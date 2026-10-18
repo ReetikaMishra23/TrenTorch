@@ -8,6 +8,10 @@ node_modules
 /.svelte-kit
 /build
 
+# Claude Code's own session scratch/worktree directory: a tool-local artifact,
+# not project content.
+.claude/
+
 # OS
 .DS_Store
 Thumbs.db
