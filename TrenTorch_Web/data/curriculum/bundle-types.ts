@@ -14,6 +14,8 @@ export interface GeneratedQuestion {
 	caseCompany?: string;
 	relatedModule?: QuestionMetadata['relatedModule'];
 	hint?: string;
+	// DSA sheet: up to four hints, shown one at a time (from problem.json).
+	hints?: string[];
 	tools?: string[];
 	topic?: string;
 	root: string;
