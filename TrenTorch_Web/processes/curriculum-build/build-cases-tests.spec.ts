@@ -117,3 +117,34 @@ describe('the DSA sheet content', () => {
 		expect(listed).not.toContain('sheet-count-pairs');
 	});
 });
+
+describe('the slim modules the browser pages import', () => {
+	const { bundle, dsaSheet, problemset } = buildCurriculum();
+	const all = bundle.roots.flatMap((root) =>
+		root.sections.flatMap((section) => section.tracks.flatMap((track) => track.questions))
+	);
+
+	it('lists the DSA sheet as steps and topics with their folder titles', () => {
+		expect(dsaSheet.title).toBe('DSA Sheet');
+		expect(dsaSheet.steps).toHaveLength(1);
+		expect(dsaSheet.steps[0].topics.map((t: { title: string }) => t.title)).toEqual([
+			'Counting Steps',
+			'Make It Fast',
+			'Python Toolbox'
+		]);
+		const ids = dsaSheet.steps.flatMap((s: { topics: { questions: { id: string }[] }[] }) =>
+			s.topics.flatMap((t) => t.questions.map((q) => q.id))
+		);
+		expect(ids).toHaveLength(27);
+		expect(ids[0]).toBe('sheet-count-pairs');
+	});
+
+	it('gives the Problemset page every problemset question and no question text', () => {
+		expect(problemset).toHaveLength(all.filter((q) => q.kind === 'problemset').length);
+		expect(problemset.length).toBeGreaterThan(0);
+		for (const source of problemset) {
+			expect(Object.keys(source), source.id).not.toContain('statementMarkdown');
+			expect(Object.keys(source), source.id).not.toContain('oracleSolutionCode');
+		}
+	});
+});
