@@ -20,11 +20,13 @@ export interface DsaSheetQuestion {
 export interface DsaSheetTopic {
 	id: string;
 	title: string;
+	description?: string;
 	questions: DsaSheetQuestion[];
 }
 export interface DsaSheetStep {
 	id: string;
 	title: string;
+	description?: string;
 	topics: DsaSheetTopic[];
 }
 export interface DsaSheet {

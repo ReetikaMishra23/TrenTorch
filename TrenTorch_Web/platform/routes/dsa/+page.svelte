@@ -175,6 +175,9 @@
 						>
 							<span class="min-w-0 flex-1 text-left">
 								<span id="step-{step.id}" class="step-title">{step.title}</span>
+								{#if step.description}
+									<span class="step-desc">{step.description}</span>
+								{/if}
 								<span class="step-meta">{progress.solved} of {progress.total} solved</span>
 							</span>
 							<span
@@ -198,18 +201,34 @@
 						{#if open}
 							<div id="step-body-{step.id}" class="px-1 pb-2">
 								{#each step.topics as topic (topic.id)}
-									<h2 class="topic-title">{topic.title}</h2>
+									{@const topicProgress = countSolved(topic.questions, solved.slugs)}
+									<div class="topic-head">
+										<h2 class="topic-title">{topic.title}</h2>
+										<span class="topic-count">
+											{topicProgress.solved} of {topicProgress.total} solved
+										</span>
+									</div>
+									{#if topic.description}
+										<p class="topic-desc">{topic.description}</p>
+									{/if}
 									<div class="overflow-x-auto">
 										<table class="problem-table">
+											<colgroup>
+												<col class="col-status" />
+												<col class="col-num" />
+												<col />
+												<col class="col-difficulty" />
+											</colgroup>
 											<thead>
 												<tr>
-													<th class="w-[26px]" aria-label="Status"></th>
-													<th>Title</th>
+													<th aria-label="Status"></th>
+													<th>#</th>
+													<th>Question</th>
 													<th>Difficulty</th>
 												</tr>
 											</thead>
 											<tbody>
-												{#each topic.questions as question (question.id)}
+												{#each topic.questions as question, index (question.id)}
 													{@const status = getSheetStatus(
 														question.id,
 														solved.slugs,
@@ -225,6 +244,7 @@
 																>
 															{/if}
 														</td>
+														<td class="num-cell">{index + 1}</td>
 														<td>
 															<a
 																href={resolve('/ide/[id]', { id: question.id })}
@@ -232,9 +252,6 @@
 															>
 																{question.title}
 															</a>
-															{#each question.tags.filter((tag) => tag !== 'dsa-sheet' && tag !== 'basics') as tag (tag)}
-																<span class="tag">{tag}</span>
-															{/each}
 														</td>
 														<td>
 															<span class="difficulty-badge {question.difficulty}">
@@ -353,14 +370,51 @@
 		transform: rotate(180deg);
 	}
 
+	.step-desc {
+		display: block;
+		max-width: 640px;
+		margin-top: 3px;
+		color: var(--muted-foreground);
+		font-size: 0.8rem;
+		line-height: 1.45;
+	}
+
+	.topic-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+		margin: 22px 12px 0;
+		border-top: 1px solid var(--border);
+		padding-top: 18px;
+	}
+
 	.topic-title {
-		margin: 14px 12px 2px;
+		color: var(--foreground);
+		font-family: var(--font-mono, ui-monospace, monospace);
+		font-size: 0.95rem;
+		font-weight: 600;
+	}
+
+	.topic-count {
 		color: var(--muted-foreground);
 		font-family: var(--font-mono, ui-monospace, monospace);
 		font-size: 0.72rem;
-		font-weight: 600;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	.topic-desc {
+		max-width: 640px;
+		margin: 4px 12px 8px;
+		color: var(--muted-foreground);
+		font-size: 0.8rem;
+		line-height: 1.45;
+	}
+
+	.num-cell {
+		color: var(--muted-foreground);
+		font-family: var(--font-mono, ui-monospace, monospace);
+		font-size: 0.75rem;
 	}
 
 	.search-field {
@@ -444,6 +498,7 @@
 
 	.problem-table {
 		width: 100%;
+		table-layout: fixed;
 		border-collapse: collapse;
 		font-size: 0.85rem;
 	}
@@ -474,8 +529,19 @@
 		vertical-align: middle;
 	}
 
+	.col-status {
+		width: 40px;
+	}
+
+	.col-num {
+		width: 44px;
+	}
+
+	.col-difficulty {
+		width: 130px;
+	}
+
 	.status-cell {
-		width: 26px;
 		text-align: center;
 	}
 
@@ -486,18 +552,6 @@
 
 	.problem-link:hover {
 		color: var(--primary);
-	}
-
-	.tag {
-		display: inline-block;
-		margin-left: 8px;
-		border: 1px solid var(--border);
-		border-radius: 4px;
-		background: color-mix(in srgb, var(--muted) 50%, var(--background));
-		padding: 2px 7px;
-		color: var(--muted-foreground);
-		font-family: var(--font-mono, ui-monospace, monospace);
-		font-size: 0.68rem;
 	}
 
 	.difficulty-badge {
@@ -535,6 +589,15 @@
 	@media (max-width: 640px) {
 		.step-bar {
 			display: none;
+		}
+
+		.num-cell {
+			display: none !important;
+		}
+
+		.topic-head {
+			flex-direction: column;
+			gap: 2px;
 		}
 
 		.problem-table thead {

@@ -1,3 +1,4 @@
 {
-	"title": "Make It Fast"
+	"title": "Make It Fast",
+	"description": "Each question starts with correct but slow code. Make it fast enough to pass the big tests."
 }

@@ -132,6 +132,10 @@ describe('the slim modules the browser pages import', () => {
 			'Make It Fast',
 			'Python Toolbox'
 		]);
+		// every step and topic explains itself on the /dsa page
+		expect(dsaSheet.steps[0].description).toBeTruthy();
+		for (const topic of dsaSheet.steps[0].topics)
+			expect(topic.description, topic.title).toBeTruthy();
 		const ids = dsaSheet.steps.flatMap((s: { topics: { questions: { id: string }[] }[] }) =>
 			s.topics.flatMap((t) => t.questions.map((q) => q.id))
 		);

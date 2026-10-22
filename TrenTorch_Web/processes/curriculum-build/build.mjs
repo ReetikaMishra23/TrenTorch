@@ -78,9 +78,11 @@ export function buildCurriculum() {
 		steps: (sheetRoot?.sections ?? []).map((section) => ({
 			id: section.id,
 			title: section.meta.title,
+			description: section.meta.description,
 			topics: section.tracks.map((track) => ({
 				id: track.id,
 				title: track.meta.title,
+				description: track.meta.description,
 				questions: track.questions.map(({ id, title, difficulty, tags }) => ({
 					id,
 					title,
