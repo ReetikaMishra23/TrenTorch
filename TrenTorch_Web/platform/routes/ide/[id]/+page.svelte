@@ -26,7 +26,11 @@
 	import SEO from '$components/SEO.svelte';
 	import IdeHeader from '$components/ide/IdeHeader.svelte';
 	import GuidePane from '$components/ide/GuidePane.svelte';
-	import CodeEditor from '$components/ide/CodeEditor.svelte';
+	import CodeEditor, {
+		EDITOR_FONT_DEFAULT,
+		EDITOR_FONT_MAX,
+		EDITOR_FONT_MIN
+	} from '$components/ide/CodeEditor.svelte';
 	import OutputConsole from '$components/ide/OutputConsole.svelte';
 	import TestResultsView from '$components/ide/TestResultsView.svelte';
 	import CustomRunPanel from '$components/ide/CustomRunPanel.svelte';
@@ -37,7 +41,9 @@
 		Terminal,
 		ShieldCheck,
 		ArrowLeft,
-		IndentIncrease
+		IndentIncrease,
+		ZoomIn,
+		ZoomOut
 	} from '@lucide/svelte';
 	import type { PageData } from './$types';
 
@@ -140,6 +146,25 @@
 	let isFullscreen = $state(false);
 	let cursorPos = $state({ line: 1, col: 1 });
 	let reindentCode = $state<() => void>(() => {});
+
+	const FONT_SIZE_KEY = 'trentorch:editor-font-size';
+	function loadFontSize(): number {
+		try {
+			const saved = Number(localStorage.getItem(FONT_SIZE_KEY));
+			if (saved >= EDITOR_FONT_MIN && saved <= EDITOR_FONT_MAX) return Math.round(saved);
+		} catch {
+			// storage blocked: use the default
+		}
+		return EDITOR_FONT_DEFAULT;
+	}
+	let editorFontSize = $state(browser ? loadFontSize() : EDITOR_FONT_DEFAULT);
+	$effect(() => {
+		try {
+			localStorage.setItem(FONT_SIZE_KEY, String(editorFontSize));
+		} catch {
+			// storage blocked: the size just won't persist
+		}
+	});
 	let language = $derived(content ? detectLanguage(content) : 'python');
 	let isSql = $derived(language === 'sql');
 	let lastSavedAt = $state<number | null>(null);
@@ -663,6 +688,37 @@
 							<span>{content.id}{isSql ? '.sql' : '.py'}</span>
 						</div>
 						<div class="flex items-center gap-2">
+							<div class="flex items-center gap-0.5" role="group" aria-label="Editor font size">
+								<button
+									type="button"
+									class="rounded p-0.5 transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-30"
+									onclick={() => (editorFontSize = Math.max(EDITOR_FONT_MIN, editorFontSize - 1))}
+									disabled={editorFontSize <= EDITOR_FONT_MIN}
+									title="Smaller text (Ctrl -)"
+									aria-label="Decrease editor font size"
+								>
+									<ZoomOut class="size-3.5" />
+								</button>
+								<button
+									type="button"
+									class="min-w-8 rounded px-1 py-0.5 text-center text-[10px] tabular-nums transition-colors hover:bg-foreground/10 hover:text-foreground"
+									onclick={() => (editorFontSize = EDITOR_FONT_DEFAULT)}
+									title="Reset font size (Ctrl 0)"
+									aria-label="Reset editor font size"
+								>
+									{editorFontSize}px
+								</button>
+								<button
+									type="button"
+									class="rounded p-0.5 transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-30"
+									onclick={() => (editorFontSize = Math.min(EDITOR_FONT_MAX, editorFontSize + 1))}
+									disabled={editorFontSize >= EDITOR_FONT_MAX}
+									title="Larger text (Ctrl +)"
+									aria-label="Increase editor font size"
+								>
+									<ZoomIn class="size-3.5" />
+								</button>
+							</div>
 							{#if !isSql}
 								<button
 									type="button"
@@ -700,6 +756,7 @@
 								onChange={handleCodeChange}
 								onCursorChange={(pos) => (cursorPos = pos)}
 								bind:reindent={reindentCode}
+								bind:fontSize={editorFontSize}
 							/>
 						{/key}
 					</div>

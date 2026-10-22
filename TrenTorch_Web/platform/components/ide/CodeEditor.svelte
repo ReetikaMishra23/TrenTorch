@@ -1,3 +1,9 @@
+<script lang="ts" module>
+	export const EDITOR_FONT_MIN = 10;
+	export const EDITOR_FONT_MAX = 32;
+	export const EDITOR_FONT_DEFAULT = 14;
+</script>
+
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import type { EditorView as EditorViewType } from '@codemirror/view';
@@ -15,7 +21,8 @@
 		onCursorChange = () => {},
 		// eslint-disable-next-line no-useless-assignment -- placeholder replaced by rebuildEditor() once CodeMirror loads
 		reindent = $bindable<() => void>(() => {}),
-		language = 'python'
+		language = 'python',
+		fontSize = $bindable(EDITOR_FONT_DEFAULT)
 	} = $props<{
 		value: string;
 		onRun?: (val?: void) => void;
@@ -23,6 +30,7 @@
 		onCursorChange?: (pos: { line: number; col: number }) => void;
 		reindent?: () => void;
 		language?: 'python' | 'sql';
+		fontSize?: number;
 	}>();
 
 	let editorContainer: HTMLDivElement;
@@ -58,7 +66,7 @@
 	const sharedRoot = {
 		height: '100%',
 		fontFamily: "'Geist Mono', 'JetBrains Mono', ui-monospace, Menlo, monospace",
-		fontSize: '13px'
+		fontSize: 'var(--editor-font-size)'
 	};
 	const darkThemeSpec = {
 		'&': { ...sharedRoot, backgroundColor: '#0d1117', color: '#c9d1d9' },
@@ -197,6 +205,10 @@
 		lightHighlight = cm.syntaxHighlighting(cm.HighlightStyle.define(specs.light));
 	}
 
+	function zoomEditor(delta: number) {
+		fontSize = Math.min(EDITOR_FONT_MAX, Math.max(EDITOR_FONT_MIN, fontSize + delta));
+	}
+
 	function rebuildEditor(doc: string) {
 		if (!cm) return;
 		editorView?.destroy();
@@ -204,6 +216,10 @@
 		const runKeyBinding = cm.keymap.of([
 			{ key: 'Mod-Enter', run: () => (onRun(), true) },
 			{ key: 'Shift-Enter', run: () => (onRun(), true) },
+			{ key: 'Mod-=', run: () => (zoomEditor(1), true) },
+			{ key: 'Mod-+', run: () => (zoomEditor(1), true) },
+			{ key: 'Mod--', run: () => (zoomEditor(-1), true) },
+			{ key: 'Mod-0', run: () => ((fontSize = EDITOR_FONT_DEFAULT), true) },
 			cm.indentWithTab
 		]);
 
@@ -230,7 +246,15 @@
 				isDarkMode() ? darkTheme : lightTheme,
 				isDarkMode() ? darkHighlight : lightHighlight,
 				updateListener,
-				cm.EditorView.lineWrapping
+				cm.EditorView.lineWrapping,
+				cm.EditorView.domEventHandlers({
+					wheel: (event: WheelEvent) => {
+						if (!event.ctrlKey && !event.metaKey) return false;
+						event.preventDefault();
+						zoomEditor(event.deltaY < 0 ? 1 : -1);
+						return true;
+					}
+				})
 			]
 		});
 
@@ -273,6 +297,12 @@
 				editorView.dispatch({ changes: { from: 0, to: currentDoc.length, insert: nextValue } });
 			}
 		}
+	});
+
+	// The theme reads the size from this CSS variable, so zooming never rebuilds the editor.
+	$effect(() => {
+		editorContainer?.style.setProperty('--editor-font-size', `${fontSize}px`);
+		editorView?.requestMeasure();
 	});
 
 	onDestroy(() => editorView?.destroy());
