@@ -166,7 +166,7 @@
 	<div class="flex items-center gap-2 justify-self-center">
 		<button
 			type="button"
-			class="flex h-9 items-center gap-2 rounded-lg border border-border bg-secondary pr-2 pl-3.5 text-sm font-medium text-foreground transition-colors hover:border-(--ide-accent)/60 hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
+			class="flex h-9 items-center gap-2 rounded-lg bg-muted px-4 text-sm font-medium text-foreground transition-colors hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
 			disabled={isBusy}
 			onclick={onRunCode}
 			title="Run code (Shift+Enter)"
@@ -177,7 +177,6 @@
 				<Play class="size-3.5 fill-current" />
 			{/if}
 			<span>Run</span>
-			<kbd class="run-kbd">⇧↵</kbd>
 		</button>
 
 		<button
@@ -314,17 +313,7 @@
 	}
 
 	.submit-button {
-		background: var(--ide-accent);
-		color: var(--ide-accent-fg);
-	}
-
-	.run-kbd {
-		border-radius: 4px;
-		background: color-mix(in oklab, var(--foreground) 10%, transparent);
-		padding: 1px 5px;
-		font-family: var(--ide-mono);
-		font-size: 10px;
-		font-weight: 500;
-		color: var(--muted-foreground);
+		background: var(--ide-ok);
+		color: var(--ide-ok-fg);
 	}
 </style>

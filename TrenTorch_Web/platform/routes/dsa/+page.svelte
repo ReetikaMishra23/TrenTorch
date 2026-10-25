@@ -77,7 +77,7 @@
 	<title>DSA Sheet - TrenTorch</title>
 	<meta
 		name="description"
-		content="A free, open-source DSA course. Write and run Python in your browser, step by step, with hints and tests."
+		content="Free data structures and algorithms practice, with high-quality questions."
 	/>
 </svelte:head>
 
@@ -85,8 +85,7 @@
 	<div class="mx-auto w-full max-w-[1180px]">
 		<h1 class="mb-1 font-mono text-[1.4rem] font-bold">DSA Sheet</h1>
 		<p class="mb-6 max-w-[680px] text-sm text-muted-foreground">
-			Learn data structures and algorithms by writing code. Everything runs in your browser, so
-			there is nothing to install. Solutions open after you solve a question.
+			Free practice for data structures and algorithms, with high-quality questions.
 		</p>
 
 		<div class="progress-card mb-7">

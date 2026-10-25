@@ -865,6 +865,7 @@
 		--ide-accent: #e0795a;
 		--ide-accent-fg: #1b0b04;
 		--ide-ok: #5fd39a;
+		--ide-ok-fg: #06180d;
 		--ide-bad: #ff6b6b;
 		--ide-warn: #ffb04a;
 		--ide-sans: 'IBM Plex Sans', var(--font-sans);

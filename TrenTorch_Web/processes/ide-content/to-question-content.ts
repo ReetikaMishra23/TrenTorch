@@ -41,6 +41,7 @@ export function toQuestionContent(question: GeneratedQuestion): QuestionContent 
 			relatedModule: question.relatedModule,
 			hint: question.hint,
 			hints: question.hints,
+			references: question.references,
 			tools: question.tools
 		},
 		descriptionMarkdown: question.statementMarkdown,

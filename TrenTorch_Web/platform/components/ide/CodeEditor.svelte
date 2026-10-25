@@ -49,7 +49,8 @@
 		EditorState: any;
 		basicSetup: any;
 		indentUnit: any;
-		indentWithTab: any;
+		indentMore: any;
+		indentLess: any;
 		indentRange: any;
 		python: any;
 		sql: any;
@@ -133,7 +134,8 @@
 			EditorView: cmMod.EditorView,
 			basicSetup: cmMod.basicSetup,
 			indentUnit: langMod.indentUnit,
-			indentWithTab: commandsMod.indentWithTab,
+			indentMore: commandsMod.indentMore,
+			indentLess: commandsMod.indentLess,
 			indentRange: langMod.indentRange,
 			EditorState: stateMod.EditorState,
 			python: pyMod.python,
@@ -154,6 +156,17 @@
 		if (!cm) return;
 		editorView?.destroy();
 
+		const insertIndent = (view: any) => {
+			const state = view.state;
+			if (state.selection.ranges.some((range: any) => !range.empty))
+				return cm?.indentMore(view) ?? false;
+			const size = language === 'sql' ? 2 : 4;
+			const head = state.selection.main.head;
+			const column = head - state.doc.lineAt(head).from;
+			view.dispatch(state.replaceSelection(' '.repeat(size - (column % size))));
+			return true;
+		};
+
 		const runKeyBinding = cm.keymap.of([
 			{ key: 'Mod-Enter', run: () => (onRun(), true) },
 			{ key: 'Shift-Enter', run: () => (onRun(), true) },
@@ -161,7 +174,10 @@
 			{ key: 'Mod-+', run: () => (zoomEditor(1), true) },
 			{ key: 'Mod--', run: () => (zoomEditor(-1), true) },
 			{ key: 'Mod-0', run: () => ((fontSize = EDITOR_FONT_DEFAULT), true) },
-			cm.indentWithTab
+			// Tab types spaces up to the next indent stop at the cursor and only re-indents whole
+			// lines when text is selected; Shift-Tab takes an indent back. (indentWithTab moved
+			// the whole line, and insertTab types a tab character, which Python dislikes.)
+			{ key: 'Tab', run: insertIndent, shift: cm.indentLess }
 		]);
 
 		const updateListener = cm.EditorView.updateListener.of((update: any) => {

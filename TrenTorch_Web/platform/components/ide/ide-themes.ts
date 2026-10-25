@@ -41,6 +41,7 @@ export type IdeTheme = {
 		accent: string;
 		accentFg: string;
 		ok: string;
+		okFg: string;
 		bad: string;
 		warn: string;
 	};
@@ -65,6 +66,7 @@ export const IDE_THEMES: IdeTheme[] = [
 			accent: '#e0795a',
 			accentFg: '#1b0b04',
 			ok: '#5fd39a',
+			okFg: '#06180d',
 			bad: '#ff6b6b',
 			warn: '#ffb04a'
 		},
@@ -105,6 +107,7 @@ export const IDE_THEMES: IdeTheme[] = [
 			accent: '#5aa2ff',
 			accentFg: '#04101f',
 			ok: '#4fd8a4',
+			okFg: '#05170f',
 			bad: '#ff7285',
 			warn: '#ffcb6b'
 		},
@@ -145,6 +148,7 @@ export const IDE_THEMES: IdeTheme[] = [
 			accent: '#bd93f9',
 			accentFg: '#1b1230',
 			ok: '#50fa7b',
+			okFg: '#06200f',
 			bad: '#ff5555',
 			warn: '#f1fa8c'
 		},
@@ -185,6 +189,7 @@ export const IDE_THEMES: IdeTheme[] = [
 			accent: '#88c0d0',
 			accentFg: '#1b2430',
 			ok: '#a3be8c',
+			okFg: '#14200c',
 			bad: '#bf616a',
 			warn: '#ebcb8b'
 		},
@@ -225,6 +230,7 @@ export const IDE_THEMES: IdeTheme[] = [
 			accent: '#d9480f',
 			accentFg: '#ffffff',
 			ok: '#1f7a4d',
+			okFg: '#ffffff',
 			bad: '#c92a2a',
 			warn: '#b8590a'
 		},
@@ -274,8 +280,21 @@ export function themeStyle(theme: IdeTheme): string {
 		'--ide-accent': u.accent,
 		'--ide-accent-fg': u.accentFg,
 		'--ide-ok': u.ok,
+		'--ide-ok-fg': u.okFg,
 		'--ide-bad': u.bad,
 		'--ide-warn': u.warn,
+		'--syn-fg': theme.editor.fg,
+		'--syn-comment': theme.editor.comment,
+		'--syn-keyword': theme.editor.keyword,
+		'--syn-operator': theme.editor.operator,
+		'--syn-fn': theme.editor.fn,
+		'--syn-cls': theme.editor.cls,
+		'--syn-string': theme.editor.string,
+		'--syn-number': theme.editor.number,
+		'--syn-property': theme.editor.property,
+		'--syn-variable': theme.editor.variable,
+		'--syn-meta': theme.editor.meta,
+		'--syn-invalid': theme.editor.invalid,
 		'color-scheme': theme.mode
 	};
 	return Object.entries(vars)

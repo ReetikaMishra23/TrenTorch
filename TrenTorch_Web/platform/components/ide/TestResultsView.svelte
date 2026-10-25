@@ -232,9 +232,9 @@
 		align-items: center;
 		gap: 6px;
 		border-radius: 8px;
-		background: var(--ide-accent);
+		background: var(--ide-ok);
 		padding: 7px 12px;
-		color: var(--ide-accent-fg);
+		color: var(--ide-ok-fg);
 		font-size: 12px;
 		font-weight: 600;
 		text-decoration: none;

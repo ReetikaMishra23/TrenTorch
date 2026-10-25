@@ -12,7 +12,14 @@
 	import type { CompanyTag } from '$data/questions';
 	import CompaniesBadge from '$components/CompaniesBadge.svelte';
 	import { extractSimpleVersion } from '$processes/ide-content/extract-simple-version';
-	import { BookOpen, CheckCircle2, FileText, Lightbulb, MessageSquare } from '@lucide/svelte';
+	import {
+		BookOpen,
+		CheckCircle2,
+		ExternalLink,
+		FileText,
+		Lightbulb,
+		MessageSquare
+	} from '@lucide/svelte';
 	import {
 		embeddedWidgetIds as embeddedWidgetIdsIn,
 		mathVisualizerIdSet,
@@ -167,12 +174,99 @@
 		root.scrollIntoView({ behavior: 'smooth', block: 'start' });
 	}
 
-	// Every code block in the reading area gets a Copy button (shown on hover).
+	// Python code blocks are coloured with the chosen theme: CodeMirror's Python parser walks the
+	// text and each token gets a class (syn-keyword ...), which the theme's variables paint. The
+	// parser loads on first use, like the editor does.
+	let painter: Promise<{
+		parse: (code: string) => unknown;
+		paint: (
+			code: string,
+			tree: unknown,
+			put: (text: string, classes: string) => void,
+			br: () => void
+		) => void;
+	}> | null = null;
+
+	function loadPainter() {
+		painter ??= Promise.all([
+			import('@codemirror/lang-python'),
+			import('@codemirror/language'),
+			import('@lezer/highlight')
+		]).then(([py, lang, hl]) => {
+			const t = hl.tags;
+			const style = lang.HighlightStyle.define([
+				{ tag: t.comment, class: 'syn-comment' },
+				{
+					tag: [
+						t.keyword,
+						t.controlKeyword,
+						t.moduleKeyword,
+						t.operatorKeyword,
+						t.definitionKeyword,
+						t.self
+					],
+					class: 'syn-keyword'
+				},
+				{ tag: t.operator, class: 'syn-operator' },
+				{
+					tag: [t.function(t.variableName), t.function(t.definition(t.variableName))],
+					class: 'syn-fn'
+				},
+				{ tag: [t.className, t.definition(t.className), t.typeName], class: 'syn-cls' },
+				{ tag: [t.string, t.special(t.string), t.docString], class: 'syn-string' },
+				{ tag: [t.number, t.bool, t.null], class: 'syn-number' },
+				{ tag: t.propertyName, class: 'syn-property' },
+				{ tag: [t.variableName, t.definition(t.variableName)], class: 'syn-variable' },
+				{ tag: t.meta, class: 'syn-meta' },
+				{ tag: t.invalid, class: 'syn-invalid' }
+			]);
+			return {
+				parse: (code: string) => py.pythonLanguage.parser.parse(code),
+				paint: (code, tree, put, br) =>
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					hl.highlightCode(code, tree as any, style, put, br)
+			};
+		});
+		return painter;
+	}
+
+	async function paintBlocks() {
+		const blocks = scroller?.querySelectorAll<HTMLElement>(
+			'.ide-prose pre > code.language-python:not([data-painted])'
+		);
+		if (!blocks?.length) return;
+		const { parse, paint } = await loadPainter();
+		for (const code of blocks) {
+			const text = code.textContent ?? '';
+			const fragment = document.createDocumentFragment();
+			paint(
+				text,
+				parse(text),
+				(piece, classes) => {
+					if (!classes) return void fragment.append(piece);
+					const span = document.createElement('span');
+					span.className = classes;
+					span.textContent = piece;
+					fragment.append(span);
+				},
+				() => fragment.append('\n')
+			);
+			code.replaceChildren(fragment);
+			code.dataset.painted = '1';
+		}
+	}
+
+	// Every code block in the reading area gets colour and a Copy button (shown on hover).
 	$effect(() => {
 		void [activeTab, descriptionBeforeConstraintsHtml, constraintsHtml, theoryHtml, solutionHtml];
 		void [showSolution, explanationHtml];
 		if (!browser) return;
-		tick().then(() => {
+		tick().then(async () => {
+			try {
+				await paintBlocks();
+			} catch {
+				// no colour is better than no code
+			}
 			for (const pre of scroller?.querySelectorAll<HTMLPreElement>('.ide-prose pre') ?? []) {
 				if (pre.querySelector(':scope > .copy-code')) continue;
 				const button = document.createElement('button');
@@ -422,6 +516,38 @@
 					</div>
 				</div>
 			{/if}
+			{#if content.metadata.references?.length}
+				<div class="mt-8 border-t border-border pt-5">
+					<h2 class="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+						References
+					</h2>
+					<ul class="flex flex-col gap-2">
+						{#each content.metadata.references as ref (ref.url)}
+							<li>
+								<!-- eslint-disable svelte/no-navigation-without-resolve -- external articles, not app routes -->
+								<a
+									href={ref.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="group flex items-start gap-2 text-sm text-foreground/90 transition-colors hover:text-foreground"
+								>
+									<ExternalLink class="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+									<span class="min-w-0">
+										<span
+											class="underline decoration-border underline-offset-2 group-hover:decoration-foreground/50"
+											>{ref.title}</span
+										>
+										<span class="block text-xs text-muted-foreground"
+											>{new URL(ref.url).hostname.replace(/^www\./, '')}</span
+										>
+									</span>
+								</a>
+								<!-- eslint-enable svelte/no-navigation-without-resolve -->
+							</li>
+						{/each}
+					</ul>
+				</div>
+			{/if}
 			{#if simpleVersionHtml}
 				<details class="mt-8 border-t border-border pt-5">
 					<summary
@@ -597,6 +723,43 @@
 		font-size: 0.78rem;
 		white-space: pre-wrap;
 		word-break: break-word;
+	}
+	:global(.ide-prose pre code) {
+		color: var(--syn-fg, inherit);
+	}
+	:global(.ide-prose .syn-comment) {
+		color: var(--syn-comment);
+		font-style: italic;
+	}
+	:global(.ide-prose .syn-keyword) {
+		color: var(--syn-keyword);
+	}
+	:global(.ide-prose .syn-operator) {
+		color: var(--syn-operator);
+	}
+	:global(.ide-prose .syn-fn) {
+		color: var(--syn-fn);
+	}
+	:global(.ide-prose .syn-cls) {
+		color: var(--syn-cls);
+	}
+	:global(.ide-prose .syn-string) {
+		color: var(--syn-string);
+	}
+	:global(.ide-prose .syn-number) {
+		color: var(--syn-number);
+	}
+	:global(.ide-prose .syn-property) {
+		color: var(--syn-property);
+	}
+	:global(.ide-prose .syn-variable) {
+		color: var(--syn-variable);
+	}
+	:global(.ide-prose .syn-meta) {
+		color: var(--syn-meta);
+	}
+	:global(.ide-prose .syn-invalid) {
+		color: var(--syn-invalid);
 	}
 	:global(.ide-prose pre .copy-code) {
 		position: absolute;
