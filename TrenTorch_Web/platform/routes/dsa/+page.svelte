@@ -332,10 +332,32 @@
 		opacity: 0.9;
 	}
 
+	/* Three levels, told apart by colour and surface, not just by indent:
+	   a step is a raised card with a white title and an ember edge, a topic is
+	   an inset dark card whose title is ember, a question is plain text. */
+	.sheet {
+		--level-accent: #93a9cc;
+		--level-step: var(--secondary);
+		--level-topic: color-mix(in oklab, var(--background) 82%, black);
+	}
+
+	:global(html:not(.dark)) .sheet {
+		--level-accent: #45618c;
+		--level-step: var(--secondary);
+		--level-topic: color-mix(in oklab, var(--background) 94%, var(--foreground));
+	}
+
 	.step-card {
 		border: 1px solid var(--border);
-		border-radius: 8px;
-		background: var(--background);
+		border-radius: 12px;
+		background: var(--level-step);
+		overflow: hidden;
+		transition: border-color 150ms;
+	}
+
+	.step-card:has(.step-head[aria-expanded='true']) {
+		border-color: color-mix(in oklab, var(--level-accent) 30%, var(--border));
+		box-shadow: inset 3px 0 0 color-mix(in oklab, var(--level-accent) 55%, transparent);
 	}
 
 	.step-head {
@@ -345,21 +367,23 @@
 		gap: 16px;
 		border: 0;
 		background: transparent;
-		padding: 14px 16px;
+		padding: 16px 18px;
 		color: var(--foreground);
 		font: inherit;
 		cursor: pointer;
 	}
 
 	.step-head:hover {
-		background: var(--secondary);
+		background: color-mix(in oklab, var(--foreground) 5%, transparent);
 	}
 
 	.step-title {
 		display: block;
 		font-family: var(--font-mono, ui-monospace, monospace);
-		font-size: 1rem;
-		font-weight: 600;
+		font-size: 1.05rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		color: var(--foreground);
 	}
 
 	.step-bar {
@@ -377,13 +401,17 @@
 	}
 
 	.step-body {
-		padding: 0 16px 12px;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 2px 14px 16px 18px;
 	}
 
 	.topic {
-		margin-left: 14px;
-		border-left: 1px solid var(--border);
-		padding-left: 14px;
+		overflow: hidden;
+		border: 1px solid color-mix(in oklab, var(--foreground) 9%, transparent);
+		border-radius: 10px;
+		background: var(--level-topic);
 	}
 
 	.topic-head {
@@ -392,9 +420,8 @@
 		align-items: center;
 		gap: 12px;
 		border: 0;
-		border-radius: 6px;
 		background: transparent;
-		padding: 10px 10px;
+		padding: 12px 14px;
 		color: var(--foreground);
 		font: inherit;
 		text-align: left;
@@ -402,27 +429,43 @@
 	}
 
 	.topic-head:hover {
-		background: var(--secondary);
+		background: color-mix(in oklab, var(--level-accent) 8%, transparent);
 	}
 
 	.topic-title {
+		display: flex;
 		min-width: 0;
 		flex: 1;
-		color: var(--foreground);
-		font-family: var(--font-mono, ui-monospace, monospace);
-		font-size: 0.92rem;
+		align-items: center;
+		gap: 10px;
+		color: var(--level-accent);
+		font-family: var(--font-sans, system-ui, sans-serif);
+		font-size: 0.9375rem;
 		font-weight: 600;
 	}
 
+	.topic-title::before {
+		content: '';
+		width: 7px;
+		height: 7px;
+		flex: 0 0 7px;
+		border-radius: 2px;
+		background: var(--level-accent);
+		transform: rotate(45deg);
+	}
+
 	.topic-count {
+		border-radius: 999px;
+		background: color-mix(in oklab, var(--foreground) 8%, transparent);
+		padding: 2px 9px;
 		color: var(--muted-foreground);
 		font-family: var(--font-mono, ui-monospace, monospace);
-		font-size: 0.72rem;
+		font-size: 0.7rem;
 		white-space: nowrap;
 	}
 
 	.topic .problem-table {
-		margin-bottom: 8px;
+		margin: 0 0 6px;
 	}
 
 	.num-cell {
@@ -518,20 +561,23 @@
 	}
 
 	.problem-table thead th {
-		border-bottom: 1px solid var(--border);
-		padding: 8px 10px;
+		border-top: 1px solid color-mix(in oklab, var(--foreground) 9%, transparent);
+		border-bottom: 1px solid color-mix(in oklab, var(--foreground) 9%, transparent);
+		padding: 7px 14px;
 		color: var(--muted-foreground);
-		font-size: 0.75rem;
-		font-weight: normal;
+		font-size: 0.7rem;
+		font-weight: 500;
+		letter-spacing: 0.06em;
 		text-align: left;
+		text-transform: uppercase;
 	}
 
 	.problem-table tbody tr {
-		border-bottom: 1px solid var(--border);
+		border-bottom: 1px solid color-mix(in oklab, var(--foreground) 6%, transparent);
 	}
 
 	.problem-table tbody tr:hover {
-		background: var(--secondary);
+		background: color-mix(in oklab, var(--foreground) 5%, transparent);
 	}
 
 	.problem-table tbody tr:last-child {
@@ -560,12 +606,12 @@
 	}
 
 	.problem-link {
-		color: var(--foreground);
+		color: color-mix(in oklab, var(--foreground) 88%, transparent);
 		text-decoration: none;
 	}
 
 	.problem-link:hover {
-		color: var(--primary);
+		color: var(--level-accent);
 	}
 
 	.difficulty-badge {
@@ -609,9 +655,8 @@
 			display: none !important;
 		}
 
-		.topic {
-			margin-left: 6px;
-			padding-left: 8px;
+		.step-body {
+			padding: 2px 8px 12px 10px;
 		}
 
 		.problem-table thead {
