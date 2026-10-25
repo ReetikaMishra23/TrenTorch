@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Terminal, Trash2, Copy, Check } from '@lucide/svelte';
-	import type { PreviewFigure, SingleTestResult, SubmissionResult } from '$data/curriculum/types';
+	import type { PreviewFigure, SubmissionResult } from '$data/curriculum/types';
 	import PlotlyFigure from './PlotlyFigure.svelte';
 
 	let {
@@ -65,18 +65,18 @@
 	<!-- Output Body -->
 	<div class="min-h-0 flex-1 overflow-y-auto p-4 text-[13px] leading-relaxed">
 		{#if results}
-			<section
-				class="mb-3 rounded-lg border p-3 {results.error || results.failedTests > 0
-					? 'border-(--ide-bad)/40 bg-(--ide-bad)/8 text-(--ide-bad)'
-					: results.totalTests === 0
-						? 'border-(--ide-warn)/40 bg-(--ide-warn)/8 text-(--ide-warn)'
-						: 'border-(--ide-ok)/35 bg-(--ide-ok)/8 text-(--ide-ok)'}"
-			>
-				<p class="font-bold">
+			<section class="mb-3 rounded border border-border p-3">
+				<p
+					class="font-medium {results.error || results.failedTests > 0
+						? 'text-(--ide-bad)'
+						: results.totalTests === 0
+							? 'text-(--ide-warn)'
+							: 'text-(--ide-ok)'}"
+				>
 					{#if results.error}
 						{results.error.includes('SyntaxError') || results.error.includes('IndentationError')
-							? 'Python syntax error — tests could not start.'
-							: 'Execution error — tests could not start.'}
+							? 'Python syntax error. The tests could not start.'
+							: 'Execution error. The tests could not start.'}
 					{:else if results.totalTests === 0}
 						No tests ran.
 					{:else if results.failedTests > 0}
@@ -89,14 +89,9 @@
 				{#if results.error}
 					<pre class="mt-2 whitespace-pre-wrap">{results.error}</pre>
 				{:else if results.failedTests > 0}
-					<ul class="mt-2 space-y-2">
-						{#each results.results.filter((test: SingleTestResult) => !test.passed) as test (test.name)}
-							<li>
-								<p class="font-semibold">{test.name}</p>
-								{#if test.error}<pre class="mt-0.5 whitespace-pre-wrap">{test.error}</pre>{/if}
-							</li>
-						{/each}
-					</ul>
+					<p class="mt-1 text-xs text-muted-foreground">
+						Open the Test result tab for the details.
+					</p>
 				{:else if results.totalTests === 0}
 					<p class="mt-1">The test runner did not find any checks for this question.</p>
 				{/if}

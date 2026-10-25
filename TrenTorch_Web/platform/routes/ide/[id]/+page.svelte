@@ -641,11 +641,11 @@
 
 		<!-- Mobile Tab Switcher -->
 		<div
-			class="mx-2 mb-2 flex gap-1 rounded-xl border border-border bg-secondary p-1 text-xs md:hidden"
+			class="mx-2 mb-2 flex gap-1 rounded-lg border border-border bg-secondary p-1 text-xs md:hidden"
 		>
 			<button
 				type="button"
-				class="flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 font-medium transition-colors {mobileActiveTab ===
+				class="flex flex-1 items-center justify-center gap-1.5 rounded-md py-2 font-medium transition-colors {mobileActiveTab ===
 				'guide'
 					? 'bg-muted text-foreground'
 					: 'text-muted-foreground'}"
@@ -656,7 +656,7 @@
 			</button>
 			<button
 				type="button"
-				class="flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 font-medium transition-colors {mobileActiveTab ===
+				class="flex flex-1 items-center justify-center gap-1.5 rounded-md py-2 font-medium transition-colors {mobileActiveTab ===
 				'editor'
 					? 'bg-muted text-foreground'
 					: 'text-muted-foreground'}"
@@ -667,7 +667,7 @@
 			</button>
 			<button
 				type="button"
-				class="flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 font-medium transition-colors {mobileActiveTab ===
+				class="flex flex-1 items-center justify-center gap-1.5 rounded-md py-2 font-medium transition-colors {mobileActiveTab ===
 				'output'
 					? 'bg-muted text-foreground'
 					: 'text-muted-foreground'}"
@@ -682,7 +682,7 @@
 		<div bind:this={mainAreaEl} class="flex flex-1 overflow-hidden px-2 pb-2">
 			<!-- Left Pane: Guide -->
 			<div
-				class="ide-left-pane h-full shrink-0 overflow-hidden rounded-xl border border-border bg-background {mobileActiveTab ===
+				class="ide-left-pane h-full shrink-0 overflow-hidden rounded-lg border border-border bg-background {mobileActiveTab ===
 				'guide'
 					? 'block w-full'
 					: 'hidden md:block'}"
@@ -714,7 +714,7 @@
 			>
 				<!-- Top Section: Editor -->
 				<div
-					class="flex min-h-[40%] flex-1 flex-col overflow-hidden rounded-xl border border-border bg-background {mobileActiveTab ===
+					class="flex min-h-[40%] flex-1 flex-col overflow-hidden rounded-lg border border-border bg-background {mobileActiveTab ===
 					'output'
 						? 'hidden md:flex'
 						: 'flex w-full'}"
@@ -769,7 +769,7 @@
 
 				<!-- Bottom Section: Terminal & Test Results -->
 				<div
-					class="ide-bottom-pane flex min-h-[180px] shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-background {resultsOpen
+					class="ide-bottom-pane flex min-h-[180px] shrink-0 flex-col overflow-hidden rounded-lg border border-border bg-background {resultsOpen
 						? ''
 						: 'ide-bottom-collapsed'} {mobileActiveTab === 'editor'
 						? 'hidden md:flex'
@@ -786,7 +786,7 @@
 								type="button"
 								role="tab"
 								aria-selected={activeRightTab === tab.id}
-								class="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors {activeRightTab ===
+								class="flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium transition-colors {activeRightTab ===
 								tab.id
 									? 'bg-muted text-foreground'
 									: 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'}"
@@ -907,7 +907,7 @@
 		--ide-accent-fg: #1b0b04;
 		--ide-ok: #5fd39a;
 		--ide-ok-fg: #06180d;
-		--ide-bad: #ff6b6b;
+		--ide-bad: #e5786f;
 		--ide-warn: #ffb04a;
 		--ide-sans: 'IBM Plex Sans', var(--font-sans);
 		--ide-mono: 'IBM Plex Mono', var(--font-mono);

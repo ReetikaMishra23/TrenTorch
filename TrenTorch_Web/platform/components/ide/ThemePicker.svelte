@@ -26,7 +26,7 @@
 <div class="relative" bind:this={root}>
 	<button
 		type="button"
-		class="flex items-center gap-2 rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground {open
+		class="flex items-center gap-2 rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground {open
 			? 'bg-muted text-foreground'
 			: ''}"
 		aria-haspopup="dialog"
@@ -42,7 +42,7 @@
 		<div
 			role="dialog"
 			aria-label="Appearance"
-			class="theme-popover absolute top-full right-0 z-50 mt-2 w-[22rem] max-w-[calc(100vw-1.5rem)] rounded-xl border border-border bg-background p-3 shadow-2xl"
+			class="theme-popover absolute top-full right-0 z-50 mt-2 w-[22rem] max-w-[calc(100vw-1.5rem)] rounded-lg border border-border bg-background p-3 shadow-2xl"
 		>
 			<p
 				class="px-1 pb-2 text-[11px] font-semibold tracking-[0.12em] text-muted-foreground uppercase"
@@ -56,7 +56,7 @@
 						type="button"
 						role="radio"
 						aria-checked={selected}
-						class="group flex items-center gap-3 rounded-lg border p-2 text-left transition-colors {selected
+						class="group flex items-center gap-3 rounded-md border p-2 text-left transition-colors {selected
 							? 'border-(--ide-accent) bg-muted'
 							: 'border-transparent hover:bg-muted/60'}"
 						onclick={() => ideTheme.set(theme.id)}

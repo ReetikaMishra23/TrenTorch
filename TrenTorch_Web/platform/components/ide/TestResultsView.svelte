@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { SubmissionResult } from '$data/curriculum/types';
-	import { AlertCircle, ArrowRight, CheckCircle2, ShieldCheck, XCircle } from '@lucide/svelte';
+	import { parseTestFailure } from '$processes/code-execution/parse-test-failure';
+	import { ArrowRight, Check, X } from '@lucide/svelte';
 
 	let {
 		results = null,
@@ -29,16 +30,14 @@
 					results.results[0])
 			: undefined
 	);
+	const failure = $derived(
+		selected && !selected.passed && selected.error ? parseTestFailure(selected.error) : null
+	);
 
-	function getErrorSummary(error: string): string {
-		return error.trim().split('\n').at(-1)?.trim() || 'Python could not complete this run.';
-	}
-
-	function getErrorTitle(error: string): string {
-		if (/SyntaxError|IndentationError/.test(error)) return 'Python syntax error';
-		if (error.includes('Test harness does not contain')) return 'Test setup error';
-		return 'Python execution error';
-	}
+	// A run that could not start at all (a syntax error, a missing function).
+	const startError = $derived(
+		results?.error && results.totalTests === 0 ? parseTestFailure(results.error) : null
+	);
 
 	// "test_07_case_3" -> "case_3": the number prefix is just the run order.
 	function shortName(name: string): string {
@@ -49,32 +48,32 @@
 <div class="flex h-full min-h-0 flex-col bg-background text-[13px] text-foreground">
 	{#if results}
 		<div class="flex h-9 shrink-0 items-center justify-between border-b border-border px-4 text-xs">
-			<span class="font-medium text-muted-foreground">
+			<span class="text-muted-foreground">
 				{results.isSample ? 'Sample run' : 'Full test suite'}
 			</span>
 			<span class="tabular-nums">
-				<span class="font-semibold {results.allPassed ? 'text-(--ide-ok)' : 'text-(--ide-bad)'}">
+				<span class={results.allPassed ? 'text-(--ide-ok)' : 'text-(--ide-bad)'}>
 					{results.passedTests}/{results.totalTests} passed
 				</span>
-				<span class="ml-1.5 text-muted-foreground">{results.totalDurationMs} ms</span>
+				<span class="ml-2 text-muted-foreground">{results.totalDurationMs} ms</span>
 			</span>
 		</div>
 	{/if}
 
 	<div class="min-h-0 flex-1 overflow-y-auto p-4">
 		{#if results}
+			<!-- The verdict: one line, no box -->
 			{#if results.allPassed}
-				<div class="verdict verdict-ok mb-4">
-					<CheckCircle2 class="size-6 shrink-0 text-(--ide-ok)" />
+				<div class="mb-4 flex items-start gap-3">
+					<Check class="mt-0.5 size-5 shrink-0 text-(--ide-ok)" />
 					<div class="min-w-0 flex-1">
-						<h3 class="text-base font-semibold text-(--ide-ok)">
+						<h3 class="text-base font-medium text-(--ide-ok)">
 							{results.isSample ? 'Sample checks passed' : 'All tests passed'}
 						</h3>
-						<p class="text-xs text-muted-foreground">
+						<p class="mt-0.5 text-xs text-muted-foreground">
 							{#if results.isSample}
-								This only ran the first {results.totalTests} check{results.totalTests === 1
-									? ''
-									: 's'}. Submit to run the full hidden suite and mark the question solved.
+								This ran the first {results.totalTests} check{results.totalTests === 1 ? '' : 's'}.
+								Submit runs the full hidden suite and marks the question solved.
 							{:else}
 								Your code passes every check.
 							{/if}
@@ -88,62 +87,45 @@
 						</a>
 					{/if}
 				</div>
-			{:else if results.error && results.totalTests === 0}
-				<div class="verdict verdict-bad mb-4 items-start">
-					<XCircle class="mt-0.5 size-4 shrink-0 text-(--ide-bad)" />
-					<div class="text-xs">
-						<p class="font-semibold text-(--ide-bad)">{getErrorTitle(results.error)}</p>
-						<p class="mt-1 break-words">{getErrorSummary(results.error)}</p>
-						<p class="mt-1 text-muted-foreground">
-							No tests ran. Fix this error before submitting.
+			{:else if startError}
+				<div class="mb-4 flex items-start gap-3">
+					<X class="mt-0.5 size-5 shrink-0 text-(--ide-bad)" />
+					<div class="min-w-0">
+						<h3 class="text-base font-medium text-(--ide-bad)">Your code did not run</h3>
+						<p class="mt-0.5 text-xs text-muted-foreground">
+							No tests ran. Fix this before submitting.
 						</p>
+						<pre class="detail-pre mt-3">{results.error}</pre>
 					</div>
 				</div>
 			{:else if results.totalTests === 0}
-				<div class="verdict verdict-warn mb-4 items-start">
-					<AlertCircle class="mt-0.5 size-4 shrink-0 text-(--ide-warn)" />
-					<div class="text-xs">
-						<p class="font-semibold text-(--ide-warn)">No tests ran</p>
-						<p class="mt-1">The test runner did not find any checks for this question.</p>
-					</div>
+				<div class="mb-4">
+					<h3 class="text-base font-medium">No tests ran</h3>
+					<p class="mt-0.5 text-xs text-muted-foreground">
+						The test runner did not find any checks for this question.
+					</p>
 				</div>
 			{:else}
-				<div class="verdict verdict-bad mb-4">
-					<XCircle class="size-6 shrink-0 text-(--ide-bad)" />
+				<div class="mb-4 flex items-start gap-3">
+					<X class="mt-0.5 size-5 shrink-0 text-(--ide-bad)" />
 					<div>
-						<h3 class="text-base font-semibold text-(--ide-bad)">
+						<h3 class="text-base font-medium text-(--ide-bad)">
 							{results.failedTests} of {results.totalTests} failed
 						</h3>
-						<p class="text-xs text-muted-foreground">
-							{results.isSample ? 'Sample checks' : 'Test suite'}: pick a red check below to see
-							why.
-						</p>
+						<p class="mt-0.5 text-xs text-muted-foreground">Pick a check below to see why.</p>
 					</div>
 				</div>
 			{/if}
 
 			{#if ratingFeedback}
-				<div
-					role="status"
-					class="mb-4 rounded-lg border p-3 text-xs {ratingFeedback.tone === 'success'
-						? 'verdict-ok'
-						: ratingFeedback.tone === 'warning'
-							? 'verdict-warn'
-							: 'border-border bg-secondary text-muted-foreground'}"
-				>
-					<p class="font-semibold">Today's POTD rating</p>
-					<p class="mt-1">{ratingFeedback.message}</p>
-				</div>
+				<p role="status" class="mb-4 border-l-2 border-border pl-3 text-xs text-muted-foreground">
+					<span class="text-foreground">Today's POTD rating.</span>
+					{ratingFeedback.message}
+				</p>
 			{/if}
 
 			{#if results.error && results.totalTests > 0}
-				<div class="verdict verdict-bad mb-4 block">
-					<div class="mb-1 flex items-center gap-1.5 text-xs font-semibold text-(--ide-bad)">
-						<XCircle class="size-3.5" />
-						<span>{getErrorTitle(results.error)}</span>
-					</div>
-					<pre class="font-mono text-[11px] whitespace-pre-wrap">{results.error}</pre>
-				</div>
+				<pre class="detail-pre mb-4">{results.error}</pre>
 			{/if}
 
 			{#if results.results.length > 0}
@@ -166,24 +148,36 @@
 				</div>
 
 				{#if selected}
-					<div class="mt-3 rounded-lg border border-border bg-secondary p-3.5">
-						<div class="flex items-center justify-between gap-3">
-							<div class="flex min-w-0 items-center gap-2">
-								{#if selected.passed}
-									<CheckCircle2 class="size-4 shrink-0 text-(--ide-ok)" />
-								{:else}
-									<XCircle class="size-4 shrink-0 text-(--ide-bad)" />
-								{/if}
-								<span class="truncate font-mono text-xs font-medium">{selected.name}</span>
-							</div>
+					<div class="detail mt-3">
+						<div class="flex items-baseline justify-between gap-3">
+							<span class="truncate font-mono text-xs text-muted-foreground">{selected.name}</span>
 							<span
 								class="font-mono text-[11px] whitespace-nowrap text-muted-foreground tabular-nums"
 								>{selected.durationMs} ms</span
 							>
 						</div>
-						{#if !selected.passed && selected.error}
-							<pre
-								class="mt-3 rounded-md border border-border bg-background p-3 font-mono text-[11.5px] leading-relaxed whitespace-pre-wrap text-(--ide-bad)">{selected.error}</pre>
+
+						{#if failure}
+							<h4 class="mt-2 text-sm font-medium text-(--ide-bad)">{failure.title}</h4>
+							{#if failure.facts.length > 0}
+								<dl class="facts mt-3">
+									{#each failure.facts as fact (fact.label)}
+										<dt>{fact.label}</dt>
+										<dd><code>{fact.value}</code></dd>
+									{/each}
+								</dl>
+							{/if}
+							{#if failure.note}
+								<p class="mt-3 text-xs text-muted-foreground">{failure.note}</p>
+							{/if}
+							{#if failure.trace}
+								<details class="mt-3">
+									<summary class="cursor-pointer text-xs text-muted-foreground"
+										>Full traceback</summary
+									>
+									<pre class="detail-pre mt-2">{failure.trace}</pre>
+								</details>
+							{/if}
 						{:else if selected.passed}
 							<p class="mt-2 text-xs text-muted-foreground">Passed.</p>
 						{/if}
@@ -194,7 +188,6 @@
 			<div
 				class="flex h-full flex-col items-center justify-center px-6 text-center text-muted-foreground"
 			>
-				<ShieldCheck class="mb-3 size-9 stroke-[1.5] opacity-70" />
 				<p class="font-medium text-foreground">No results yet</p>
 				<p class="mt-1 text-xs">
 					Run your code to check it against the examples, or submit to run every test.
@@ -205,70 +198,47 @@
 </div>
 
 <style>
-	.verdict {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		border: 1px solid transparent;
-		border-radius: 10px;
-		padding: 14px 16px;
-	}
-	.verdict-ok {
-		border-color: color-mix(in oklab, var(--ide-ok) 30%, transparent);
-		background: color-mix(in oklab, var(--ide-ok) 9%, transparent);
-	}
-	.verdict-bad {
-		border-color: color-mix(in oklab, var(--ide-bad) 32%, transparent);
-		background: color-mix(in oklab, var(--ide-bad) 8%, transparent);
-	}
-	.verdict-warn {
-		border-color: color-mix(in oklab, var(--ide-warn) 35%, transparent);
-		background: color-mix(in oklab, var(--ide-warn) 9%, transparent);
-	}
-
 	.next-link {
 		display: inline-flex;
 		flex-shrink: 0;
 		align-items: center;
 		gap: 6px;
-		border-radius: 8px;
+		border-radius: 6px;
 		background: var(--muted);
-		padding: 7px 12px;
+		padding: 6px 11px;
 		color: var(--ide-ok);
 		font-size: 12px;
-		font-weight: 600;
+		font-weight: 500;
 		text-decoration: none;
-		transition: filter 120ms;
+		transition: background 120ms;
 	}
 	.next-link:hover {
-		filter: brightness(1.1);
+		background: color-mix(in oklab, var(--foreground) 15%, transparent);
 	}
 
 	.chip {
-		font-family: var(--ide-mono);
 		display: inline-flex;
 		align-items: center;
 		gap: 7px;
 		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--secondary);
-		padding: 4px 11px 4px 9px;
+		border-radius: 4px;
+		background: transparent;
+		padding: 3px 9px 3px 8px;
 		color: var(--muted-foreground);
 		font-family: var(--ide-mono);
 		font-size: 11.5px;
 		cursor: pointer;
 		transition:
 			background 120ms,
-			border-color 120ms,
 			color 120ms;
 	}
 	.chip:hover {
 		color: var(--foreground);
-		background: var(--muted);
+		background: var(--secondary);
 	}
 	.chip-dot {
-		width: 7px;
-		height: 7px;
+		width: 6px;
+		height: 6px;
 		border-radius: 50%;
 	}
 	.chip-ok .chip-dot {
@@ -281,8 +251,51 @@
 		background: var(--ide-bad);
 	}
 	.chip-selected {
-		border-color: var(--ide-accent);
-		background: var(--muted);
+		border-color: color-mix(in oklab, var(--foreground) 40%, transparent);
+		background: var(--secondary);
 		color: var(--foreground);
+	}
+
+	.detail {
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		padding: 12px 14px;
+	}
+
+	.facts {
+		display: grid;
+		grid-template-columns: max-content 1fr;
+		gap: 8px 16px;
+		font-size: 12px;
+	}
+	.facts dt {
+		padding-top: 2px;
+		color: var(--muted-foreground);
+	}
+	.facts dd {
+		margin: 0;
+		min-width: 0;
+	}
+	.facts code {
+		display: block;
+		border-radius: 4px;
+		background: var(--secondary);
+		padding: 3px 8px;
+		font-family: var(--ide-mono);
+		font-size: 12px;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	.detail-pre {
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		background: var(--secondary);
+		padding: 10px 12px;
+		font-family: var(--ide-mono);
+		font-size: 11.5px;
+		line-height: 1.6;
+		white-space: pre-wrap;
+		word-break: break-word;
 	}
 </style>

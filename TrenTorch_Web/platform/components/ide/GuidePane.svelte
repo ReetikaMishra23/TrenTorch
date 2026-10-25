@@ -403,7 +403,7 @@
 					aria-selected={activeTab === tab.id}
 					aria-label={tab.label}
 					title={tab.label}
-					class="rail-tab relative flex size-9 items-center justify-center rounded-lg transition-colors {activeTab ===
+					class="rail-tab relative flex size-9 items-center justify-center rounded-md transition-colors {activeTab ===
 					tab.id
 						? 'rail-active bg-muted text-foreground'
 						: 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'}"
@@ -420,7 +420,7 @@
 		     stay visible no matter which one a student is reading. -->
 		<div class="mb-6">
 			<div class="mb-3.5 flex items-start justify-between gap-3">
-				<h1 class="text-[1.65rem] leading-tight font-semibold tracking-[-0.02em] text-foreground">
+				<h1 class="text-[2.05rem] leading-[1.15] font-semibold tracking-[-0.02em] text-foreground">
 					{content.metadata.title}
 				</h1>
 				{#if isCompleted}
@@ -494,8 +494,7 @@
 					</h2>
 					<div class="flex flex-wrap gap-2">
 						{#each content.metadata.tags as tag (tag)}
-							<span
-								class="rounded-md bg-muted px-2 py-1 font-mono text-[11px] text-muted-foreground"
+							<span class="rounded bg-muted px-2 py-1 font-mono text-[11px] text-muted-foreground"
 								>{tag}</span
 							>
 						{/each}
@@ -570,7 +569,7 @@
 			<div class="space-y-3">
 				{#each content.metadata.hints?.slice(0, hintsShown) ?? [] as hint, index (index)}
 					<div
-						class="rounded-lg border border-border bg-secondary px-4 py-3 text-sm leading-relaxed"
+						class="rounded-md border border-border bg-secondary px-4 py-3 text-sm leading-relaxed"
 					>
 						<span class="text-xs font-semibold text-muted-foreground">
 							Hint {index + 1} of {content.metadata.hints?.length}
@@ -582,7 +581,7 @@
 				{#if hintsShown < (content.metadata.hints?.length ?? 0)}
 					<button
 						type="button"
-						class="rounded-lg bg-muted px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-foreground/15"
+						class="rounded-md bg-muted px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-foreground/15"
 						onclick={() => (hintsShown += 1)}
 					>
 						Show hint {hintsShown + 1}
@@ -596,7 +595,7 @@
 				</p>
 				<button
 					type="button"
-					class="rounded-lg bg-muted px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-foreground/15"
+					class="rounded-md bg-muted px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-foreground/15"
 					onclick={() => (showSolution = true)}
 				>
 					Reveal solution
@@ -677,7 +676,7 @@
 		margin: 0 0 0.25rem;
 		padding: 0.7rem 1rem;
 		border: 1px solid var(--border);
-		border-radius: 0.625rem;
+		border-radius: 0.375rem;
 		background: var(--ide-code, var(--muted));
 		font-family: var(--ide-mono);
 		font-size: 0.8125rem;
@@ -687,7 +686,7 @@
 	}
 	:global(.ide-prose :where(:not(pre) > code)) {
 		border: 0;
-		border-radius: 0.375rem;
+		border-radius: 0.25rem;
 		background: var(--muted);
 		padding: 0.15em 0.4em;
 		font-family: var(--ide-mono);
@@ -703,7 +702,7 @@
 	}
 	:global(.ide-prose :where(details)) {
 		border-color: var(--border);
-		border-radius: 0.625rem;
+		border-radius: 0.375rem;
 		background: var(--secondary);
 	}
 	:global(.ide-prose pre code) {

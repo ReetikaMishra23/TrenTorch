@@ -120,7 +120,7 @@
 	<div class="flex min-w-0 items-center gap-1.5 justify-self-start">
 		<a
 			href={resolve('/')}
-			class="flex items-center rounded-lg p-1 transition-opacity hover:opacity-80"
+			class="flex items-center rounded-md p-1 transition-opacity hover:opacity-80"
 			title="TrenTorch home"
 			aria-label="TrenTorch home"
 		>
@@ -129,7 +129,7 @@
 		<span class="h-5 w-px bg-border" aria-hidden="true"></span>
 		<a
 			href={backHref}
-			class="flex items-center rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+			class="flex items-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
 			title={backLabel}
 			aria-label={backLabel}
 		>
@@ -137,7 +137,7 @@
 		</a>
 		<a
 			href={backHref}
-			class="hidden min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted sm:flex"
+			class="hidden min-w-0 items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-muted sm:flex"
 		>
 			<ListChecks class="size-4 shrink-0 text-muted-foreground" />
 			<span class="shrink-0 text-muted-foreground">{crumb}</span>
@@ -154,7 +154,7 @@
 				aria-label="Previous question"
 				aria-disabled={!prevHref}
 				tabindex={prevHref ? 0 : -1}
-				class="flex items-center rounded-lg p-1.5 text-muted-foreground transition-colors {prevHref
+				class="flex items-center rounded-md p-1.5 text-muted-foreground transition-colors {prevHref
 					? 'hover:bg-muted hover:text-foreground'
 					: 'pointer-events-none opacity-30'}"
 			>
@@ -171,7 +171,7 @@
 				aria-label="Next question"
 				aria-disabled={!nextHref}
 				tabindex={nextHref ? 0 : -1}
-				class="flex items-center rounded-lg p-1.5 text-muted-foreground transition-colors {nextHref
+				class="flex items-center rounded-md p-1.5 text-muted-foreground transition-colors {nextHref
 					? 'hover:bg-muted hover:text-foreground'
 					: 'pointer-events-none opacity-30'}"
 			>
@@ -185,7 +185,7 @@
 	<div class="flex items-center gap-2 justify-self-center">
 		<button
 			type="button"
-			class="flex h-9 items-center gap-2 rounded-lg bg-muted px-4 text-sm font-medium text-foreground transition-colors hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
+			class="flex h-9 items-center gap-2 rounded-md bg-muted px-4 text-sm font-medium text-foreground transition-colors hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
 			disabled={isBusy}
 			onclick={onRunCode}
 			title="Run code (Shift+Enter)"
@@ -200,7 +200,7 @@
 
 		<button
 			type="button"
-			class="flex h-9 items-center gap-2 rounded-lg bg-muted px-4 text-sm font-semibold text-(--ide-ok) transition-colors hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
+			class="flex h-9 items-center gap-2 rounded-md bg-muted px-4 text-sm font-semibold text-(--ide-ok) transition-colors hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
 			disabled={isBusy}
 			onclick={onRunTests}
 			title="Run the test suite and submit"
@@ -216,7 +216,7 @@
 		<div class="relative" bind:this={menuRoot}>
 			<button
 				type="button"
-				class="flex items-center rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground {menuOpen
+				class="flex items-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground {menuOpen
 					? 'bg-muted text-foreground'
 					: ''}"
 				aria-haspopup="menu"
@@ -230,7 +230,7 @@
 			{#if menuOpen}
 				<div
 					role="menu"
-					class="more-menu absolute top-full right-0 z-50 mt-2 w-64 rounded-xl border border-border bg-background p-1.5 shadow-2xl"
+					class="more-menu absolute top-full right-0 z-50 mt-2 w-64 rounded-lg border border-border bg-background p-1.5 shadow-2xl"
 				>
 					<button
 						type="button"
@@ -290,7 +290,7 @@
 		width: 100%;
 		align-items: center;
 		gap: 10px;
-		border-radius: 8px;
+		border-radius: 6px;
 		padding: 8px 10px;
 		color: var(--foreground);
 		font-size: 13px;

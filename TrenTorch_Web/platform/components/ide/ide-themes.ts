@@ -67,7 +67,7 @@ export const IDE_THEMES: IdeTheme[] = [
 			accentFg: '#1b0b04',
 			ok: '#5fd39a',
 			okFg: '#06180d',
-			bad: '#ff6b6b',
+			bad: '#e5786f',
 			warn: '#ffb04a'
 		},
 		editor: {
@@ -87,7 +87,7 @@ export const IDE_THEMES: IdeTheme[] = [
 			property: '#e6b673',
 			variable: '#f2ede6',
 			meta: '#d7a8ff',
-			invalid: '#ff6b6b'
+			invalid: '#e5786f'
 		}
 	},
 	{
@@ -108,7 +108,7 @@ export const IDE_THEMES: IdeTheme[] = [
 			accentFg: '#04101f',
 			ok: '#4fd8a4',
 			okFg: '#05170f',
-			bad: '#ff7285',
+			bad: '#e87b8b',
 			warn: '#ffcb6b'
 		},
 		editor: {
@@ -128,7 +128,7 @@ export const IDE_THEMES: IdeTheme[] = [
 			property: '#82aaff',
 			variable: '#d6deeb',
 			meta: '#c792ea',
-			invalid: '#ff7285'
+			invalid: '#e87b8b'
 		}
 	},
 	{

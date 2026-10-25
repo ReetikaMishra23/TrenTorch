@@ -60,7 +60,7 @@
 		<input
 			bind:value={functionName}
 			list="custom-run-function-names"
-			class="h-9 rounded-lg border border-border bg-secondary px-3 font-mono text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
+			class="h-9 rounded-md border border-border bg-secondary px-3 font-mono text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
 			placeholder="function_name"
 		/>
 		<datalist id="custom-run-function-names">
@@ -74,7 +74,7 @@
 		<span class="text-muted-foreground">Positional arguments (JSON array)</span>
 		<textarea
 			bind:value={argumentsJson}
-			class="min-h-16 flex-1 resize-y rounded-lg border border-border bg-secondary p-3 font-mono text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
+			class="min-h-16 flex-1 resize-y rounded-md border border-border bg-secondary p-3 font-mono text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
 			spellcheck="false"
 			aria-label="Function arguments as a JSON array"></textarea>
 	</label>
@@ -83,7 +83,7 @@
 		<span class="text-muted-foreground">Expected result (optional JSON)</span>
 		<input
 			bind:value={expectedJson}
-			class="h-9 rounded-lg border border-border bg-secondary px-3 font-mono text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
+			class="h-9 rounded-md border border-border bg-secondary px-3 font-mono text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
 			placeholder="e.g. 12 or [2, 1]"
 			spellcheck="false"
 		/>
@@ -95,7 +95,7 @@
 
 	<button
 		type="button"
-		class="inline-flex h-9 items-center justify-center gap-2 self-start rounded-lg bg-primary px-4 font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+		class="inline-flex h-9 items-center justify-center gap-2 self-start rounded-md bg-primary px-4 font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
 		disabled={isRunning}
 		onclick={runCustomCase}
 	>
