@@ -44,6 +44,8 @@
 		Terminal,
 		ShieldCheck,
 		Play,
+		ChevronDown,
+		ChevronUp,
 		ArrowLeft,
 		IndentIncrease
 	} from '@lucide/svelte';
@@ -138,6 +140,13 @@
 	// whole hidden suite and is what actually marks the question solved.
 	const SAMPLE_TEST_COUNT = 2;
 	let activeRightTab = $state<'console' | 'tests' | 'custom'>('tests');
+	// The results panel starts as just its tab bar, so the editor gets the height, and opens
+	// when something is run or a tab is picked.
+	let resultsOpen = $state(false);
+	$effect(() => {
+		void content?.id;
+		resultsOpen = false;
+	});
 	let mobileActiveTab = $state<'guide' | 'editor' | 'output'>('editor');
 	let ratingFeedback = $state<{
 		questionId: string;
@@ -341,6 +350,7 @@
 
 	async function handleRunCode() {
 		activeRightTab = 'console';
+		resultsOpen = true;
 		mobileActiveTab = 'output';
 
 		// No question loaded (an id with no published content): nothing to
@@ -396,6 +406,7 @@
 	async function handleRunTests() {
 		if (!content) return;
 		activeRightTab = 'tests';
+		resultsOpen = true;
 		mobileActiveTab = 'output';
 		ratingFeedback = null;
 		// Snapshot what is actually being tested. The student can keep typing or
@@ -519,6 +530,7 @@
 	) {
 		if (!content) return;
 		activeRightTab = 'console';
+		resultsOpen = true;
 		mobileActiveTab = 'output';
 		unifiedExecutor.testResults.set(null);
 		unifiedExecutor.consoleError.set(false);
@@ -752,13 +764,14 @@
 					valueNow={bottomPanePercent}
 					valueMin={15}
 					valueMax={75}
-					class="hidden md:block"
+					class={resultsOpen ? 'hidden md:block' : 'hidden'}
 				/>
 
 				<!-- Bottom Section: Terminal & Test Results -->
 				<div
-					class="ide-bottom-pane flex min-h-[180px] shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-background {mobileActiveTab ===
-					'editor'
+					class="ide-bottom-pane flex min-h-[180px] shrink-0 flex-col overflow-hidden rounded-xl border border-border bg-background {resultsOpen
+						? ''
+						: 'ide-bottom-collapsed'} {mobileActiveTab === 'editor'
 						? 'hidden md:flex'
 						: 'flex h-[42%] w-full'}"
 					style="--ide-bottom-pane-percent: {bottomPanePercent}%"
@@ -777,16 +790,40 @@
 								tab.id
 									? 'bg-muted text-foreground'
 									: 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'}"
-								onclick={() => (activeRightTab = tab.id as 'tests' | 'console' | 'custom')}
+								onclick={() => {
+									activeRightTab = tab.id as 'tests' | 'console' | 'custom';
+									resultsOpen = true;
+								}}
 							>
 								<tab.icon class="size-3.5" />
 								<span>{tab.label}</span>
 							</button>
 						{/each}
+						<span
+							class="ml-auto hidden pr-1 text-xs text-muted-foreground {resultsOpen
+								? ''
+								: 'md:inline'}">Run your code to see results</span
+						>
+						<button
+							type="button"
+							class="hidden rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:flex {resultsOpen
+								? 'ml-auto'
+								: ''}"
+							title={resultsOpen ? 'Collapse results' : 'Show results'}
+							aria-label={resultsOpen ? 'Collapse results' : 'Show results'}
+							aria-expanded={resultsOpen}
+							onclick={() => (resultsOpen = !resultsOpen)}
+						>
+							{#if resultsOpen}
+								<ChevronDown class="size-4" />
+							{:else}
+								<ChevronUp class="size-4" />
+							{/if}
+						</button>
 					</div>
 
 					<!-- Tab Contents -->
-					<div class="flex-1 overflow-hidden">
+					<div class="flex-1 overflow-hidden {resultsOpen ? '' : 'md:hidden'}">
 						{#if activeRightTab === 'tests'}
 							<TestResultsView
 								results={$testResults}
@@ -843,6 +880,10 @@
 		}
 		.ide-bottom-pane {
 			height: var(--ide-bottom-pane-percent);
+		}
+		.ide-bottom-pane.ide-bottom-collapsed {
+			height: 2.75rem;
+			min-height: 0;
 		}
 	}
 

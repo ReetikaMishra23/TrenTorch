@@ -14,6 +14,7 @@
 	import { extractSimpleVersion } from '$processes/ide-content/extract-simple-version';
 	import {
 		BookOpen,
+		CheckCheck,
 		CheckCircle2,
 		ExternalLink,
 		FileText,
@@ -40,6 +41,11 @@
 	// `marked`/`marked-katex-extension` release) can't ship a script tag
 	// straight to every visitor. DOMPurify's default allowlist covers KaTeX's
 	// HTML+MathML output without extra config.
+	// Hints are one short line that may hold `code`.
+	function toSafeInline(markdown: string): string {
+		return DOMPurify.sanitize(marked.parseInline(markdown, { async: false }) as string);
+	}
+
 	function toSafeHtml(markdown: string): string {
 		return DOMPurify.sanitize(marked.parse(markdown, { async: false }) as string);
 	}
@@ -71,7 +77,9 @@
 		);
 	});
 
-	let activeTab = $state<'description' | 'theory' | 'solution' | 'discussion'>('description');
+	let activeTab = $state<'description' | 'theory' | 'hints' | 'solution' | 'discussion'>(
+		'description'
+	);
 	let showSolution = $state(false);
 	// DSA sheet hints are shown one at a time, so a student takes only as much help as needed.
 	let hintsShown = $state(0);
@@ -136,7 +144,8 @@
 	const tabs = [
 		{ id: 'description', label: 'Description', icon: FileText },
 		{ id: 'theory', label: 'Theory', icon: BookOpen },
-		{ id: 'solution', label: 'Solution', icon: Lightbulb },
+		{ id: 'hints', label: 'Hints', icon: Lightbulb },
+		{ id: 'solution', label: 'Solution', icon: CheckCheck },
 		{ id: 'discussion', label: 'Discussion', icon: MessageSquare }
 	] as const;
 
@@ -153,7 +162,7 @@
 			difficultyMeter.Beginner
 	);
 
-	function selectTab(tab: 'description' | 'theory' | 'solution' | 'discussion') {
+	function selectTab(tab: 'description' | 'theory' | 'hints' | 'solution' | 'discussion') {
 		activeTab = tab;
 		// The solution only stays revealed while the Solution tab is actually
 		// active -- stepping away to check Theory (or back to Description)
@@ -387,7 +396,7 @@
 		aria-label="Question sections"
 	>
 		{#each tabs as tab (tab.id)}
-			{#if visibleTabs.includes(tab.id)}
+			{#if tab.id === 'hints' ? Boolean(content.metadata.hints?.length) : visibleTabs.includes(tab.id)}
 				<button
 					type="button"
 					role="tab"
@@ -478,29 +487,6 @@
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				<div class="question-prose ide-prose">{@html constraintsHtml}</div>
 			{/if}
-			{#if content.metadata.hints?.length}
-				<div class="mt-8 space-y-2 border-t border-border pt-5">
-					{#each content.metadata.hints.slice(0, hintsShown) as hint, index (index)}
-						<div
-							class="rounded-lg border border-border bg-secondary px-4 py-3 text-sm leading-relaxed"
-						>
-							<span class="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-								Hint {index + 1} of {content.metadata.hints.length}
-							</span>
-							<p class="question-prose ide-prose mt-1">{hint}</p>
-						</div>
-					{/each}
-					{#if hintsShown < content.metadata.hints.length}
-						<button
-							type="button"
-							class="rounded-lg bg-muted px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-foreground/15"
-							onclick={() => (hintsShown += 1)}
-						>
-							Show hint {hintsShown + 1}
-						</button>
-					{/if}
-				</div>
-			{/if}
 			{#if content.metadata.tags.length}
 				<div class="mt-8 border-t border-border pt-5">
 					<h2 class="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
@@ -575,6 +561,32 @@
 				{@html theoryHtml}
 				{#if !content.widgetId && (mathVisualizerIdSet.has(content.id) || systemsVisualizerIdSet.has(content.id) || classicalMLVisualizerIdSet.has(content.id))}
 					<div bind:this={generatedVisualizerRoot} data-widget={content.id}></div>
+				{/if}
+			</div>
+		{:else if activeTab === 'hints'}
+			<p class="mb-4 text-sm text-muted-foreground">
+				Take only as many as you need. Each one gives away a little more.
+			</p>
+			<div class="space-y-3">
+				{#each content.metadata.hints?.slice(0, hintsShown) ?? [] as hint, index (index)}
+					<div
+						class="rounded-lg border border-border bg-secondary px-4 py-3 text-sm leading-relaxed"
+					>
+						<span class="text-xs font-semibold text-muted-foreground">
+							Hint {index + 1} of {content.metadata.hints?.length}
+						</span>
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+						<p class="question-prose ide-prose mt-1 font-normal">{@html toSafeInline(hint)}</p>
+					</div>
+				{/each}
+				{#if hintsShown < (content.metadata.hints?.length ?? 0)}
+					<button
+						type="button"
+						class="rounded-lg bg-muted px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-foreground/15"
+						onclick={() => (hintsShown += 1)}
+					>
+						Show hint {hintsShown + 1}
+					</button>
 				{/if}
 			</div>
 		{:else if activeTab === 'solution' && !showSolution}

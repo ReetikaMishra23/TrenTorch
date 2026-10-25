@@ -16,6 +16,7 @@
 		Ellipsis
 	} from '@lucide/svelte';
 	import ThemePicker from './ThemePicker.svelte';
+	import { dsaSteps } from '$data/dsa-sheet';
 	import LogoBadge from '$components/LogoBadge.svelte';
 	import AccountButton from '$components/AccountButton.svelte';
 
@@ -94,6 +95,19 @@
 				? 'Back to Problem of the Day'
 				: 'Back to Module'
 	);
+	// A DSA sheet question shows where it sits ("DSA Sheet / Hashing", and "3 / 6" between the
+	// arrows) instead of repeating its own title, which is the heading right below.
+	const place = $derived.by(() => {
+		if (content.metadata.kind !== 'dsa') return null;
+		for (const step of dsaSteps) {
+			for (const topic of step.topics) {
+				const index = topic.questions.findIndex((q) => q.id === content.id);
+				if (index >= 0)
+					return { step: step.title, position: index + 1, total: topic.questions.length };
+			}
+		}
+		return null;
+	});
 	const crumb = $derived(
 		content.metadata.kind === 'dsa' ? 'DSA Sheet' : fromPotd ? 'Problem of the Day' : 'Questions'
 	);
@@ -128,7 +142,7 @@
 			<ListChecks class="size-4 shrink-0 text-muted-foreground" />
 			<span class="shrink-0 text-muted-foreground">{crumb}</span>
 			<span class="text-muted-foreground/60" aria-hidden="true">/</span>
-			<span class="truncate font-medium">{content.metadata.title}</span>
+			<span class="truncate font-medium">{place ? place.step : content.metadata.title}</span>
 		</a>
 
 		<!-- Previous / next question, right beside the question's name -->
@@ -146,6 +160,11 @@
 			>
 				<ChevronLeft class="size-4" />
 			</a>
+			{#if place}
+				<span class="px-1 text-xs text-muted-foreground tabular-nums"
+					>{place.position} / {place.total}</span
+				>
+			{/if}
 			<a
 				href={nextHref ?? undefined}
 				title="Next question"
@@ -181,7 +200,7 @@
 
 		<button
 			type="button"
-			class="submit-button flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-semibold transition-[filter] hover:brightness-110 disabled:pointer-events-none disabled:opacity-40"
+			class="flex h-9 items-center gap-2 rounded-lg bg-muted px-4 text-sm font-semibold text-(--ide-ok) transition-colors hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
 			disabled={isBusy}
 			onclick={onRunTests}
 			title="Run the test suite and submit"
@@ -310,10 +329,5 @@
 		.more-menu {
 			animation: none;
 		}
-	}
-
-	.submit-button {
-		background: var(--ide-ok);
-		color: var(--ide-ok-fg);
 	}
 </style>
