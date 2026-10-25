@@ -573,6 +573,31 @@
 		font-size: inherit;
 		font-weight: inherit;
 	}
+	:global(.ide-prose :where(table)) {
+		width: 100%;
+		margin: 0.75rem 0;
+		border-collapse: collapse;
+		font-size: 0.8125rem;
+		line-height: 1.5;
+	}
+	:global(.ide-prose :where(th, td)) {
+		border-bottom: 1px solid var(--border);
+		padding: 0.45rem 0.7rem;
+		text-align: left;
+		vertical-align: top;
+	}
+	:global(.ide-prose :where(th)) {
+		color: var(--muted-foreground);
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+	:global(.ide-prose :where(td code)) {
+		background: transparent;
+		padding: 0;
+		font-size: 0.78rem;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
 	:global(.ide-prose pre .copy-code) {
 		position: absolute;
 		top: 6px;
