@@ -63,15 +63,13 @@
 <header
 	class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
 >
-	<div
-		class="container flex h-[4.75rem] items-center justify-between px-5 sm:px-7 lg:px-9 xl:px-10"
-	>
+	<div class="container flex h-14 items-center justify-between px-5 sm:px-7 lg:px-9 xl:px-10">
 		<div class="flex items-center gap-2.5">
-			<LogoBadge class="size-9" />
-			<span class="flex flex-col items-start gap-1">
+			<LogoBadge class="size-8" />
+			<span class="flex flex-col items-start gap-0.5">
 				<a
 					href={resolve('/')}
-					class="font-mono text-xl leading-none font-bold tracking-wide text-foreground"
+					class="font-mono text-lg leading-none font-bold tracking-wide text-foreground"
 				>
 					TrenTorch
 				</a>

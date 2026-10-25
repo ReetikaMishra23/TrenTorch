@@ -31,48 +31,46 @@
 	}
 </script>
 
-<div class="flex h-full min-h-0 flex-col bg-background font-mono text-xs text-foreground">
+<div class="flex h-full min-h-0 flex-col bg-background text-[13px] text-foreground">
 	<!-- Console Header -->
-	<div class="flex h-8 items-center justify-between border-b border-border bg-secondary px-3">
-		<div
-			class="flex items-center gap-1.5 text-[11px] tracking-wider text-muted-foreground uppercase"
-		>
-			<Terminal class="size-3" />
-			<span>Console Output</span>
+	<div class="flex h-9 shrink-0 items-center justify-between border-b border-border px-4">
+		<div class="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+			<Terminal class="size-3.5" />
+			<span>Output</span>
 		</div>
 		<div class="flex items-center gap-1">
 			<button
 				type="button"
-				class="flex size-6 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+				class="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
 				title="Copy Output"
 				onclick={copyOutput}
 			>
 				{#if copied}
-					<Check class="size-3 text-foreground" />
+					<Check class="size-3.5 text-foreground" />
 				{:else}
-					<Copy class="size-3" />
+					<Copy class="size-3.5" />
 				{/if}
 			</button>
 			<button
 				type="button"
-				class="flex size-6 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+				class="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
 				title="Clear Console"
 				onclick={onClear}
 			>
-				<Trash2 class="size-3" />
+				<Trash2 class="size-3.5" />
 			</button>
 		</div>
 	</div>
 
 	<!-- Output Body -->
-	<div class="min-h-0 flex-1 overflow-y-auto p-3 text-xs leading-relaxed">
+	<div class="min-h-0 flex-1 overflow-y-auto p-4 text-[13px] leading-relaxed">
 		{#if results}
 			<section
-				class="mb-3 rounded border p-3 {results.error || results.failedTests > 0
-					? 'border-red-500/40 bg-red-500/5 text-red-700 dark:text-red-300'
+				class="mb-3 rounded-lg border p-3 {results.error || results.failedTests > 0
+					? 'border-(--ide-bad)/40 bg-(--ide-bad)/8 text-(--ide-bad)'
 					: results.totalTests === 0
-						? 'border-amber-500/40 bg-amber-500/5 text-amber-700 dark:text-amber-300'
-						: 'border-emerald-500/30 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300'}"
+						? 'border-(--ide-warn)/40 bg-(--ide-warn)/8 text-(--ide-warn)'
+						: 'border-(--ide-ok)/35 bg-(--ide-ok)/8 text-(--ide-ok)'}"
 			>
 				<p class="font-bold">
 					{#if results.error}
@@ -122,11 +120,11 @@
 		{#if output}
 			<pre
 				class="font-mono whitespace-pre-wrap select-text {hasError
-					? 'text-red-700 dark:text-red-300'
+					? 'text-(--ide-bad)'
 					: 'text-foreground/80'}">{output}</pre>
 		{:else if figures.length === 0}
-			<div class="flex h-full items-center justify-center text-muted-foreground italic">
-				Click "Run Code" or press Shift+Enter to execute
+			<div class="flex h-full items-center justify-center text-muted-foreground">
+				Run your code (Shift+Enter) to see its output here
 			</div>
 		{/if}
 	</div>

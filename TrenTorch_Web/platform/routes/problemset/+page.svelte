@@ -466,7 +466,7 @@
 
 <style>
 	.problemset {
-		min-height: calc(100vh - 4.75rem);
+		min-height: calc(100vh - 3.5rem);
 		background: var(--background);
 		color: var(--foreground);
 		font-family: var(--font-sans);

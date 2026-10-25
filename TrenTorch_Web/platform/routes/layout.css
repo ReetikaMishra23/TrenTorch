@@ -20,6 +20,16 @@
 	font-display: swap;
 }
 
+/* Code in the IDE (examples, inline code, the editor) is set in JetBrains Mono,
+   a variable font drawn for reading code: taller lowercase, open shapes, clear
+   0/O and 1/l. Geist Mono stays the site's wordmark and UI mono. */
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('../fonts/jetbrains-mono-latin.woff2') format('woff2');
+	font-weight: 100 800;
+	font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
