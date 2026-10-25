@@ -31,7 +31,7 @@
 >
 	<Select.Trigger
 		aria-label={label}
-		class="h-[38px] w-auto gap-2 rounded-md border-border bg-secondary px-3 text-[0.78rem] hover:bg-muted dark:bg-secondary dark:hover:bg-muted {className}"
+		class="press h-[38px] w-auto gap-2 rounded-md border-border bg-secondary px-3 text-[0.78rem] hover:bg-muted dark:bg-secondary dark:hover:bg-muted {className}"
 	>
 		<span class="flex items-center gap-2">
 			{#if Icon}<Icon class="size-4 text-muted-foreground" />{/if}

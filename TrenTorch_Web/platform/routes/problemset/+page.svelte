@@ -200,7 +200,7 @@
 				{#if !showAllModules}
 					<button
 						type="button"
-						class="rail-arrow"
+						class="rail-arrow press"
 						aria-label="Scroll modules left"
 						onclick={() => scrollModules(-1)}
 					>
@@ -208,7 +208,7 @@
 					</button>
 					<button
 						type="button"
-						class="rail-arrow"
+						class="rail-arrow press"
 						aria-label="Scroll modules right"
 						onclick={() => scrollModules(1)}
 					>
@@ -281,7 +281,7 @@
 			<div class="relative" bind:this={filterRoot}>
 				<button
 					type="button"
-					class="filter-trigger {filterOpen || activeFilterCount ? 'active' : ''}"
+					class="filter-trigger press {filterOpen || activeFilterCount ? 'active' : ''}"
 					aria-haspopup="dialog"
 					aria-expanded={filterOpen}
 					onclick={() => (filterOpen = !filterOpen)}
@@ -428,7 +428,7 @@
 				<nav class="pagination" aria-label="Problemset pages">
 					<button
 						type="button"
-						class="rail-arrow"
+						class="rail-arrow press"
 						disabled={currentPage <= 1}
 						aria-label="Previous page"
 						onclick={() => goToPage(currentPage - 1)}
@@ -438,7 +438,7 @@
 					<span>Page {currentPage} of {totalPages}</span>
 					<button
 						type="button"
-						class="rail-arrow"
+						class="rail-arrow press"
 						disabled={currentPage >= totalPages}
 						aria-label="Next page"
 						onclick={() => goToPage(currentPage + 1)}
@@ -461,6 +461,7 @@
 
 <style>
 	.problemset {
+		font-variant-numeric: tabular-nums;
 		min-height: calc(100vh - 3.5rem);
 		background: var(--background);
 		color: var(--foreground);
@@ -677,6 +678,7 @@
 	}
 
 	.problem-table tbody tr {
+		position: relative;
 		border-bottom: 1px solid var(--border);
 		cursor: pointer;
 	}
@@ -702,6 +704,16 @@
 	.problem-link {
 		color: var(--foreground);
 		text-decoration: none;
+	}
+
+	.problem-link::after {
+		position: absolute;
+		inset: 0;
+		content: '';
+	}
+
+	.problem-link:focus-visible {
+		outline-offset: -2px;
 	}
 
 	.problem-link:hover {

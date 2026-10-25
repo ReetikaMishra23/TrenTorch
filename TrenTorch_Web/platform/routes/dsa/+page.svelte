@@ -109,7 +109,7 @@
 				</div>
 			</div>
 			{#if next}
-				<a href={resolve('/ide/[id]', { id: next.id })} class="continue-button">
+				<a href={resolve('/ide/[id]', { id: next.id })} class="continue-button press">
 					{overall.solved === 0 ? 'Start' : 'Continue'}: {next.title}
 					<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
 				</a>
@@ -331,6 +331,7 @@
 	/* Three levels, told apart by surface and indent: a step is a raised card,
 	   a topic is an inset darker card, a question is plain text. */
 	.sheet {
+		font-variant-numeric: tabular-nums;
 		--level-step: var(--secondary);
 		--level-topic: color-mix(in oklab, var(--background) 82%, black);
 	}

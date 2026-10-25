@@ -185,7 +185,7 @@
 	<div class="flex items-center gap-2 justify-self-center">
 		<button
 			type="button"
-			class="flex h-9 items-center gap-2 rounded-md bg-muted px-4 text-sm font-medium text-foreground transition-colors hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
+			class="press flex h-9 items-center gap-2 rounded-md bg-muted px-4 text-sm font-medium text-foreground hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
 			disabled={isBusy}
 			onclick={onRunCode}
 			title="Run code (Shift+Enter)"
@@ -200,7 +200,7 @@
 
 		<button
 			type="button"
-			class="flex h-9 items-center gap-2 rounded-md bg-muted px-4 text-sm font-semibold text-(--ide-ok) transition-colors hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
+			class="press flex h-9 items-center gap-2 rounded-md bg-muted px-4 text-sm font-semibold text-(--ide-ok) hover:bg-foreground/15 disabled:pointer-events-none disabled:opacity-40"
 			disabled={isBusy}
 			onclick={onRunTests}
 			title="Run the test suite and submit"
