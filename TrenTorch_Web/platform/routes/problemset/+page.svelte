@@ -169,70 +169,14 @@
 			{problemsetProblems.length} hands-on problems across {problemsetModules.length} study modules.
 		</p>
 
-		<div class="mb-7">
+		<div class="mb-6">
 			<ProblemsetPotdBanner onDayChange={updatePastPotd} potdSummaries={data.potdSummaries} />
 		</div>
 
 		<div class="mb-3 flex items-center justify-between gap-3">
-			<div>
-				<p class="mb-1 font-mono text-xs tracking-wider text-muted-foreground uppercase">
-					Problemset
-				</p>
-				<h2 class="font-mono text-lg font-semibold">Study modules</h2>
-			</div>
-			<button
-				type="button"
-				class="text-xs text-primary hover:underline"
-				aria-expanded={showAllModules}
-				onclick={() => (showAllModules = !showAllModules)}
-			>
-				{showAllModules ? 'Show fewer' : 'See all modules'}
-			</button>
-		</div>
-
-		{#if showAllModules}
-			<div class="mb-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-				{#each problemsetModules as module (module.id)}
-					{@const ModuleIcon = getPartIcon(module.learningPartId)}
-					<a
-						href={resolve('/questions/[partId]', { partId: module.learningPartId })}
-						class="module-card"
-					>
-						<ModuleIcon class="size-6 shrink-0 text-primary" aria-hidden="true" />
-						<span class="min-w-0">
-							<span class="module-title">{module.title}</span>
-							<span class="module-description">{module.description}</span>
-						</span>
-						<ArrowRight class="ml-auto size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-					</a>
-				{/each}
-			</div>
-		{:else}
-			<div class="relative mb-7">
-				<div
-					bind:this={moduleRail}
-					class="module-rail flex snap-x snap-proximity gap-3 overflow-x-auto pb-2"
-					aria-label="Study modules"
-				>
-					{#each problemsetModules as module (module.id)}
-						{@const ModuleIcon = getPartIcon(module.learningPartId)}
-						<a
-							href={resolve('/questions/[partId]', { partId: module.learningPartId })}
-							class="module-card snap-start"
-						>
-							<ModuleIcon class="size-6 shrink-0 text-primary" aria-hidden="true" />
-							<span class="min-w-0">
-								<span class="module-title">{module.title}</span>
-								<span class="module-description">{module.description}</span>
-							</span>
-							<ArrowRight
-								class="ml-auto size-4 shrink-0 text-muted-foreground"
-								aria-hidden="true"
-							/>
-						</a>
-					{/each}
-				</div>
-				<div class="mt-2 flex justify-end gap-2">
+			<h2 class="font-mono text-lg font-semibold">Study modules</h2>
+			<div class="flex items-center gap-2">
+				{#if !showAllModules}
 					<button
 						type="button"
 						class="rail-arrow"
@@ -249,6 +193,59 @@
 					>
 						<ChevronRight class="size-4" />
 					</button>
+				{/if}
+				<button
+					type="button"
+					class="see-all"
+					aria-expanded={showAllModules}
+					onclick={() => (showAllModules = !showAllModules)}
+				>
+					{showAllModules ? 'Show fewer' : 'See all modules'}
+				</button>
+			</div>
+		</div>
+
+		{#if showAllModules}
+			<div class="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+				{#each problemsetModules as module (module.id)}
+					{@const ModuleIcon = getPartIcon(module.learningPartId)}
+					<a
+						href={resolve('/questions/[partId]', { partId: module.learningPartId })}
+						class="module-card"
+					>
+						<ModuleIcon class="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+						<span class="min-w-0">
+							<span class="module-title">{module.title}</span>
+							<span class="module-description">{module.description}</span>
+						</span>
+						<ArrowRight class="ml-auto size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+					</a>
+				{/each}
+			</div>
+		{:else}
+			<div class="relative mb-6">
+				<div
+					bind:this={moduleRail}
+					class="module-rail flex snap-x snap-proximity gap-3 overflow-x-auto pb-2"
+					aria-label="Study modules"
+				>
+					{#each problemsetModules as module (module.id)}
+						{@const ModuleIcon = getPartIcon(module.learningPartId)}
+						<a
+							href={resolve('/questions/[partId]', { partId: module.learningPartId })}
+							class="module-card snap-start"
+						>
+							<ModuleIcon class="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+							<span class="min-w-0">
+								<span class="module-title">{module.title}</span>
+								<span class="module-description">{module.description}</span>
+							</span>
+							<ArrowRight
+								class="ml-auto size-4 shrink-0 text-muted-foreground"
+								aria-hidden="true"
+							/>
+						</a>
+					{/each}
 				</div>
 			</div>
 		{/if}
@@ -420,6 +417,7 @@
 								</td>
 								<td>
 									<span class="difficulty-badge {problem.difficulty}">
+										<span class="difficulty-dot" aria-hidden="true"></span>
 										{problem.difficulty}
 									</span>
 								</td>
@@ -488,32 +486,43 @@
 		align-items: center;
 		gap: 5px;
 		white-space: nowrap;
-		border: 1px solid color-mix(in srgb, var(--primary) 35%, var(--border));
-		border-radius: 999px;
-		background: color-mix(in srgb, var(--primary) 12%, var(--background));
-		padding: 6px 13px;
-		color: color-mix(in srgb, var(--primary) 55%, var(--foreground));
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		background: var(--secondary);
+		padding: 5px 11px;
+		color: var(--muted-foreground);
 		font-size: 0.78rem;
 		cursor: pointer;
 	}
 
-	.topic-pill:hover,
+	.topic-pill:hover {
+		color: var(--foreground);
+	}
+
 	.topic-pill.selected {
 		border-color: var(--primary);
-		background: color-mix(in srgb, var(--primary) 22%, var(--background));
+		background: var(--muted);
+		color: var(--foreground);
 	}
 
 	.topic-count {
 		color: var(--muted-foreground);
 	}
 
-	.expand-button {
+	.expand-button,
+	.see-all {
 		border: 0;
 		background: transparent;
 		padding: 6px 8px;
-		color: var(--primary);
+		color: var(--muted-foreground);
 		font-size: 0.78rem;
 		cursor: pointer;
+	}
+
+	.expand-button:hover,
+	.see-all:hover {
+		color: var(--foreground);
+		text-decoration: underline;
 	}
 
 	.module-rail {
@@ -523,20 +532,19 @@
 
 	.module-card {
 		display: flex;
-		min-width: 170px;
-		min-height: 124px;
-		flex: 0 0 170px;
+		min-width: 230px;
+		flex: 0 0 230px;
 		align-items: flex-start;
-		gap: 12px;
+		gap: 10px;
 		border: 1px solid var(--border);
-		border-radius: 8px;
+		border-radius: 6px;
 		background: var(--secondary);
-		padding: 14px;
+		padding: 12px 14px;
 		transition: border-color 150ms;
 	}
 
 	.module-card:hover {
-		border-color: var(--primary);
+		border-color: color-mix(in srgb, var(--foreground) 35%, var(--border));
 	}
 
 	.module-title,
@@ -545,20 +553,26 @@
 	}
 
 	.module-title {
-		margin: 3px 0 5px;
-		font-size: 0.82rem;
+		margin: 0 0 4px;
+		font-size: 0.85rem;
+		font-weight: 600;
 	}
 
 	.module-description {
+		display: -webkit-box;
+		overflow: hidden;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		color: var(--muted-foreground);
-		font-size: 0.72rem;
+		font-size: 0.75rem;
 		line-height: 1.45;
 	}
 
 	.rail-arrow {
 		display: inline-flex;
-		width: 34px;
-		height: 34px;
+		width: 30px;
+		height: 30px;
 		align-items: center;
 		justify-content: center;
 		border: 1px solid var(--border);
@@ -569,8 +583,7 @@
 	}
 
 	.rail-arrow:hover:not(:disabled) {
-		border-color: var(--primary);
-		color: color-mix(in srgb, var(--primary) 55%, var(--foreground));
+		border-color: color-mix(in srgb, var(--foreground) 35%, var(--border));
 	}
 
 	.rail-arrow:disabled {
@@ -604,7 +617,7 @@
 		padding-left: 34px;
 	}
 
-	.filter-icon {
+	.filter-select :global(.filter-icon) {
 		position: absolute;
 		z-index: 1;
 		left: 11px;
@@ -617,7 +630,7 @@
 	.filter-button:hover,
 	.filter-button.active {
 		border-color: var(--primary);
-		color: var(--primary);
+		background: var(--muted);
 	}
 
 	.company-filter-row {
@@ -647,9 +660,13 @@
 
 	.company-filter-row button:hover,
 	.company-filter-row button.active {
-		border-color: var(--primary);
+		border-color: color-mix(in srgb, var(--foreground) 35%, var(--border));
 		background: var(--muted);
 		color: var(--foreground);
+	}
+
+	.company-filter-row button.active {
+		border-color: var(--primary);
 	}
 
 	.search-field {
@@ -749,51 +766,45 @@
 	.company-tag {
 		display: inline-block;
 		margin-left: 8px;
-		border-radius: 4px;
-		padding: 2px 7px;
-		font-size: 0.68rem;
+		font-size: 0.72rem;
 	}
 
 	.module-tag {
-		border: 1px solid color-mix(in srgb, var(--primary) 35%, var(--border));
-		background: color-mix(in srgb, var(--primary) 12%, var(--background));
-		color: var(--primary);
+		color: var(--muted-foreground);
 	}
 
-	.potd-tag {
-		background: #d29922;
-		color: #1a1a1a;
-		font-size: 0.65rem;
-		font-weight: bold;
-	}
-
+	.potd-tag,
 	.company-tag {
-		border: 1px solid color-mix(in srgb, #b8860b 35%, var(--border));
-		background: color-mix(in srgb, #b8860b 12%, var(--background));
-		color: color-mix(in srgb, #b8860b 70%, var(--foreground));
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		padding: 1px 7px;
+		color: var(--muted-foreground);
 	}
 
 	.difficulty-badge {
-		display: inline-block;
-		border-radius: 12px;
-		padding: 3px 10px;
-		font-size: 0.75rem;
-		font-weight: bold;
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		font-size: 0.8rem;
+	}
+
+	.difficulty-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: currentcolor;
 	}
 
 	.difficulty-badge.Beginner {
-		background: rgb(63 185 80 / 10%);
-		color: color-mix(in srgb, #3fb950 70%, var(--foreground));
+		color: color-mix(in srgb, #3fb950 75%, var(--foreground));
 	}
 
 	.difficulty-badge.Intermediate {
-		background: rgb(210 153 34 / 10%);
-		color: color-mix(in srgb, #d29922 70%, var(--foreground));
+		color: color-mix(in srgb, #d29922 75%, var(--foreground));
 	}
 
 	.difficulty-badge.Advanced {
-		background: rgb(229 83 75 / 10%);
-		color: color-mix(in srgb, #e5534b 75%, var(--foreground));
+		color: color-mix(in srgb, #e5534b 80%, var(--foreground));
 	}
 
 	.empty-state {
@@ -842,6 +853,10 @@
 		.problem-table tbody tr {
 			display: block;
 			padding: 10px 0;
+		}
+
+		.problem-table tbody td:not(.status-cell) {
+			padding-left: 40px;
 		}
 
 		.status-cell {
