@@ -89,17 +89,6 @@
 			pastPotdOnly
 		].filter(Boolean).length
 	);
-	const filtering = $derived(
-		Boolean(
-			searchQuery.trim() ||
-			activeModule ||
-			activeTopic ||
-			selectedCompany ||
-			selectedDifficulty ||
-			selectedStatus !== 'all' ||
-			pastPotdOnly
-		)
-	);
 
 	function topicLabel(topic: string): string {
 		const acronyms: Record<string, string> = {
