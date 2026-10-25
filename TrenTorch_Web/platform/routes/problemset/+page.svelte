@@ -3,17 +3,13 @@
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';
 	import {
-		Building2,
-		CalendarClock,
 		ArrowRight,
 		Check,
 		ChevronLeft,
 		ChevronRight,
-		CheckCircle2,
-		Gauge,
-		Layers,
 		RotateCcw,
-		Search
+		Search,
+		SlidersHorizontal
 	} from '@lucide/svelte';
 	import ProblemsetPotdBanner from '$components/ProblemsetPotdBanner.svelte';
 	import { getPartIcon } from '$data/part-icons';
@@ -59,7 +55,8 @@
 	let selectedDifficulty = $state('');
 	let selectedStatus = $state<ProblemsetStatus>('all');
 	let pastPotdOnly = $state(false);
-	let showAllTopics = $state(false);
+	let filterOpen = $state(false);
+	let filterRoot = $state<HTMLDivElement>();
 	let showAllModules = $state(false);
 	let pastPotdSlugs = $state<ReadonlySet<string>>(new Set());
 	let moduleRail = $state<HTMLDivElement>();
@@ -81,6 +78,16 @@
 		Math.max(1, Math.ceil(filteredProblems.length / PROBLEMSET_PAGE_SIZE))
 	);
 	const pagedProblems = $derived(paginateProblemset(filteredProblems, currentPage));
+	const activeFilterCount = $derived(
+		[
+			activeModule,
+			activeTopic,
+			selectedCompany,
+			selectedDifficulty,
+			selectedStatus !== 'all',
+			pastPotdOnly
+		].filter(Boolean).length
+	);
 	const filtering = $derived(
 		Boolean(
 			searchQuery.trim() ||
@@ -120,8 +127,12 @@
 		pastPotdOnly = false;
 	}
 
-	function chooseCompany(company: string) {
-		selectedCompany = selectedCompany === company ? '' : company;
+	function onWindowPointerDown(event: PointerEvent) {
+		if (filterOpen && filterRoot && !filterRoot.contains(event.target as Node)) filterOpen = false;
+	}
+
+	function onWindowKeydown(event: KeyboardEvent) {
+		if (filterOpen && event.key === 'Escape') filterOpen = false;
 	}
 
 	function goToPage(nextPage: number) {
@@ -153,6 +164,8 @@
 		if (currentPage > totalPages) goToPage(totalPages);
 	});
 </script>
+
+<svelte:window onpointerdown={onWindowPointerDown} onkeydown={onWindowKeydown} />
 
 <svelte:head>
 	<title>Problemset - TrenTorch</title>
@@ -250,118 +263,87 @@
 			</div>
 		{/if}
 
-		<div class="topic-row mb-3" role="group" aria-label="Filter by topic">
-			<button
-				type="button"
-				class="topic-pill {activeTopic === '' ? 'selected' : ''}"
-				aria-pressed={activeTopic === ''}
-				onclick={() => (activeTopic = '')}
-			>
-				All topics
-			</button>
-			{#each showAllTopics ? topics : topics.slice(0, 6) as topic (topic)}
-				<button
-					type="button"
-					class="topic-pill {activeTopic === topic ? 'selected' : ''}"
-					aria-pressed={activeTopic === topic}
-					onclick={() => (activeTopic = activeTopic === topic ? '' : topic)}
-				>
-					{topicLabel(topic)}
-					<span class="topic-count">
-						{problemsetProblems.filter((problem) => problem.topic === topic).length}
-					</span>
-				</button>
-			{/each}
-			{#if topics.length > 6}
-				<button
-					type="button"
-					class="expand-button"
-					aria-expanded={showAllTopics}
-					onclick={() => (showAllTopics = !showAllTopics)}
-				>
-					{showAllTopics ? 'Show fewer' : 'Expand'}
-				</button>
-			{/if}
-		</div>
-
-		<div class="mb-4 flex flex-wrap items-center gap-2">
+		<div class="mb-3 flex items-center gap-2">
 			<label class="search-field">
 				<span class="sr-only">Search problems</span>
 				<Search class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
 				<input bind:value={searchQuery} type="search" placeholder="Search problems..." />
 			</label>
 
-			<label class="filter-select">
-				<Layers class="filter-icon" aria-hidden="true" />
-				<span class="sr-only">Filter by module</span>
-				<select bind:value={activeModule}>
-					<option value="">All modules</option>
-					{#each problemsetModules as module (module.id)}
-						<option value={module.id}>{module.title}</option>
-					{/each}
-				</select>
-			</label>
-
-			<button
-				type="button"
-				class="filter-button {pastPotdOnly ? 'active' : ''}"
-				aria-pressed={pastPotdOnly}
-				onclick={() => (pastPotdOnly = !pastPotdOnly)}
-			>
-				<CalendarClock class="size-4" aria-hidden="true" />
-				Past POTD
-			</button>
-
-			<label class="filter-select">
-				<CheckCircle2 class="filter-icon" aria-hidden="true" />
-				<span class="sr-only">Filter by status</span>
-				<select bind:value={selectedStatus}>
-					{#each statuses as status (status.value)}
-						<option value={status.value}>{status.label}</option>
-					{/each}
-				</select>
-			</label>
-
-			<label class="filter-select">
-				<Gauge class="filter-icon" aria-hidden="true" />
-				<span class="sr-only">Filter by difficulty</span>
-				<select bind:value={selectedDifficulty}>
-					<option value="">All difficulties</option>
-					{#each difficulties as difficulty (difficulty)}
-						<option value={difficulty}>{difficulty}</option>
-					{/each}
-				</select>
-			</label>
-
-			{#if filtering}
-				<button type="button" class="clear-button" onclick={resetFilters}>
-					<RotateCcw class="size-3.5" />
-					Clear
-				</button>
-			{/if}
-		</div>
-
-		<div class="company-filter-row" role="group" aria-label="Filter by company">
-			<button
-				type="button"
-				class:active={selectedCompany === ''}
-				aria-pressed={selectedCompany === ''}
-				onclick={() => chooseCompany('')}
-			>
-				<Building2 class="size-3.5" aria-hidden="true" />
-				All companies
-			</button>
-			{#each companies as company (company)}
+			<div class="relative" bind:this={filterRoot}>
 				<button
 					type="button"
-					class:active={selectedCompany === company}
-					aria-pressed={selectedCompany === company}
-					onclick={() => chooseCompany(company)}
+					class="filter-trigger {filterOpen || activeFilterCount ? 'active' : ''}"
+					aria-haspopup="dialog"
+					aria-expanded={filterOpen}
+					onclick={() => (filterOpen = !filterOpen)}
 				>
-					<Building2 class="size-3.5" aria-hidden="true" />
-					{company}
+					<SlidersHorizontal class="size-4" aria-hidden="true" />
+					Filters
+					{#if activeFilterCount}
+						<span class="filter-count">{activeFilterCount}</span>
+					{/if}
 				</button>
-			{/each}
+
+				{#if filterOpen}
+					<div role="dialog" aria-label="Filters" class="filter-popover">
+						<label class="filter-field">
+							<span>Module</span>
+							<select bind:value={activeModule}>
+								<option value="">All modules</option>
+								{#each problemsetModules as module (module.id)}
+									<option value={module.id}>{module.title}</option>
+								{/each}
+							</select>
+						</label>
+						<label class="filter-field">
+							<span>Topic</span>
+							<select bind:value={activeTopic}>
+								<option value="">All topics</option>
+								{#each topics as topic (topic)}
+									<option value={topic}>{topicLabel(topic)}</option>
+								{/each}
+							</select>
+						</label>
+						<label class="filter-field">
+							<span>Company</span>
+							<select bind:value={selectedCompany}>
+								<option value="">All companies</option>
+								{#each companies as company (company)}
+									<option value={company}>{company}</option>
+								{/each}
+							</select>
+						</label>
+						<label class="filter-field">
+							<span>Status</span>
+							<select bind:value={selectedStatus}>
+								{#each statuses as status (status.value)}
+									<option value={status.value}>{status.label}</option>
+								{/each}
+							</select>
+						</label>
+						<label class="filter-field">
+							<span>Difficulty</span>
+							<select bind:value={selectedDifficulty}>
+								<option value="">All difficulties</option>
+								{#each difficulties as difficulty (difficulty)}
+									<option value={difficulty}>{difficulty}</option>
+								{/each}
+							</select>
+						</label>
+						<label class="filter-check">
+							<input type="checkbox" bind:checked={pastPotdOnly} />
+							Past Problem of the Day only
+						</label>
+						{#if activeFilterCount}
+							<button type="button" class="clear-button" onclick={resetFilters}>
+								<RotateCcw class="size-3.5" />
+								Clear filters
+							</button>
+						{/if}
+					</div>
+				{/if}
+			</div>
 		</div>
 
 		<p class="mb-2 text-xs text-muted-foreground" aria-live="polite">
@@ -382,7 +364,6 @@
 						<tr>
 							<th class="w-[26px]" aria-label="Status"></th>
 							<th>Title</th>
-							<th>Company</th>
 							<th>Difficulty</th>
 						</tr>
 					</thead>
@@ -408,11 +389,6 @@
 									</span>
 									{#if pastPotdSlugs.has(problem.slug)}
 										<span class="potd-tag">Past POTD</span>
-									{/if}
-								</td>
-								<td>
-									{#if problem.caseCompany}
-										<span class="company-tag">{problem.caseCompany}</span>
 									{/if}
 								</td>
 								<td>
@@ -474,42 +450,6 @@
 		font-family: inherit;
 	}
 
-	.topic-row {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 8px;
-	}
-
-	.topic-pill {
-		display: inline-flex;
-		align-items: center;
-		gap: 5px;
-		white-space: nowrap;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--secondary);
-		padding: 5px 11px;
-		color: var(--muted-foreground);
-		font-size: 0.78rem;
-		cursor: pointer;
-	}
-
-	.topic-pill:hover {
-		color: var(--foreground);
-	}
-
-	.topic-pill.selected {
-		border-color: var(--primary);
-		background: var(--muted);
-		color: var(--foreground);
-	}
-
-	.topic-count {
-		color: var(--muted-foreground);
-	}
-
-	.expand-button,
 	.see-all {
 		border: 0;
 		background: transparent;
@@ -519,7 +459,6 @@
 		cursor: pointer;
 	}
 
-	.expand-button:hover,
 	.see-all:hover {
 		color: var(--foreground);
 		text-decoration: underline;
@@ -591,8 +530,7 @@
 		opacity: 0.4;
 	}
 
-	.filter-button,
-	.filter-select select {
+	.filter-trigger {
 		display: inline-flex;
 		height: 38px;
 		align-items: center;
@@ -607,66 +545,66 @@
 		cursor: pointer;
 	}
 
-	.filter-select {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-	}
-
-	.filter-select select {
-		padding-left: 34px;
-	}
-
-	.filter-select :global(.filter-icon) {
-		position: absolute;
-		z-index: 1;
-		left: 11px;
-		width: 15px;
-		height: 15px;
-		color: var(--muted-foreground);
-		pointer-events: none;
-	}
-
-	.filter-button:hover,
-	.filter-button.active {
-		border-color: var(--primary);
+	.filter-trigger.active {
+		border-color: color-mix(in srgb, var(--foreground) 35%, var(--border));
 		background: var(--muted);
 	}
 
-	.company-filter-row {
-		display: flex;
-		overflow-x: auto;
-		gap: 6px;
-		margin: -6px 0 12px;
-		padding: 4px 0 8px;
-		scrollbar-width: thin;
+	.filter-count {
+		min-width: 18px;
+		border-radius: 999px;
+		background: var(--foreground);
+		padding: 0 5px;
+		color: var(--background);
+		font-size: 0.68rem;
+		line-height: 18px;
+		text-align: center;
 	}
 
-	.company-filter-row button {
-		display: inline-flex;
-		min-height: 30px;
-		flex: 0 0 auto;
-		align-items: center;
-		gap: 6px;
+	.filter-popover {
+		position: absolute;
+		z-index: 30;
+		top: calc(100% + 8px);
+		right: 0;
+		display: flex;
+		width: 300px;
+		max-width: calc(100vw - 2rem);
+		flex-direction: column;
+		gap: 12px;
 		border: 1px solid var(--border);
-		border-radius: 999px;
+		border-radius: 8px;
+		background: var(--background);
+		padding: 14px;
+		box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+	}
+
+	.filter-field {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		color: var(--muted-foreground);
+		font-size: 0.72rem;
+	}
+
+	.filter-field select {
+		height: 36px;
+		border: 1px solid var(--border);
+		border-radius: 6px;
 		background: var(--secondary);
 		padding: 0 10px;
-		color: var(--muted-foreground);
+		color: var(--foreground);
 		font: inherit;
-		font-size: 0.72rem;
+		font-size: 0.8rem;
 		cursor: pointer;
 	}
 
-	.company-filter-row button:hover,
-	.company-filter-row button.active {
-		border-color: color-mix(in srgb, var(--foreground) 35%, var(--border));
-		background: var(--muted);
+	.filter-check {
+		display: flex;
+		align-items: center;
+		gap: 8px;
 		color: var(--foreground);
-	}
-
-	.company-filter-row button.active {
-		border-color: var(--primary);
+		font-size: 0.8rem;
+		cursor: pointer;
 	}
 
 	.search-field {
@@ -762,8 +700,7 @@
 	}
 
 	.module-tag,
-	.potd-tag,
-	.company-tag {
+	.potd-tag {
 		display: inline-block;
 		margin-left: 8px;
 		font-size: 0.72rem;
@@ -773,8 +710,7 @@
 		color: var(--muted-foreground);
 	}
 
-	.potd-tag,
-	.company-tag {
+	.potd-tag {
 		border: 1px solid var(--border);
 		border-radius: 4px;
 		padding: 1px 7px;
