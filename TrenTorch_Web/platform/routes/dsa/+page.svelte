@@ -444,18 +444,8 @@
 		font-weight: 600;
 	}
 
-	.topic-title::before {
-		content: '';
-		width: 7px;
-		height: 7px;
-		flex: 0 0 7px;
-		border-radius: 2px;
-		background: var(--level-accent);
-		transform: rotate(45deg);
-	}
-
 	.topic-count {
-		border-radius: 999px;
+		border-radius: 6px;
 		background: color-mix(in oklab, var(--foreground) 8%, transparent);
 		padding: 2px 9px;
 		color: var(--muted-foreground);

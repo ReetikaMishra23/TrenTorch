@@ -39,7 +39,6 @@ export type IdeTheme = {
 		text2: string;
 		code: string;
 		accent: string;
-		accent2: string;
 		accentFg: string;
 		ok: string;
 		bad: string;
@@ -52,7 +51,7 @@ export const IDE_THEMES: IdeTheme[] = [
 	{
 		id: 'ember',
 		name: 'Ember',
-		blurb: 'Warm graphite with a soft clay accent. The TrenTorch default.',
+		blurb: 'Warm dark. The default.',
 		mode: 'dark',
 		ui: {
 			gutter: '#0d0c0b',
@@ -64,7 +63,6 @@ export const IDE_THEMES: IdeTheme[] = [
 			text2: '#a99f93',
 			code: '#12100e',
 			accent: '#e0795a',
-			accent2: '#e8a46a',
 			accentFg: '#1b0b04',
 			ok: '#5fd39a',
 			bad: '#ff6b6b',
@@ -93,7 +91,7 @@ export const IDE_THEMES: IdeTheme[] = [
 	{
 		id: 'midnight',
 		name: 'Midnight',
-		blurb: 'Deep blue, easy on the eyes for long sessions.',
+		blurb: 'Deep blue dark.',
 		mode: 'dark',
 		ui: {
 			gutter: '#070a12',
@@ -105,7 +103,6 @@ export const IDE_THEMES: IdeTheme[] = [
 			text2: '#8c9bbd',
 			code: '#0a0f1b',
 			accent: '#5aa2ff',
-			accent2: '#9b8cff',
 			accentFg: '#04101f',
 			ok: '#4fd8a4',
 			bad: '#ff7285',
@@ -134,7 +131,7 @@ export const IDE_THEMES: IdeTheme[] = [
 	{
 		id: 'dracula',
 		name: 'Dracula',
-		blurb: 'Purple and pink on charcoal. A classic.',
+		blurb: 'Purple on charcoal.',
 		mode: 'dark',
 		ui: {
 			gutter: '#14151c',
@@ -146,7 +143,6 @@ export const IDE_THEMES: IdeTheme[] = [
 			text2: '#a0a3bd',
 			code: '#181920',
 			accent: '#bd93f9',
-			accent2: '#ff79c6',
 			accentFg: '#1b1230',
 			ok: '#50fa7b',
 			bad: '#ff5555',
@@ -175,7 +171,7 @@ export const IDE_THEMES: IdeTheme[] = [
 	{
 		id: 'nord',
 		name: 'Nord',
-		blurb: 'Cool, muted slate with an arctic blue.',
+		blurb: 'Muted blue-grey dark.',
 		mode: 'dark',
 		ui: {
 			gutter: '#242933',
@@ -187,7 +183,6 @@ export const IDE_THEMES: IdeTheme[] = [
 			text2: '#a3adc2',
 			code: '#272c36',
 			accent: '#88c0d0',
-			accent2: '#81a1c1',
 			accentFg: '#1b2430',
 			ok: '#a3be8c',
 			bad: '#bf616a',
@@ -216,7 +211,7 @@ export const IDE_THEMES: IdeTheme[] = [
 	{
 		id: 'paper',
 		name: 'Paper',
-		blurb: 'Warm off-white and ink, for bright rooms.',
+		blurb: 'Warm off-white light.',
 		mode: 'light',
 		ui: {
 			gutter: '#e9e5da',
@@ -228,7 +223,6 @@ export const IDE_THEMES: IdeTheme[] = [
 			text2: '#6b6558',
 			code: '#f6f2e8',
 			accent: '#d9480f',
-			accent2: '#e8590c',
 			accentFg: '#ffffff',
 			ok: '#1f7a4d',
 			bad: '#c92a2a',
@@ -278,12 +272,10 @@ export function themeStyle(theme: IdeTheme): string {
 		'--ide-text-2': u.text2,
 		'--ide-code': u.code,
 		'--ide-accent': u.accent,
-		'--ide-accent-2': u.accent2,
 		'--ide-accent-fg': u.accentFg,
 		'--ide-ok': u.ok,
 		'--ide-bad': u.bad,
 		'--ide-warn': u.warn,
-		'--ide-mono': "'JetBrains Mono', var(--font-mono)",
 		'color-scheme': theme.mode
 	};
 	return Object.entries(vars)

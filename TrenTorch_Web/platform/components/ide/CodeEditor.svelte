@@ -65,7 +65,7 @@
 		return {
 			'&': {
 				height: '100%',
-				fontFamily: "'JetBrains Mono', 'Geist Mono', ui-monospace, Menlo, monospace",
+				fontFamily: "'IBM Plex Mono', 'Geist Mono', ui-monospace, Menlo, monospace",
 				fontSize: 'var(--editor-font-size)',
 				backgroundColor: p.bg,
 				color: p.fg

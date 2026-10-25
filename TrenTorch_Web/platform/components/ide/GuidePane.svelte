@@ -145,7 +145,6 @@
 		difficultyMeter[content.metadata.difficulty as QuestionMetadata['difficulty']] ??
 			difficultyMeter.Beginner
 	);
-	const activeTabLabel = $derived(tabs.find((tab) => tab.id === activeTab)?.label ?? '');
 
 	function selectTab(tab: 'description' | 'theory' | 'solution' | 'discussion') {
 		activeTab = tab;
@@ -317,11 +316,6 @@
 		<!-- Header info: shown on every section so difficulty/tags/solved status
 		     stay visible no matter which one a student is reading. -->
 		<div class="mb-6">
-			<p
-				class="mb-2 font-mono text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase"
-			>
-				{activeTabLabel}
-			</p>
 			<div class="mb-3.5 flex items-start justify-between gap-3">
 				<h1 class="text-[1.65rem] leading-tight font-semibold tracking-[-0.02em] text-foreground">
 					{content.metadata.title}
@@ -337,20 +331,11 @@
 			</div>
 			<div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
 				<span
-					class="inline-flex items-center gap-2 text-xs font-semibold"
+					class="inline-flex items-center gap-1.5 text-xs font-semibold"
 					style:color={meter.color}
 				>
-					<span class="flex items-end gap-0.5" aria-hidden="true">
-						{#each [1, 2, 3, 4] as bar (bar)}
-							<span
-								class="w-1 rounded-sm"
-								style:height="{6 + bar * 2}px"
-								style:background={bar <= meter.level
-									? meter.color
-									: 'color-mix(in oklab, var(--foreground) 16%, transparent)'}
-							></span>
-						{/each}
-					</span>
+					<span class="size-1.5 rounded-full" style:background={meter.color} aria-hidden="true"
+					></span>
 					{content.metadata.difficulty}
 				</span>
 				{#if companies}
@@ -430,7 +415,7 @@
 					<div class="flex flex-wrap gap-2">
 						{#each content.metadata.tags as tag (tag)}
 							<span
-								class="rounded-full bg-muted px-2.5 py-1 font-mono text-[11px] text-muted-foreground"
+								class="rounded-md bg-muted px-2 py-1 font-mono text-[11px] text-muted-foreground"
 								>{tag}</span
 							>
 						{/each}
@@ -506,10 +491,10 @@
 	:global(.ide-prose) {
 		font-size: 0.9375rem;
 		line-height: 1.75;
-		font-family: var(--font-sans);
+		font-family: var(--ide-sans);
 	}
 	:global(.ide-prose :where(h1, h2, h3, h4)) {
-		font-family: var(--font-sans);
+		font-family: var(--ide-sans);
 		letter-spacing: -0.01em;
 		color: var(--foreground);
 	}
@@ -535,11 +520,8 @@
 	}
 	:global(.ide-prose :where(p:has(+ pre))) {
 		margin: 0.85rem 0 0.35rem;
-		font-family: var(--ide-mono);
-		font-size: 0.6875rem;
+		font-size: 0.8125rem;
 		font-weight: 600;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
 		color: var(--muted-foreground);
 	}
 	.rail-active::before {
@@ -557,7 +539,6 @@
 		margin: 0 0 0.25rem;
 		padding: 0.7rem 1rem;
 		border: 1px solid var(--border);
-		border-left: 3px solid color-mix(in oklab, var(--foreground) 20%, transparent);
 		border-radius: 0.625rem;
 		background: var(--ide-code, var(--muted));
 		font-family: var(--ide-mono);
@@ -600,7 +581,7 @@
 		border-radius: 6px;
 		background: var(--secondary);
 		padding: 1px 8px;
-		font-family: var(--font-mono);
+		font-family: var(--ide-mono);
 		font-size: 10px;
 		color: var(--muted-foreground);
 		opacity: 0;
@@ -615,6 +596,6 @@
 		color: var(--foreground);
 	}
 	:global(.ide-prose :where(summary)) {
-		font-family: var(--font-sans);
+		font-family: var(--ide-sans);
 	}
 </style>

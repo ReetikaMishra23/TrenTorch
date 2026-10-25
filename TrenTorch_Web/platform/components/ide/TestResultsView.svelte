@@ -232,7 +232,7 @@
 		align-items: center;
 		gap: 6px;
 		border-radius: 8px;
-		background: linear-gradient(135deg, var(--ide-accent), var(--ide-accent-2));
+		background: var(--ide-accent);
 		padding: 7px 12px;
 		color: var(--ide-accent-fg);
 		font-size: 12px;
@@ -250,11 +250,11 @@
 		align-items: center;
 		gap: 7px;
 		border: 1px solid var(--border);
-		border-radius: 999px;
+		border-radius: 6px;
 		background: var(--secondary);
 		padding: 4px 11px 4px 9px;
 		color: var(--muted-foreground);
-		font-family: var(--font-mono);
+		font-family: var(--ide-mono);
 		font-size: 11.5px;
 		cursor: pointer;
 		transition:

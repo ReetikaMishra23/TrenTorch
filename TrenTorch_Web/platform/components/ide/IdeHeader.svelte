@@ -314,16 +314,15 @@
 	}
 
 	.submit-button {
-		background: linear-gradient(135deg, var(--ide-accent), var(--ide-accent-2));
+		background: var(--ide-accent);
 		color: var(--ide-accent-fg);
-		box-shadow: 0 0 0 1px color-mix(in oklab, var(--ide-accent) 50%, transparent);
 	}
 
 	.run-kbd {
 		border-radius: 4px;
 		background: color-mix(in oklab, var(--foreground) 10%, transparent);
 		padding: 1px 5px;
-		font-family: var(--font-mono);
+		font-family: var(--ide-mono);
 		font-size: 10px;
 		font-weight: 500;
 		color: var(--muted-foreground);

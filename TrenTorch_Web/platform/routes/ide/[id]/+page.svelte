@@ -605,7 +605,7 @@
 {:else}
 	<div
 		bind:this={ideRoot}
-		class="ide-shell flex h-dvh w-full flex-col overflow-hidden font-sans"
+		class="ide-shell flex h-dvh w-full flex-col overflow-hidden"
 		style={themeStyle(ideTheme.current)}
 	>
 		<!-- IDE Top Header -->
@@ -829,7 +829,6 @@
 			line={cursorPos.line}
 			col={cursorPos.col}
 			saved={lastSavedAt !== null}
-			fontSize={editorFontSize}
 		/>
 	</div>
 {/if}
@@ -864,12 +863,12 @@
 		--ide-text-2: #a99f93;
 		--ide-code: #12100e;
 		--ide-accent: #e0795a;
-		--ide-accent-2: #e8a46a;
 		--ide-accent-fg: #1b0b04;
 		--ide-ok: #5fd39a;
 		--ide-bad: #ff6b6b;
 		--ide-warn: #ffb04a;
-		--ide-mono: 'JetBrains Mono', var(--font-mono);
+		--ide-sans: 'IBM Plex Sans', var(--font-sans);
+		--ide-mono: 'IBM Plex Mono', var(--font-mono);
 		--background: var(--ide-panel);
 		--secondary: var(--ide-head);
 		--muted: var(--ide-chip);
@@ -880,7 +879,14 @@
 		--primary-foreground: var(--ide-accent-fg);
 		background: var(--ide-gutter);
 		color: var(--ide-text);
+		font-family: var(--ide-sans);
 		scrollbar-color: var(--ide-line) transparent;
+	}
+	:global(.ide-shell .font-mono) {
+		font-family: var(--ide-mono);
+	}
+	:global(.ide-shell .font-sans) {
+		font-family: var(--ide-sans);
 	}
 	:global(.ide-shell *)::-webkit-scrollbar-thumb {
 		background-color: var(--ide-line);
