@@ -114,10 +114,10 @@
 </script>
 
 <header
-	class="grid h-14 w-full grid-cols-[1fr_auto_1fr] items-center px-3 text-sm text-foreground sm:px-4"
+	class="grid h-14 w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center px-3 text-sm text-foreground sm:px-4"
 >
 	<!-- Left: back to where the student came from, with the question's place in the list -->
-	<div class="flex min-w-0 items-center gap-1.5 justify-self-start">
+	<div class="flex w-full min-w-0 items-center gap-1.5 justify-self-start">
 		<a
 			href={resolve('/')}
 			class="flex items-center rounded-md p-1 transition-opacity hover:opacity-80"
@@ -147,7 +147,7 @@
 
 		<!-- Previous / next question, right beside the question's name -->
 		<!-- eslint-disable svelte/no-navigation-without-resolve -- both hrefs come from resolve() in the page -->
-		<div class="ml-1 hidden items-center sm:flex">
+		<div class="ml-1 hidden shrink-0 items-center sm:flex">
 			<a
 				href={prevHref ?? undefined}
 				title="Previous question"
