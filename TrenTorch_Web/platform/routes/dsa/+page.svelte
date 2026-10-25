@@ -328,17 +328,14 @@
 		opacity: 0.9;
 	}
 
-	/* Three levels, told apart by colour and surface, not just by indent:
-	   a step is a raised card with a white title and an ember edge, a topic is
-	   an inset dark card whose title is ember, a question is plain text. */
+	/* Three levels, told apart by surface and indent: a step is a raised card,
+	   a topic is an inset darker card, a question is plain text. */
 	.sheet {
-		--level-accent: #93a9cc;
 		--level-step: var(--secondary);
 		--level-topic: color-mix(in oklab, var(--background) 82%, black);
 	}
 
 	:global(html:not(.dark)) .sheet {
-		--level-accent: #45618c;
 		--level-step: var(--secondary);
 		--level-topic: color-mix(in oklab, var(--background) 94%, var(--foreground));
 	}
@@ -352,8 +349,8 @@
 	}
 
 	.step-card:has(.step-head[aria-expanded='true']) {
-		border-color: color-mix(in oklab, var(--level-accent) 30%, var(--border));
-		box-shadow: inset 3px 0 0 color-mix(in oklab, var(--level-accent) 55%, transparent);
+		border-color: color-mix(in oklab, var(--foreground) 22%, var(--border));
+		box-shadow: inset 3px 0 0 color-mix(in oklab, var(--foreground) 20%, transparent);
 	}
 
 	.step-head {
@@ -425,7 +422,7 @@
 	}
 
 	.topic-head:hover {
-		background: color-mix(in oklab, var(--level-accent) 8%, transparent);
+		background: color-mix(in oklab, var(--foreground) 6%, transparent);
 	}
 
 	.topic-title {
@@ -434,7 +431,7 @@
 		flex: 1;
 		align-items: center;
 		gap: 10px;
-		color: var(--level-accent);
+		color: var(--foreground);
 		font-family: var(--font-sans, system-ui, sans-serif);
 		font-size: 0.9375rem;
 		font-weight: 600;
@@ -563,7 +560,7 @@
 	}
 
 	.problem-link:hover {
-		color: var(--level-accent);
+		text-decoration: underline;
 	}
 
 	.difficulty-badge {
