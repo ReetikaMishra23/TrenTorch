@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import FilterSelect from '$components/FilterSelect.svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import {
 		ArrowRight,
@@ -108,7 +109,7 @@
 				</div>
 			</div>
 			{#if next}
-				<a href={resolve('/ide/[id]', { id: next.id })} class="continue-button">
+				<a href={resolve('/ide/[id]', { id: next.id })} class="continue-button press">
 					{overall.solved === 0 ? 'Start' : 'Continue'}: {next.title}
 					<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
 				</a>
@@ -124,26 +125,22 @@
 				<input bind:value={searchQuery} type="search" placeholder="Search questions or tags..." />
 			</label>
 
-			<label class="filter-select">
-				<CheckCircle2 class="filter-icon" aria-hidden="true" />
-				<span class="sr-only">Filter by status</span>
-				<select bind:value={selectedStatus}>
-					{#each statuses as status (status.value)}
-						<option value={status.value}>{status.label}</option>
-					{/each}
-				</select>
-			</label>
+			<FilterSelect
+				bind:value={selectedStatus}
+				label="Filter by status"
+				icon={CheckCircle2}
+				options={statuses}
+			/>
 
-			<label class="filter-select">
-				<Gauge class="filter-icon" aria-hidden="true" />
-				<span class="sr-only">Filter by difficulty</span>
-				<select bind:value={selectedDifficulty}>
-					<option value="">All difficulties</option>
-					{#each difficulties as difficulty (difficulty)}
-						<option value={difficulty}>{difficulty}</option>
-					{/each}
-				</select>
-			</label>
+			<FilterSelect
+				bind:value={selectedDifficulty}
+				label="Filter by difficulty"
+				icon={Gauge}
+				options={[
+					{ value: '', label: 'All difficulties' },
+					...difficulties.map((d) => ({ value: d, label: d }))
+				]}
+			/>
 
 			{#if filtering}
 				<button type="button" class="clear-button" onclick={resetFilters}>
@@ -331,17 +328,15 @@
 		opacity: 0.9;
 	}
 
-	/* Three levels, told apart by colour and surface, not just by indent:
-	   a step is a raised card with a white title and an ember edge, a topic is
-	   an inset dark card whose title is ember, a question is plain text. */
+	/* Three levels, told apart by surface and indent: a step is a raised card,
+	   a topic is an inset darker card, a question is plain text. */
 	.sheet {
-		--level-accent: #93a9cc;
+		font-variant-numeric: tabular-nums;
 		--level-step: var(--secondary);
 		--level-topic: color-mix(in oklab, var(--background) 82%, black);
 	}
 
 	:global(html:not(.dark)) .sheet {
-		--level-accent: #45618c;
 		--level-step: var(--secondary);
 		--level-topic: color-mix(in oklab, var(--background) 94%, var(--foreground));
 	}
@@ -355,8 +350,8 @@
 	}
 
 	.step-card:has(.step-head[aria-expanded='true']) {
-		border-color: color-mix(in oklab, var(--level-accent) 30%, var(--border));
-		box-shadow: inset 3px 0 0 color-mix(in oklab, var(--level-accent) 55%, transparent);
+		border-color: color-mix(in oklab, var(--foreground) 22%, var(--border));
+		box-shadow: inset 3px 0 0 color-mix(in oklab, var(--foreground) 20%, transparent);
 	}
 
 	.step-head {
@@ -428,7 +423,7 @@
 	}
 
 	.topic-head:hover {
-		background: color-mix(in oklab, var(--level-accent) 8%, transparent);
+		background: color-mix(in oklab, var(--foreground) 6%, transparent);
 	}
 
 	.topic-title {
@@ -437,7 +432,7 @@
 		flex: 1;
 		align-items: center;
 		gap: 10px;
-		color: var(--level-accent);
+		color: var(--foreground);
 		font-family: var(--font-sans, system-ui, sans-serif);
 		font-size: 0.9375rem;
 		font-weight: 600;
@@ -488,40 +483,6 @@
 
 	.search-field :global(svg) {
 		color: var(--muted-foreground);
-	}
-
-	.filter-select {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-	}
-
-	.filter-select select {
-		display: inline-flex;
-		height: 38px;
-		align-items: center;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--secondary);
-		padding: 0 12px 0 34px;
-		color: var(--foreground);
-		font: inherit;
-		font-size: 0.78rem;
-		cursor: pointer;
-	}
-
-	.filter-select select:hover {
-		border-color: var(--primary);
-	}
-
-	.filter-select :global(.filter-icon) {
-		position: absolute;
-		z-index: 1;
-		left: 11px;
-		width: 15px;
-		height: 15px;
-		color: var(--muted-foreground);
-		pointer-events: none;
 	}
 
 	.clear-button {
@@ -600,7 +561,7 @@
 	}
 
 	.problem-link:hover {
-		color: var(--level-accent);
+		text-decoration: underline;
 	}
 
 	.difficulty-badge {

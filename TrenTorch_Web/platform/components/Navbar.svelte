@@ -95,8 +95,8 @@
 					<a
 						href={route.href}
 						onclick={(event) => route.gated && gateBehindSignIn(event)}
-						class="flex items-center gap-1.5 transition-colors hover:text-primary {page.url
-							.pathname === route.href
+						class="flex items-center gap-1.5 transition-colors [word-spacing:-0.3em] hover:text-primary {page
+							.url.pathname === route.href
 							? 'text-primary'
 							: 'text-foreground'}"
 					>
@@ -141,7 +141,8 @@
 										onclick={(event) => link.gated && gateBehindSignIn(event)}
 										class="flex flex-col rounded-lg px-3 py-2.5 text-popover-foreground hover:bg-accent"
 									>
-										<span class="flex items-center gap-1.5">{link.label}</span>
+										<span class="flex items-center gap-1.5 [word-spacing:-0.3em]">{link.label}</span
+										>
 										<span
 											class="mt-0.5 text-[11px] tracking-normal text-muted-foreground normal-case"
 											>{link.hint}</span
@@ -155,7 +156,7 @@
 									class="flex cursor-not-allowed flex-col rounded-lg px-3 py-2.5 text-popover-foreground"
 									title="Coming soon"
 								>
-									<span class="flex items-center gap-1.5">
+									<span class="flex items-center gap-1.5 [word-spacing:-0.3em]">
 										{link.label}
 										<Badge
 											variant="outline"
