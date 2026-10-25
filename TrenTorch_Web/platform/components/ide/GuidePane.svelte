@@ -11,7 +11,6 @@
 	import type { QuestionContent, QuestionMetadata } from '$data/curriculum/types';
 	import type { CompanyTag } from '$data/questions';
 	import CompaniesBadge from '$components/CompaniesBadge.svelte';
-	import { extractSimpleVersion } from '$processes/ide-content/extract-simple-version';
 	import {
 		BookOpen,
 		CheckCheck,
@@ -119,15 +118,6 @@
 			classicalMLVisualizerIdSet.has(content.id)
 		)
 	);
-	// Shown collapsed under the Description so the plain-language idea is in
-	// the static page for search engines. Only when this question is allowed
-	// to show Theory at all: a Problem of the Day keeps it hidden until its
-	// date has passed, so it must not leak here either.
-	let simpleVersionHtml = $derived.by(() => {
-		if (!visibleTabs.includes('theory')) return '';
-		const section = extractSimpleVersion(content.theoryMarkdown);
-		return section ? toSafeHtml(section) : '';
-	});
 	let solutionHtml = $derived(
 		toSafeHtml(
 			'```' +
@@ -448,28 +438,6 @@
 		</div>
 
 		{#if activeTab === 'description'}
-			{#if content.metadata.kind === 'problemset'}
-				<div class="mb-4 flex flex-wrap items-start gap-3 border-b border-border pb-4">
-					{#if relatedModuleHref && content.metadata.relatedModule}
-						<!-- eslint-disable svelte/no-navigation-without-resolve -- already passed through resolve() in relatedModuleHref -->
-						<a
-							href={relatedModuleHref}
-							class="inline-flex items-center gap-1 rounded border border-border bg-secondary px-2.5 py-1.5 font-mono text-xs text-foreground transition-colors hover:border-primary/50 hover:text-primary"
-						>
-							Learn: {content.metadata.relatedModule.topicTag}
-						</a>
-						<!-- eslint-enable svelte/no-navigation-without-resolve -->
-					{/if}
-					{#if content.metadata.hint}
-						<details class="min-w-48 flex-1 rounded border border-border px-3 py-2 text-xs">
-							<summary class="cursor-pointer font-mono font-medium text-muted-foreground">
-								Show hint
-							</summary>
-							<p class="mt-2 leading-relaxed text-foreground">{content.metadata.hint}</p>
-						</details>
-					{/if}
-				</div>
-			{/if}
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			<div class="question-prose ide-prose">{@html descriptionBeforeConstraintsHtml}</div>
 			{#if hasInteractiveVisualizer}
@@ -533,18 +501,17 @@
 					</ul>
 				</div>
 			{/if}
-			{#if simpleVersionHtml}
-				<details class="mt-8 border-t border-border pt-5">
-					<summary
-						class="cursor-pointer text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+			<div class="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-5">
+				{#if content.metadata.kind === 'problemset' && relatedModuleHref && content.metadata.relatedModule}
+					<!-- eslint-disable svelte/no-navigation-without-resolve -- already passed through resolve() in relatedModuleHref -->
+					<a
+						href={relatedModuleHref}
+						class="rounded-md bg-muted px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors hover:bg-foreground/15"
 					>
-						The simple version
-					</summary>
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					<div class="question-prose ide-prose mt-3">{@html simpleVersionHtml}</div>
-				</details>
-			{/if}
-			<div class="mt-8 border-t border-border pt-5">
+						Learn: {content.metadata.relatedModule.topicTag}
+					</a>
+					<!-- eslint-enable svelte/no-navigation-without-resolve -->
+				{/if}
 				<Button variant="outline" size="sm" onclick={() => (reportBugOpen = true)}>
 					Report a bug
 				</Button>
