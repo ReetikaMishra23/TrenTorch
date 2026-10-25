@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import FilterSelect from '$components/FilterSelect.svelte';
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';
 	import {
@@ -128,11 +129,18 @@
 	}
 
 	function onWindowPointerDown(event: PointerEvent) {
-		if (filterOpen && filterRoot && !filterRoot.contains(event.target as Node)) filterOpen = false;
+		const target = event.target as Element;
+		if (target.closest('[data-slot="select-content"]')) return;
+		if (filterOpen && filterRoot && !filterRoot.contains(target)) filterOpen = false;
 	}
 
 	function onWindowKeydown(event: KeyboardEvent) {
-		if (filterOpen && event.key === 'Escape') filterOpen = false;
+		if (
+			filterOpen &&
+			event.key === 'Escape' &&
+			!document.querySelector('[data-slot="select-content"]')
+		)
+			filterOpen = false;
 	}
 
 	function goToPage(nextPage: number) {
@@ -287,50 +295,63 @@
 
 				{#if filterOpen}
 					<div role="dialog" aria-label="Filters" class="filter-popover">
-						<label class="filter-field">
+						<div class="filter-field">
 							<span>Module</span>
-							<select bind:value={activeModule}>
-								<option value="">All modules</option>
-								{#each problemsetModules as module (module.id)}
-									<option value={module.id}>{module.title}</option>
-								{/each}
-							</select>
-						</label>
-						<label class="filter-field">
+							<FilterSelect
+								bind:value={activeModule}
+								label="Filter by module"
+								class="w-full justify-between"
+								options={[
+									{ value: '', label: 'All modules' },
+									...problemsetModules.map((module) => ({ value: module.id, label: module.title }))
+								]}
+							/>
+						</div>
+						<div class="filter-field">
 							<span>Topic</span>
-							<select bind:value={activeTopic}>
-								<option value="">All topics</option>
-								{#each topics as topic (topic)}
-									<option value={topic}>{topicLabel(topic)}</option>
-								{/each}
-							</select>
-						</label>
-						<label class="filter-field">
+							<FilterSelect
+								bind:value={activeTopic}
+								label="Filter by topic"
+								class="w-full justify-between"
+								options={[
+									{ value: '', label: 'All topics' },
+									...topics.map((topic) => ({ value: topic, label: topicLabel(topic) }))
+								]}
+							/>
+						</div>
+						<div class="filter-field">
 							<span>Company</span>
-							<select bind:value={selectedCompany}>
-								<option value="">All companies</option>
-								{#each companies as company (company)}
-									<option value={company}>{company}</option>
-								{/each}
-							</select>
-						</label>
-						<label class="filter-field">
+							<FilterSelect
+								bind:value={selectedCompany}
+								label="Filter by company"
+								class="w-full justify-between"
+								options={[
+									{ value: '', label: 'All companies' },
+									...companies.map((company) => ({ value: company, label: company }))
+								]}
+							/>
+						</div>
+						<div class="filter-field">
 							<span>Status</span>
-							<select bind:value={selectedStatus}>
-								{#each statuses as status (status.value)}
-									<option value={status.value}>{status.label}</option>
-								{/each}
-							</select>
-						</label>
-						<label class="filter-field">
+							<FilterSelect
+								bind:value={selectedStatus}
+								label="Filter by status"
+								class="w-full justify-between"
+								options={statuses}
+							/>
+						</div>
+						<div class="filter-field">
 							<span>Difficulty</span>
-							<select bind:value={selectedDifficulty}>
-								<option value="">All difficulties</option>
-								{#each difficulties as difficulty (difficulty)}
-									<option value={difficulty}>{difficulty}</option>
-								{/each}
-							</select>
-						</label>
+							<FilterSelect
+								bind:value={selectedDifficulty}
+								label="Filter by difficulty"
+								class="w-full justify-between"
+								options={[
+									{ value: '', label: 'All difficulties' },
+									...difficulties.map((difficulty) => ({ value: difficulty, label: difficulty }))
+								]}
+							/>
+						</div>
 						<label class="filter-check">
 							<input type="checkbox" bind:checked={pastPotdOnly} />
 							Past Problem of the Day only
@@ -584,18 +605,6 @@
 		gap: 5px;
 		color: var(--muted-foreground);
 		font-size: 0.72rem;
-	}
-
-	.filter-field select {
-		height: 36px;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--secondary);
-		padding: 0 10px;
-		color: var(--foreground);
-		font: inherit;
-		font-size: 0.8rem;
-		cursor: pointer;
 	}
 
 	.filter-check {

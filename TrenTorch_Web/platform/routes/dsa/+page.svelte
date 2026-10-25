@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import FilterSelect from '$components/FilterSelect.svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import {
 		ArrowRight,
@@ -124,26 +125,22 @@
 				<input bind:value={searchQuery} type="search" placeholder="Search questions or tags..." />
 			</label>
 
-			<label class="filter-select">
-				<CheckCircle2 class="filter-icon" aria-hidden="true" />
-				<span class="sr-only">Filter by status</span>
-				<select bind:value={selectedStatus}>
-					{#each statuses as status (status.value)}
-						<option value={status.value}>{status.label}</option>
-					{/each}
-				</select>
-			</label>
+			<FilterSelect
+				bind:value={selectedStatus}
+				label="Filter by status"
+				icon={CheckCircle2}
+				options={statuses}
+			/>
 
-			<label class="filter-select">
-				<Gauge class="filter-icon" aria-hidden="true" />
-				<span class="sr-only">Filter by difficulty</span>
-				<select bind:value={selectedDifficulty}>
-					<option value="">All difficulties</option>
-					{#each difficulties as difficulty (difficulty)}
-						<option value={difficulty}>{difficulty}</option>
-					{/each}
-				</select>
-			</label>
+			<FilterSelect
+				bind:value={selectedDifficulty}
+				label="Filter by difficulty"
+				icon={Gauge}
+				options={[
+					{ value: '', label: 'All difficulties' },
+					...difficulties.map((d) => ({ value: d, label: d }))
+				]}
+			/>
 
 			{#if filtering}
 				<button type="button" class="clear-button" onclick={resetFilters}>
@@ -488,40 +485,6 @@
 
 	.search-field :global(svg) {
 		color: var(--muted-foreground);
-	}
-
-	.filter-select {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-	}
-
-	.filter-select select {
-		display: inline-flex;
-		height: 38px;
-		align-items: center;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--secondary);
-		padding: 0 12px 0 34px;
-		color: var(--foreground);
-		font: inherit;
-		font-size: 0.78rem;
-		cursor: pointer;
-	}
-
-	.filter-select select:hover {
-		border-color: var(--primary);
-	}
-
-	.filter-select :global(.filter-icon) {
-		position: absolute;
-		z-index: 1;
-		left: 11px;
-		width: 15px;
-		height: 15px;
-		color: var(--muted-foreground);
-		pointer-events: none;
 	}
 
 	.clear-button {
