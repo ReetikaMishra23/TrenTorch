@@ -11,6 +11,7 @@ import { sqlService } from './sql-service';
 import { jsService } from './js-service';
 import { cppService } from './cpp-service';
 import { goService } from './go-service';
+import { rustService } from './rust-service';
 import { detectLanguage, type Language } from './detect-language';
 
 type Service =
@@ -18,7 +19,8 @@ type Service =
 	| typeof sqlService
 	| typeof jsService
 	| typeof cppService
-	| typeof goService;
+	| typeof goService
+	| typeof rustService;
 
 function serviceFor(language: Language): Service {
 	switch (language) {
@@ -30,6 +32,8 @@ function serviceFor(language: Language): Service {
 			return cppService;
 		case 'go':
 			return goService;
+		case 'rust':
+			return rustService;
 		default:
 			return pyodideService;
 	}
@@ -101,6 +105,9 @@ class UnifiedExecutor {
 		if (this.language === 'go') {
 			return goService.runCode(code);
 		}
+		if (this.language === 'rust') {
+			return rustService.runCode(code);
+		}
 		return pyodideService.runCode(code);
 	}
 
@@ -128,6 +135,9 @@ class UnifiedExecutor {
 		}
 		if (this.language === 'go') {
 			return goService.runTests();
+		}
+		if (this.language === 'rust') {
+			return rustService.runTests();
 		}
 		return pyodideService.runTests(code, testHarnessCode, contentId, sampleLimit);
 	}
@@ -157,6 +167,9 @@ class UnifiedExecutor {
 		}
 		if (this.language === 'go') {
 			return goService.runCustomTest();
+		}
+		if (this.language === 'rust') {
+			return rustService.runCustomTest();
 		}
 		return pyodideService.runCustomTest(
 			code,

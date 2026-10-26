@@ -206,7 +206,8 @@
 		python: 'Python',
 		javascript: 'JavaScript',
 		cpp: 'C++',
-		go: 'Go'
+		go: 'Go',
+		rust: 'Rust'
 	};
 
 	function handleLanguageChange(next: string) {
@@ -902,7 +903,9 @@
 					? 'C++ (JSCPP)'
 					: language === 'go'
 						? 'Go (Yaegi)'
-						: 'Python 3.12'}
+						: language === 'rust'
+							? 'Rust (rustc-wasm)'
+							: 'Python 3.12'}
 			line={cursorPos.line}
 			col={cursorPos.col}
 			saved={lastSavedAt !== null}
