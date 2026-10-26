@@ -11,7 +11,7 @@ declare function cheerpOSAddStringFile(path: string, data: string): void;
 declare function cjFileBlob(path: string): Promise<Blob>;
 
 const LOADER_URL = 'https://cjrtnc.leaningtech.com/4.3/loader.js';
-const RUNNER_CLASSPATH = '/app/java-runtime/';
+const RUNNER_CLASSPATH = '/app/java-runtime/:/app/java-runtime/ecj.jar';
 
 let runtimeReady: Promise<void> | null = null;
 function ensureRuntime(): Promise<void> {
@@ -24,10 +24,11 @@ function ensureRuntime(): Promise<void> {
 }
 
 // Runner.class (compiled ahead of time, see Runner.java next to it) compiles
-// /str/Main.java with the system Java compiler and runs its main(String[]),
-// writing every diagnostic, program output line, and uncaught exception into
-// one file -- CheerpJ gives no documented way to intercept System.out/err
-// from JS directly, so the file is the handoff point back to this worker.
+// /str/Main.java with the vendored ECJ compiler (CheerpJ's bundled JRE has no
+// system Java compiler) and runs its main(String[]), writing every
+// diagnostic, program output line, and uncaught exception into one file --
+// CheerpJ gives no documented way to intercept System.out/err from JS
+// directly, so the file is the handoff point back to this worker.
 async function runJava(source: string): Promise<{ output: string; error: string | null }> {
 	await ensureRuntime();
 	cheerpOSAddStringFile('/str/Main.java', source);
