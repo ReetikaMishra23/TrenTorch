@@ -123,7 +123,7 @@
 		// DSA sheet: the solution and walkthrough open only after the question is solved.
 		if (content.metadata.kind === 'dsa') {
 			return solved.isSolved(content.id)
-				? ['description', 'theory', 'solution']
+				? ['description', 'theory', 'solution', 'discussion']
 				: ['description', 'theory'];
 		}
 		const entry = potdEntries.find((e) => e.questionId === content.id);

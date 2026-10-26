@@ -7,6 +7,7 @@
 	import { browser } from '$app/environment';
 	import Button from '$components/Button.svelte';
 	import DiscussionTab from '$components/discussion/DiscussionTab.svelte';
+	import DsaDiscussionTab from '$components/discussion/DsaDiscussionTab.svelte';
 	import ReportBugDialog from './ReportBugDialog.svelte';
 	import type { QuestionContent, QuestionMetadata } from '$data/curriculum/types';
 	import type { CompanyTag } from '$data/questions';
@@ -580,6 +581,8 @@
 					<div class="question-prose ide-prose">{@html explanationHtml}</div>
 				</div>
 			{/if}
+		{:else if content.metadata.kind === 'dsa'}
+			<DsaDiscussionTab questionId={content.id} />
 		{:else}
 			<DiscussionTab questionId={content.id} />
 		{/if}
