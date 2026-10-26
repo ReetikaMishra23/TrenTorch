@@ -59,6 +59,7 @@
 		cpp: any;
 		go: any;
 		rust: any;
+		java: any;
 		StreamLanguage: any;
 		keymap: any;
 		HighlightStyle: any;
@@ -124,7 +125,7 @@
 	}
 
 	async function loadCm() {
-		const [cmMod, stateMod, pyMod, sqlMod, jsMod, cppMod, goMod, rustMod, viewMod, langMod, highlightMod, commandsMod] =
+		const [cmMod, stateMod, pyMod, sqlMod, jsMod, cppMod, goMod, rustMod, javaMod, viewMod, langMod, highlightMod, commandsMod] =
 			await Promise.all([
 				import('codemirror'),
 				import('@codemirror/state'),
@@ -134,6 +135,7 @@
 				import('@codemirror/lang-cpp'),
 				import('@codemirror/legacy-modes/mode/go'),
 				import('@codemirror/legacy-modes/mode/rust'),
+				import('@codemirror/legacy-modes/mode/clike'),
 				import('@codemirror/view'),
 				import('@codemirror/language'),
 				import('@lezer/highlight'),
@@ -154,6 +156,7 @@
 			cpp: cppMod.cpp,
 			go: goMod.go,
 			rust: rustMod.rust,
+			java: javaMod.java,
 			StreamLanguage: langMod.StreamLanguage,
 			keymap: viewMod.keymap,
 			HighlightStyle: langMod.HighlightStyle,
@@ -175,7 +178,11 @@
 			if (state.selection.ranges.some((range: any) => !range.empty))
 				return cm?.indentMore(view) ?? false;
 			const size =
-				language === 'sql' || language === 'javascript' || language === 'go' || language === 'rust'
+				language === 'sql' ||
+				language === 'javascript' ||
+				language === 'go' ||
+				language === 'rust' ||
+				language === 'java'
 					? 2
 					: 4;
 			const head = state.selection.main.head;
@@ -225,9 +232,15 @@
 								? cm.StreamLanguage.define(cm.go)
 								: language === 'rust'
 									? cm.StreamLanguage.define(cm.rust)
-									: cm.python(),
+									: language === 'java'
+										? cm.StreamLanguage.define(cm.java)
+										: cm.python(),
 				cm.indentUnit.of(
-					language === 'sql' || language === 'javascript' || language === 'go' || language === 'rust'
+					language === 'sql' ||
+						language === 'javascript' ||
+						language === 'go' ||
+						language === 'rust' ||
+						language === 'java'
 						? '  '
 						: '    '
 				),

@@ -206,6 +206,7 @@
 		python: 'Python',
 		javascript: 'JavaScript',
 		cpp: 'C++',
+		java: 'Java',
 		go: 'Go',
 		rust: 'Rust'
 	};
@@ -905,7 +906,9 @@
 						? 'Go (Yaegi)'
 						: language === 'rust'
 							? 'Rust (rustc-wasm)'
-							: 'Python 3.12'}
+							: language === 'java'
+								? 'Java (CheerpJ)'
+								: 'Python 3.12'}
 			line={cursorPos.line}
 			col={cursorPos.col}
 			saved={lastSavedAt !== null}
