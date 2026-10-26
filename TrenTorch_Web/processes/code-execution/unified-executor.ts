@@ -8,7 +8,24 @@ import type {
 } from '$data/curriculum/types';
 import { pyodideService } from './pyodide-service';
 import { sqlService } from './sql-service';
+import { jsService } from './js-service';
+import { cppService } from './cpp-service';
 import { detectLanguage, type Language } from './detect-language';
+
+type Service = typeof pyodideService | typeof sqlService | typeof jsService | typeof cppService;
+
+function serviceFor(language: Language): Service {
+	switch (language) {
+		case 'sql':
+			return sqlService;
+		case 'javascript':
+			return jsService;
+		case 'cpp':
+			return cppService;
+		default:
+			return pyodideService;
+	}
+}
 
 class UnifiedExecutor {
 	// Stable stores: the IDE page grabs these once, so they must not be swapped
@@ -45,22 +62,40 @@ class UnifiedExecutor {
 		const next = detectLanguage(content);
 		if (next !== this.language || next === 'sql') {
 			this.language = next;
-			this.bind(next === 'sql' ? sqlService : pyodideService);
+			this.bind(serviceFor(next));
 		}
-		// Warm the SQL runtime early (it is small); Python keeps loading on first Run.
+		// Warm the SQL runtime early (it is small); Python/JS/C++ keep loading on first Run.
 		if (next === 'sql') sqlService.init();
+	}
+
+	/** Lets the IDE page override the auto-detected language for DSA questions, where the
+	 *  student picks Python/JavaScript/C++ from a dropdown rather than it being content-derived. */
+	public setLanguage(language: Language): void {
+		if (language === this.language) return;
+		this.language = language;
+		this.bind(serviceFor(language));
+	}
+
+	public getLanguage(): Language {
+		return this.language;
 	}
 
 	public async runCode(code: string, dbSchema?: string): Promise<ExecutionResult> {
 		if (this.language === 'sql') {
 			return sqlService.runQuery(code, dbSchema);
 		}
+		if (this.language === 'javascript') {
+			return jsService.runCode(code);
+		}
+		if (this.language === 'cpp') {
+			return cppService.runCode(code);
+		}
 		return pyodideService.runCode(code);
 	}
 
-	/** The question's example run, shown after Run. Python only; SQL has nothing to draw. */
+	/** The question's example run, shown after Run. Python only; other languages have nothing to draw. */
 	public async runPreview(code: string, previewCode: string) {
-		if (this.language === 'sql') return { output: '', figures: [] as PreviewFigure[] };
+		if (this.language !== 'python') return { output: '', figures: [] as PreviewFigure[] };
 		return pyodideService.runPreview(code, previewCode);
 	}
 
@@ -73,6 +108,12 @@ class UnifiedExecutor {
 	): Promise<SubmissionResult> {
 		if (this.language === 'sql') {
 			return sqlService.runTests(code, testHarnessCode, dbSchema || '', contentId);
+		}
+		if (this.language === 'javascript') {
+			return jsService.runTests();
+		}
+		if (this.language === 'cpp') {
+			return cppService.runTests();
 		}
 		return pyodideService.runTests(code, testHarnessCode, contentId, sampleLimit);
 	}
@@ -93,6 +134,12 @@ class UnifiedExecutor {
 				error: 'Custom tests not supported for SQL',
 				durationMs: 0
 			};
+		}
+		if (this.language === 'javascript') {
+			return jsService.runCustomTest();
+		}
+		if (this.language === 'cpp') {
+			return cppService.runCustomTest();
 		}
 		return pyodideService.runCustomTest(
 			code,

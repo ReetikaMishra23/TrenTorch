@@ -1,0 +1,51 @@
+// Web Worker for native JavaScript execution. No runtime to download -- the
+// worker's own JS engine runs the student's code directly, inside a
+// function body so top-level `return` and strict mode both work the same
+// way Pyodide's run action behaves for Python.
+self.onmessage = async (e: MessageEvent) => {
+	const trustedOrigins = new Set([self.location.origin, 'null']);
+	const messageOrigin = typeof e.origin === 'string' ? e.origin : '';
+	if (messageOrigin && !trustedOrigins.has(messageOrigin)) {
+		self.postMessage({ type: 'error', error: `Untrusted message origin: ${messageOrigin}` });
+		return;
+	}
+
+	const { id, action, code } = e.data;
+
+	if (action === 'init') {
+		self.postMessage({ id, type: 'init_complete', success: true });
+		return;
+	}
+
+	if (action === 'run') {
+		self.postMessage({ type: 'status', status: 'running' });
+		const startTime = performance.now();
+		const lines: string[] = [];
+		const print = (...args: unknown[]) =>
+			lines.push(
+				args
+					.map((a) => (typeof a === 'string' ? a : JSON.stringify(a, null, 2)))
+					.join(' ')
+			);
+		let error: string | undefined;
+		try {
+			// eslint-disable-next-line @typescript-eslint/no-implied-eval
+			const fn = new Function('console', `"use strict";\n${code || ''}`);
+			fn({ log: print, error: print, warn: print, info: print });
+		} catch (err: any) {
+			error = err?.stack || err?.message || String(err);
+		}
+		self.postMessage({
+			id,
+			type: 'run_result',
+			success: !error,
+			output: lines.join('\n'),
+			error,
+			durationMs: Math.round(performance.now() - startTime)
+		});
+		self.postMessage({ type: 'status', status: 'ready' });
+		return;
+	}
+};
+
+export {};

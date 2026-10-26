@@ -5,7 +5,7 @@
 	import { browser } from '$app/environment';
 	import type { QuestionContent } from '$data/curriculum/types';
 	import { unifiedExecutor } from '$processes/code-execution/unified-executor';
-	import { detectLanguage } from '$processes/code-execution/detect-language';
+	import { detectLanguage, isLanguageSelectable, DSA_LANGUAGES } from '$processes/code-execution/detect-language';
 	import { loadUserCode } from '$processes/code-execution/load-user-code';
 	import { saveUserCode } from '$processes/code-execution/save-user-code';
 	import { draftSync } from '$processes/code-execution/draft-sync.svelte';
@@ -192,8 +192,26 @@
 			// storage blocked: the size just won't persist
 		}
 	});
-	let language = $derived(content ? detectLanguage(content) : 'python');
+	// For DSA questions the student can pick their language; everything else stays
+	// auto-detected from content. selectedLanguage is reset to the auto-detected
+	// default whenever content changes (see the $effect below).
+	let selectedLanguage = $state<ReturnType<typeof detectLanguage> | null>(null);
+	let languageSelectable = $derived(content ? isLanguageSelectable(content) : false);
+	let language = $derived(
+		languageSelectable && selectedLanguage ? selectedLanguage : content ? detectLanguage(content) : 'python'
+	);
 	let isSql = $derived(language === 'sql');
+
+	const LANGUAGE_LABELS: Record<string, string> = {
+		python: 'Python',
+		javascript: 'JavaScript',
+		cpp: 'C++'
+	};
+
+	function handleLanguageChange(next: string) {
+		selectedLanguage = next as ReturnType<typeof detectLanguage>;
+		unifiedExecutor.setLanguage(selectedLanguage);
+	}
 	let lastSavedAt = $state<number | null>(null);
 
 	// Resizable panes: left guide/code split, and code/console split within
@@ -262,6 +280,7 @@
 			// onMount-only call would miss that second case entirely, since
 			// SvelteKit reuses this component across /ide/[id] param changes
 			// rather than remounting it.
+			selectedLanguage = null;
 			unifiedExecutor.init(content);
 			userCode = loadUserCode(content.id, content.starterCode);
 			editedSinceLoad = false;
@@ -724,7 +743,19 @@
 					>
 						<div class="flex items-center gap-2">
 							<Code2 class="size-4 text-(--ide-accent)" />
-							<span class="text-sm font-medium text-foreground">{isSql ? 'SQL' : 'Python'}</span>
+							{#if languageSelectable}
+								<select
+									class="rounded-md border border-border bg-secondary px-1.5 py-0.5 text-sm font-medium text-foreground"
+									value={language}
+									onchange={(e) => handleLanguageChange((e.target as HTMLSelectElement).value)}
+								>
+									{#each DSA_LANGUAGES as lang (lang)}
+										<option value={lang}>{LANGUAGE_LABELS[lang]}</option>
+									{/each}
+								</select>
+							{:else}
+								<span class="text-sm font-medium text-foreground">{isSql ? 'SQL' : 'Python'}</span>
+							{/if}
 						</div>
 						<div class="flex items-center gap-2">
 							{#if !isSql}
@@ -862,7 +893,13 @@
 		<IdeStatusBar
 			runtimeState={$runtimeState}
 			runtimeText={runtimeStatusText}
-			language={isSql ? 'SQL (SQLite)' : 'Python 3.12'}
+			language={isSql
+			? 'SQL (SQLite)'
+			: language === 'javascript'
+				? 'JavaScript'
+				: language === 'cpp'
+					? 'C++ (JSCPP)'
+					: 'Python 3.12'}
 			line={cursorPos.line}
 			col={cursorPos.col}
 			saved={lastSavedAt !== null}
