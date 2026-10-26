@@ -205,7 +205,8 @@
 	const LANGUAGE_LABELS: Record<string, string> = {
 		python: 'Python',
 		javascript: 'JavaScript',
-		cpp: 'C++'
+		cpp: 'C++',
+		go: 'Go'
 	};
 
 	function handleLanguageChange(next: string) {
@@ -899,7 +900,9 @@
 				? 'JavaScript'
 				: language === 'cpp'
 					? 'C++ (JSCPP)'
-					: 'Python 3.12'}
+					: language === 'go'
+						? 'Go (Yaegi)'
+						: 'Python 3.12'}
 			line={cursorPos.line}
 			col={cursorPos.col}
 			saved={lastSavedAt !== null}

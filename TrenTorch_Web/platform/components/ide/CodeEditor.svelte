@@ -22,7 +22,7 @@
 		onCursorChange = () => {},
 		// eslint-disable-next-line no-useless-assignment -- placeholder replaced by rebuildEditor() once CodeMirror loads
 		reindent = $bindable<() => void>(() => {}),
-		language = 'python' as 'python' | 'sql' | 'javascript' | 'cpp',
+		language = 'python' as 'python' | 'sql' | 'javascript' | 'cpp' | 'java' | 'go',
 		fontSize = $bindable(EDITOR_FONT_DEFAULT),
 		palette = IDE_THEMES[0].editor,
 		dark = true
@@ -32,7 +32,7 @@
 		onChange?: (val: string) => void;
 		onCursorChange?: (pos: { line: number; col: number }) => void;
 		reindent?: () => void;
-		language?: 'python' | 'sql' | 'javascript' | 'cpp';
+		language?: 'python' | 'sql' | 'javascript' | 'cpp' | 'java' | 'go';
 		fontSize?: number;
 		/** Editor and syntax colours of the chosen IDE theme (see ide-themes.ts). */
 		palette?: IdeEditorPalette;
@@ -57,6 +57,8 @@
 		sqlite: any;
 		javascript: any;
 		cpp: any;
+		go: any;
+		StreamLanguage: any;
 		keymap: any;
 		HighlightStyle: any;
 		syntaxHighlighting: any;
@@ -121,7 +123,7 @@
 	}
 
 	async function loadCm() {
-		const [cmMod, stateMod, pyMod, sqlMod, jsMod, cppMod, viewMod, langMod, highlightMod, commandsMod] =
+		const [cmMod, stateMod, pyMod, sqlMod, jsMod, cppMod, goMod, viewMod, langMod, highlightMod, commandsMod] =
 			await Promise.all([
 				import('codemirror'),
 				import('@codemirror/state'),
@@ -129,6 +131,7 @@
 				import('@codemirror/lang-sql'),
 				import('@codemirror/lang-javascript'),
 				import('@codemirror/lang-cpp'),
+				import('@codemirror/legacy-modes/mode/go'),
 				import('@codemirror/view'),
 				import('@codemirror/language'),
 				import('@lezer/highlight'),
@@ -147,6 +150,8 @@
 			sqlite: sqlMod.SQLite,
 			javascript: jsMod.javascript,
 			cpp: cppMod.cpp,
+			go: goMod.go,
+			StreamLanguage: langMod.StreamLanguage,
 			keymap: viewMod.keymap,
 			HighlightStyle: langMod.HighlightStyle,
 			syntaxHighlighting: langMod.syntaxHighlighting,
@@ -166,7 +171,7 @@
 			const state = view.state;
 			if (state.selection.ranges.some((range: any) => !range.empty))
 				return cm?.indentMore(view) ?? false;
-			const size = language === 'sql' || language === 'javascript' ? 2 : 4;
+			const size = language === 'sql' || language === 'javascript' || language === 'go' ? 2 : 4;
 			const head = state.selection.main.head;
 			const column = head - state.doc.lineAt(head).from;
 			view.dispatch(state.replaceSelection(' '.repeat(size - (column % size))));
@@ -210,8 +215,12 @@
 						? cm.javascript()
 						: language === 'cpp'
 							? cm.cpp()
-							: cm.python(),
-				cm.indentUnit.of(language === 'sql' || language === 'javascript' ? '  ' : '    '),
+							: language === 'go'
+								? cm.StreamLanguage.define(cm.go)
+								: cm.python(),
+				cm.indentUnit.of(
+					language === 'sql' || language === 'javascript' || language === 'go' ? '  ' : '    '
+				),
 				cm.EditorView.theme(themeSpec(palette), { dark }),
 				cm.syntaxHighlighting(cm.HighlightStyle.define(highlightSpec(cm.tags, palette))),
 				updateListener,

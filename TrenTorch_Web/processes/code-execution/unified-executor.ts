@@ -10,9 +10,15 @@ import { pyodideService } from './pyodide-service';
 import { sqlService } from './sql-service';
 import { jsService } from './js-service';
 import { cppService } from './cpp-service';
+import { goService } from './go-service';
 import { detectLanguage, type Language } from './detect-language';
 
-type Service = typeof pyodideService | typeof sqlService | typeof jsService | typeof cppService;
+type Service =
+	| typeof pyodideService
+	| typeof sqlService
+	| typeof jsService
+	| typeof cppService
+	| typeof goService;
 
 function serviceFor(language: Language): Service {
 	switch (language) {
@@ -22,6 +28,8 @@ function serviceFor(language: Language): Service {
 			return jsService;
 		case 'cpp':
 			return cppService;
+		case 'go':
+			return goService;
 		default:
 			return pyodideService;
 	}
@@ -90,6 +98,9 @@ class UnifiedExecutor {
 		if (this.language === 'cpp') {
 			return cppService.runCode(code);
 		}
+		if (this.language === 'go') {
+			return goService.runCode(code);
+		}
 		return pyodideService.runCode(code);
 	}
 
@@ -114,6 +125,9 @@ class UnifiedExecutor {
 		}
 		if (this.language === 'cpp') {
 			return cppService.runTests();
+		}
+		if (this.language === 'go') {
+			return goService.runTests();
 		}
 		return pyodideService.runTests(code, testHarnessCode, contentId, sampleLimit);
 	}
@@ -140,6 +154,9 @@ class UnifiedExecutor {
 		}
 		if (this.language === 'cpp') {
 			return cppService.runCustomTest();
+		}
+		if (this.language === 'go') {
+			return goService.runCustomTest();
 		}
 		return pyodideService.runCustomTest(
 			code,
