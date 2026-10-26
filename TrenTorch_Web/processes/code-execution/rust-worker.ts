@@ -1,13 +1,22 @@
 // Web Worker for Rust execution via a real rustc compiled to WASM (wasm32-wasip1,
 // from the Weblings/rust-in-wasm project). Genuinely compiles and runs Rust source
 // inside the browser, off the main thread, via a pure-JS WASI shim.
-// rustc.wasm (~88MB) and the sysroot bundle (~71MB) are static assets, fetched
-// lazily only on the first Rust run.
+// rustc.wasm (~88MB) and the sysroot bundle (~71MB) are static assets, shipped
+// gzip-compressed (~20MB / ~24MB) and fetched lazily only on the first Rust run.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Fd, File, Directory, PreopenDirectory, WASI } from './rust-vendor/index.js';
 
-const RUSTC_URL = '/rust-runtime/rustc.wasm';
-const BUNDLE_URL = '/rust-runtime/sysroot-wasip1.bundle';
+const RUSTC_URL = '/rust-runtime/rustc.wasm.gz';
+const BUNDLE_URL = '/rust-runtime/sysroot-wasip1.bundle.gz';
+
+// Both assets are pre-gzipped on disk (not served via Content-Encoding), so
+// they decompress client-side via the browser's native gzip decoder.
+async function fetchGunzipped(url: string): Promise<ArrayBuffer> {
+	const resp = await fetch(url);
+	if (!resp.ok) throw new Error(`fetch ${url}: ${resp.status}`);
+	const stream = resp.body!.pipeThrough(new DecompressionStream('gzip'));
+	return await new Response(stream).arrayBuffer();
+}
 
 let rustcModule: WebAssembly.Module | null = null;
 let stdSysroot: Map<string, InstanceType<typeof File>> | null = null;
@@ -55,14 +64,11 @@ let runtimeReady: Promise<void> | null = null;
 function ensureRuntime(): Promise<void> {
 	if (runtimeReady) return runtimeReady;
 	runtimeReady = (async () => {
-		const [rustcResp, bundleResp] = await Promise.all([fetch(RUSTC_URL), fetch(BUNDLE_URL)]);
-		if (!rustcResp.ok) throw new Error(`fetch rustc.wasm: ${rustcResp.status}`);
-		if (!bundleResp.ok) throw new Error(`fetch sysroot bundle: ${bundleResp.status}`);
-		const [module, bundleBytes] = await Promise.all([
-			WebAssembly.compileStreaming(rustcResp),
-			bundleResp.arrayBuffer()
+		const [rustcBytes, bundleBytes] = await Promise.all([
+			fetchGunzipped(RUSTC_URL),
+			fetchGunzipped(BUNDLE_URL)
 		]);
-		rustcModule = module;
+		rustcModule = await WebAssembly.compile(rustcBytes);
 		stdSysroot = parseBundle(new Uint8Array(bundleBytes));
 	})();
 	return runtimeReady;
