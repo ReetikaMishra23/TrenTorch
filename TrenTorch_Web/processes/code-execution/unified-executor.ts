@@ -45,7 +45,7 @@ class UnifiedExecutor {
 		this.bind(pyodideService);
 	}
 
-	private bind(service: typeof pyodideService | typeof sqlService): void {
+	private bind(service: Service): void {
 		this.unbind.forEach((stop) => stop());
 		this.unbind = [
 			service.runtimeState.subscribe((v) => this.runtimeState.set(v)),

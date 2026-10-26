@@ -55,6 +55,8 @@
 		python: any;
 		sql: any;
 		sqlite: any;
+		javascript: any;
+		cpp: any;
 		keymap: any;
 		HighlightStyle: any;
 		syntaxHighlighting: any;
