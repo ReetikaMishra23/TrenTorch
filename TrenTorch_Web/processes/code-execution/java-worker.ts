@@ -53,10 +53,9 @@ async function runJava(source: string): Promise<{ output: string; error: string 
 }
 
 self.onmessage = async (e: MessageEvent) => {
-	const trustedOrigins = new Set([self.location.origin, 'null']);
-	const messageOrigin = typeof (e as any).origin === 'string' ? (e as any).origin : '';
-	if (messageOrigin && !trustedOrigins.has(messageOrigin)) {
-		self.postMessage({ type: 'error', error: `Untrusted message origin: ${messageOrigin}` });
+	// A dedicated worker's messages carry an empty origin; anything else must be this site.
+	if (e.origin !== '' && e.origin !== self.location.origin && e.origin !== 'null') {
+		self.postMessage({ type: 'error', error: `Untrusted message origin: ${e.origin}` });
 		return;
 	}
 
