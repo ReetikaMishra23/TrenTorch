@@ -3,6 +3,7 @@ name: sheet-max-area-of-island
 title: 'Largest Island'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Beginner
+theory: flood-fill-and-counting-islands
 ---
 
 ## Statement

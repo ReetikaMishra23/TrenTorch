@@ -3,7 +3,7 @@ name: sheet-cheapest-flights-within-k-stops
 title: 'Cheapest Flights Within K Stops'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Advanced
-theory: strategy-three-unroll-the-cycle-into-the-state
+theory: cheapest-flights-within-k-stops
 ---
 
 ## Statement

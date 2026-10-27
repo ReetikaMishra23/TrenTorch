@@ -3,6 +3,7 @@ name: sheet-connect-the-network
 title: 'Operations to Connect the Network'
 tags: [dsa-sheet, graphs, disjoint-sets]
 difficulty: Intermediate
+theory: spotting-cycles
 ---
 
 ## Statement

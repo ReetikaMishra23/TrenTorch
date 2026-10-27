@@ -3,6 +3,7 @@ name: sheet-eventual-safe-states
 title: 'Eventual Safe Nodes'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Advanced
+theory: eventual-safe-states
 ---
 
 ## Statement

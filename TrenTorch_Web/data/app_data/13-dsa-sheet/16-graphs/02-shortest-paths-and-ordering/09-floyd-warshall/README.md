@@ -3,6 +3,7 @@ name: sheet-floyd-warshall
 title: 'Floyd-Warshall: All Pairs'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Advanced
+theory: floyd-warshall-all-pairs
 ---
 
 ## Statement

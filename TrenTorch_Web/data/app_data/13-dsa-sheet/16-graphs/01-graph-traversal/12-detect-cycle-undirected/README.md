@@ -3,6 +3,7 @@ name: sheet-detect-cycle-undirected
 title: 'Cycle in an Undirected Graph'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Intermediate
+theory: cycles-in-an-undirected-graph
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-alien-dictionary
 title: 'Alien Dictionary'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Mastery
+theory: alien-dictionary
 ---
 
 ## Statement

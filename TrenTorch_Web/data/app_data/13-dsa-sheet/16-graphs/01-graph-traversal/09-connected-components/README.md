@@ -3,6 +3,7 @@ name: sheet-connected-components
 title: 'Number of Connected Components'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Beginner
+theory: connected-components
 ---
 
 ## Statement

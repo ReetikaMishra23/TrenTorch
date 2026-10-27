@@ -3,6 +3,7 @@ name: sheet-distance-to-nearest-zero
 title: 'Distance to the Nearest Zero'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Intermediate
+theory: many-starting-points-at-once
 ---
 
 ## Statement

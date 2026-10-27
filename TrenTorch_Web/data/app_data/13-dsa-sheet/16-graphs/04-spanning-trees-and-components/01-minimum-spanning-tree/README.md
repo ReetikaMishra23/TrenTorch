@@ -3,6 +3,7 @@ name: sheet-minimum-spanning-tree
 title: 'Minimum Spanning Tree'
 tags: [dsa-sheet, graphs, spanning-trees-and-components]
 difficulty: Advanced
+theory: kruskal-cheapest-edge-first
 ---
 
 ## Statement

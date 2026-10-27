@@ -3,6 +3,7 @@ name: sheet-making-a-large-island
 title: 'Making a Large Island'
 tags: [dsa-sheet, graphs, disjoint-sets]
 difficulty: Mastery
+theory: sizes-live-at-the-leader
 ---
 
 ## Statement

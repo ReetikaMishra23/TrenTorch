@@ -3,6 +3,7 @@ name: sheet-valid-path
 title: 'Is There a Path?'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Beginner
+theory: connected-components
 ---
 
 ## Statement

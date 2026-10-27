@@ -3,6 +3,7 @@ name: sheet-word-ladder
 title: 'Word Ladder'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Advanced
+theory: graphs-made-from-a-rule-word-ladder
 ---
 
 ## Statement

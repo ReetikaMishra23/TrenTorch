@@ -3,6 +3,7 @@ name: sheet-is-graph-a-tree
 title: 'Is the Graph a Tree?'
 tags: [dsa-sheet, graphs, disjoint-sets]
 difficulty: Beginner
+theory: spotting-cycles
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-flood-fill
 title: 'Flood Fill'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Beginner
+theory: flood-fill-and-counting-islands
 ---
 
 ## Statement

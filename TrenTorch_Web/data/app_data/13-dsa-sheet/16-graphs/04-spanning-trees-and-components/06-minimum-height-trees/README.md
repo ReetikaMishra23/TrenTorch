@@ -3,6 +3,7 @@ name: sheet-minimum-height-trees
 title: 'Minimum Height Trees'
 tags: [dsa-sheet, graphs, spanning-trees-and-components]
 difficulty: Advanced
+theory: minimum-height-trees
 ---
 
 ## Statement

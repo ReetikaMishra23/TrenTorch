@@ -3,6 +3,7 @@ name: sheet-pacific-atlantic-water-flow
 title: 'Pacific Atlantic Water Flow'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Advanced
+theory: dfs-from-the-borders
 ---
 
 ## Statement

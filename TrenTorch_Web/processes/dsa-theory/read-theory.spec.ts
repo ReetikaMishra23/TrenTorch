@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { headingSlug, listTheorySteps, renderTheory } from './read-theory';
 
@@ -26,6 +28,29 @@ describe('renderTheory', () => {
 			expect(page.toc.length).toBeGreaterThan(0);
 			expect(page.html).toContain('<div class="code-tabs">');
 			for (const chapter of page.toc) expect(page.html).toContain(`id="${chapter.id}"`);
+		},
+		30_000
+	);
+});
+
+describe('question theory anchors', () => {
+	it.each(listTheorySteps().map((step) => [step.step, step] as const))(
+		'%s: every question links to an existing heading',
+		(_name, step) => {
+			const html = renderTheory(step).html;
+			const dir = step.file.replace(/theory\.md$/, '');
+			const broken: string[] = [];
+			for (const topic of readdirSync(dir, { withFileTypes: true })) {
+				if (!topic.isDirectory()) continue;
+				for (const question of readdirSync(join(dir, topic.name), { withFileTypes: true })) {
+					if (!question.isDirectory()) continue;
+					const readme = readFileSync(join(dir, topic.name, question.name, 'README.md'), 'utf8');
+					const anchor = /^theory: (.+)$/m.exec(readme)?.[1];
+					if (anchor && !html.includes(`id="${anchor}"`))
+						broken.push(`${question.name}: ${anchor}`);
+				}
+			}
+			expect(broken).toEqual([]);
 		},
 		30_000
 	);

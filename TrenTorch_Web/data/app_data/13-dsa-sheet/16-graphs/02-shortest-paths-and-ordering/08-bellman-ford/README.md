@@ -3,6 +3,7 @@ name: sheet-bellman-ford
 title: 'Bellman-Ford With Negative Edges'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Advanced
+theory: bellman-ford-and-negative-weights
 ---
 
 ## Statement

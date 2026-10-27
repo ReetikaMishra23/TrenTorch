@@ -3,6 +3,7 @@ name: sheet-rotting-oranges
 title: 'Rotting Oranges'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Intermediate
+theory: spreading-over-time-rotting-oranges
 ---
 
 ## Statement

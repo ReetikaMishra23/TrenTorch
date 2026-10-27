@@ -3,6 +3,7 @@ name: sheet-satisfiability-of-equality-equations
 title: 'Equality Equations'
 tags: [dsa-sheet, graphs, disjoint-sets]
 difficulty: Intermediate
+theory: grouping-by-a-rule
 ---
 
 ## Statement

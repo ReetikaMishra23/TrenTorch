@@ -3,6 +3,7 @@ name: sheet-is-graph-bipartite
 title: 'Is the Graph Bipartite?'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Intermediate
+theory: bipartite-graphs-and-two-colours
 ---
 
 ## Statement

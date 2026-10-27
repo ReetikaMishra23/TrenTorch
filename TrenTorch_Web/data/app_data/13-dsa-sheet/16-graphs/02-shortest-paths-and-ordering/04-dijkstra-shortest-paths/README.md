@@ -3,7 +3,7 @@ name: sheet-dijkstra-shortest-paths
 title: 'Dijkstra: Shortest Distances'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Advanced
-theory: strategy-two-let-dijkstra-supply-the-order
+theory: dijkstra-the-idea-and-a-worked-example
 ---
 
 ## Statement

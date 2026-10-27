@@ -3,6 +3,7 @@ name: sheet-redundant-connection
 title: 'Redundant Connection'
 tags: [dsa-sheet, graphs, disjoint-sets]
 difficulty: Intermediate
+theory: spotting-cycles
 ---
 
 ## Statement

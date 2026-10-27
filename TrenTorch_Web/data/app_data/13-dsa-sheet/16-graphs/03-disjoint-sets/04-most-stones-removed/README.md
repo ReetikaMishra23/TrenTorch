@@ -3,6 +3,7 @@ name: sheet-most-stones-removed
 title: 'Most Stones Removed'
 tags: [dsa-sheet, graphs, disjoint-sets]
 difficulty: Advanced
+theory: grouping-by-a-rule
 ---
 
 ## Statement

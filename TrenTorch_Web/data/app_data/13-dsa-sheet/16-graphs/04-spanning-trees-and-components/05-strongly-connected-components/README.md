@@ -3,7 +3,7 @@ name: sheet-strongly-connected-components
 title: 'Strongly Connected Components'
 tags: [dsa-sheet, graphs, spanning-trees-and-components]
 difficulty: Mastery
-theory: strategy-one-collapse-every-cycle-strongly-connected-components
+theory: strongly-connected-components
 ---
 
 ## Statement

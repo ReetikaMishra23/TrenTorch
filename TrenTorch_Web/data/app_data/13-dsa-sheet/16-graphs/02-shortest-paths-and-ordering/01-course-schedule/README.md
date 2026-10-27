@@ -3,7 +3,7 @@ name: sheet-course-schedule
 title: 'Course Schedule'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Intermediate
-theory: topological-order-and-bottom-up-dp
+theory: course-schedule
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-shortest-path-in-binary-matrix
 title: 'Shortest Path in a Binary Matrix'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Intermediate
+theory: bfs-on-a-grid-shortest-path-in-a-binary-matrix
 ---
 
 ## Statement

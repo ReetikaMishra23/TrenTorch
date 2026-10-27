@@ -3,6 +3,7 @@ name: sheet-min-cost-to-connect-all-points
 title: 'Connect All Points'
 tags: [dsa-sheet, graphs, spanning-trees-and-components]
 difficulty: Advanced
+theory: points-on-a-plane
 ---
 
 ## Statement

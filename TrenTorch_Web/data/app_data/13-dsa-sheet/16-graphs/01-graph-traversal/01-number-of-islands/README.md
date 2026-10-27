@@ -3,6 +3,7 @@ name: sheet-number-of-islands
 title: 'Number of Islands'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Beginner
+theory: flood-fill-and-counting-islands
 ---
 
 ## Statement
