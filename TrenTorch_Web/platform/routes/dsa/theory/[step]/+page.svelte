@@ -128,7 +128,7 @@
 	</a>
 	<h1 class="mb-6 text-3xl font-semibold tracking-tight">Theory: {theory.title}</h1>
 
-	<div class="grid gap-8 lg:grid-cols-[14.5rem_minmax(0,1fr)]">
+	<div class="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[14.5rem_minmax(0,1fr)]">
 		<nav
 			aria-label="On this page"
 			class="theory-toc lg:sticky lg:top-4 lg:self-start"
@@ -153,7 +153,7 @@
 				{/if}
 			{/each}
 		</nav>
-		<article class="question-prose theory-body" bind:this={content}>
+		<article class="question-prose theory-body min-w-0" bind:this={content}>
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised with DOMPurify at build time -->
 			{@html theory.html}
 		</article>
@@ -261,6 +261,16 @@
 	.theory-body :global(h2),
 	.theory-body :global(h3) {
 		scroll-margin-top: 1.5rem;
+	}
+	/* On a phone, wide formulas and tables scroll sideways instead of widening the page. */
+	.theory-body :global(.katex-display) {
+		overflow-x: auto;
+		overflow-y: hidden;
+	}
+	.theory-body :global(table) {
+		display: block;
+		max-width: 100%;
+		overflow-x: auto;
 	}
 	.theory-body :global(.code-tab-bar) {
 		display: flex;
