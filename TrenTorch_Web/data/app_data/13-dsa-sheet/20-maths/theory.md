@@ -1166,7 +1166,6 @@ vector<long long> continuedFraction(long long a, long long b) {
 
 For example, `continuedFraction(13, 5)` returns `{2, 1, 1, 2}`, representing $13/5=[2;1,1,2]$.
 
-
 You do not need to master the full theory immediately. First understand that the Euclidean algorithm repeatedly separates quotient and remainder; continued fractions record those quotients. Then learn how to generate convergents using
 
 $$p_i=a_i p_{i-1}+p_{i-2},\qquad q_i=a_i q_{i-1}+q_{i-2}.$$
@@ -1188,7 +1187,7 @@ $$c_k=\sum_{i+j=k}a_i b_j.$$
 The direct method takes $O(nm)$ time. The Fast Fourier Transform (FFT) evaluates the polynomials at carefully chosen complex roots of unity, multiplies the values, then transforms back. This reduces the time to $O(N\log N)$ for a padded size $N$.
 
 The Number Theoretic Transform (NTT) uses modular arithmetic instead of floating-point complex numbers. It requires a modulus with suitable roots of unity, commonly a prime of the form $p=c\cdot2^k+1$, and a primitive root. For transform length $N$, we need an element of order $N$ modulo $p$. After pointwise multiplication, the inverse transform uses the inverse root and the modular inverse of $N$.
- 
+
 **NTT implementation stages:** choose a power-of-two length $N$ at least $n+m-1$; verify $N\mid(p-1)$; derive a root of order $N$; bit-reverse the indices; run iterative butterfly stages; multiply transformed coefficients pointwise; run the inverse stages using the inverse root; then multiply each coefficient by $N^{-1}\pmod p$. This is intentionally a stage-by-stage guide rather than a universal copy-paste implementation, since the modulus, root and supported length must agree.
 
 A full NTT implementation is lengthy and depends on the chosen modulus and supported transform length, so this course gives the algorithm's essential stages rather than a copy-paste universal function: pad both coefficient arrays to a suitable power of two, transform both arrays, multiply corresponding entries modulo $p$, apply the inverse transform, and scale by $N^{-1}\pmod p$. Before coding, verify that $N\mid(p-1)$ and that the selected root has order exactly $N$.

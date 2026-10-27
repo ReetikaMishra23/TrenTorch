@@ -127,7 +127,7 @@ The structure "combine the answers of all successors" works with any combining o
 
 $$\text{ways}(v)=\begin{cases}1 & v=t,\\ \sum_{(v,u)\in E}\text{ways}(u)&\text{otherwise,}\end{cases}$$
 
-usually modulo a prime. If we want the cheapest path with edge costs, we take a minimum of $c(v,u)+\text{best}(u)$. If we want to know whether some path of a certain kind exists, we take a logical OR. The skeleton is always the same: *state = vertex, transition = fold over outgoing edges, order = reverse topological*.
+usually modulo a prime. If we want the cheapest path with edge costs, we take a minimum of $c(v,u)+\text{best}(u)$. If we want to know whether some path of a certain kind exists, we take a logical OR. The skeleton is always the same: _state = vertex, transition = fold over outgoing edges, order = reverse topological_.
 
 Two practical remarks. First, the DP needs states to be "complete": if the problem has additional requirements (for example "the path must pass through exactly three special vertices"), you add that information to the state, so the state becomes $(v,\text{number of special vertices passed})$. This is the first appearance of an idea that dominates later chapters: **enrich the state until the future depends only on the state**. Second, to print the path rather than just its length, store for each vertex the successor that attained the optimum and follow these pointers.
 
@@ -184,7 +184,7 @@ for (int k = 0; k < n; k++)
 
 A very common bug is to put $k$ in the innermost loop. It must be the outermost, because it is the "layer" index of the DP.
 
-**Dijkstra.** The DP formulation is $d(v)=\min_{(u,v)\in E}(d(u)+w(u,v))$, which on a graph with cycles has circular dependencies. Dijkstra's algorithm resolves the difficulty by *discovering* a valid order on the fly. When all weights are non-negative, the unfinished vertex with the smallest tentative distance already has its final distance (no other path can sneak in with a smaller one), so we can finalize it, and then every state it feeds gets updated. The priority queue is simply the device that picks the next state in a valid order. The same observation, that Dijkstra produces an order in which DP may be run, is used in Chapter 7.
+**Dijkstra.** The DP formulation is $d(v)=\min_{(u,v)\in E}(d(u)+w(u,v))$, which on a graph with cycles has circular dependencies. Dijkstra's algorithm resolves the difficulty by _discovering_ a valid order on the fly. When all weights are non-negative, the unfinished vertex with the smallest tentative distance already has its final distance (no other path can sneak in with a smaller one), so we can finalize it, and then every state it feeds gets updated. The priority queue is simply the device that picks the next state in a valid order. The same observation, that Dijkstra produces an order in which DP may be run, is used in Chapter 7.
 
 ## 3.5 The shortest-path DAG
 
@@ -194,7 +194,7 @@ Many questions about shortest paths now become DP on this DAG: counting the shor
 
 ## 3.6 Exercises for this chapter
 
-AtCoder Educational DP Contest problem G (Longest Path); CSES *Longest Flight Route* and *Game Routes*; CSES *Shortest Routes I* and *II*; CSES *High Score* (longest path, with the twist of detecting positive cycles reachable on a route to the target).
+AtCoder Educational DP Contest problem G (Longest Path); CSES _Longest Flight Route_ and _Game Routes_; CSES _Shortest Routes I_ and _II_; CSES _High Score_ (longest path, with the twist of detecting positive cycles reachable on a route to the target).
 
 ---
 
@@ -208,9 +208,9 @@ A **strongly connected component (SCC)** is a maximal set of vertices in which e
 
 This is the right tool whenever the question is insensitive to what happens inside a cycle. A classical example: each room has some coins, you walk along one-way corridors, and you may revisit rooms (but collect the coins in a room only once). Inside an SCC you can reach every room, so you can collect all coins there. The value of a component is therefore the sum of its coins, and the problem becomes "find the most valuable path in the DAG of components".
 
-**Finding SCCs with Kosaraju's algorithm.** Run a DFS on the graph and record the vertices in the order in which their DFS calls **finish**. Then process the vertices in **decreasing** finishing time, running DFS on the *reversed* graph; each tree found by these searches is one SCC.
+**Finding SCCs with Kosaraju's algorithm.** Run a DFS on the graph and record the vertices in the order in which their DFS calls **finish**. Then process the vertices in **decreasing** finishing time, running DFS on the _reversed_ graph; each tree found by these searches is one SCC.
 
-Why does this work? Consider two components $A$ and $B$ with an edge from $A$ to $B$ in the original graph. The last vertex to finish in $A\cup B$ always belongs to $A$: if the first DFS enters $A$ first, it will still be running in $A$ when it discovers and fully explores $B$, so $A$'s first vertex finishes later than everything in $B$; if it enters $B$ first, it finishes all of $B$ without ever reaching $A$ (there is no edge back), and $A$ finishes later. So decreasing finish order lists components in a topological order of the condensation: the first vertex is in a source component. In the reversed graph, the edges leaving that component now point *into* it, so a DFS from its vertex cannot escape to any other unvisited component, and it collects exactly one SCC. Repeating this peels the components off one at a time.
+Why does this work? Consider two components $A$ and $B$ with an edge from $A$ to $B$ in the original graph. The last vertex to finish in $A\cup B$ always belongs to $A$: if the first DFS enters $A$ first, it will still be running in $A$ when it discovers and fully explores $B$, so $A$'s first vertex finishes later than everything in $B$; if it enters $B$ first, it finishes all of $B$ without ever reaching $A$ (there is no edge back), and $A$ finishes later. So decreasing finish order lists components in a topological order of the condensation: the first vertex is in a source component. In the reversed graph, the edges leaving that component now point _into_ it, so a DFS from its vertex cannot escape to any other unvisited component, and it collects exactly one SCC. Repeating this peels the components off one at a time.
 
 ```python
 g = []
@@ -360,7 +360,7 @@ while (!pq.empty()) {
 }
 ```
 
-This pattern, called a **layered graph** or product graph, is enormously general. A state like (vertex, remaining fuel), (vertex, number of tickets), (vertex, parity of steps), (vertex, last color used), or (vertex, set of keys held) turns a problem on a graph with side constraints into an ordinary shortest-path or DP problem on a bigger graph. The price is the size of the state space, so the art is to choose the *smallest* extra information that makes the future independent of the past.
+This pattern, called a **layered graph** or product graph, is enormously general. A state like (vertex, remaining fuel), (vertex, number of tickets), (vertex, parity of steps), (vertex, last color used), or (vertex, set of keys held) turns a problem on a graph with side constraints into an ordinary shortest-path or DP problem on a bigger graph. The price is the size of the state space, so the art is to choose the _smallest_ extra information that makes the future independent of the past.
 
 ## 7.4 Strategy four: matrix exponentiation for counting walks
 
@@ -424,6 +424,6 @@ For "where after $k$ steps" we use **binary lifting**: let $up[j][v]$ be the ver
 
 ## 7.6 Exercises for this chapter
 
-CSES *Coin Collector*, *Planets and Kingdoms*, *Giant Pizza* (SCC and 2-SAT); CSES *Investigation* (counting shortest paths); CSES *Flight Discount*; CSES *Planets Cycles* and *Planet Queries I* (functional graphs); CSES *Graph Paths I* (matrix power).
+CSES _Coin Collector_, _Planets and Kingdoms_, _Giant Pizza_ (SCC and 2-SAT); CSES _Investigation_ (counting shortest paths); CSES _Flight Discount_; CSES _Planets Cycles_ and _Planet Queries I_ (functional graphs); CSES _Graph Paths I_ (matrix power).
 
 ---

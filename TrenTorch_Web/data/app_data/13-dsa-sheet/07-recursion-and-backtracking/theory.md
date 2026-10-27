@@ -244,11 +244,9 @@ int sumTo(int n) {
 
 For `sumTo(4)`:
 
-
 $$
 S(4)=4+S(3)=4+3+S(2)=4+3+2+S(1)=4+3+2+1+S(0)=10.
 $$
-
 
 The return value travels back through the waiting calls. A frequent beginner mistake is to call the function but discard its result:
 
@@ -313,19 +311,15 @@ Writing down the meaning prevents a common error: the code may look plausible bu
 
 Factorial is defined by
 
-
 $$
 n! = 1\cdot2\cdot3\cdots n,\qquad 0!=1.
 $$
 
-
 Separate the last factor:
-
 
 $$
 n! = n\cdot(n-1)!.
 $$
-
 
 That identity directly gives the recursive solution:
 
@@ -352,11 +346,9 @@ For non-negative `n`, the time is $O(n)$, and the maximum recursion depth is $O(
 
 To compute $a^n$, one simple recurrence is
 
-
 $$
 a^n=a\cdot a^{n-1},\quad a^0=1.
 $$
-
 
 ```python
 def powerLinear(a, n):
@@ -378,11 +370,9 @@ This uses $O(n)$ multiplications and $O(n)$ stack space. Later, divide-and-conqu
 
 The Fibonacci sequence is defined by
 
-
 $$
 F(0)=0,\quad F(1)=1,\quad F(n)=F(n-1)+F(n-2).
 $$
-
 
 ```python
 def fibSlow(n):
@@ -437,11 +427,9 @@ Call it with a vector of size `n + 1` initialized to `-1`. Every state is comput
 
 The identity
 
-
 $$
 \gcd(a,b)=\gcd(b,a\bmod b)
 $$
-
 
 gives a natural recursive function:
 
@@ -529,11 +517,9 @@ The recurrence is fine for larger values, but the base case changes the meaning 
 
 If each call does constant work and makes one call on `n - 1`, then
 
-
 $$
 T(n)=T(n-1)+O(1),
 $$
-
 
 so $T(n)=O(n)$. There are `n` active calls in the worst case, so stack space is $O(n)$.
 
@@ -543,11 +529,9 @@ Examples: factorial, sum from 1 to `n`, printing a sequence recursively.
 
 If each call creates two calls on inputs around `n - 1`, a recurrence may be
 
-
 $$
 T(n)=2T(n-1)+O(1),
 $$
-
 
 which grows exponentially. Naive Fibonacci has this shape (with a slightly more precise recurrence $T(n)=T(n-1)+T(n-2)+O(1)$).
 
@@ -557,11 +541,9 @@ The number of recursive calls matters. “The function is short” does not mean
 
 If each call makes two subproblems of size $n/2$ and does $O(n)$ extra work, then
 
-
 $$
 T(n)=2T(n/2)+O(n)=O(n\log n).
 $$
-
 
 Merge sort is the classic example. The recursion tree has about $\log n$ levels, and the total work per level is $O(n)$.
 
@@ -967,6 +949,7 @@ long long sumIterative(int n) {
 Every active recursive call needs stack space. If depth is `n`, stack memory is usually $O(n)$. A recursion of depth several hundred thousand may crash depending on environment and frame size.
 
 Consider an iterative version when:
+
 - input can create a very deep chain;
 - recursion depth depends on adversarial input;
 - each frame contains large local arrays;
@@ -991,6 +974,7 @@ If a recursive call modifies a vector, string, board, or set, decide whether tha
 ## 10.6 Debugging checklist
 
 For a recursive function, write down:
+
 - the exact meaning of one call;
 - the base case and its answer;
 - the smaller state passed to every recursive call;
@@ -1056,6 +1040,7 @@ These final tasks require additional topics; they are listed as a direction for 
 Recursion is not a special kind of loop. It is a way to define a problem in terms of smaller versions of itself.
 
 A strong recursive solution has:
+
 - a precise state and meaning;
 - correct base cases;
 - a transition that reduces the problem;
@@ -1069,7 +1054,7 @@ Do not memorize code first. Learn to explain what one call means, what smaller q
 
 # Introduction (Backtracking)
 
-This course teaches backtracking from zero and builds toward the search techniques used in difficult programming contests. It assumes basic C++17 knowledge and familiarity with functions and vectors. The companion *Recursion in C++* course explains the call stack and recursive correctness in more detail; this document briefly rebuilds the ideas it needs.
+This course teaches backtracking from zero and builds toward the search techniques used in difficult programming contests. It assumes basic C++17 knowledge and familiarity with functions and vectors. The companion _Recursion in C++_ course explains the call stack and recursive correctness in more detail; this document briefly rebuilds the ideas it needs.
 
 Backtracking is not merely “recursion that tries things.” It is a disciplined way to explore a search space, reject choices that cannot lead to a valid answer, and restore state so that other choices can be explored correctly.
 
@@ -1104,7 +1089,7 @@ A basic backtracking search follows this pattern:
 2. **Explore** the consequences of that choice recursively.
 3. **Undo** the choice so the next option starts from the correct state.
 
-The undo step is often called *backtracking*. It is what lets one mutable vector or board represent many branches of the search tree without copying the entire state at every call.
+The undo step is often called _backtracking_. It is what lets one mutable vector or board represent many branches of the search tree without copying the entire state at every call.
 
 ## 1.3 First complete implementation: all subsets
 
@@ -1859,6 +1844,7 @@ For small prototypes, copying can make the logic easier. For performance-sensiti
 ## 11.3 Canonical order prevents duplicates
 
 If the same mathematical solution can be reached in multiple orders, enforce a canonical rule:
+
 - choose indices in increasing order for combinations;
 - sort values and skip equal candidates at the same recursion depth;
 - fix a starting vertex when rotations represent the same cycle;
@@ -1874,15 +1860,14 @@ Duplicate prevention is not just a speed optimization. In counting problems, dup
 
 If every state has branching factor `b` and maximum depth `d`, a full tree may contain
 
-
 $$
 1+b+b^2+\cdots+b^d = O(b^d)
 $$
 
-
 nodes when `b > 1`. A few additional operations per node do not change the exponential nature of the search.
 
 Examples:
+
 - all subsets: $O(2^n)$ nodes;
 - all permutations: $O(n!)$ leaves;
 - coloring with `k` colors: up to $k^n$ assignments;
@@ -1893,17 +1878,20 @@ Always distinguish the number of search nodes from the output size. If the task 
 ## 12.2 Backtracking or dynamic programming?
 
 Use backtracking when:
+
 - you need to enumerate solutions;
 - constraints make many branches invalid early;
 - `n` is small;
 - the state space has little overlap or you can prune effectively.
 
 Use dynamic programming when:
+
 - many branches reach the same state;
 - you need counts, feasibility, minimum cost, or maximum value;
 - the number of distinct states is manageable.
 
 Use BFS or Dijkstra when:
+
 - the goal is shortest path under the corresponding edge-weight assumptions.
 
 Use greedy algorithms when a proof shows a locally chosen option can be part of an optimal solution.
