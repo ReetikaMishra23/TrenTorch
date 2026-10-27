@@ -58,3 +58,8 @@ Filling from the back is the trick: you always know the next largest square, so 
 ## Explanation
 
 `out[i]` is filled from the last index down. The pointer with the larger absolute value supplies the next square and moves inwards.
+
+### Complexity
+
+- Time: O(n). The largest square is at one of the two ends, so two pointers fill the result from the back.
+- Space: O(n). The result list.

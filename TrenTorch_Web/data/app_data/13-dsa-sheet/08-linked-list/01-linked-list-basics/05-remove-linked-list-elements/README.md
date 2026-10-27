@@ -57,3 +57,8 @@ Several matches in a row work correctly because `prev` stays where it is until a
 ## Explanation
 
 `prev` is the last node we kept. A match is skipped by linking `prev` straight to the node after it; a non-match becomes the new `prev`.
+
+### Complexity
+
+- Time: O(n). One pass; a matching node is skipped by relinking.
+- Space: O(1). Two pointers.

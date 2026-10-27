@@ -61,3 +61,8 @@ BFS finds it more directly: the first leaf you reach in level order is the close
 ## Explanation
 
 The BFS returns the depth of the first node without children. For a tree that is deep on one side only, the recursion would otherwise visit everything.
+
+### Complexity
+
+- Time: O(n). A level-by-level search stops at the first leaf, so it visits no more than `n` nodes.
+- Space: O(w). `w` is the widest level, at most `n / 2`.

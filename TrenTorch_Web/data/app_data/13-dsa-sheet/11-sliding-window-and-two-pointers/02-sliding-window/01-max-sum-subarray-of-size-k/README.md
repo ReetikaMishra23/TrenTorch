@@ -59,3 +59,23 @@ Compute the first window directly, then slide. Each step is `O(1)`, so the whole
 ## Explanation
 
 `total` is the sum of the current window. Adding the new value and subtracting the one that left gives the next window's sum.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                          | Variables          |
+| ---------------------------------------- | ------------------ |
+| `total = sum(nums[i] for i in range(k))` | `total = 8`        |
+| `best = total`                           | `best = 8`         |
+| `total += nums[i] - nums[i - k]`         | `total = 7, i = 3` |
+| `for i in range(k, len(nums)):`          | `i = 4`            |
+| `total += nums[i] - nums[i - k]`         | `total = 9`        |
+| `best = max(best, total)`                | `best = 9`         |
+| `total += nums[i] - nums[i - k]`         | `total = 6, i = 5` |
+| `return`                                 | `returned = 9`     |
+
+### Complexity
+
+- Time: O(n). The window sum is updated by adding one value and removing one.
+- Space: O(1). A few numbers.

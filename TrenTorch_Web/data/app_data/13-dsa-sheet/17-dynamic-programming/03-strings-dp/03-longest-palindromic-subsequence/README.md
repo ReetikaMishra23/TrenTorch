@@ -59,3 +59,8 @@ A neat shortcut: the answer equals the **longest common subsequence of `s` and i
 ## Explanation
 
 `row` holds `best(i + 1, ·)` and `new` the row for `i`, filled from left to right for `j > i`.
+
+### Complexity
+
+- Time: O(n^2). Every cell of the table is computed once, in O(1).
+- Space: O(n). Two rows of the table.

@@ -56,3 +56,8 @@ That fallback means the worst case is `O(n)` (for example a list of almost all e
 ## Explanation
 
 Return `True` when `nums[mid] == target`. If the three boundary values are equal, drop one from both ends. Otherwise decide which half is sorted (`nums[lo] <= nums[mid]` means the left half) and apply the same range test as before to keep the correct half.
+
+### Complexity
+
+- Time: O(n) worst case, O(log n) when few values repeat. When `nums[lo] == nums[mid] == nums[hi]` nothing tells which half is sorted, so only one end can be dropped; a list of equal values forces a linear scan, and no algorithm can do better in that case.
+- Space: O(1). Three indices.

@@ -1,10 +1,13 @@
 def happy_number(n):
-    seen = set()
-    while n != 1 and n not in seen:
-        seen.add(n)
+    def step(x):
         total = 0
-        while n:
-            n, digit = divmod(n, 10)
+        while x:
+            x, digit = divmod(x, 10)
             total += digit * digit
-        n = total
-    return n == 1
+        return total
+
+    slow, fast = n, step(n)
+    while fast != 1 and slow != fast:
+        slow = step(slow)
+        fast = step(step(fast))
+    return fast == 1

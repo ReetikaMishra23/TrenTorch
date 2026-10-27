@@ -57,3 +57,8 @@ Python gives you both bounds: `bisect.bisect_right(nums, target) - bisect.bisect
 ## Explanation
 
 Two binary searches, one with `<` and one with `<=`, return the two bounds; their difference is the block length. It works even when the target is absent, because both searches then stop at the same index.
+
+### Complexity
+
+- Time: O(log n). Two binary searches (`bisect_left` and `bisect_right`).
+- Space: O(1). Nothing is stored.

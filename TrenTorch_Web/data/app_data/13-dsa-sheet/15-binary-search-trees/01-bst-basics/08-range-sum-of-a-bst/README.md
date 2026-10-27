@@ -62,3 +62,8 @@ When the range is narrow, this visits only the nodes near the range: `O(h + numb
 ## Explanation
 
 The two `if` branches prune; the last line adds the node and explores both sides.
+
+### Complexity
+
+- Time: O(h + m). `m` is the number of nodes inside the range: subtrees that cannot hold a value in range are skipped.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

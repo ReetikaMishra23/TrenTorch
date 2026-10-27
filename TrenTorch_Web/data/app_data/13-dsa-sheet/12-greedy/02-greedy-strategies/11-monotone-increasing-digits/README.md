@@ -56,3 +56,8 @@ Practical method: scan **from the right**; whenever `digits[i - 1] > digits[i]`,
 ## Explanation
 
 `mark` is the position from which the digits become 9. Scanning from the right lets earlier drops cascade correctly (a decreased digit may now be larger than its left neighbour).
+
+### Complexity
+
+- Time: O(d). `d` is the number of digits of `n`: two passes over the digits.
+- Space: O(d). The list of digits.

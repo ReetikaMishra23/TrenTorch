@@ -62,3 +62,8 @@ One pass, one dictionary: `O(n)` time and memory.
 ## Explanation
 
 `seen[0] = 1` accounts for the empty prefix. For each value update `prefix`, add `seen[prefix - k]` (runs ending at this value), then increment `seen[prefix]`. The lookup happens **before** recording the current prefix, so a run of length zero is never counted when `k = 0`.
+
+### Complexity
+
+- Time: O(n). One pass; a subarray ending here has sum `k` when an earlier prefix equals `prefix - k`, found with one dictionary lookup.
+- Space: O(n). The dictionary of prefix sums seen so far.

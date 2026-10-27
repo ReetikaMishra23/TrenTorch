@@ -58,3 +58,8 @@ That is still `n` terms. The values `n // j` take only about `2·sqrt(n)` differ
 ## Explanation
 
 `r = isqrt(n)`; the sum runs over `j <= r`. Doubling it counts each pair `(j, m)` once from each side, and subtracting `r × r` removes the pairs counted twice.
+
+### Complexity
+
+- Time: O(sqrt(n)). The number of pairs `(i, j)` with `i * j <= n` is counted by the hyperbola trick: sum `n // j` up to `sqrt(n)`, double it and subtract the overlap.
+- Space: O(1). A few integers.

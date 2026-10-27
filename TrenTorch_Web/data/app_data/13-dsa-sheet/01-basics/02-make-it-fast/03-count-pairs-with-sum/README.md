@@ -66,3 +66,8 @@ Counting before recording matters: it makes each pair counted once and stops a n
 Go left to right. When you reach `x`, every earlier element equal to `target - x` forms a valid pair with it, and there are `seen[target - x]` of them. Add that, then do `seen[x] += 1`.
 
 `Counter` returns `0` for missing keys, so no extra check is needed. Updating after the lookup avoids pairing an element with itself.
+
+### Complexity
+
+- Time: O(n). One pass with one hash lookup and one update per element (O(1) on average).
+- Space: O(n). The counter may hold every distinct value.

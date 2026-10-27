@@ -57,3 +57,8 @@ Keep `best[v]`, the cheapest distance from `v` to the current tree. Each round p
 ## Explanation
 
 `best` starts at infinity except for point 0. Every round adds one point and relaxes the distances to all points still outside the tree.
+
+### Complexity
+
+- Time: O(n^2). Prim's algorithm without a heap: `n` rounds, each scanning `n` points; the graph has `n^2 / 2` edges, so this is linear in the number of edges.
+- Space: O(n). The distance and visited arrays.

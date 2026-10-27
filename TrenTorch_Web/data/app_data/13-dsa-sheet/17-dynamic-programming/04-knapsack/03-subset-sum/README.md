@@ -60,3 +60,8 @@ In Python the whole table fits in **one integer used as a bitset**: bit `s` is s
 ## Explanation
 
 The shift by `x` adds `x` to every reachable sum at once, and the mask drops sums larger than the target.
+
+### Complexity
+
+- Time: O(n * T / w). `T` is the target and `w` the machine word size: each number shifts and ORs one big integer used as a bit set.
+- Space: O(T / w). The bit set.

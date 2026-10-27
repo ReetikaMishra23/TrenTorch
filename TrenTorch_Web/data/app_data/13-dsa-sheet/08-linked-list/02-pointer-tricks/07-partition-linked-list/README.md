@@ -57,3 +57,8 @@ The same "split into chains, then join" idea solves the odd-even list question.
 ## Explanation
 
 `small_tail` and `large_tail` grow two chains. `large_tail.next = None` cuts any stale pointer; `small_tail.next = large_dummy.next` joins them.
+
+### Complexity
+
+- Time: O(n). One pass appends each node to a smaller or a larger chain, then the chains are joined.
+- Space: O(1). Two dummy nodes and tail pointers.

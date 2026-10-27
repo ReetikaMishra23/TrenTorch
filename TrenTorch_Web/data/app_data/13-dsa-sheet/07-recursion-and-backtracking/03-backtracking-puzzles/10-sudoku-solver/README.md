@@ -41,3 +41,8 @@ This one search idea, "choose the most constrained choice first", is what makes 
 ## Explanation
 
 `rows`, `cols` and `boxes` hold the digits used so far. `go()` finds the empty cell with the fewest candidates; none means dead end (return `False`), otherwise it tries each candidate, placing it in the board and in the three sets, recursing, and undoing on failure. When no empty cell remains the puzzle is solved.
+
+### Complexity
+
+- Time: O(9^m) worst case, m = number of empty cells. Backtracking tries up to 9 digits per empty cell; always filling the cell with the fewest candidates prunes almost every branch on real puzzles, and Sudoku is NP-complete when generalised, so no polynomial method is known.
+- Space: O(1). The board is a fixed 9 x 9 and the recursion is at most 81 deep.

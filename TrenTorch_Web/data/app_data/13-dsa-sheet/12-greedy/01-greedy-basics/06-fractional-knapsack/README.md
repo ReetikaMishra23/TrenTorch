@@ -58,3 +58,8 @@ Greedy is correct here because every unit of weight can be spent independently, 
 ## Explanation
 
 `key` sorts by value per weight in decreasing order. `take = min(weight, capacity)` is the part of the item that fits; its value is `value * take / weight`.
+
+### Complexity
+
+- Time: O(n log n). Sorting by value per weight dominates; filling the bag is one pass. (A selection algorithm can reach O(n) on average, but sorting is the standard method).
+- Space: O(n). The sorted list.

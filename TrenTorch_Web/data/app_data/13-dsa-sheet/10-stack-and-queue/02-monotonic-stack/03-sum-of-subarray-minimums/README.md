@@ -61,3 +61,8 @@ Both borders come from a monotonic stack: `left` is the previous strictly smalle
 ## Explanation
 
 One stack pass computes `left` while scanning and `right` when elements are popped; here both are computed with two passes for clarity.
+
+### Complexity
+
+- Time: O(n). Two monotonic-stack passes find, for every element, how far it stays the minimum on each side.
+- Space: O(n). The two boundary arrays and the stack.

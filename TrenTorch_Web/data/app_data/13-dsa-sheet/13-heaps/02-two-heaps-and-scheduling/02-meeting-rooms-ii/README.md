@@ -59,3 +59,8 @@ Each meeting costs `O(log n)`, plus the sort: `O(n log n)` overall. Compare with
 ## Explanation
 
 `rooms` holds end times. Reusing a room means replacing its end time with the new one, so the heap grows only when no room is free.
+
+### Complexity
+
+- Time: O(n log n). Sorting by start time dominates; the heap holds room end times, `O(log n)` per meeting.
+- Space: O(n). The heap and the sorted list.

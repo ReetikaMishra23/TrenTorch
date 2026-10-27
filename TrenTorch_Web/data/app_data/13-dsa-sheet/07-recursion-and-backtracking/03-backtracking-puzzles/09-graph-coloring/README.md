@@ -57,3 +57,8 @@ Build an **adjacency list** first so that "who are the neighbours of `i`?" is qu
 ## Explanation
 
 `adj[i]` lists the neighbours of `i`. `go(i)` tries every colour not used by an already-coloured neighbour; a successful full assignment returns `True`, and failing colours are reset to `-1` (uncoloured) before the next try. A self-loop makes the answer `False` immediately.
+
+### Complexity
+
+- Time: O(k^n * (n + e)). Each vertex tries up to `k` colours (`k` = colors) and checks its neighbours; the problem is NP-complete in general, so no polynomial-time method is known.
+- Space: O(n + e). The adjacency lists and the colour array.

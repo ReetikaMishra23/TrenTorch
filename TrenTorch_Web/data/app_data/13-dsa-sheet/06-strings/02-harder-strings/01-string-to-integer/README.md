@@ -81,3 +81,8 @@ Do not use `int(s)`: it accepts things the rules reject (underscores, tabs, a si
 ## Explanation
 
 The index `i` moves through spaces, then the optional sign, then the digits. After each digit, `if value > 2**31: break` stops early because the result will be clamped anyway. Multiply by the sign and clamp with `max`/`min`.
+
+### Complexity
+
+- Time: O(n). One pass over the characters; the digit loop stops as soon as the value passes the 32-bit limit.
+- Space: O(1). A few variables.

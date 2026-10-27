@@ -57,3 +57,8 @@ The pattern is: **pay `O(n)` once to build a table, then answer each query in `O
 ## Explanation
 
 Build `counts = Counter(nums)` once. Each query is then `counts[q]`, and a value that never appears gives `0` without raising an error. Total time is `O(n + q)`.
+
+### Complexity
+
+- Time: O(n + q). One pass to count `n` values and one lookup for each of the `q` queries.
+- Space: O(n). The counter may hold all `n` distinct values (the answer list of size `q` is output).

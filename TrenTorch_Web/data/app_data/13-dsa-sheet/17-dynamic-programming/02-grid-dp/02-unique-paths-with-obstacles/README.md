@@ -57,3 +57,8 @@ Keep one row: when you reach a blocked cell set `row[c] = 0`. `O(rows × cols)`.
 ## Explanation
 
 A blocked cell resets its entry to zero, which also stops paths from flowing through it to later cells.
+
+### Complexity
+
+- Time: O(r * c). Every cell is computed once from its left and upper neighbours.
+- Space: O(c). One row of the table.

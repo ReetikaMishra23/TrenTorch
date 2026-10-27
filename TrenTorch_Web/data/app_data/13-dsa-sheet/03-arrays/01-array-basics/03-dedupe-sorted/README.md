@@ -53,3 +53,8 @@ This is the **two-pointer** idea: one pointer reads every value, and another mar
 ## Explanation
 
 `out[-1]` is the last kept value. A new value is appended only when `out` is empty or the value differs from `out[-1]`. Sortedness guarantees that a repeated value is always adjacent to its twin.
+
+### Complexity
+
+- Time: O(n). One pass, comparing each value with the last one kept.
+- Space: O(n). The result list holds up to `n` values.

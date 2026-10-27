@@ -61,3 +61,8 @@ Python's built-in `pow(base, exp, mod)` does exactly this; write it yourself onc
 ## Explanation
 
 The loop version processes the bits of `exp`: when the lowest bit is `1`, multiply the result by the current power of `base`; then square the base and shift `exp` right. Each step is reduced modulo `mod`. `mod = 1` always gives `0`.
+
+### Complexity
+
+- Time: O(log exp). The exponent is halved at every step, with one or two modular multiplications each.
+- Space: O(1). Three integers.

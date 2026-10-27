@@ -60,3 +60,8 @@ A **min-heap** of `(distance, node)` finds the smallest quickly; when you pop an
 ## Explanation
 
 Pushing a new `(distance, node)` pair on every improvement leaves old pairs in the heap; `if d > dist[u]: continue` skips them.
+
+### Complexity
+
+- Time: O((n + e) log n). Each edge can push one heap entry (`O(log e)`, which is `O(log n)`), and stale entries are skipped when popped.
+- Space: O(n + e). The adjacency lists, the distances and the heap.

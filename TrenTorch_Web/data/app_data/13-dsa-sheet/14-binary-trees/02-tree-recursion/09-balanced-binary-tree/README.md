@@ -61,3 +61,8 @@ This "return the answer plus the failure in one number" trick makes it `O(n)`.
 ## Explanation
 
 `check(node)` returns the height, or `-1` if any node below is unbalanced. The first `-1` bubbles up unchanged.
+
+### Complexity
+
+- Time: O(n). Heights are computed bottom up and the search stops at the first unbalanced node.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

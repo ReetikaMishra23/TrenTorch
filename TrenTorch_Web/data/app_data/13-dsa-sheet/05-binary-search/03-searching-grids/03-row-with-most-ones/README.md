@@ -59,4 +59,26 @@ So the whole matrix costs `rows * log(cols)` reads instead of `rows * cols`. Kee
 
 ## Explanation
 
-For each row, binary search the first index where the value is `1` (`hi = len(row)` if there is none). The count of ones is `len(row) - lo`. Update the best row only when the count is strictly greater, so ties keep the earlier row, and a matrix with no ones keeps `-1`.
+Keep `col`, the start of the ones in the best row so far (`col = cols` means no ones yet). For every row, move `col` left while the cell just before it is a one; if it moved, this row has more ones than any earlier one, so remember it. A row that cannot move `col` costs one check.
+
+`col` never moves right, so the total walk is at most `cols` steps plus one check per row: `O(r + c)`. Ties keep the earlier row because only a strictly longer run changes the answer.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                    | Variables                                                |
+| ---------------------------------- | -------------------------------------------------------- |
+| `best_row = -1`                    | `best_row = -1`                                          |
+| `for i, row in enumerate(matrix):` | `col = 4, i = 0, row = [0, 0, 1, 1]`                     |
+| `col -= 1`                         | `col = 3, moved = False`                                 |
+| `col -= 1`                         | `col = 2, moved = True`                                  |
+| `moved = False`                    | `best_row = 0, i = 1, row = [0, 1, 1, 1], moved = False` |
+| `moved = True`                     | `col = 1, moved = True`                                  |
+| `for i, row in enumerate(matrix):` | `best_row = 1, i = 2, row = [0, 0, 0, 1]`                |
+| `return`                           | `returned = 1`                                           |
+
+### Complexity
+
+- Time: O(r + c). One pointer walks left along the best row boundary and never moves back; each row costs one check plus the cells the pointer passes.
+- Space: O(1). Two numbers.

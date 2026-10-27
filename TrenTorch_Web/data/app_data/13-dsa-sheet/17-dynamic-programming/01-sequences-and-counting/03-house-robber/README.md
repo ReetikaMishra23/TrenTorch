@@ -59,3 +59,8 @@ The plain recursion has two branches per house, `O(2^n)` calls, although there a
 ## Explanation
 
 `skip` is `best(i - 1)` and `take` is `best(i - 2)`; each round computes the new best and shifts.
+
+### Complexity
+
+- Time: O(n). One pass keeping the best total with and without the previous house.
+- Space: O(1). Two numbers.

@@ -58,3 +58,8 @@ The heap never holds more than `k + 1` items, so each step costs `O(log k)`: `O(
 ## Explanation
 
 The first `k + 1` values go into the heap; afterwards every step pushes one value and pops one. The pops come out in sorted order.
+
+### Complexity
+
+- Time: O(n log k). A heap of `k + 1` values always holds the next smallest, `O(log k)` per value.
+- Space: O(k). The heap (the result is output).

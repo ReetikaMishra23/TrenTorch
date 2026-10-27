@@ -59,3 +59,8 @@ There are `log n` levels, each costing `O(n)` for splitting and merging: `O(n lo
 ## Explanation
 
 The helper `merge` joins two sorted lists with a dummy head. `slow` stops at the end of the first half; `slow.next = None` cuts the list there.
+
+### Complexity
+
+- Time: O(n log n). Merge sort halves the list `log n` times and each level merges `n` nodes; no comparison sort can be faster.
+- Space: O(log n). The recursion depth; nodes are relinked, not copied.

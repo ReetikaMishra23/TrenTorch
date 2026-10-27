@@ -59,4 +59,26 @@ The tuple key `(-count, value)` is the standard way to say "bigger count first, 
 
 ## Explanation
 
-`counts.items()` are `(value, count)` pairs. `heapq.nsmallest(k, counts, key=lambda v: (-counts[v], v))` returns the `k` values with the smallest keys, which are the most frequent (and smallest on ties), already in the right order.
+Count the values, then order them by `(-count, value)`: the first `k` in that order are the answer. Instead of sorting all distinct values, use quickselect: pick a random pivot pair, split the pairs into smaller and larger (the pairs are all different because the values are), and keep only the side that contains the `k`-th pair. Then sort just the `k` chosen pairs.
+
+`heapq.nsmallest(k, counts, key=...)` does the same job with a heap, in `O(n + d log k)`.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                                                       | Variables                                      |
+| --------------------------------------------------------------------- | ---------------------------------------------- |
+| `pairs = [(-count, value) for value, count in Counter(nums).items()]` | `pairs = [(-3, 1), (-2, 2), (-1, 3)]`          |
+| `chosen = []`                                                         | `chosen = []`                                  |
+| `need = k`                                                            | `pool = [(-3, 1), (-2, 2), (-1, 3)], need = 2` |
+| `pivot = random.choice(pool)`                                         | `pivot = (-2, 2)`                              |
+| `chosen += less`                                                      | `chosen = [(-3, 1)], less = [(-3, 1)]`         |
+| `chosen.append(pivot)`                                                | `chosen = [(-3, 1), (-2, 2)]`                  |
+| `pairs = chosen`                                                      | `pairs = [(-3, 1), (-2, 2)], need = 0`         |
+| `return`                                                              | `returned = [1, 2]`                            |
+
+### Complexity
+
+- Time: O(n + k log k) expected. Counting is O(n); quickselect on the `d` distinct values is expected O(d); only the chosen `k` are sorted.
+- Space: O(d). The counter and the list of `(-count, value)` pairs.

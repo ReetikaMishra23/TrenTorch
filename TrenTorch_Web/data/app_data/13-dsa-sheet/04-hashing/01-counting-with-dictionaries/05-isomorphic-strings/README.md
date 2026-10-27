@@ -59,3 +59,8 @@ A shortcut: two strings are isomorphic exactly when they have the same **pattern
 ## Explanation
 
 The loop zips both strings. `forward.setdefault(a, b)` stores the first mapping and returns the stored one afterwards; if it differs from `b`, the mapping is inconsistent. The same check on `backward` stops two letters from mapping to one.
+
+### Complexity
+
+- Time: O(n). One pass; every letter is looked up in two dictionaries.
+- Space: O(1). Each dictionary has at most 26 letters.

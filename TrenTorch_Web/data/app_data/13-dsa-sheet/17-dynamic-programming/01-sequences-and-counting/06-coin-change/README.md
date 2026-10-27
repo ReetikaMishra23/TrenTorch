@@ -62,3 +62,8 @@ The plain recursion recomputes `fewest(a - c)` for the same `a - c` along many d
 ## Explanation
 
 `best[a]` is the answer for amount `a`; `inf` marks unreachable. The final `inf` becomes `-1`.
+
+### Complexity
+
+- Time: O(amount * k). For each amount up to the target, try each of the `k` coins.
+- Space: O(amount). The table of best counts.

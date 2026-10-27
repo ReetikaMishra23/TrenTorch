@@ -64,3 +64,8 @@ The division is always exact (`C(r, i + 1)` is a whole number), so use integer d
 ## Explanation
 
 `value` starts at `1`. For each position `i` from `0` to `row`, append `value`, then update `value = value * (row - i) // (i + 1)`. Multiplying first keeps the intermediate result an exact multiple, so `//` loses nothing.
+
+### Complexity
+
+- Time: O(row). `row + 1` steps, each one multiplication and one division of numbers with at most `row` bits.
+- Space: O(row). The result list holds `row + 1` numbers.

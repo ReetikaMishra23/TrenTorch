@@ -62,3 +62,8 @@ Python's `%` always gives a result in `0..k-1` even for negative numbers (`-1 % 
 ## Explanation
 
 `seen[r]` counts earlier prefixes with remainder `r`; it starts as `{0: 1}`. Each new prefix remainder `r = prefix % k` forms a divisible run with every earlier prefix of remainder `r`, so add `seen[r]`, then `seen[r] += 1`.
+
+### Complexity
+
+- Time: O(n). One pass; two prefixes with the same remainder bound a divisible subarray.
+- Space: O(min(n, k)). The dictionary has at most one entry per remainder.

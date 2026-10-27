@@ -55,3 +55,8 @@ Choose the **last multiplication**: split the chain at some `k`, multiply `i..k`
 ## Explanation
 
 `dp[i][j]` covers the sub-chain from boundary `i` to boundary `j`; `k` is where the last product splits it.
+
+### Complexity
+
+- Time: O(n^3). The table has `n^2` cells, each trying up to `n` split points.
+- Space: O(n^2). The table.

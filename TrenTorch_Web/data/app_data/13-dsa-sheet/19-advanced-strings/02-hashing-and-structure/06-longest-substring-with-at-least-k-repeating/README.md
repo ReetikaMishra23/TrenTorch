@@ -58,3 +58,8 @@ An alternative is a sliding window run once for each possible number of distinct
 ## Explanation
 
 `solve(lo, hi)` works on `s[lo:hi]`. A letter with a count below `k` splits the range, and the best length of the pieces is returned.
+
+### Complexity
+
+- Time: O(26 * n). A letter that appears fewer than `k` times splits the string; each level of recursion removes at least one of the at most 26 letters, and each level scans `n` characters.
+- Space: O(n). Recursion depth is at most 26, plus the counts.

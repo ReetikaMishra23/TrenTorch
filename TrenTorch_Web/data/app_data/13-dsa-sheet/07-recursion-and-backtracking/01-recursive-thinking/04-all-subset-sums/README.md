@@ -54,4 +54,22 @@ Sorting the result puts it in the required order. Recursion expresses the same t
 
 ## Explanation
 
-`sums` starts as `[0]` (the empty subset). For each value, the sums that include it are the old sums plus the value; append them to the old ones. Sort at the end.
+Start with `[0]`, the sum of the empty subset. For each number `x`, every existing sum can be taken with or without `x`, so the new list is the old list plus the old list shifted by `x`. Both halves are already sorted, so sorting their concatenation is a single linear merge (Timsort finds the two sorted runs), and the list stays sorted without a final sort.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                               | Variables                 |
+| --------------------------------------------- | ------------------------- |
+| `sums = [0]`                                  | `sums = [0]`              |
+| `for x in nums:`                              | `x = 1`                   |
+| `sums = sorted(sums + [s + x for s in sums])` | `sums = [0, 1]`           |
+| `for x in nums:`                              | `x = 2`                   |
+| `sums = sorted(sums + [s + x for s in sums])` | `sums = [0, 1, 2, 3]`     |
+| `return`                                      | `returned = [0, 1, 2, 3]` |
+
+### Complexity
+
+- Time: O(2^n). Adding one more number doubles the sorted list; the shifted copy is already sorted, so merging the two sorted halves is linear, and the sizes add up to `2^(n+1)`.
+- Space: O(2^n). The list of sums is the output.

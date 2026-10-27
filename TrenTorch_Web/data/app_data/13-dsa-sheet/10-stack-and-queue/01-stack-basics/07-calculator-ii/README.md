@@ -62,4 +62,24 @@ Trick: process the number when you reach the next operator or the end of the str
 
 ## Explanation
 
-`op` is the operator before the current number. Digits are collected into `num`; at an operator or at the end the number is applied according to `op`. Division uses an integer-only truncation toward zero.
+Keep `total`, the sum of finished terms, and `last`, the term being built. A `+` or `-` finishes the previous term (adds `last` to `total`) and starts a new one with the sign applied. A `*` or `/` changes `last` straight away, which is why they bind tighter. Division truncates toward zero, which is done on the absolute value. At the end, `total + last` is the answer; a sentinel `+` after the string flushes the last number.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line            | Variables                      |
+| -------------------------- | ------------------------------ |
+| `total = last = num = 0`   | `total = 0, last = 0, num = 0` |
+| `num = num * 10 + int(ch)` | `num = 3, op = '+', ch = '3'`  |
+| `num = 0`                  | `last = 3, num = 0, ch = '+'`  |
+| `for ch in s + "+":`       | `num = 2, ch = '*'`            |
+| `last = num`               | `total = 3, last = 2`          |
+| `for ch in s + "+":`       | `num = 0, op = '*', ch = '2'`  |
+| `last *= num`              | `last = 4, num = 2, ch = '+'`  |
+| `return`                   | `returned = 7`                 |
+
+### Complexity
+
+- Time: O(n). One pass; multiplication and division are folded into the last term, and additions are summed on the fly.
+- Space: O(1). A few integers.

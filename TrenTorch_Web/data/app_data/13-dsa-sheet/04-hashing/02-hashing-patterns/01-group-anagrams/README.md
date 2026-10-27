@@ -55,3 +55,8 @@ A tuple of letter counts also works and is `O(length)` per word instead of `O(le
 ## Explanation
 
 `groups[''.join(sorted(word))].append(word)` puts every word under its signature. Sort each group's words and then sort the groups by their first word to get one exact order.
+
+### Complexity
+
+- Time: O(n * k log k + n * k log n). Sorting each word is `k log k`; ordering the `n` words at the end needs `n log n` comparisons of strings of length `k`.
+- Space: O(n * k). The dictionary of groups holds every word once.

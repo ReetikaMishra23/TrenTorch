@@ -59,3 +59,8 @@ Store the visited set as a **bitmask**. **State:** `best[mask][last]`, the short
 ## Explanation
 
 Masks are processed in increasing order, so a smaller mask is always finished before it is extended. Bit 0 (city 0) is set from the start.
+
+### Complexity
+
+- Time: O(n^2 * 2^n). Held-Karp: `2^n` subsets, each with `n` last cities and `n` next cities.
+- Space: O(n * 2^n). The table of costs per subset and last city.

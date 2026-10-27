@@ -62,3 +62,8 @@ Store every word in a dictionary `word -> index`, then for each word try its at 
 ## Explanation
 
 The set `found` avoids duplicates (an empty split can be generated twice). `rev` maps a string to the index of the word equal to it.
+
+### Complexity
+
+- Time: O(n * k^2 + P log P). `k` = longest word: for each word and each cut, a palindrome check and a hash lookup of a reversed piece cost O(k); `P` pairs are sorted for the output.
+- Space: O(n * k). The table of words and the set of pairs.

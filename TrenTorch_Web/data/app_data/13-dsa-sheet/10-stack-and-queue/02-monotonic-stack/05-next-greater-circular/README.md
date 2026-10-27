@@ -57,3 +57,8 @@ Everything else is the same as in the plain next greater element question. `O(n)
 ## Explanation
 
 In the second lap values only answer waiting indices; they are not pushed again, so every index is answered at most once.
+
+### Complexity
+
+- Time: O(n). Two laps over the array, each index pushed once and popped at most once.
+- Space: O(n). The stack and the result.

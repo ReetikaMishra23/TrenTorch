@@ -60,3 +60,8 @@ The loop over `k` must be the **outermost** one. After all `n` values of `k`, ev
 ## Explanation
 
 The matrix starts with the edge weights (and 0 on the diagonal); `inf` marks missing edges. After the triple loop, `inf` entries become `-1`.
+
+### Complexity
+
+- Time: O(n^3). Three nested loops over the nodes.
+- Space: O(n^2). The distance matrix.

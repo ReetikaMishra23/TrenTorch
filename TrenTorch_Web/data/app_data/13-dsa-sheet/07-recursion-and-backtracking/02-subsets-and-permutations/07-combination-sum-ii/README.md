@@ -56,3 +56,8 @@ When you meet a new problem in this family, ask three questions: _can a value be
 ## Explanation
 
 Sort first so equal values are neighbours. In each loop, skip a value equal to the previous one at the same level, stop when a value exceeds the remainder, and recurse with `j + 1` so each position is used once.
+
+### Complexity
+
+- Time: O(2^n) worst case. Each candidate is either taken or not; sorting, the duplicate skip and the early `break` prune branches.
+- Space: O(n). Recursion depth, plus the output.

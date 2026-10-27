@@ -57,3 +57,8 @@ So: sort the activities by **end time**. Take the first; then repeatedly take th
 ## Explanation
 
 `last_end` is the end of the last chosen activity. After sorting by end time, an activity is taken exactly when it starts at or after `last_end`.
+
+### Complexity
+
+- Time: O(n log n). Sorting by end time dominates; the selection is one pass.
+- Space: O(n). The sorted list.

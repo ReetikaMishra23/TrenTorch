@@ -56,3 +56,8 @@ The pointer in `t` moves every step, the pointer in `s` only on a match: one pas
 ## Explanation
 
 `i` counts how many characters of `s` have been matched so far, in order. Each character of `t` can match at most the next unmatched one.
+
+### Complexity
+
+- Time: O(|t|). One pass over `t`, advancing a pointer in `s` on each match.
+- Space: O(1). One index.

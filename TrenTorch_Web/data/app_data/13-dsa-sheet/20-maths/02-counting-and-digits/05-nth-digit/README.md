@@ -62,3 +62,8 @@ About 16 steps for `n` up to `9 × 10^15`.
 ## Explanation
 
 The loop skips whole groups. Then integer division finds the number and the remainder finds the position inside it.
+
+### Complexity
+
+- Time: O(log n). Skipping whole blocks of 1-digit, 2-digit, ... numbers takes one step per digit length.
+- Space: O(1). A few integers.

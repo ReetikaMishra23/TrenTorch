@@ -56,3 +56,8 @@ Build the adjacency list, then run a BFS or DFS from `source`. If you reach `des
 ## Explanation
 
 The search marks nodes as seen so each is processed once, and stops early when the destination is found.
+
+### Complexity
+
+- Time: O(n + e). Each node and edge is visited at most once.
+- Space: O(n + e). The adjacency lists, the visited array and the stack.

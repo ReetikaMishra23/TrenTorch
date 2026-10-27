@@ -61,3 +61,8 @@ Always ask the three recursion questions for a tree: what is the **base case** (
 ## Explanation
 
 The base case `None` returns 0. Each node adds 1 to the better of its two subtrees.
+
+### Complexity
+
+- Time: O(n). Every node is visited once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

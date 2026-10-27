@@ -57,3 +57,8 @@ The answer is `total - 2 × (largest reachable s not above total / 2)`. `O(n × 
 ## Explanation
 
 `bits` has bit `s` set when a subset sums to `s`. The loop from `total // 2` down finds the reachable sum closest to half.
+
+### Complexity
+
+- Time: O(n * S / w + S). `S` is the total sum: a bit set of reachable sums is built in `n` shifts, then scanned downward from `S / 2`.
+- Space: O(S / w). The bit set.

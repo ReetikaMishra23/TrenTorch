@@ -60,3 +60,8 @@ A `-` before a number or a bracket just sets `sign = -1`, which also covers unar
 ## Explanation
 
 `result += sign * num` is done when a number ends. The stack remembers the outside value and the sign that applies to the whole bracket.
+
+### Complexity
+
+- Time: O(n). One pass; each bracket pair pushes and pops once.
+- Space: O(n). The stack holds one entry per open bracket.

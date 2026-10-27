@@ -59,3 +59,8 @@ Compute `total` once, then scan while keeping `left` as a **running (prefix) sum
 ## Explanation
 
 `left` starts at `0` and grows by `nums[i]` after each index is checked. The right sum is derived from the total, so no inner loop is needed. Negative values do not matter because only sums are compared.
+
+### Complexity
+
+- Time: O(n). One `sum` pass and one pass that keeps the left sum.
+- Space: O(1). Two integers.

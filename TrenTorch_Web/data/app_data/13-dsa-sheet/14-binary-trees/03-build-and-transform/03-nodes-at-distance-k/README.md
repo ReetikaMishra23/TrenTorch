@@ -62,3 +62,8 @@ This "give nodes a parent pointer" step is the standard way to make tree questio
 ## Explanation
 
 `parent` is built with one DFS. The BFS visits neighbours (children and parent) that are not yet seen; after `k` rounds the frontier is exactly the nodes at distance `k`.
+
+### Complexity
+
+- Time: O(n). One pass records every parent, then a breadth-first search of at most `k` levels visits each node once.
+- Space: O(n). The parent table and the visited set.

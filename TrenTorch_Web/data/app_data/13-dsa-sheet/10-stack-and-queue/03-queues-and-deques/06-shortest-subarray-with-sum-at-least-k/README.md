@@ -64,3 +64,8 @@ Every index is added and removed once: `O(n)`.
 ## Explanation
 
 The deque holds candidate start indices whose prefix sums increase. The front is the best start (smallest prefix) for the current end; it is removed once used because a later end would only make the subarray longer.
+
+### Complexity
+
+- Time: O(n). Each prefix index enters and leaves the deque at most once.
+- Space: O(n). The prefix sums and the deque.

@@ -59,3 +59,8 @@ A simpler method uses a **disjoint set (union-find)**: process the edges; if an 
 ## Explanation
 
 The search keeps `(node, edge_id_used_to_arrive)`. Meeting a visited node through a different edge means a cycle.
+
+### Complexity
+
+- Time: O(n + e). Each node and edge is visited once; an edge back to a visited node (other than the one just used) closes a cycle.
+- Space: O(n + e). The adjacency lists, the visited array and the stack.

@@ -60,3 +60,8 @@ Both deques make `max` and `min` `O(1)`, so the whole algorithm is `O(n)`.
 ## Explanation
 
 `big` and `small` are the deques for the window's maximum and minimum. While the difference is above the limit, `left` moves right and the deques drop indices that fall out of the window.
+
+### Complexity
+
+- Time: O(n). Two monotonic deques give the window maximum and minimum in O(1); each index enters and leaves each deque once.
+- Space: O(n). The two deques can hold the whole window.

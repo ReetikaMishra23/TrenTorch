@@ -64,3 +64,8 @@ Every index is added once and removed once: `O(n)`.
 ## Explanation
 
 The deque is a stack at the back (for the monotonic order) and a queue at the front (for expiring old indices). Both ends of a `deque` are `O(1)`.
+
+### Complexity
+
+- Time: O(n). Each index enters and leaves the deque at most once.
+- Space: O(k). The deque holds at most `k` indices (plus the result).

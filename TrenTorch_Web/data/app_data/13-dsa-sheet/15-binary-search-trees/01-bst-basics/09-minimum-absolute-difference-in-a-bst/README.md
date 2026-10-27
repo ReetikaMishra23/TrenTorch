@@ -59,3 +59,8 @@ The closest two values are **neighbours in sorted order**. And the inorder trave
 ## Explanation
 
 `prev` is the value visited just before the current node in inorder. Because the order is increasing, the difference is never negative.
+
+### Complexity
+
+- Time: O(n). An in-order walk visits values in increasing order, so the best pair is a neighbour pair.
+- Space: O(h). The stack holds one path; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

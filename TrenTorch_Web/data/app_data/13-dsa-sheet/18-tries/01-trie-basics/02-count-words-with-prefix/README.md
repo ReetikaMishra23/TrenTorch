@@ -59,3 +59,8 @@ Building costs `O(total letters)`, each query `O(len(query))`, independent of th
 ## Explanation
 
 `node["#"]` counts the words through the node. The query walk ends in the node whose counter is returned.
+
+### Complexity
+
+- Time: O(W + Q). `W` is the total length of the words and `Q` the total length of the queries: each letter is stepped once.
+- Space: O(W). One trie node per letter, each with a counter.

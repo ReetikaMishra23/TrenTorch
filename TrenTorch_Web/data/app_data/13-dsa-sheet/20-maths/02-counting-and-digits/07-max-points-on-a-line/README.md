@@ -60,3 +60,8 @@ Directions must be compared **exactly**. Floating-point slopes (`dy / dx`) can b
 ## Explanation
 
 `slopes` counts points by normalised direction from the current point. The best line through it has `max(slopes.values()) + 1` points.
+
+### Complexity
+
+- Time: O(n^2). For each point, every later point is placed in a table by its reduced direction.
+- Space: O(n). The table of directions for one point.

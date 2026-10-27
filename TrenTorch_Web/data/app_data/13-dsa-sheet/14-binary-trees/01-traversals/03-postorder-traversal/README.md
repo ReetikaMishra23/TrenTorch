@@ -60,3 +60,8 @@ A short iterative trick: postorder is the **reverse** of "node, right, left". So
 ## Explanation
 
 The loop produces node, right, left; reversing it gives left, right, node.
+
+### Complexity
+
+- Time: O(n). Each node is pushed and popped once, and the reversal is one more pass.
+- Space: O(n). The stack and the reversed output.

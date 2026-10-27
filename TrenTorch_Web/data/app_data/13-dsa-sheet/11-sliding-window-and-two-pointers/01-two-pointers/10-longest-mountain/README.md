@@ -57,3 +57,8 @@ A cleverer scan jumps `i` to `right` after each mountain, so every element is re
 ## Explanation
 
 After a peak is found and expanded, `i` continues from `right`, because no element before `right` can be the peak of a longer mountain that also starts inside this one.
+
+### Complexity
+
+- Time: O(n). Every element is visited a constant number of times because the scan resumes after each mountain.
+- Space: O(1). A few indices.

@@ -57,3 +57,8 @@ This one move, "save next, redirect, advance", is the building block for most li
 ## Explanation
 
 `after = head.next` saves the rest. `head.next = prev` flips the arrow. Then `prev = head` and `head = after` step forward. When `head` becomes `None`, `prev` is the last node, which is the new head.
+
+### Complexity
+
+- Time: O(n). Each node is visited once and its pointer is flipped.
+- Space: O(1). Three pointers.

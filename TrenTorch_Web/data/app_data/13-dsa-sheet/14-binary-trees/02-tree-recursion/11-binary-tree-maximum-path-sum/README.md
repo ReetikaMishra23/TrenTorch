@@ -62,3 +62,8 @@ Update the global best with `best_through` at each node and return the one-sided
 ## Explanation
 
 `gain(node)` is the best sum of a path that starts at `node` and goes down. `best` records the best path that bends at each node, using both sides.
+
+### Complexity
+
+- Time: O(n). Every node is visited once and its best downward gain is computed from its children.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

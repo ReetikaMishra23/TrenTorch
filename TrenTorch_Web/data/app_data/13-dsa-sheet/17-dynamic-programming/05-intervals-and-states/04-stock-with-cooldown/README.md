@@ -63,3 +63,8 @@ The answer is `max(sold, rest)` on the last day. Writing a problem as a **finite
 ## Explanation
 
 The three variables are updated at the same time from the previous day's values (the tuple assignment evaluates the right side first).
+
+### Complexity
+
+- Time: O(n). One pass with three states.
+- Space: O(1). Three numbers.

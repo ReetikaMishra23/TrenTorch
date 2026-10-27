@@ -56,3 +56,8 @@ Output:
 ## Explanation
 
 `[list(col) for col in zip(*matrix)]` builds each new row from one column. For `[]`, `zip()` yields nothing, and for `[[], []]` every row is empty, so `zip` stops immediately. Both give `[]`.
+
+### Complexity
+
+- Time: O(r * c). Every one of the `r * c` cells is copied once.
+- Space: O(r * c). The transposed matrix is a new list of lists.

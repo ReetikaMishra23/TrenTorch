@@ -61,3 +61,8 @@ There are in-place rotations (AVL and red-black trees do small rotations after e
 ## Explanation
 
 The first loop collects the values in sorted order; `build` makes the balanced tree from index ranges.
+
+### Complexity
+
+- Time: O(n). One in-order walk collects the sorted values and one recursion rebuilds the tree.
+- Space: O(n). The list of values (the new tree is the output).

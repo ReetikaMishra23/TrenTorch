@@ -58,3 +58,8 @@ Python integers have no size limit, so the result can be as big as memory allows
 ## Explanation
 
 `reduce(math.lcm, nums, 1)` combines the values one at a time. Because `math.lcm(x, y)` is exact for any size, there is no overflow to worry about.
+
+### Complexity
+
+- Time: O(n * B). `n` gcd steps; each divides the running lcm (at most `B = n * log2(max)` bits) by a number of at most 40 bits.
+- Space: O(B). The running lcm is the only large value.

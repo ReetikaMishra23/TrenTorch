@@ -58,3 +58,8 @@ Each round moves one node to the front of the part, which builds the reversed or
 ## Explanation
 
 `cur = prev.next` is the part's first node and stays fixed. In each round `nxt = cur.next` is cut out and put right after `prev`. After `size - 1` rounds the part is reversed and `cur` links to whatever followed it.
+
+### Complexity
+
+- Time: O(n). Walk to the segment, then reverse `size` nodes with front insertion.
+- Space: O(1). A few pointers.

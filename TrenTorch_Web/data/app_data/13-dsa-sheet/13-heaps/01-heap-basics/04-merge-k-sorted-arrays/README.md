@@ -58,3 +58,8 @@ The heap never holds more than `k` items, so each of the `N` values costs `O(log
 ## Explanation
 
 The tuple carries the array number and the position, so after a pop you know where to read the next value. Equal values compare by array number, so tuples never compare past the integers.
+
+### Complexity
+
+- Time: O(N log k). A heap of `k` array heads gives the next smallest value in `O(log k)`, done `N` times.
+- Space: O(k). The heap (the result is output).

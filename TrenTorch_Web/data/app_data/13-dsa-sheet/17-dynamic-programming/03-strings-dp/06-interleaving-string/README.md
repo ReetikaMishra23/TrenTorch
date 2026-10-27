@@ -58,3 +58,8 @@ A table of `(len(a) + 1) × (len(b) + 1)` booleans; it can be kept as one row. `
 ## Explanation
 
 `row[j]` means `ok(i, j)` for the current `i`. The first column and the first row are filled with simple checks.
+
+### Complexity
+
+- Time: O(n * m). Every cell of the table is computed once, in O(1).
+- Space: O(m). One row of the table.

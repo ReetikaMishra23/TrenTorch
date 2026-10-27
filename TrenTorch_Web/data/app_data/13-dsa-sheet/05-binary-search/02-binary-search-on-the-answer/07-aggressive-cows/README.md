@@ -60,3 +60,8 @@ The distance ranges from `1` to `max - min`. `O(n log M)` plus the sort.
 ## Explanation
 
 Sort `stalls`. `place(d)` puts a cow in the first stall, then a cow in each next stall at least `d` after the previous cow, counting them. Search `d` upward: if `place(mid) >= cows` the distance works and `lo = mid`, otherwise `hi = mid - 1`. The `+ 1` in `mid = (lo + hi + 1) // 2` stops an endless loop when `lo` can move.
+
+### Complexity
+
+- Time: O(n log n + n log D). Sort the stalls, then binary search the distance (`D` = last stall minus first) with one `O(n)` scan per probe.
+- Space: O(n). The sorted copy.

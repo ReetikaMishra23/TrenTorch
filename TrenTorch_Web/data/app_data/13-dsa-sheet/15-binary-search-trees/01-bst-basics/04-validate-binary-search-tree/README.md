@@ -64,3 +64,8 @@ The alternative is the **inorder** traversal: a tree is a BST exactly when its i
 ## Explanation
 
 `check(node, low, high)` verifies one node against its allowed interval and passes tighter intervals to the children.
+
+### Complexity
+
+- Time: O(n). Every node is checked once against the open interval its position allows.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

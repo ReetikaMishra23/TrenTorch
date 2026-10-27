@@ -62,3 +62,8 @@ A simple loop, `O(h)` time and `O(1)` memory.
 ## Explanation
 
 The loop descends while both values are on the same side. The first node where they split (or equal one of them) is returned.
+
+### Complexity
+
+- Time: O(h). The first node whose value lies between `p` and `q` is the answer, one walk down.
+- Space: O(1). One pointer; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

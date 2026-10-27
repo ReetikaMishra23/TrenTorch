@@ -59,3 +59,8 @@ So: numerator `= Π (n - i) mod p`, denominator `= k! mod p`, answer `= numerato
 ## Explanation
 
 Both products are reduced modulo `p` at every step so they never grow. One `pow` at the end turns the division into a multiplication.
+
+### Complexity
+
+- Time: O(k + log mod). With `k = min(k, n - k)`, the product of `k` terms is built in a loop, then one modular inverse by fast exponentiation.
+- Space: O(1). A few integers.

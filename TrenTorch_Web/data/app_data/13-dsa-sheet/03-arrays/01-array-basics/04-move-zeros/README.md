@@ -55,3 +55,8 @@ Python list comprehensions make the two-pass version short and fast. Know the in
 ## Explanation
 
 `[x for x in nums if x != 0]` keeps the non-zero values in order. `nums.count(0)` counts the zeros, and `[0] * count` builds the tail. Concatenate them.
+
+### Complexity
+
+- Time: O(n). One filter pass and one `count` pass.
+- Space: O(n). The result list.

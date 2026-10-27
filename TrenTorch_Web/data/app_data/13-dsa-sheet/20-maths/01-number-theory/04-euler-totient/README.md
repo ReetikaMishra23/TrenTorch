@@ -62,3 +62,8 @@ over the distinct primes `p` that divide `n`. In integers: start with `result = 
 ## Explanation
 
 `result -= result // p` multiplies the result by `(1 - 1/p)` exactly (the division is exact at that moment).
+
+### Complexity
+
+- Time: O(sqrt(n)). Trial division finds each distinct prime factor `p`, and `result -= result // p` applies `n * (1 - 1/p)` exactly.
+- Space: O(1). A few integers.

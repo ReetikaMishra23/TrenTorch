@@ -60,3 +60,8 @@ Combine them: a **hash map plus a doubly linked list** (the classic answer), or 
 ## Explanation
 
 `cache` keeps keys in the order of use, oldest first. Reading or writing a key moves it to the end; a new key beyond the capacity evicts the first one.
+
+### Complexity
+
+- Time: O(n). `OrderedDict` gets, moves and evicts in O(1) each, with `n` operations.
+- Space: O(capacity). The cache.

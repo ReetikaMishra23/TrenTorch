@@ -59,3 +59,8 @@ Iteratively: keep pairs `(old_r, r)` and `(old_x, x)`, start with `(a, m)` and `
 ## Explanation
 
 The invariant is `old_r ≡ old_x × a (mod m)`. When the loop ends, `old_r` is the gcd; a gcd other than 1 means no inverse.
+
+### Complexity
+
+- Time: O(log m). The extended Euclidean algorithm takes about `log m` steps.
+- Space: O(1). A few integers.

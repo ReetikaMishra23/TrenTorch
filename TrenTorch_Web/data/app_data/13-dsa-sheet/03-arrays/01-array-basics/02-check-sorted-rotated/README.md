@@ -61,3 +61,8 @@ The index trick `(i + 1) % n` wraps the last position back to `0`, and it is the
 Count `i` in `0..n-1` with `nums[i] > nums[(i + 1) % n]`. If the count is at most `1`, the answer is `True`.
 
 For one value the single comparison is `nums[0] > nums[0]`, which is false, so the count is `0`. For equal values no comparison is true.
+
+### Complexity
+
+- Time: O(n). One pass counting the places where the order drops (wrapping around once).
+- Space: O(1). One counter.

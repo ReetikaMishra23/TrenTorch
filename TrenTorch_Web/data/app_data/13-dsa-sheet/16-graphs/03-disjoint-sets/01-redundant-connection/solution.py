@@ -1,5 +1,6 @@
 def find_redundant_connection(edges):
     parent = list(range(len(edges) + 2))
+    size = [1] * len(parent)
 
     def find(a):
         while parent[a] != a:
@@ -11,5 +12,8 @@ def find_redundant_connection(edges):
         ra, rb = find(a), find(b)
         if ra == rb:
             return [a, b]
-        parent[ra] = rb
+        if size[ra] < size[rb]:
+            ra, rb = rb, ra
+        parent[rb] = ra
+        size[ra] += size[rb]
     return []

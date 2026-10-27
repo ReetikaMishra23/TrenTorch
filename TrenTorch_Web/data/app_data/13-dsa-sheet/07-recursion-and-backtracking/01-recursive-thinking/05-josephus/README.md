@@ -59,3 +59,8 @@ Compute it with a loop from `m = 2` up to `n`: `O(n)` time and `O(1)` memory. Ad
 ## Explanation
 
 `position` starts at `0` (one person, counting from 0). For every circle size `m` from 2 to `n`, `position = (position + k) % m`. The survivor is `position + 1` when numbering from 1.
+
+### Complexity
+
+- Time: O(n). The survivor of `m` people follows from the survivor of `m - 1` people, so one loop of `n - 1` steps.
+- Space: O(1). One position.

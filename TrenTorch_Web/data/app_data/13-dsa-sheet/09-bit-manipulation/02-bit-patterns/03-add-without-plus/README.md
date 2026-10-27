@@ -54,3 +54,8 @@ Python integers have no fixed width, so negative numbers would carry forever. Ke
 ## Explanation
 
 `a ^ b` adds without carry; `(a & b) << 1` is the carry. With the mask, values stay in 0..2**32-1, and the final test restores the sign.
+
+### Complexity
+
+- Time: O(1). The carry loop runs at most 32 times because each round pushes the carry one place left.
+- Space: O(1). A few integers.

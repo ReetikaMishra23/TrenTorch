@@ -60,3 +60,8 @@ Each index enters and leaves the window once: `O(n)`. With negative numbers this
 ## Explanation
 
 The `while` loop shrinks as long as the window is still big enough, recording each smaller valid length. If no window ever reached the target, `best` stays at infinity and `0` is returned.
+
+### Complexity
+
+- Time: O(n). Each index enters and leaves the window once (values are positive).
+- Space: O(1). A few numbers.

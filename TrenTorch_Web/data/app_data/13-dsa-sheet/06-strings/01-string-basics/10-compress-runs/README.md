@@ -55,3 +55,8 @@ This is **run-length encoding**. Scan the string and keep the current character 
 ## Explanation
 
 `groupby(s)` splits `s` into runs of equal characters. For each run write the character, plus its length when it is more than one. The pieces are joined once at the end.
+
+### Complexity
+
+- Time: O(n). One pass over the runs.
+- Space: O(n). The result pieces.

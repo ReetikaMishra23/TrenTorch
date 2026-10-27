@@ -57,3 +57,8 @@ The difference from a shortest-path search is that you want **all** paths, so yo
 ## Explanation
 
 `go(r, c)` returns immediately if the cell is closed or already on the current path. At the goal it records `"".join(path)`. Otherwise it marks the cell, tries `D, L, R, U` appending the letter to the path before each recursive call, and unmarks the cell on the way back.
+
+### Complexity
+
+- Time: O(4^(r * c)) worst case. Every cell can be tried in 4 directions; the visited marks cut paths that revisit a cell.
+- Space: O(r * c). The visited grid and the current path, plus the output.

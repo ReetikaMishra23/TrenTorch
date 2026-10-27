@@ -59,3 +59,8 @@ The queue order stays the same; only the output order of alternate levels change
 ## Explanation
 
 `left_to_right` flips after every level. A level is reversed (`level[::-1]`) when it is false.
+
+### Complexity
+
+- Time: O(n). Each node enters and leaves the queue once; reversing a level costs its size.
+- Space: O(w). `w` is the widest level, at most `n / 2` (the result is output).

@@ -61,3 +61,8 @@ Keep `left_max` and `right_max`, the tallest bars seen so far from each end, wit
 ## Explanation
 
 When `left_max < right_max`, the water at `left` is limited by `left_max` no matter what is further right, since a wall at least as tall exists on the right. Symmetrically for the right side.
+
+### Complexity
+
+- Time: O(n). Two pointers; the side with the lower wall is limited by its own running maximum.
+- Space: O(1). A few variables.

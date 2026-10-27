@@ -60,3 +60,8 @@ Counting many answers in one step ("everything between the pointers also works")
 ## Explanation
 
 After sorting, a successful pair `(lo, hi)` means all positions `lo+1..hi` can play the third role together with `lo`; that is `hi - lo` triples.
+
+### Complexity
+
+- Time: O(n^2). Sort once, then for each first value a two-pointer sweep counts a whole range at once.
+- Space: O(n). The sorted copy.

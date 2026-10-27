@@ -56,3 +56,8 @@ There are `n!` permutations (5,040 for `n = 7`), which grows faster than `2^n`. 
 ## Explanation
 
 `used[j]` says whether `a[j]` is already in the current permutation. When `current` has `len(a)` values, record a copy. Otherwise try every unused value in sorted order: mark, append, recurse, then undo both.
+
+### Complexity
+
+- Time: O(n * n!). There are `n!` permutations, and each leaf costs `O(n)` to scan and copy.
+- Space: O(n * n!). The output; the recursion adds only `O(n)`.

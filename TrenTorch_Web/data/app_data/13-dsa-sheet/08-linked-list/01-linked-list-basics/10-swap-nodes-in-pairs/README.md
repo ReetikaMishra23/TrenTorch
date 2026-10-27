@@ -55,3 +55,8 @@ After a swap, `a` is the second node of the pair, so it becomes the next `prev`.
 ## Explanation
 
 `prev.next` is the first of the pair (`a`) and `a.next` is the second (`b`). The three assignments turn `prev -> a -> b -> rest` into `prev -> b -> a -> rest`. Then `prev = a` moves to the end of the swapped pair.
+
+### Complexity
+
+- Time: O(n). Each pair is relinked once.
+- Space: O(1). A few pointers.

@@ -55,3 +55,8 @@ Only one mismatch needs this branching, so the whole thing is still `O(n)`.
 ## Explanation
 
 `is_pal(i, j)` is the plain check. At the first mismatch, one of the two characters is dropped and the rest must match completely.
+
+### Complexity
+
+- Time: O(n). One pass from both ends; at the first mismatch two more linear checks.
+- Space: O(1). A few indices.

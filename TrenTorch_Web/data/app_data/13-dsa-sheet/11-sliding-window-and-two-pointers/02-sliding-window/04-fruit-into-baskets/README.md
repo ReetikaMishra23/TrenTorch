@@ -57,3 +57,8 @@ Recognising that a story question is a known pattern in disguise is half the wor
 ## Explanation
 
 The dictionary is the contents of the baskets. A type is deleted when its count drops to zero.
+
+### Complexity
+
+- Time: O(n). Each index enters and leaves the window once.
+- Space: O(1). The count map has at most 3 entries.

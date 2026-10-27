@@ -61,3 +61,8 @@ Total time is `O(N log k)`. An alternative with the same cost is to merge the li
 ## Explanation
 
 The heap always holds at most one node per list: the front of each list that is not yet used. Each pop outputs the globally smallest remaining value.
+
+### Complexity
+
+- Time: O(N log k). A heap of `k` list heads gives the next smallest node in `O(log k)`, done `N` times (`N` = total nodes).
+- Space: O(k). The heap holds one node per list.

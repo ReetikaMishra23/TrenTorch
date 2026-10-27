@@ -61,3 +61,8 @@ This pattern, "return one thing up the recursion and record another thing on the
 ## Explanation
 
 `height(node)` returns the number of nodes on the longest downward path. `best` is updated with `left + right` at every node; with heights counted in nodes, that sum is exactly the number of edges.
+
+### Complexity
+
+- Time: O(n). Every node is visited once and its height is computed from its children.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

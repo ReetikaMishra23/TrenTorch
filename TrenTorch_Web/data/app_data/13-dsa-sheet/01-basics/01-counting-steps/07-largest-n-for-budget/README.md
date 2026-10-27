@@ -72,3 +72,8 @@ Because the cost never decreases as `n` grows, you can find the biggest affordab
 The cost functions are non-decreasing in `n`, so binary search works. The cost is at least `n` once `n >= 2`, so `budget + 1` is a safe upper bound for the search.
 
 `"2^n"` needs care: computing `2 ** n` for `n` near `10**18` would never finish. `2 ** n <= budget` means `n <= budget.bit_length() - 1`, so answer from the bit length (and `0` when `budget < 2`, because even `n = 1` costs `2`).
+
+### Complexity
+
+- Time: O(log budget). The cost grows with `n`, so binary search over `[1, budget + 1]` needs about `log2(budget)` probes and each probe is O(1); the `2^n` case is one `bit_length()`.
+- Space: O(1). Only the search bounds are kept.

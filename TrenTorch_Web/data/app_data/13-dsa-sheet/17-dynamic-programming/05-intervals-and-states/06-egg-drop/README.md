@@ -62,3 +62,8 @@ Increase `m` until `reach[m][eggs] >= floors`. The number of drops needed is sma
 ## Explanation
 
 `reach[e]` is the number of floors checkable with the current number of drops. The update uses the old `reach[e - 1]`, so `e` runs downwards.
+
+### Complexity
+
+- Time: O(e * d). `d` is the answer (number of drops) and `e` the number of eggs: each drop updates how many floors `e` eggs can cover.
+- Space: O(e). One row of the table.

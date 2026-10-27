@@ -59,3 +59,8 @@ As with the simple majority, this finds only the _possible_ answers. A second pa
 ## Explanation
 
 The first loop is the voting. The check order matters: first match an existing candidate, then fill an empty slot, then decrement both. The second pass counts each candidate and keeps those with `count * 3 > n`. Sorting the (at most two) results gives the required order.
+
+### Complexity
+
+- Time: O(n). Boyer-Moore voting with two candidates is one pass; a second counting pass verifies them.
+- Space: O(1). Two candidates and two counters.

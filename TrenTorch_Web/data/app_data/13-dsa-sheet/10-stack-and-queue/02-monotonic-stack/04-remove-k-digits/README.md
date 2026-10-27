@@ -60,3 +60,8 @@ This is a **greedy** choice that the stack makes cheap: a smaller digit placed e
 ## Explanation
 
 The stack stays non-decreasing as long as removals remain. `stack[:len(stack) - k]` removes the leftover from the end. `lstrip("0")` drops leading zeros and `or "0"` handles an empty result.
+
+### Complexity
+
+- Time: O(n). Each digit is pushed once and popped at most once.
+- Space: O(n). The stack.

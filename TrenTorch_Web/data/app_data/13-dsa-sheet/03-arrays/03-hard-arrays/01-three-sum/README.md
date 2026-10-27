@@ -61,3 +61,8 @@ Duplicates are the tricky part. Skip a value for `i` if it equals the previous o
 ## Explanation
 
 Sort, then for each `i` (skipping repeated `a[i]`) run two pointers `lo = i + 1` and `hi = n - 1`. Too small: `lo += 1`. Too big: `hi -= 1`. On a match, record the triple, step both pointers, then skip equal values at `lo` and `hi`. The triples come out in sorted order automatically because `i`, then `lo`, only move forward.
+
+### Complexity
+
+- Time: O(n^2). Sort once (`n log n`), then for each first value a two-pointer sweep over the rest costs O(n).
+- Space: O(n). The sorted copy (the result list is extra output).

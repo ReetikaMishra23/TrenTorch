@@ -60,3 +60,8 @@ The **prefix function** `pi` of a string `s` gives for each position `i` the len
 ## Explanation
 
 `fail` is the prefix function of the needle. `k` is the length of the current match; the fall back reuses the part of the needle that is still valid.
+
+### Complexity
+
+- Time: O(n + m). KMP: the failure table of the needle takes O(m) and the scan of the haystack never moves back, so it takes O(n).
+- Space: O(m). The failure table (`n` = len(haystack), `m` = len(needle)).

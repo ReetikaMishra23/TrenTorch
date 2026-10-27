@@ -60,3 +60,8 @@ The answer is the number of BFS rounds needed to reach the last node (the depth 
 ## Explanation
 
 Each round of the BFS is one minute. The loop stops when no new node can be reached; the number of completed rounds that reached new nodes is the answer.
+
+### Complexity
+
+- Time: O(n). One pass records every parent, then a breadth-first search visits each node once.
+- Space: O(n). The parent table and the visited set.

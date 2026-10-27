@@ -59,3 +59,8 @@ Keep two boundaries `lo` and `hi` that always bracket where the target can still
 ## Explanation
 
 `nums[mid] == target` returns `mid`. A smaller value means everything up to `mid` is too small, so `lo = mid + 1`. A bigger value means `hi = mid - 1`. When `lo > hi` the range is empty and the target is not present. A search reads about `log₂ n` values.
+
+### Complexity
+
+- Time: O(log n). The search range halves at every step.
+- Space: O(1). Three indices.

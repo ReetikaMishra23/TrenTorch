@@ -57,3 +57,8 @@ The loop ends when `lo == hi`: both point at the minimum. `O(log n)` reads.
 ## Explanation
 
 `while lo < hi`: when the middle is bigger than the last value the minimum is strictly to the right, otherwise it is at `mid` or earlier, so `mid` stays a candidate. At the end `nums[lo]` is the minimum.
+
+### Complexity
+
+- Time: O(log n). Comparing the middle with the last value shows which half holds the minimum.
+- Space: O(1). Two indices.

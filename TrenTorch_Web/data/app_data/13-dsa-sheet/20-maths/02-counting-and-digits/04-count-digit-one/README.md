@@ -61,3 +61,8 @@ Add this up for every position: about 16 positions for `n` up to `9 × 10^15`. T
 ## Explanation
 
 `high * p` counts the full blocks; the `if/elif` adds the partial block depending on the current digit.
+
+### Complexity
+
+- Time: O(log n). One step per digit position, each a constant number of divisions.
+- Space: O(1). A few integers.

@@ -63,3 +63,8 @@ Finally join the stack with `/` and put a `/` in front. An empty stack gives `/`
 ## Explanation
 
 `path.split("/")` gives empty strings for repeated slashes; they are skipped like `.`. A `..` at the root pops nothing.
+
+### Complexity
+
+- Time: O(n). One pass over the path parts.
+- Space: O(n). The stack of directory names.

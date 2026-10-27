@@ -55,3 +55,8 @@ To get the bit, isolate the lowest set bit of `a ^ b` with `x & -x`. The method 
 ## Explanation
 
 `xor_all = a ^ b`. `low = xor_all & -xor_all` is one bit where they differ. Numbers with `low` set xor to one single number and the rest to the other.
+
+### Complexity
+
+- Time: O(n). Two passes: XOR everything, then XOR the two groups split by one differing bit.
+- Space: O(1). A few integers.

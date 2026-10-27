@@ -60,3 +60,8 @@ Iteratively, use a stack that holds the nodes still to be visited. Pop a node, r
 ## Explanation
 
 The stack always has the next node on top. Because a stack is last in, first out, pushing right then left makes left come out first.
+
+### Complexity
+
+- Time: O(n). Each node is pushed and popped once.
+- Space: O(h). `h` is the height of the tree; the stack holds one path of pending right children, so `O(n)` in the worst case (the result is output).

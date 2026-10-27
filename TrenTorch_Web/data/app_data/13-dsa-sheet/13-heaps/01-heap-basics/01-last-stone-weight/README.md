@@ -59,3 +59,8 @@ Sorting after every turn costs `O(n log n)` per turn, `O(n² log n)` overall; th
 ## Explanation
 
 `heap` holds negative weights, so `heappop` returns the heaviest stone. The loop runs until at most one stone remains.
+
+### Complexity
+
+- Time: O(n log n). Each of at most `n - 1` rounds pops two stones and pushes one, `O(log n)` each.
+- Space: O(n). The heap.

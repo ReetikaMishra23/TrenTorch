@@ -57,3 +57,8 @@ The easy version, `values = [..]; values == values[::-1]`, is correct and also `
 ## Explanation
 
 After the first loop, `slow` is on the middle node (for odd lengths the middle belongs to the second half, and it still matches itself). The second half is reversed, and then both halves are compared until the shorter one (the reversed half) ends.
+
+### Complexity
+
+- Time: O(n). Find the middle (`n / 2` steps), reverse the second half, compare the halves.
+- Space: O(1). A few pointers; the second half is reversed in place.

@@ -60,3 +60,8 @@ Check the corner cases: the start or the end is blocked, or the grid has a singl
 ## Explanation
 
 Each queue entry is `(row, col, steps)`. The first time the bottom-right cell is dequeued, `steps` is the answer.
+
+### Complexity
+
+- Time: O(r * c). A breadth-first search; each cell enters the queue at most once and has 8 neighbours.
+- Space: O(r * c). The visited grid and the queue.

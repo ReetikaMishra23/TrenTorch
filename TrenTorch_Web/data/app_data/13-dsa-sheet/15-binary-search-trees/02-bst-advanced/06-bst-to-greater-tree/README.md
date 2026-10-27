@@ -62,3 +62,8 @@ A single pass, `O(n)` time and `O(h)` memory.
 ## Explanation
 
 The traversal goes right first, so larger values are added to `total` before smaller ones. `node.val = total` after the addition includes the node's own old value.
+
+### Complexity
+
+- Time: O(n). A reverse in-order walk visits each node once while keeping a running sum.
+- Space: O(h). The stack holds one path; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

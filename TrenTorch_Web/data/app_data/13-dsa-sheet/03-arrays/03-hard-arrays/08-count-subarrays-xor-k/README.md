@@ -62,3 +62,8 @@ So keep a dictionary counting each prefix XOR seen so far, start it with `{0: 1}
 ## Explanation
 
 `prefix` is the XOR of everything read so far. Runs ending here that XOR to `k` are those starting after an earlier prefix equal to `prefix ^ k`, and `seen` counts them. The lookup comes before recording the current prefix, as with sums.
+
+### Complexity
+
+- Time: O(n). One pass; the same prefix idea as for sums, using XOR.
+- Space: O(n). The dictionary of prefix XOR counts.

@@ -55,3 +55,8 @@ So the first position is `lower = lower_bound(target)`, provided `nums[lower] ==
 ## Explanation
 
 `lo` is the lower bound. If it equals `len(nums)` or `nums[lo] != target`, the target is missing. Otherwise the block ends at `upper - 1`, where `upper` is the upper bound found with `<=`. Both searches use the same loop with a different comparison.
+
+### Complexity
+
+- Time: O(log n). Two binary searches, each halving its range.
+- Space: O(1). A few indices.

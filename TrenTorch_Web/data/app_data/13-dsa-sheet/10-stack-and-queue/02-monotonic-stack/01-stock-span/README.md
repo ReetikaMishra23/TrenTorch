@@ -59,3 +59,8 @@ Find it with a monotonic stack of indices: pop all indices whose price is `<=` t
 ## Explanation
 
 The stack keeps indices with strictly decreasing prices. After popping the smaller or equal ones, the top is the nearest higher price on the left.
+
+### Complexity
+
+- Time: O(n). Each index is pushed once and popped at most once.
+- Space: O(n). The stack and the result.

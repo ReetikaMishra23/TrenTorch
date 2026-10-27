@@ -52,3 +52,8 @@ This is **breadth-first search** on an infinite binary tree: you visit all nodes
 ## Explanation
 
 Each loop round outputs the oldest string and queues its two children. After `n` rounds the output is the first `n` binary numbers.
+
+### Complexity
+
+- Time: O(n log n). `n` strings of up to `log2(n) + 1` characters have to be written.
+- Space: O(n log n). The output; the queue holds at most `n` strings.

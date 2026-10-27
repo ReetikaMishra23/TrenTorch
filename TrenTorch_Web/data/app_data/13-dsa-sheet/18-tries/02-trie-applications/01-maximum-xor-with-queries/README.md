@@ -60,3 +60,8 @@ Insert all numbers (30 steps each) and answer each query by one walk of 30 steps
 ## Explanation
 
 `want = 1 - bit` is the opposite bit. If that child exists, the xor gets a 1 at this position.
+
+### Complexity
+
+- Time: O(30 * (n + q)). A binary trie of the numbers is built with 30 steps per number; each query walks 30 levels, always preferring the opposite bit.
+- Space: O(30 * n). The trie.

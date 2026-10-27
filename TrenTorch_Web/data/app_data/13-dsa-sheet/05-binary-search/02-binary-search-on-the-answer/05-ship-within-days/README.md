@@ -59,3 +59,8 @@ The capacity must be at least `max(weights)` (every package has to fit alone) an
 ## Explanation
 
 `lo = max(weights)`, `hi = sum(weights)`. `needed(mid)` starts at one day and counts a new day whenever adding the next weight would exceed `mid`. A working capacity keeps the lower half, otherwise `lo = mid + 1`.
+
+### Complexity
+
+- Time: O(n log W). Binary search over capacities up to the total weight `W` costs `log W` probes, and each probe scans `n` packages.
+- Space: O(1). A few counters.

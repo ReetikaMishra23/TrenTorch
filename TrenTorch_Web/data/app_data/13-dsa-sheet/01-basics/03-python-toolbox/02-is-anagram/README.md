@@ -53,3 +53,8 @@ Sorting both strings and comparing also works (`O(n log n)`). The counting versi
 ## Explanation
 
 Strings with different lengths cannot be anagrams, and `Counter` equality already covers that (the counts differ). No extra length check is needed, though adding one skips the work early.
+
+### Complexity
+
+- Time: O(n + m). Each string is counted once, and the lengths are compared first.
+- Space: O(k). Two counters with at most `k = 26` letters.

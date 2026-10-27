@@ -57,3 +57,8 @@ So if `nums[mid] == nums[mid + 1]` set `lo = mid + 2`, otherwise the single elem
 ## Explanation
 
 `mid` is forced to be even. If it is paired with its right neighbour, the pairs up to there are aligned, so the single value is further right: `lo = mid + 2`. Otherwise the alignment already broke at or before `mid`: `hi = mid`. When `lo == hi` that index holds the single value.
+
+### Complexity
+
+- Time: O(log n). Before the single value pairs sit at (even, odd) indices and after it at (odd, even), so one comparison halves the range.
+- Space: O(1). Two indices.

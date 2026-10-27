@@ -62,3 +62,8 @@ There is a one-pass idea (Kadane's algorithm). Track the best sum of a subarray 
 `cur` is the best sum of a subarray that ends at the current element. Extending is `cur + x`; starting fresh is `x`. Take the larger, and keep the overall maximum in `best`.
 
 Start from the first element (not `0`), so a list of all negative numbers returns its largest single element and not `0`.
+
+### Complexity
+
+- Time: O(n). One pass; Kadane keeps the best sum ending here and the best sum seen so far.
+- Space: O(1). Two running numbers.

@@ -57,3 +57,8 @@ Walk the string with its index. For symbol `i`, compare `value[s[i]]` with `valu
 ## Explanation
 
 `values` maps each symbol to its number. For each position, if the next symbol is bigger the current one is subtracted, otherwise added. The last symbol is added.
+
+### Complexity
+
+- Time: O(n). One pass; a symbol smaller than the next one is subtracted.
+- Space: O(1). A fixed table of seven symbols.

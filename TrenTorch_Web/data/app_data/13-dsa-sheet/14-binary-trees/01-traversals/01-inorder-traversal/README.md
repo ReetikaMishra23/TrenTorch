@@ -60,3 +60,8 @@ The recursive version is the clearest. The **iterative** version replaces the ca
 ## Explanation
 
 `stack` holds the ancestors still waiting for their turn. When no more left child exists, the top of the stack is the next node in inorder.
+
+### Complexity
+
+- Time: O(n). Each node is pushed and popped once.
+- Space: O(h). `h` is the height of the tree; the stack holds one path, so `O(n)` in the worst case (the result is output).

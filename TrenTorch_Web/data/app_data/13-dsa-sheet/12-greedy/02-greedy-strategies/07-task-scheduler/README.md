@@ -60,3 +60,8 @@ A different view uses a **max-heap**: always run the available task with the mos
 ## Explanation
 
 `m` is the largest count and `ties` the number of letters with that count. The frame length is the minimum when idle time is needed; with many different tasks the answer is just `len(tasks)`.
+
+### Complexity
+
+- Time: O(n). One pass to count the tasks; the answer is a formula from the most frequent task.
+- Space: O(1). A count per task name (26 at most).

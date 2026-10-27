@@ -61,3 +61,8 @@ Still one pass, still `O(n)`.
 ## Explanation
 
 `current` is the sum of the run ending at position `i`, and `begin` is where it started. If `current` was negative before adding `nums[i]`, reset it: `current = nums[i]`, `begin = i`; otherwise add. Then `if current > best`, store `[current, begin, i]`.
+
+### Complexity
+
+- Time: O(n). Kadane with a start index: one pass, restarting whenever the running sum goes negative.
+- Space: O(1). A few variables.

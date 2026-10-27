@@ -66,3 +66,8 @@ Taking from `a` on ties keeps the merge **stable**: equal values stay in the ord
 ## Explanation
 
 Two indexes `i` and `j` walk the lists. While both are in range, count one comparison and append the smaller value (using `<=` so ties come from `a`). After the loop, `a[i:]` and `b[j:]` are sorted and at most one of them is non-empty, so extend the result with both.
+
+### Complexity
+
+- Time: O(n + m). Each step appends one value and moves one pointer forward, with `n` and `m` the list lengths.
+- Space: O(n + m). The merged list is the result.

@@ -58,3 +58,8 @@ The heap needs `O(n log n)`. There is also a neat `O(n)` method with three point
 ## Explanation
 
 `seen` keeps duplicates out of the heap. The loop pops `n - 1` numbers and the next pop is the answer; here the three-pointer version is shown because it is `O(n)`.
+
+### Complexity
+
+- Time: O(n). Three pointers build the sequence in order, one new number per step.
+- Space: O(n). The list of ugly numbers.

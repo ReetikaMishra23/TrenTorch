@@ -53,3 +53,8 @@ The stack always holds the answer for the part of the string read so far. `O(n)`
 ## Explanation
 
 The top of the stack is the last character that survived. A new character that matches it cancels it; otherwise it is kept.
+
+### Complexity
+
+- Time: O(n). Each character is pushed or popped at most once.
+- Space: O(n). The stack.

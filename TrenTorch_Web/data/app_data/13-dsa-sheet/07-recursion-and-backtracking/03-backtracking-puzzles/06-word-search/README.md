@@ -56,3 +56,8 @@ Prune early: if the current cell's letter is not the wanted one, return `False` 
 ## Explanation
 
 `go(r, c, i)` checks whether the word from index `i` can be spelled starting at cell `(r, c)`. It fails if the cell is out of range, already used, or the wrong letter. It marks the cell, tries the four neighbours, and restores the cell before returning.
+
+### Complexity
+
+- Time: O(r * c * 3^L). A search starts at every cell and, after the first step, has at most 3 new directions per letter of the word (`L` letters).
+- Space: O(r * c + L). The working copy of the board and the recursion.

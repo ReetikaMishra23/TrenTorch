@@ -61,3 +61,8 @@ Add a bar of height `0` at the end to flush everything. `O(n)` time because each
 ## Explanation
 
 When bar `top` is popped by bar `i`, the stack below it holds the nearest shorter bar on the left. The width is the gap between that bar and `i`. The sentinel `0` forces all remaining bars to be popped.
+
+### Complexity
+
+- Time: O(n). Each bar is pushed once and popped at most once, and the area is finished when the bar is popped.
+- Space: O(n). The stack.

@@ -61,3 +61,8 @@ Each hit enters the queue once and leaves once, so all operations are `O(1)` amo
 ## Explanation
 
 `window` holds the hits that may still count. The `while` loop discards the expired ones before measuring its length.
+
+### Complexity
+
+- Time: O(n). Each hit enters and leaves the window once, so a query is O(1) amortised.
+- Space: O(h). `h` is the largest number of hits inside one 300-second window.

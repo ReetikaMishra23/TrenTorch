@@ -59,4 +59,9 @@ A closed formula exists too: every path has `rows - 1` downs and `cols - 1` righ
 
 ## Explanation
 
-`row[c] += row[c - 1]` combines the cell above (old `row[c]`) and the cell to the left.
+Every path has exactly `rows - 1` down moves and `cols - 1` right moves in some order, so the number of paths is the number of ways to choose where the down moves go: `C(rows + cols - 2, rows - 1)`. `math.comb` computes that in `O(min(rows, cols))` multiplications, and the result is reduced modulo `10^9 + 7`. The grid table (`row[c] += row[c - 1]`) gives the same answer in `O(rows * cols)` and is the method to use once obstacles appear.
+
+### Complexity
+
+- Time: O(min(r, c)). Every path is a choice of which `r - 1` of the `r + c - 2` moves go down, which is the binomial coefficient `C(r + c - 2, r - 1)`.
+- Space: O(1). A few big integers.

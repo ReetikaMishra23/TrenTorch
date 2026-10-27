@@ -61,3 +61,8 @@ That keeps the `ladders` largest climbs on ladders and the rest on bricks at eve
 ## Explanation
 
 `heap` holds the climbs currently covered by ladders. When it grows beyond `ladders`, the smallest is moved to bricks (`bricks -= popped`). Negative bricks means this step cannot be done.
+
+### Complexity
+
+- Time: O(n log L). A min-heap of the `L` biggest climbs (the ones that get ladders); each climb is pushed and popped at most once.
+- Space: O(L). The heap, `L` = number of ladders.

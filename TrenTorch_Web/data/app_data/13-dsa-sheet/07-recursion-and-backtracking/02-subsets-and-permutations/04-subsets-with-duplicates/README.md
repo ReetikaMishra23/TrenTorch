@@ -57,3 +57,8 @@ Skipping duplicates at the same level of the recursion is the standard way to av
 ## Explanation
 
 The loop starts at `start`. A value equal to the one before it **within the same loop** is skipped because that choice would build exactly the same subsets as the earlier one. Values further down the recursion start a new loop, so a second equal value can still be taken after the first.
+
+### Complexity
+
+- Time: O(n * 2^n). At most `2^n` subsets, each copied once; skipping equal neighbours at the same depth stops duplicates before they are built.
+- Space: O(n * 2^n). The output; the recursion adds only `O(n)`.

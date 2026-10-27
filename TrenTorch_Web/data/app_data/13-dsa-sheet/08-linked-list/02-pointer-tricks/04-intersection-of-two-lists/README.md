@@ -63,3 +63,8 @@ Compare nodes with `is`, never by value.
 ## Explanation
 
 Each pointer travels its own list and then the other one. The shorter list's pointer switches earlier, which removes the length difference. The loop ends when the pointers are the same node or both `None`.
+
+### Complexity
+
+- Time: O(n + m). Each pointer walks its list and then the other, so both cover `n + m` nodes and meet at the intersection (or at the end).
+- Space: O(1). Two pointers.

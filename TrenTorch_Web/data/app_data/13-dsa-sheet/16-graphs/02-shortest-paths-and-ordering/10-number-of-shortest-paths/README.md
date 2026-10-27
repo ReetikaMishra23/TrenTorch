@@ -61,3 +61,8 @@ Because all times are positive, when a node is popped from the heap its `ways` i
 ## Explanation
 
 The two `if` branches update `ways` exactly as described. `ways[0] = 1` seeds the count.
+
+### Complexity
+
+- Time: O((n + e) log n). Dijkstra that also adds up the number of shortest paths into each node.
+- Space: O(n + e). The adjacency lists, the distances, the counts and the heap.

@@ -61,3 +61,8 @@ The copy is the trap: without it, one round could chain several flights and brea
 ## Explanation
 
 `nxt` starts as a copy of `best`. Each flight is relaxed from the old `best`, so a path gains at most one flight per round.
+
+### Complexity
+
+- Time: O(k * e). Bellman-Ford limited to `k + 1` rounds, each round relaxes every flight once.
+- Space: O(n). Two arrays of distances.

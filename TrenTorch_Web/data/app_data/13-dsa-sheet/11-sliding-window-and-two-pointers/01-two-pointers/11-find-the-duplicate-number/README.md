@@ -56,3 +56,8 @@ That is exactly the linked list cycle question. Use Floyd's tortoise and hare: f
 ## Explanation
 
 `slow = nums[slow]` and `fast = nums[nums[fast]]` follow the "next" function. The second phase finds the cycle entrance.
+
+### Complexity
+
+- Time: O(n). Floyd's cycle detection on the 'index -> value' graph.
+- Space: O(1). Two pointers; the list is not changed.

@@ -56,3 +56,8 @@ Warning: greedy is **not** correct for every set of coin values. With coins `1, 
 ## Explanation
 
 For each value, from the largest, `divmod` gives how many fit and the amount left. The counts add up to the answer.
+
+### Complexity
+
+- Time: O(1). Nine divisions, whatever the amount (this set of coins is one where taking the largest coin first is optimal).
+- Space: O(1). A counter.

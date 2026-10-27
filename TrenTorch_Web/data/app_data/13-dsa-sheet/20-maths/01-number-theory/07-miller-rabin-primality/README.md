@@ -60,3 +60,8 @@ Handle small `n` and multiples of the small primes first. Use `pow(a, d, n)` for
 ## Explanation
 
 The loop squares `x` up to `s - 1` times looking for `-1 mod n`. If no base finds a witness, `n` is prime.
+
+### Complexity
+
+- Time: O(12 log^2 n). Twelve fixed bases are enough to be exact for every `n` below 3.3 * 10^24, and each base needs `log n` modular squarings.
+- Space: O(1). A few integers.

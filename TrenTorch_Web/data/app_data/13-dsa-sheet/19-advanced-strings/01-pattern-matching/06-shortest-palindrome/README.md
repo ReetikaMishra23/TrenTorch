@@ -61,3 +61,8 @@ A prefix of length `k` is a palindrome when it equals its own reverse. Build `t 
 ## Explanation
 
 `border` is the length of the longest palindromic prefix. The part of `s` after it is reversed and placed in front.
+
+### Complexity
+
+- Time: O(n). The prefix function of `s + "#" + reverse(s)` gives the longest palindromic prefix of `s` in one linear pass.
+- Space: O(n). The combined string and its prefix function.

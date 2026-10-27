@@ -63,3 +63,8 @@ Check the guess in `O(n)`, and there are about `log₂ (max pile)` guesses: `O(n
 ## Explanation
 
 `lo = 1`, `hi = max(piles)`. For each `mid`, `needed = sum(-(-p // mid) for p in piles)`. If `needed <= hours` the speed works, so try slower: `hi = mid`. Otherwise it is too slow: `lo = mid + 1`. The loop ends at the smallest working speed.
+
+### Complexity
+
+- Time: O(n log M). Binary search over speeds `1..M` (`M` = largest pile) costs `log M` probes, and each probe sums `n` piles.
+- Space: O(1). Two bounds and a running sum.

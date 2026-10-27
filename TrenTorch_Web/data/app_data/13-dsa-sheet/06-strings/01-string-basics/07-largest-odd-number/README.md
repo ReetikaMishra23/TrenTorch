@@ -59,3 +59,8 @@ So find the **last odd digit** and return everything up to and including it: `nu
 ## Explanation
 
 Scan from the right for the first digit that is odd (`1 3 5 7 9`). Return the prefix up to it. If no digit is odd, return `""`.
+
+### Complexity
+
+- Time: O(n). Scan from the right until an odd digit is found, then slice.
+- Space: O(n). The returned slice.

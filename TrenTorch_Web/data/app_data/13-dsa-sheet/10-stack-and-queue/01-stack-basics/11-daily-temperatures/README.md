@@ -57,3 +57,8 @@ Storing **indices** (not temperatures) is what lets you compute the distance. `O
 ## Explanation
 
 The stack holds days without an answer, whose temperatures do not increase from bottom to top. A warmer day pops the colder ones and tells each how long it waited.
+
+### Complexity
+
+- Time: O(n). Each index is pushed once and popped at most once.
+- Space: O(n). The stack and the result.

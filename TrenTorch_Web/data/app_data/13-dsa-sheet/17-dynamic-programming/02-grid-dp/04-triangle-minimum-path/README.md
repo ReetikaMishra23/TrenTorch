@@ -57,3 +57,8 @@ Only one row is needed: update it in place, and it needs just `O(rows)` extra me
 ## Explanation
 
 `best` starts as a copy of the last row. Each higher row replaces `best` with the cheapest total from each of its cells down to the bottom.
+
+### Complexity
+
+- Time: O(n^2). The triangle has about `n^2 / 2` cells, each computed once from the two below it.
+- Space: O(n). One row of the table (`n` = number of rows).

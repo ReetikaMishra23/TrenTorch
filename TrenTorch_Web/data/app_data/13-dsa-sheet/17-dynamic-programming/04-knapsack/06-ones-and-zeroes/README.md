@@ -56,3 +56,8 @@ This is a 0/1 knapsack with **two capacities** (zeros and ones) and every item w
 ## Explanation
 
 `zeros = s.count("0")` and `ones = len(s) - zeros` are the weights. Both loops run downwards.
+
+### Complexity
+
+- Time: O(len * m * n). Each string updates every `(zeros, ones)` budget once.
+- Space: O(m * n). The table of budgets.

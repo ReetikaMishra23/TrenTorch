@@ -54,3 +54,8 @@ Always do all 32 rounds, even when `n` runs out of bits: leading zeros of `n` be
 ## Explanation
 
 Each round moves one bit from the bottom of `n` to the bottom of `result` while shifting the earlier bits of `result` up by one. The first bit read ends in position 31.
+
+### Complexity
+
+- Time: O(1). A fixed 32 steps, one per bit.
+- Space: O(1). Two integers.

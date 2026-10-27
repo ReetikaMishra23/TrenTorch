@@ -58,3 +58,8 @@ Python's `//` rounds toward negative infinity, but this question wants truncatio
 ## Explanation
 
 `b = stack.pop()` comes first, then `a = stack.pop()`. Division uses `int(a / b)` only when both are small enough for float division to be exact; here an integer-only test avoids precision loss: `q = abs(a) // abs(b)`, negated if the signs differ.
+
+### Complexity
+
+- Time: O(n). Each token is read once and each operator costs O(1).
+- Space: O(n). The stack of operands.

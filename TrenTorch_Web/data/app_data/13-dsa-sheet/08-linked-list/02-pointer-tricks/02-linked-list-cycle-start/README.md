@@ -61,3 +61,8 @@ So: when they meet, put one pointer back at `head` and move **both one step at a
 ## Explanation
 
 After the first meeting, `slow` restarts from `head` while `fast` stays at the meeting point. Both then move one step per round; they meet at the node where the cycle begins.
+
+### Complexity
+
+- Time: O(n). Floyd's algorithm finds a meeting point; restarting one pointer at the head and moving both one step at a time makes them meet at the cycle start.
+- Space: O(1). Two pointers.

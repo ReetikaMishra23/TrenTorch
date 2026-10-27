@@ -62,3 +62,8 @@ It is the same dictionary trick as counting runs, but you store the first index 
 ## Explanation
 
 `first[p]` is the earliest index whose prefix sum is `p`; `first[0] = -1` stands for the empty prefix. At index `i` with running sum `prefix`, if `prefix - k` is in `first`, the run from `first[prefix - k] + 1` to `i` adds to `k`, with length `i - first[prefix - k]`. Only record a prefix the first time it appears, to keep runs as long as possible.
+
+### Complexity
+
+- Time: O(n). One pass; the earliest index of each prefix sum is stored, so a lookup gives the longest subarray ending here.
+- Space: O(n). The dictionary of first positions of prefix sums.

@@ -56,3 +56,8 @@ Because every list is already sorted, the next smallest value overall must be at
 `heapq.merge(*lists)` returns an iterator over the merged values in order. Wrap it in `list(...)`.
 
 `*lists` unpacks the list of lists into separate arguments. An empty `lists` gives an empty result.
+
+### Complexity
+
+- Time: O(n log k). A heap of `k` list heads gives the next smallest value in O(log k), done `n` times.
+- Space: O(k). The heap holds one head per list (the output is not counted).

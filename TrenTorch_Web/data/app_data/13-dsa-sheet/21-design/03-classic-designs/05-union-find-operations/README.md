@@ -62,3 +62,8 @@ With both tricks every operation is almost `O(1)` (inverse Ackermann time).
 ## Explanation
 
 `find` uses path halving. `union` swaps so the larger group's leader stays on top, and the size of the new leader grows.
+
+### Complexity
+
+- Time: O(n + q * alpha(n)). Union by size with path halving makes each operation O(alpha(n)), below 5 in practice.
+- Space: O(n). The parent and size arrays.

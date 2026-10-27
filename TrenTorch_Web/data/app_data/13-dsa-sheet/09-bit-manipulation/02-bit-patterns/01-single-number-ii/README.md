@@ -56,3 +56,8 @@ That is one pass, `O(n)` time and `O(1)` memory. Python integers behave like inf
 ## Explanation
 
 For each bit, the number of times it is seen is a multiple of 3 for the tripled values, so only the single number's bits are left in `ones` after every value is processed.
+
+### Complexity
+
+- Time: O(n). One pass; two bit-masks count every bit position modulo 3.
+- Space: O(1). Two integers.

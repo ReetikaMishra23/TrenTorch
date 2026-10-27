@@ -57,3 +57,8 @@ One pass, `O(n)`. The recorded sequences go into a set (a sequence seen three ti
 ## Explanation
 
 `seen` holds all windows met so far; `repeated` the ones met again.
+
+### Complexity
+
+- Time: O(n). Every window is 10 letters (a constant), so there are `n - 9` windows, each hashed once.
+- Space: O(n). The sets of seen windows.

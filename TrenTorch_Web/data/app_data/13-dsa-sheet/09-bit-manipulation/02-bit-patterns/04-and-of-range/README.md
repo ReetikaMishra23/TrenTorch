@@ -55,4 +55,9 @@ So shift both numbers right until they are equal, counting the shifts, then shif
 
 ## Explanation
 
-Each shift removes the lowest bit of both numbers. When they become equal, what is left is the shared prefix, and shifting back left fills the dropped positions with zeros.
+Every number between `left` and `right` shares the bits of their common prefix; below the highest bit where `left` and `right` differ, some number in the range has a `0` in every position, so the AND clears them. The highest differing bit is `(left ^ right).bit_length()`, so shift the common prefix back into place: `left >> shift << shift`.
+
+### Complexity
+
+- Time: O(1). The common prefix of `left` and `right` is everything above their highest differing bit, found with one XOR and `bit_length()`.
+- Space: O(1). A few integers.

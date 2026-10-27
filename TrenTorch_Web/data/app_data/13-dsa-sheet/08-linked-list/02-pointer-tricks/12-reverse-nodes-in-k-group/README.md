@@ -62,3 +62,8 @@ A dummy head makes the first block like all the others. The total work is `O(n)`
 ## Explanation
 
 Reversing with `prev = group_next` means the old first node of the block points at the node after the block. `first` (the old first node) is now the block's tail, and it is the `group_prev` for the next block.
+
+### Complexity
+
+- Time: O(n). Every node is visited a constant number of times: once to find the group end and once to reverse it.
+- Space: O(1). A few pointers.

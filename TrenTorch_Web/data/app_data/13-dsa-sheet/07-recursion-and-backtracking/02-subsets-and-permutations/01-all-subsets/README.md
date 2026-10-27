@@ -58,3 +58,8 @@ There are `2^n` subsets, so any solution takes at least that long. That is why `
 ## Explanation
 
 `go(i, cur)` first records a copy of `cur` (every partial choice is itself a subset), then tries each value from index `i` onwards: add it, recurse on the rest, remove it. Copy `cur` with `list(cur)` when recording, because `cur` keeps changing.
+
+### Complexity
+
+- Time: O(n * 2^n). There are `2^n` subsets and copying each into the output costs up to `n`.
+- Space: O(n * 2^n). The output; the recursion adds only `O(n)`.

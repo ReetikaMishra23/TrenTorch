@@ -1,4 +1,6 @@
 def lcs_length(a, b):
+    if len(b) > len(a):
+        a, b = b, a
     prev = [0] * (len(b) + 1)
     for i in range(1, len(a) + 1):
         cur = [0] * (len(b) + 1)

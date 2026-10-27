@@ -56,3 +56,8 @@ Two good approaches. **Vertical scanning**: compare the words column by column (
 ## Explanation
 
 An empty list returns `""`. Otherwise `min(words)` and `max(words)` are the alphabetically first and last words. Walk them together and stop at the first character that differs; everything before it is shared by all the words in between, hence by every word.
+
+### Complexity
+
+- Time: O(S). The smallest and largest word (in dictionary order) are found with `n` comparisons that stop at the first difference; `S` is the total number of characters.
+- Space: O(m). The returned prefix, `m` = length of the shortest word.

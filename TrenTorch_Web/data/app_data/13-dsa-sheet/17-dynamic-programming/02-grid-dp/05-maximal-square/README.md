@@ -59,3 +59,8 @@ Why the minimum: a bigger square ending here needs all three smaller squares aro
 ## Explanation
 
 `prev` holds the previous row of sides and `cur` the row being built. The diagonal value is kept in `diag` since it is overwritten.
+
+### Complexity
+
+- Time: O(r * c). Every cell is computed once from three neighbours.
+- Space: O(c). Two rows of the table.

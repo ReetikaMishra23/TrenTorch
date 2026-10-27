@@ -57,3 +57,8 @@ The same two-speed idea finds the start of a cycle, the half of a list to revers
 ## Explanation
 
 `fast` moves twice as fast as `slow`. When `fast` can no longer take two steps, `slow` is exactly halfway. For `1 -> 2 -> 3 -> 4` the loop ends with `slow` on `3`, the second middle.
+
+### Complexity
+
+- Time: O(n). `fast` moves two nodes for every one of `slow`, so `slow` stops in the middle after `n / 2` steps.
+- Space: O(1). Two pointers.

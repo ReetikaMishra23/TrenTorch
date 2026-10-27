@@ -66,3 +66,8 @@ The last recorded floor and ceil are the answer. One path, `O(h)`.
 ## Explanation
 
 `floor` and `ceil` keep the closest values found so far on each side of `x` while the walk narrows the interval.
+
+### Complexity
+
+- Time: O(h). One root-to-leaf walk remembering the last smaller and the last larger value.
+- Space: O(1). Two numbers; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

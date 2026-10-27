@@ -64,3 +64,8 @@ Every operation is `O(1)`.
 ## Explanation
 
 `count` and `value` store each key's data; `groups[c]` holds the keys with count `c` in recency order. `touch` moves a key up one group.
+
+### Complexity
+
+- Time: O(n). Each key sits in the ordered group of its use count, so touching or evicting a key is O(1), with `n` operations.
+- Space: O(capacity). The values, the counts and the groups.

@@ -75,3 +75,8 @@ Choosing the last value as the pivot is risky: on an already sorted list every p
 Copy the list, then run the loop exactly as given. `i + 1` is where the pivot belongs after the final swap, and it is the second item to return.
 
 The final swap `a[i + 1], a[-1] = a[-1], a[i + 1]` also works when `i + 1` is already the last index (it swaps the pivot with itself).
+
+### Complexity
+
+- Time: O(n). A single left-to-right pass.
+- Space: O(n). The input is copied because it must not change; the partition itself is in place on the copy.

@@ -54,3 +54,8 @@ A mask is a number made to select particular bits with `&`. It is the most commo
 ## Explanation
 
 `0x5555555555555555` has a `1` at every even bit position (up to 62). A power of two that shares a bit with the mask has its set bit in an even position, which is exactly the powers of four.
+
+### Complexity
+
+- Time: O(1). One bit test for a power of two and one mask test that the bit is at an even position.
+- Space: O(1). Nothing is stored.

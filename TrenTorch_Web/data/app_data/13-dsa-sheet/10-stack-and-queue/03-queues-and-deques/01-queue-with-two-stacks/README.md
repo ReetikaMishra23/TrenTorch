@@ -59,3 +59,8 @@ The queue is empty only when both stacks are empty.
 ## Explanation
 
 `move()` refills the outbox only when it is empty. Between refills, `pop` and `peek` work on the outbox top, which is the front of the queue.
+
+### Complexity
+
+- Time: O(n). Every value moves from the inbox to the outbox at most once, so each operation is O(1) amortised.
+- Space: O(n). The two stacks.

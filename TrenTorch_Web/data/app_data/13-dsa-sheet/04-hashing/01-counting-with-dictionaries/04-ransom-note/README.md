@@ -55,3 +55,8 @@ Counting both strings is `O(len(note) + len(magazine))`.
 ## Explanation
 
 `Counter(note) - Counter(magazine)` drops every letter whose magazine count covers the note's count, and keeps the shortfall of the others. Empty means everything is covered.
+
+### Complexity
+
+- Time: O(n + m). Each string is counted once and the two counters (at most 26 letters) are subtracted.
+- Space: O(1). Two counters with at most 26 letters.

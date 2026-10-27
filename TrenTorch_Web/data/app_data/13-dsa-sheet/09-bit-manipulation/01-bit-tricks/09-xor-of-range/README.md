@@ -63,3 +63,8 @@ A range is a **difference of two prefixes**, and xor undoes itself (`x ^ x = 0`)
 ## Explanation
 
 `prefix(n)` uses the table above. Xoring the prefix up to `right` with the prefix up to `left - 1` cancels all numbers below `left`.
+
+### Complexity
+
+- Time: O(1). The XOR of `0..n` repeats every four values, so a prefix XOR is a table lookup and the range is the XOR of two prefixes.
+- Space: O(1). Nothing is stored.

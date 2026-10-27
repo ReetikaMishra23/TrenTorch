@@ -52,3 +52,8 @@ This number is called the **Hamming distance**. XOR is the natural "difference" 
 ## Explanation
 
 `a ^ b` marks the differing positions; Kernighan's loop counts them.
+
+### Complexity
+
+- Time: O(s). The XOR has a one exactly where the numbers differ, and the loop clears one set bit per step (`s` = number of differing bits).
+- Space: O(1). One counter.

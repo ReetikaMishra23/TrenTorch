@@ -63,3 +63,8 @@ Each level of the recursion does `O(n)` work and there are `log₂ n` levels: `O
 `sort(a)` returns the sorted list and its inversion count. Split, recurse, then merge: when taking a value from the right half, add `len(left) - i`, the number of left values not yet used (all of them are larger). Equal values take from the left first, so they are not counted.
 
 The recursion is only `log₂ n` deep (about 17 for `10⁵`), so Python's recursion limit is no problem.
+
+### Complexity
+
+- Time: O(n log n). Merge sort has `log n` levels and every level merges `n` values; the cross inversions are counted during each merge.
+- Space: O(n). The merged lists on the recursion path add up to `n`.

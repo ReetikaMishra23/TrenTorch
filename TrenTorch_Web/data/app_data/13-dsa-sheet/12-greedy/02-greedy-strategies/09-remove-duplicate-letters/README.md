@@ -59,3 +59,8 @@ This is the same idea as removing digits to get the smallest number, with the ex
 ## Explanation
 
 A popped letter is not lost: a later copy exists. Letters already on the stack are skipped, since keeping the earlier occurrence is never worse after the pops.
+
+### Complexity
+
+- Time: O(n). Each character is pushed and popped at most once.
+- Space: O(k). The stack and set hold at most one entry per letter, `k` <= 26.

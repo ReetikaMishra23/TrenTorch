@@ -1,8 +1,11 @@
+import random
+
+
 def kth_largest(nums, k):
     a = list(nums)
     target = len(a) - k
     while True:
-        pivot = a[len(a) // 2]
+        pivot = random.choice(a)
         less = [x for x in a if x < pivot]
         equal = a.count(pivot)
         if target < len(less):

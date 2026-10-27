@@ -59,3 +59,8 @@ Each addition costs `O(log k)`, while sorting every time costs `O(n log n)`. Thi
 ## Explanation
 
 The heap is built from the starting values by keeping only the `k` largest. After that `heappushpop` adds the new value and removes the smallest of the `k + 1`, leaving the `k` largest.
+
+### Complexity
+
+- Time: O((n + m) log k). A heap of the `k` largest values, `O(log k)` per value (`n` initial values, `m` added ones).
+- Space: O(k). The heap.

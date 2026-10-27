@@ -58,3 +58,8 @@ Greedy works here because each value in the table is not too far from the next, 
 ## Explanation
 
 `table` lists values from largest to smallest with their symbols, including the nine/four forms. For each value, `divmod(num, value)` gives how many times it fits; append the symbol that many times and continue with the remainder.
+
+### Complexity
+
+- Time: O(1). A fixed table of 13 symbols; the output has at most 15 characters.
+- Space: O(1). The output is bounded.

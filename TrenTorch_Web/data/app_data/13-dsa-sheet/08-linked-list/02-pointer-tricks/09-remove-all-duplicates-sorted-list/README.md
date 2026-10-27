@@ -57,3 +57,8 @@ Notice that `prev` only moves when a node is confirmed unique, so later duplicat
 ## Explanation
 
 A repeat triggers an inner loop that skips the whole group. The outer pointers move on only when the node is unique.
+
+### Complexity
+
+- Time: O(n). One pass; every run of equal values is skipped as a whole.
+- Space: O(1). Two pointers.

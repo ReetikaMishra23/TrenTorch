@@ -53,3 +53,8 @@ A neat way to do it with two pointers: `i` from the left and `j` from the right;
 ## Explanation
 
 `vowels` is the list of vowels in order; `reversed_vowels = iter(reversed(vowels))` hands them out from the end. Scanning `s`, each vowel is replaced by the next reversed vowel and all other characters are copied unchanged.
+
+### Complexity
+
+- Time: O(n). One pass collects the vowels and one pass rebuilds the string.
+- Space: O(n). The vowel list and the result.

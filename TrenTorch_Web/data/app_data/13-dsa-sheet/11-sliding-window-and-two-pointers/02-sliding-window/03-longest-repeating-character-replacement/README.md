@@ -62,3 +62,8 @@ Two surprising details: `max_count` is never decreased when the window shrinks. 
 ## Explanation
 
 The window never gets smaller: when it becomes invalid it slides (right moves, left moves one). The final window size is the answer.
+
+### Complexity
+
+- Time: O(n). One pass; the window never shrinks, it only slides.
+- Space: O(26). The counts of at most 26 letters.

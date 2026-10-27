@@ -61,3 +61,8 @@ To check a day `d`, sweep the flowers once, counting the current run of bloomed 
 ## Explanation
 
 If `m * k` is more than the number of flowers, return `-1`. Otherwise search days between the earliest and latest bloom. `possible(day)` counts bouquets in one pass using the run length. A day that works keeps the lower half, a day that does not moves `lo` up.
+
+### Complexity
+
+- Time: O(n log D). Binary search over the days between the first and the last bloom (`D` = latest bloom day) costs `log D` probes, and each probe scans `n` flowers.
+- Space: O(1). A few counters.

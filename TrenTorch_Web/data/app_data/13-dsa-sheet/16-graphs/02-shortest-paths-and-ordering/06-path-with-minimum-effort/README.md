@@ -59,3 +59,8 @@ A heap gives `O(rows·cols·log(rows·cols))`. Another approach: **binary search
 ## Explanation
 
 `effort[r][c]` is the best known maximum difference to reach the cell. The heap pops cells in order of effort, and `max(...)` combines the path so far with the new step.
+
+### Complexity
+
+- Time: O(r * c * log(r * c)). Dijkstra where the cost of a path is its largest step; each cell can push a few heap entries.
+- Space: O(r * c). The effort grid and the heap.

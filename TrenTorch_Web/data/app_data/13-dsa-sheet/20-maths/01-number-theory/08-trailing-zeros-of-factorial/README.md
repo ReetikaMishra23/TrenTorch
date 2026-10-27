@@ -60,3 +60,8 @@ Count them: `n // 5` numbers are multiples of 5 (one factor each), `n // 25` mul
 ## Explanation
 
 `n //= 5` in each round gives `n // 5`, then `n // 25`, and so on, and the terms are added up.
+
+### Complexity
+
+- Time: O(log n). The loop divides by 5 until zero, adding the multiples of 5, 25, 125, ...
+- Space: O(1). A counter.

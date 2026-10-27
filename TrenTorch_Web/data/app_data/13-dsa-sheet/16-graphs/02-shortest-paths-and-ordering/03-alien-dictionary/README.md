@@ -57,3 +57,8 @@ The letters and arrows form a directed graph; the order is a **topological sort*
 ## Explanation
 
 `edges` is a set of `(x, y)` pairs, so repeated facts count once. The in-degree counts only distinct arrows.
+
+### Complexity
+
+- Time: O(S + L log L + e). `S` is the total number of characters: comparing neighbouring words gives at most one edge per pair; then a heap-based topological sort over the `L` distinct letters.
+- Space: O(L + e). The graph over at most 26 letters.

@@ -61,3 +61,8 @@ Two structures work together: sort the projects by the capital they need; as you
 ## Explanation
 
 `i` walks through the projects sorted by required capital and pushes every affordable profit into the heap (negated, for a max-heap). Each round takes the best one.
+
+### Complexity
+
+- Time: O(n log n). Sort projects by capital once, then each of at most `k` rounds moves the newly affordable ones to a heap.
+- Space: O(n). The sorted list and the heap.

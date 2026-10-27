@@ -62,3 +62,8 @@ Duplicates are handled exactly like in Three Sum: skip a repeated `a[i]` and a r
 ## Explanation
 
 Two loops fix `i` and `j` (skipping repeats at each level). The inner `lo`/`hi` sweep looks for two values that add up to `target - a[i] - a[j]`. After a match, both pointers move and skip equal values, so each group is recorded once, in sorted order.
+
+### Complexity
+
+- Time: O(n^3). Sort once, fix two values with two loops, then a two-pointer sweep costs O(n).
+- Space: O(n). The sorted copy (the result list is extra output).

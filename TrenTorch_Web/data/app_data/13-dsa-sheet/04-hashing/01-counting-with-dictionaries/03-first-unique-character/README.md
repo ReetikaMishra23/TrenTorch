@@ -59,3 +59,8 @@ Strings are iterable, so `Counter(s)` counts characters directly, and `enumerate
 ## Explanation
 
 `counts = Counter(s)` records how often each character occurs. The loop over `enumerate(s)` returns the first index whose character has `counts[ch] == 1`. If the loop ends, no character is unique and the answer is `-1`.
+
+### Complexity
+
+- Time: O(n). One counting pass and one scan.
+- Space: O(1). The counter has at most 26 letters.

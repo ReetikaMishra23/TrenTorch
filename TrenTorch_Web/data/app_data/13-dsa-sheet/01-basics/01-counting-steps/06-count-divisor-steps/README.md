@@ -68,3 +68,8 @@ The sum itself can be computed faster. The value `n // i` takes at most about `2
 Start at `i = 1`. Let `q = n // i`. The largest `j` with `n // j == q` is `n // q`. All `i..j` contribute `q` each, so add `q * (j - i + 1)` and continue from `j + 1`.
 
 There are at most `2√n` runs, so the loop does about `2 * 10**5` steps for `n = 10**10`.
+
+### Complexity
+
+- Time: O(sqrt(n)). `n // i` takes only about `2 * sqrt(n)` different values, and every loop turn jumps over a whole block of equal quotients.
+- Space: O(1). A few integer variables.

@@ -57,3 +57,8 @@ The fix is a trade of memory for time. A `set` answers "have I seen this value?"
 Keep a set of values seen so far. For each value, if it is already in the set the answer is `True`; otherwise add it. If the loop ends, every value was new.
 
 A shorter version compares sizes: `len(set(nums)) != len(nums)`. It does the same work, but it always builds the whole set even when the first two values are equal.
+
+### Complexity
+
+- Time: O(n). Each value is checked and inserted once; set operations are O(1) on average.
+- Space: O(n). The set may hold all `n` distinct values.

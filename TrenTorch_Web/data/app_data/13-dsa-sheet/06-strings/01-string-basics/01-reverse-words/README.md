@@ -53,3 +53,8 @@ Strings in Python are **immutable**: you cannot change a string in place, every 
 ## Explanation
 
 `s.split()` gives the words with no empty pieces, `[::-1]` reverses them, and `" ".join(...)` puts them back with one space between. An all-space or empty string has no words and gives `""`.
+
+### Complexity
+
+- Time: O(n). `split` and `join` each read the string once.
+- Space: O(n). The list of words and the result.

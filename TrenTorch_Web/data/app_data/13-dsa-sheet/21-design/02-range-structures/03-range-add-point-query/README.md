@@ -62,3 +62,8 @@ To make both the update and the point query `O(log n)`, keep the difference arra
 ## Explanation
 
 The Fenwick tree stores the difference array. Two point updates mark the ends of the range; a prefix sum recovers the value.
+
+### Complexity
+
+- Time: O((n + q) log n). A range add is two updates of a Fenwick tree over differences, and a point query is one prefix sum.
+- Space: O(n). The tree.

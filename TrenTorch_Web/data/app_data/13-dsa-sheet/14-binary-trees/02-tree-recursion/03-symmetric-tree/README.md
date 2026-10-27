@@ -59,3 +59,8 @@ So write a helper `mirror(a, b)` and call it on the left and right subtrees of t
 ## Explanation
 
 `mirror` returns `True` for two `None`s, `False` if only one is `None` or the values differ, and otherwise checks the crossed children.
+
+### Complexity
+
+- Time: O(n). Every node is compared with its mirror once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

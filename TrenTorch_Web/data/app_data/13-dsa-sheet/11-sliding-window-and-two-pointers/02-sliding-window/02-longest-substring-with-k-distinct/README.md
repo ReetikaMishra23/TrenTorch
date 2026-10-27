@@ -62,3 +62,8 @@ This "expand right, shrink left while invalid" loop is the standard form for the
 ## Explanation
 
 `count` maps each character in the window to how many times it appears. A key whose count drops to zero is deleted so `len(count)` stays the number of different characters.
+
+### Complexity
+
+- Time: O(n). Each index enters and leaves the window once.
+- Space: O(k). The count map has at most `k + 1` entries.

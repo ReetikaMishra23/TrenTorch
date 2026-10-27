@@ -59,3 +59,8 @@ The order matters: unions first, `!=` checks second. `O(n α)`.
 ## Explanation
 
 `ord(ch) - 97` maps a letter to a position in `parent`. The two loops do the unions and then the checks.
+
+### Complexity
+
+- Time: O(m). One union-find pass over the `m` equations on at most 26 letters.
+- Space: O(1). A parent array of 26 entries.

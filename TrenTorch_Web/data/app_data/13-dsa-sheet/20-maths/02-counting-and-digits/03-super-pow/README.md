@@ -58,3 +58,8 @@ That is one small modular power per digit, `O(len(b))` in total.
 ## Explanation
 
 Appending a digit `d` to the exponent multiplies the old exponent by 10 and adds `d`, which the two `pow` calls do.
+
+### Complexity
+
+- Time: O(len(b)). One step per digit of the exponent, each a pair of modular powers with a tiny exponent.
+- Space: O(1). A few integers.

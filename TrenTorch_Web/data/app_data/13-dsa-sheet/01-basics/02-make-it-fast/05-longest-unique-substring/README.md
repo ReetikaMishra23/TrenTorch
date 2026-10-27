@@ -77,3 +77,8 @@ That is a **sliding window**: keep a window `[start, i]` with no repeats and mov
 `last[ch]` is the last index where `ch` appeared. If `last[ch] >= start`, then `ch` is already in the current window, so move `start` to `last[ch] + 1`. Then record `last[ch] = i` and update the best length `i - start + 1`.
 
 The check `last[ch] >= start` matters: a character seen long ago, before the window began, must not move `start` backwards.
+
+### Complexity
+
+- Time: O(n). The window start only moves forward, so every character is handled once.
+- Space: O(min(n, k)). The dictionary holds at most one entry per distinct character, `k` being the alphabet size.

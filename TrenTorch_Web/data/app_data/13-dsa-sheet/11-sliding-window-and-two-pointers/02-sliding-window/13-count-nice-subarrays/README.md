@@ -60,3 +60,8 @@ For `at_most(m)`: expand `right` (count it if odd), shrink `left` while the odd 
 ## Explanation
 
 The helper counts windows by their right end. Subtracting the two counts keeps exactly the subarrays whose odd count is `k`.
+
+### Complexity
+
+- Time: O(n). Two sliding-window passes: "at most k odd" minus "at most k - 1 odd".
+- Space: O(1). A few numbers.

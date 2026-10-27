@@ -59,3 +59,8 @@ Precompute `last[ch]`, the index of the last occurrence of each letter. Scan wit
 ## Explanation
 
 `end` grows whenever a letter in the part occurs further right. A cut at `end` is valid because nothing in the part appears afterwards.
+
+### Complexity
+
+- Time: O(n). One pass to find the last position of each letter and one to cut the string.
+- Space: O(k). The last-position map has one entry per letter, `k` <= 26.

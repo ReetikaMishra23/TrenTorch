@@ -64,3 +64,8 @@ For each position keep a list of `(snapshot id, value)` entries, appended when t
 ## Explanation
 
 `history[i]` holds the ids and values for position `i`. `bisect_right(ids, id) - 1` is the latest entry not after the snapshot.
+
+### Complexity
+
+- Time: O(n log n). A `set` is O(1); a `get` is one binary search over the snapshot ids that changed that index.
+- Space: O(n). One entry per change.

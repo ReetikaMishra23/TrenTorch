@@ -57,3 +57,8 @@ Output:
 ## Explanation
 
 `row[c]` holds `best(r - 1, c)` before the update and the new `best(r, c)` after; `row[c - 1]` is the left neighbour.
+
+### Complexity
+
+- Time: O(r * c). Every cell is computed once from its left and upper neighbours.
+- Space: O(c). One row of the table.

@@ -58,3 +58,8 @@ This is the paint bucket tool. Remember the **original colour** of the start cel
 ## Explanation
 
 The early return handles `color == old`. Otherwise each recoloured cell no longer has the old colour, so it is never pushed again.
+
+### Complexity
+
+- Time: O(r * c). Every cell is pushed and popped at most once and each has 4 neighbours.
+- Space: O(r * c). The stack can hold the whole region (the image is changed in place).

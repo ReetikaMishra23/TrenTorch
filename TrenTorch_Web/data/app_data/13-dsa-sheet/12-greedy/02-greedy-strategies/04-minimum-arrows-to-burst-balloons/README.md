@@ -57,3 +57,8 @@ Skip all balloons that start at or before the arrow position; the next balloon t
 ## Explanation
 
 `arrow` is the position of the last arrow. A balloon with `x_start <= arrow` is already burst (its end is at least the arrow, thanks to the sorting).
+
+### Complexity
+
+- Time: O(n log n). Sorting by end dominates; the scan is one pass.
+- Space: O(n). The sorted list.

@@ -58,3 +58,8 @@ Dijkstra fails with negative weights (a node's distance can still drop after it 
 ## Explanation
 
 The first `n - 1` rounds compute the distances; the last round is the cycle test. Edges out of unreachable nodes are skipped.
+
+### Complexity
+
+- Time: O(n * e). `n - 1` rounds, each relaxing every edge once, plus one round to detect a negative cycle.
+- Space: O(n). The distance array.

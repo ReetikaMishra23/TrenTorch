@@ -53,3 +53,8 @@ Walk both lists with two pointers. Take the smaller current value (from `a` on a
 ## Explanation
 
 Each round picks the next value: from `a` if `b` is used up or `a[i] <= b[j]`, otherwise from `b`. Then it appends the value unless it equals the last appended value. Loop until both lists are used up.
+
+### Complexity
+
+- Time: O(n + m). A merge of the two lists, each pointer only moves forward.
+- Space: O(n + m). The result list; nothing else is allocated.

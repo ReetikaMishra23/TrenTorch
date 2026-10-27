@@ -59,3 +59,8 @@ The deque makes both "take from the top" and "move to the bottom" `O(1)`, so the
 ## Explanation
 
 The simulation uses indices of the result list. `popleft` reveals a card; `append(popleft())` moves the next card to the bottom.
+
+### Complexity
+
+- Time: O(n log n). Sorting dominates; the queue simulation is O(n).
+- Space: O(n). The queue of positions and the result.

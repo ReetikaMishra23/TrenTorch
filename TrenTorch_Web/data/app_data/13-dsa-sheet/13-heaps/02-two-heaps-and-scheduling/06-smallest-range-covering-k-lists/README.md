@@ -60,3 +60,8 @@ A **min-heap** holds the current choice from each list, so the minimum is the to
 ## Explanation
 
 The heap stores `(value, list_index, position)`. `current_max` is the largest value currently chosen. When any list is exhausted, no range can cover all lists any more.
+
+### Complexity
+
+- Time: O(N log k). A heap with one value per list; each of the `N` values is pushed and popped at most once.
+- Space: O(k). The heap.

@@ -59,3 +59,8 @@ You can mark cells as visited by writing `0` into the grid (changing the input) 
 ## Explanation
 
 Every cell is entered once. The outer loops look for unvisited land; `stack` is the flood fill of one island.
+
+### Complexity
+
+- Time: O(r * c). Every cell is pushed and popped at most once and each has 4 neighbours.
+- Space: O(r * c). The visited grid and the stack.

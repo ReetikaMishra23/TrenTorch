@@ -61,3 +61,8 @@ Each index is pushed once and popped once, so the whole thing is `O(n)`. This pa
 ## Explanation
 
 The stack holds indices of values still without an answer, in non-increasing order of value. A new value that is bigger than the top answers it, and keeps answering the new top while it is bigger.
+
+### Complexity
+
+- Time: O(n). Each index is pushed once and popped at most once.
+- Space: O(n). The stack and the result.

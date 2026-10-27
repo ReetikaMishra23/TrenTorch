@@ -54,3 +54,8 @@ The loop version (`while n % 2 == 0: n //= 2`) works too, but takes up to 62 ste
 ## Explanation
 
 For a positive power of two, `n - 1` has all the lower bits set and the single `1` cleared, so `n & (n - 1)` is `0`. Any other positive number has a higher set bit that survives the `&`.
+
+### Complexity
+
+- Time: O(1). A power of two has exactly one set bit, which `n & (n - 1) == 0` tests.
+- Space: O(1). Nothing is stored.

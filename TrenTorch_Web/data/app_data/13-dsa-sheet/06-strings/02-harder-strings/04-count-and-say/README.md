@@ -63,3 +63,8 @@ A famous fact: no term ever contains a digit bigger than `3`, and the sequence g
 ## Explanation
 
 Start with `"1"` and apply the describe step `n - 1` times. `groupby` splits the string into runs; each run becomes its length followed by its digit.
+
+### Complexity
+
+- Time: O(L). Each term is built in one pass over the previous term; the terms grow by a factor of about 1.3, so the total is a geometric series dominated by the last term of length `L`.
+- Space: O(L). The current term and the next one.

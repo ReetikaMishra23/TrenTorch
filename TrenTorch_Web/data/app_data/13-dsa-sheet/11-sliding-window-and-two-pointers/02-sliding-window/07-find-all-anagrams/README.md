@@ -56,3 +56,8 @@ To avoid comparing 26 counts every step, you can keep a running number `matched`
 ## Explanation
 
 After processing index `i`, the window is `s[i - m + 1 .. i]`. If its counts equal `p`'s counts, `i - m + 1` is recorded.
+
+### Complexity
+
+- Time: O(n). The window moves one step at a time and comparing two 26-letter counts is O(26).
+- Space: O(1). Two arrays of 26 counts (the result list is output).

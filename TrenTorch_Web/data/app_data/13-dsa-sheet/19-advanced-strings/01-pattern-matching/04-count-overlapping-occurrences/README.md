@@ -62,3 +62,8 @@ Python's `str.count` counts only non-overlapping occurrences, so it is not enoug
 ## Explanation
 
 After a full match the fall back `k = fail[k - 1]` keeps the longest border, which is where an overlapping match would start.
+
+### Complexity
+
+- Time: O(n + m). KMP: after a match the pointer falls back to the longest border instead of restarting, so overlaps are counted without rescanning.
+- Space: O(m). The failure table of the pattern.

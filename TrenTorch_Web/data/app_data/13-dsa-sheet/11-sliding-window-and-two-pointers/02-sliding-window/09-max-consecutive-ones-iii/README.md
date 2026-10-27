@@ -57,3 +57,8 @@ This is the "longest valid window" template again with the condition `zeros <= k
 ## Explanation
 
 `zeros` is the number of zeros in the window. Moving `left` past a zero reduces it.
+
+### Complexity
+
+- Time: O(n). Each index enters and leaves the window once.
+- Space: O(1). A few numbers.

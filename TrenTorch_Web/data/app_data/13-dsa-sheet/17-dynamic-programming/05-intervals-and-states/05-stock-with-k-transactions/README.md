@@ -60,3 +60,8 @@ Updating `t` from high to low (or computing `hold` first) keeps a buy and a sell
 ## Explanation
 
 `hold[t]` starts at minus infinity (nothing bought yet). Each day relaxes both arrays for every `t`; `free[k]` is the answer.
+
+### Complexity
+
+- Time: O(n * k). For each day, update the `k` transaction levels (if `k >= n / 2` it is the unlimited case, O(n)).
+- Space: O(k). Two arrays of `k + 1` numbers.

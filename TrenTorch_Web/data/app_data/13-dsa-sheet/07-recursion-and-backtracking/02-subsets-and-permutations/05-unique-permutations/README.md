@@ -55,3 +55,8 @@ This is the permutation version of "skip duplicates at the same level".
 ## Explanation
 
 The condition says: if `a[j]` has a twin `a[j - 1]` that is still unused, then using `a[j]` first would just be the twin swapped in, a repeat. So equal values are placed left to right in the sorted order.
+
+### Complexity
+
+- Time: O(n * n!). At most `n!` permutations, each costing `O(n)` to scan and copy; the skip rule never builds a duplicate.
+- Space: O(n * n!). The output; the recursion adds only `O(n)`.

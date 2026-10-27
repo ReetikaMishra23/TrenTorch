@@ -57,3 +57,8 @@ Each step halves the range and reads a constant number of values: `O(log n)`.
 ## Explanation
 
 After checking `nums[mid] == target`, decide which half is sorted by comparing `nums[lo]` with `nums[mid]`. In the sorted half a simple range test says whether the target is inside; if so, discard the other half, otherwise discard this half. Distinct values make `<=` on the sorted-half test safe.
+
+### Complexity
+
+- Time: O(log n). At every step one half of the range is sorted, which tells which half can hold the target, so the range halves.
+- Space: O(1). Three indices.

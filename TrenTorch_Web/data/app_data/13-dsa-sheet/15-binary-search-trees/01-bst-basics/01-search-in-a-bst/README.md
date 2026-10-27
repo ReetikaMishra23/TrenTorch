@@ -59,3 +59,8 @@ Searching follows one path from the root: if `val` is smaller than the current v
 ## Explanation
 
 Each step discards one whole subtree. The loop ends at the matching node, or at `None`.
+
+### Complexity
+
+- Time: O(h). Each step discards one subtree.
+- Space: O(1). One pointer; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

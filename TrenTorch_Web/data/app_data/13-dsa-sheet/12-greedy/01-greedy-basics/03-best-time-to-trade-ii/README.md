@@ -57,3 +57,8 @@ The greedy rule: add `max(0, prices[i] - prices[i - 1])` for every day. `O(n)`, 
 ## Explanation
 
 Every upward step is profit you could have captured by buying the day before and selling today. A downward step is never taken.
+
+### Complexity
+
+- Time: O(n). One pass adding every rise between neighbouring days.
+- Space: O(1). A running sum.

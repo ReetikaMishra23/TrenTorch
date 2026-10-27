@@ -59,3 +59,8 @@ Implement it like Kahn's algorithm: keep degrees, start a queue with the leaves,
 ## Explanation
 
 `remaining` is the number of nodes still in the tree; every round removes the current leaves and exposes new ones.
+
+### Complexity
+
+- Time: O(n). Peeling leaves layer by layer removes every node once.
+- Space: O(n). The adjacency lists and the degrees.

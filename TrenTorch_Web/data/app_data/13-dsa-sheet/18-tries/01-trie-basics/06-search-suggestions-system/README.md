@@ -60,3 +60,8 @@ This is `O(n log n)` for the sort plus `O(len(word) × log n)` for the searches.
 ## Explanation
 
 `bisect_left(products, prefix)` is the first product that could start with `prefix`. Slicing three items and filtering by prefix gives the suggestions.
+
+### Complexity
+
+- Time: O(P log P + k * L * log P). `P` = number of products, sorted once; after each typed letter one binary search finds the first match (`L` = length of the search word).
+- Space: O(P). The sorted list (the answer is output).

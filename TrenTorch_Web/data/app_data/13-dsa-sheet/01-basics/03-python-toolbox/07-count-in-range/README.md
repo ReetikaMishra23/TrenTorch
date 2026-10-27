@@ -59,3 +59,8 @@ Using `bisect_right` for the upper end is what makes `hi` inclusive. Mixing the 
 ## Explanation
 
 For each query compute `bisect_right(sorted_nums, hi) - bisect_left(sorted_nums, lo)`. Each query costs `O(log n)`, so `q` queries cost `O(q log n)`.
+
+### Complexity
+
+- Time: O(q log n). Two binary searches per query on a sorted list of `n` values.
+- Space: O(1). Nothing besides the answer list.

@@ -1,11 +1,20 @@
-import heapq
-
-
 def kth_smallest_matrix(matrix, k):
-    heap = [(matrix[r][0], r, 0) for r in range(len(matrix))]
-    heapq.heapify(heap)
-    for _ in range(k - 1):
-        _, r, c = heapq.heappop(heap)
-        if c + 1 < len(matrix[r]):
-            heapq.heappush(heap, (matrix[r][c + 1], r, c + 1))
-    return heap[0][0]
+    rows, cols = len(matrix), len(matrix[0])
+
+    def count_at_most(x):
+        count = 0
+        col = cols - 1
+        for r in range(rows):
+            while col >= 0 and matrix[r][col] > x:
+                col -= 1
+            count += col + 1
+        return count
+
+    lo, hi = matrix[0][0], matrix[-1][-1]
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if count_at_most(mid) >= k:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo

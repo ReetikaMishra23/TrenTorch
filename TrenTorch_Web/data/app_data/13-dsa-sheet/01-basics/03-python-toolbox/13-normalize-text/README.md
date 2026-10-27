@@ -59,3 +59,8 @@ To turn other characters into separators, either replace them one by one (`str.t
 ## Explanation
 
 Lower-case first, then `re.sub(r"[^a-z0-9]+", " ", text)` replaces every run of non-alphanumeric characters with one space, and `.strip()` removes the space at either end. For an empty or all-punctuation string the result is `""`.
+
+### Complexity
+
+- Time: O(n). Lower-casing and the regular expression each scan the string once.
+- Space: O(n). The lower-cased copy and the result.

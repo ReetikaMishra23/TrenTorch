@@ -61,3 +61,8 @@ You never need to know which train leaves, only how many are present. `O(n log n
 ## Explanation
 
 At equal times the arrival is processed before the departure, which gives the inclusive overlap the statement asks for.
+
+### Complexity
+
+- Time: O(n log n). Sorting arrivals and departures dominates; the sweep is O(n).
+- Space: O(n). The two sorted copies.

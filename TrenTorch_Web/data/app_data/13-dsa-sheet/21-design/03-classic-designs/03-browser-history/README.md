@@ -57,3 +57,8 @@ Keep the history in a **list** and an **index** of the current page. `visit`: dr
 ## Explanation
 
 The list is the whole history and `index` points into it. `del history[index + 1 :]` forgets the forward pages on a visit.
+
+### Complexity
+
+- Time: O(n). Every operation is O(1), except that a `visit` drops the forward pages, each page being dropped at most once.
+- Space: O(n). The list of pages.

@@ -1,13 +1,14 @@
 def longest_valid_parentheses(s):
     best = 0
-    stack = [-1]
-    for i, ch in enumerate(s):
-        if ch == "(":
-            stack.append(i)
-        else:
-            stack.pop()
-            if not stack:
-                stack.append(i)
+    for sequence, opener in ((s, "("), (reversed(s), ")")):
+        left = right = 0
+        for ch in sequence:
+            if ch == opener:
+                left += 1
             else:
-                best = max(best, i - stack[-1])
+                right += 1
+            if left == right:
+                best = max(best, 2 * left)
+            elif right > left:
+                left = right = 0
     return best

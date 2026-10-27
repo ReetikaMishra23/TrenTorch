@@ -60,3 +60,8 @@ The last compatible job is found by **binary search** on the sorted end times (`
 ## Explanation
 
 `ends` is the sorted list of end times. `bisect_right(ends, start)` counts the jobs that end at or before `start`, which is the number of jobs available to precede this one.
+
+### Complexity
+
+- Time: O(n log n). Sort by end time, then one binary search per job.
+- Space: O(n). The sorted list and the table.

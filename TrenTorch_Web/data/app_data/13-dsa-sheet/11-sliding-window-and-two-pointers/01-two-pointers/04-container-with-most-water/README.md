@@ -59,3 +59,8 @@ Repeat, keeping the best area. `O(n)`. The reasoning "this choice can never be p
 ## Explanation
 
 Each step computes the area of the current pair and moves the pointer at the shorter line, since keeping it could only give smaller or equal areas.
+
+### Complexity
+
+- Time: O(n). Two pointers; the shorter wall can never do better with a smaller width, so it is the one that moves.
+- Space: O(1). A few variables.

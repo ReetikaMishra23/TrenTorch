@@ -60,3 +60,8 @@ Each word costs `O(len(word))` regardless of the number of roots.
 ## Explanation
 
 The loop stops at the first node with the end marker, which is the shortest matching root because shorter prefixes are met first.
+
+### Complexity
+
+- Time: O(R + S). The roots are put in a trie once (`R` = total length of roots); each word of the sentence walks down it at most to its first root (`S` = length of the sentence).
+- Space: O(R + S). The trie and the output words.

@@ -55,3 +55,8 @@ Rotating in place without a second matrix works for square matrices, by rotating
 ## Explanation
 
 `matrix[::-1]` lists the rows from bottom to top. `zip(*...)` then reads columns of that reversed matrix: the first output row is the first column read from the bottom up, which is the first column of the original rotated into a row. Each tuple is turned into a list. An empty matrix, or one with empty rows, rotates to `[]`.
+
+### Complexity
+
+- Time: O(r * c). Every cell is copied once.
+- Space: O(r * c). The rotated matrix is a new list of lists.

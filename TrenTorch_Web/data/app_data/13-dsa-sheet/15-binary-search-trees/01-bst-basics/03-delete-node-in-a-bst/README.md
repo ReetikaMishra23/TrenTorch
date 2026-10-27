@@ -65,3 +65,8 @@ The recursive form returns the new root of each subtree: `node.left = delete(nod
 ## Explanation
 
 The first two cases return the surviving child directly. In case 3 the successor's value replaces the deleted one, and the successor is removed from the right subtree with the same function.
+
+### Complexity
+
+- Time: O(h). One search down to the node and at most one more walk down for the successor.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

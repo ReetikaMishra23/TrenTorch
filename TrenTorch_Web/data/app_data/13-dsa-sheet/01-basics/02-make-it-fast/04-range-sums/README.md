@@ -59,3 +59,8 @@ A **prefix sum** array fixes this. Let `prefix[i]` be the sum of the first `i` e
 `prefix = [0] + list(accumulate(nums))` gives `prefix[i] = nums[0] + ... + nums[i-1]`. The extra leading `0` makes `l = 0` work without a special case.
 
 Each answer is `prefix[right + 1] - prefix[left]`. Total time is `O(n + q)`.
+
+### Complexity
+
+- Time: O(n + q). O(n) to build the prefix sums, then O(1) per query, with `q` queries.
+- Space: O(n). The prefix array has `n + 1` entries (the answer list of size `q` is output, not extra work).

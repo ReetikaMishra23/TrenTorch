@@ -58,3 +58,8 @@ Use one array `best[w]` and process each item with `w` **going downwards**, so t
 ## Explanation
 
 The downward loop over `w` is the whole trick: an upward loop would let the same item be taken many times (the unbounded knapsack).
+
+### Complexity
+
+- Time: O(n * W). Each of the `n` items updates every capacity up to `W` once (pseudo-polynomial; the problem is NP-hard).
+- Space: O(W). One row of the table.

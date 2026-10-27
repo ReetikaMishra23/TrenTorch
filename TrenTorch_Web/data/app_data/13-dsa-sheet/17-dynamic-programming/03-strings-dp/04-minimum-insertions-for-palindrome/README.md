@@ -57,3 +57,8 @@ This is a good example of **reducing** a question to one you solved: compute the
 ## Explanation
 
 The helper is the longest palindromic subsequence table from the previous question. Characters outside it each cost one insertion.
+
+### Complexity
+
+- Time: O(n^2). The longest palindromic subsequence is found with a table whose cells are each computed once; the answer is `n` minus its length.
+- Space: O(n). Two rows of the table.

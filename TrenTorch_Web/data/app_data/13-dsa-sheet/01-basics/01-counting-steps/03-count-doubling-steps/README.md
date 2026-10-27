@@ -68,3 +68,8 @@ The tricky part is the boundary. The loop runs while `i < n`, so for `n = 8` it 
 After `k` rounds `i = 2**k`. The loop stops at the first `k` with `2**k >= n`, which is `ceil(log₂ n)`.
 
 `(n - 1).bit_length()` computes exactly that with integers. A float `math.log2` would round wrong near powers of two for large `n`.
+
+### Complexity
+
+- Time: O(1). `bit_length()` of `n - 1` replaces a loop of about `log2(n)` doublings.
+- Space: O(1). A single integer is produced.

@@ -63,3 +63,8 @@ Each pointer moves forward only, so the time is `O(len(s) + len(t))`. Recording 
 ## Explanation
 
 `missing` tracks how many needed characters are still short. The window is valid when it is 0. Shrinking is allowed while it stays valid, which finds the tightest window ending at each `right`.
+
+### Complexity
+
+- Time: O(n + m). Both window ends only move forward; `m` is the length of `t`.
+- Space: O(k). The two count maps, `k` = number of distinct characters.

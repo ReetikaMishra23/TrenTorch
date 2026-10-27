@@ -55,3 +55,8 @@ The result needs one integer of memory and one pass: `O(n)` time, `O(1)` space. 
 ## Explanation
 
 `functools.reduce(operator.xor, nums)` folds `^` over the list. Pairs cancel because `x ^ x = 0`, and the leftover value is unchanged by the zeros.
+
+### Complexity
+
+- Time: O(n). One XOR pass; equal values cancel out.
+- Space: O(1). One running XOR.

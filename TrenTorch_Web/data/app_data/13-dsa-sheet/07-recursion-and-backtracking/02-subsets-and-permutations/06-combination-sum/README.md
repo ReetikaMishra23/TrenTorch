@@ -58,3 +58,8 @@ Pruning is the difference between backtracking and brute force: cut off any bran
 ## Explanation
 
 `go(i, remaining, current)` records `current` when `remaining == 0`. Otherwise it tries each candidate from index `i`; a candidate above `remaining` ends the loop (sorted, so the rest are bigger). Reusing a candidate is `go(j, ...)` with the same `j`.
+
+### Complexity
+
+- Time: O(n^(T/m)) worst case. The recursion is at most `T / m` deep (`T` = target, `m` = smallest candidate) with up to `n` choices per level; sorting and the early `break` prune most branches.
+- Space: O(T / m). Recursion depth, plus the output.

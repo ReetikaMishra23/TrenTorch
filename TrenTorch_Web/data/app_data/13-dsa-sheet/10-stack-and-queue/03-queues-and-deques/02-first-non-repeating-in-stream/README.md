@@ -55,3 +55,8 @@ Each character enters the queue once and leaves it once, so the whole thing is `
 ## Explanation
 
 `queue` holds characters seen exactly once so far, plus some that have just been repeated; those are removed lazily from the front before answering.
+
+### Complexity
+
+- Time: O(n). Each character enters and leaves the queue at most once.
+- Space: O(k). The counts and the queue hold at most one entry per distinct character, `k` of them.

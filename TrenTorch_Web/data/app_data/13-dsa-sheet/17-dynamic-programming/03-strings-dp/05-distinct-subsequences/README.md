@@ -60,3 +60,8 @@ One row suffices if `j` runs **downwards**, so that `ways[j - 1]` still holds th
 ## Explanation
 
 `row[j]` is the number of ways to spell `t[:j]` with the characters seen so far. Iterating `j` downwards uses the previous row's `row[j - 1]`.
+
+### Complexity
+
+- Time: O(n * m). Every cell of the table is computed once, in O(1).
+- Space: O(m). One row of the table (`n` = len(s), `m` = len(t)).

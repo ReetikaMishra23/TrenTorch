@@ -59,3 +59,8 @@ Scanning from the end is a useful trick whenever the answer for a position depen
 ## Explanation
 
 Walk `reversed(nums)`, keeping `best`. A value `x > best` (or the first value, when `best` is `None`) is a leader: append it and raise `best`. Reverse the collected list to restore the left-to-right order.
+
+### Complexity
+
+- Time: O(n). One right-to-left pass keeping the largest value seen.
+- Space: O(n). The result list can hold every value, for example in a decreasing list.

@@ -59,4 +59,25 @@ A `set` of seen values detects cycles in `O(1)` per step. (Floyd's tortoise-and-
 
 ## Explanation
 
-`seen` holds every value visited. The loop keeps replacing `n` by the digit-square sum until it is `1` (return `True`) or already in `seen` (return `False`). `divmod(n, 10)` peels off the last digit.
+The digit-square sum is a function of the number, so repeating it either reaches `1` or enters a cycle, like a linked list that ends in a loop. Floyd's cycle detection needs no set: `slow` moves one step, `fast` moves two. If `fast` reaches `1` the number is happy; if the two meet first, the walk is in a cycle that does not contain `1`.
+
+`step(x)` peels digits with `divmod(x, 10)` and adds their squares.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line           | Variables                                                            |
+| ------------------------- | -------------------------------------------------------------------- |
+| `def step(x):`            | `step = <function happy_number.<locals>.step at 0x000002BDE6FDC700>` |
+| `slow, fast = n, step(n)` | `slow = 19, fast = 82`                                               |
+| `slow = step(slow)`       | `slow = 82`                                                          |
+| `fast = step(step(fast))` | `fast = 100`                                                         |
+| `slow = step(slow)`       | `slow = 68`                                                          |
+| `fast = step(step(fast))` | `fast = 1`                                                           |
+| `return`                  | `returned = True`                                                    |
+
+### Complexity
+
+- Time: O(log n). The first step costs one pass over the digits; after that the value is below 1000, so the walk to `1` or into a cycle is a constant number of steps.
+- Space: O(1). Floyd cycle detection keeps two numbers.

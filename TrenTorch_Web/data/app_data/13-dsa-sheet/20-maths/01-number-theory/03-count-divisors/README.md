@@ -58,3 +58,8 @@ Better: from the prime factorization `n = p1^e1 × p2^e2 × ...`, a divisor choo
 ## Explanation
 
 The loop counts divisors by pairs: both `d` and `n // d`, unless they are the same number.
+
+### Complexity
+
+- Time: O(sqrt(n)). Every divisor `d <= sqrt(n)` pairs with `n / d`, so testing the numbers up to `sqrt(n)` finds them all.
+- Space: O(1). A counter.

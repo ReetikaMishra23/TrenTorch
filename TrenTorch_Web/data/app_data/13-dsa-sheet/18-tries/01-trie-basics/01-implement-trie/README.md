@@ -55,3 +55,8 @@ Insert: walk from the root, creating a child node for each letter that is missin
 ## Explanation
 
 `walk(word)` returns the node reached by the word, or `None`. `search` also checks the end marker `"$"`.
+
+### Complexity
+
+- Time: O(L) per operation. Each insert, search or prefix check walks one letter at a time, `L` = length of the word; the total is the sum of all word lengths.
+- Space: O(T). `T` is the total length of the inserted words (one trie node per new letter).

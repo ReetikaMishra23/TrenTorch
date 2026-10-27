@@ -59,3 +59,8 @@ The lesson: a general sort costs `O(n log n)` because it must compare. If you kn
 The counting version is shortest in Python: `counts = [nums.count(0), nums.count(1), nums.count(2)]` and rebuild with `[0] * c0 + [1] * c1 + [2] * c2`. Each `count` is a fast built-in pass.
 
 The one-pass version: `low = i = 0`, `high = n - 1`. While `i <= high`: if `nums[i] == 0` swap it with `nums[low]` and advance both `low` and `i`; if it is `2` swap it with `nums[high]` and decrease `high` (do not advance `i`, the swapped-in value is not checked yet); if it is `1` just advance `i`.
+
+### Complexity
+
+- Time: O(n). Three counting passes; counting sort beats `n log n` because there are only three values.
+- Space: O(n). The output list.

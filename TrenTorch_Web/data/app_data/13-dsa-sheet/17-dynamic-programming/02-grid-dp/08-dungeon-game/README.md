@@ -57,3 +57,8 @@ Forward DP fails: knowing the best health on arrival does not tell you the minim
 ## Explanation
 
 The table starts from the bottom-right and fills upwards and to the left; `inf` stands for cells outside the grid.
+
+### Complexity
+
+- Time: O(r * c). Every cell is computed once, walking backward from the exit.
+- Space: O(c). One row of the table.

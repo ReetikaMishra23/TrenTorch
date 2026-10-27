@@ -61,3 +61,8 @@ This "choose the last one" idea is the standard interval DP.
 ## Explanation
 
 `dp[i][j]` is filled for increasing `j - i`. `k` runs over the balloons between the borders.
+
+### Complexity
+
+- Time: O(n^3). The table has `n^2` cells, each trying up to `n` last balloons.
+- Space: O(n^2). The table.

@@ -63,3 +63,8 @@ Use `-infinity` and `+infinity` for positions off the ends. Searching only the s
 ## Explanation
 
 Make `a` the shorter list. Binary search `i` (values taken from `a`), with `j = half - i` taken from `b`. When the four boundary values are in order (`a_left <= b_right and b_left <= a_right`) the split is right: odd total gives `max(a_left, b_left)`, even gives the mean of `max(a_left, b_left)` and `min(a_right, b_right)`. Otherwise move `hi` or `lo` depending on which side is too big.
+
+### Complexity
+
+- Time: O(log min(n, m)). Binary search on how many values the shorter list gives to the left half.
+- Space: O(1). A few indices.

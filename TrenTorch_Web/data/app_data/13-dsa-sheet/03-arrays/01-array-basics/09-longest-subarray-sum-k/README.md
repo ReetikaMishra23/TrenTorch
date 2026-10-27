@@ -64,3 +64,8 @@ This only works for non-negative values. With negative values the sum is no long
 `total` is the sum of `nums[left..right]`. After adding `nums[right]`, shrink from the left while `total > k`. Then check `total == k` and update `best`. If `left` passes `right` the window is empty with sum `0`; recording its length `0` changes nothing.
 
 `k = 0` works too: a run of zeros has sum `0`, and the window keeps all of them.
+
+### Complexity
+
+- Time: O(n). Values are non-negative, so a sliding window works and each pointer only moves forward.
+- Space: O(1). Two pointers and a running sum.

@@ -60,3 +60,8 @@ When the trie node you stand on marks a word end, record the word (and unmark it
 ## Explanation
 
 `dfs(r, c, node)` follows the board letter into the trie. The cell is blanked during the recursion and restored afterwards.
+
+### Complexity
+
+- Time: O(r * c * 3^L + W). One depth-first search from every cell that follows the trie, so a branch stops as soon as no word continues that way (`L` = longest word, `W` = total length of the words).
+- Space: O(W + r * c). The trie and the working copy of the board.

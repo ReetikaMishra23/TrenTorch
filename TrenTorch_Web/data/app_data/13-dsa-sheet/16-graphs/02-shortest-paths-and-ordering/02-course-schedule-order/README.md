@@ -57,3 +57,8 @@ If the output has fewer than `n` nodes, the rest are in a cycle: return `[]`. Wi
 ## Explanation
 
 The heap holds the courses whose prerequisites are all taken. Popping the smallest gives the lexicographically smallest valid order.
+
+### Complexity
+
+- Time: O((n + e) log n). Kahn's algorithm with a heap, so that the smallest available course is taken first.
+- Space: O(n + e). The adjacency lists, the in-degrees and the heap.

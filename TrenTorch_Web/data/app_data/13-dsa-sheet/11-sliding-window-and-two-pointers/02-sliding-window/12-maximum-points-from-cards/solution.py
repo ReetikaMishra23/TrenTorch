@@ -1,7 +1,7 @@
 def max_points(points, k):
     n = len(points)
     size = n - k
-    window = sum(points[:size])
+    window = sum(points[i] for i in range(size))
     smallest = window
     for i in range(size, n):
         window += points[i] - points[i - size]

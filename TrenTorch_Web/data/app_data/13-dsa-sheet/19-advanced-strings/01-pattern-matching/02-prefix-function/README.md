@@ -59,3 +59,8 @@ Why falling back with `pi[k - 1]` is right: if the current match `s[:k]` cannot 
 ## Explanation
 
 `k` is the length of the current border. The `while` loop shortens it until the next letter fits, then `k += 1` on a match.
+
+### Complexity
+
+- Time: O(n). The pointer `k` grows by at most one per letter and every failure step shrinks it, so the total number of steps is at most `2n`.
+- Space: O(n). The result array.

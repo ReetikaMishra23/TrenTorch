@@ -59,3 +59,8 @@ Invert the left subtree, invert the right subtree, then swap them: `root.left, r
 ## Explanation
 
 The right-hand side is evaluated first, so both recursive calls see the original children before the assignment swaps them.
+
+### Complexity
+
+- Time: O(n). Every node swaps its two children once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

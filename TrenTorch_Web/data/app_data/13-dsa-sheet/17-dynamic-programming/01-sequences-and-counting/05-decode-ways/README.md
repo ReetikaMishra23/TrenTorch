@@ -74,3 +74,8 @@ Output:
 ## Explanation
 
 `a` is `ways(i - 2)` and `b` is `ways(i - 1)`. A zero digit contributes nothing alone but may still pair with the digit before it.
+
+### Complexity
+
+- Time: O(n). One pass; each digit pair is checked in O(1).
+- Space: O(1). Two numbers.

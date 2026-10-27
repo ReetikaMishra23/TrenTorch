@@ -61,3 +61,8 @@ Initialise the answer with `0` at zeros and "unknown" elsewhere; push every zero
 ## Explanation
 
 `dist` starts at -1 (unknown) for the ones. The queue begins with all the zeros, so BFS levels equal distances.
+
+### Complexity
+
+- Time: O(r * c). A breadth-first search started from every zero at once; each cell is set once.
+- Space: O(r * c). The distance grid (the result) and the queue.

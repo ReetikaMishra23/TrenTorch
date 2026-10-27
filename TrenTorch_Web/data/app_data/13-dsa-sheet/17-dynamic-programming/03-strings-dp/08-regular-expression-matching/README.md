@@ -61,3 +61,8 @@ The star is now tied to the previous character, so treat `x*` as one unit. **Sta
 ## Explanation
 
 `fits(x, ch)` is `x == "." or x == ch`. In the star case, `cur[j - 2]` is "zero copies" and `prev[j]` is "one more copy".
+
+### Complexity
+
+- Time: O(n * m). Every cell of the table is computed once, in O(1).
+- Space: O(m). Two rows of the table (`n` = len(s), `m` = len(p)).

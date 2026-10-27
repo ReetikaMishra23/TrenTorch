@@ -65,3 +65,8 @@ Walk the tree inorder, remember the previous node, and record `first` (the earli
 ## Explanation
 
 `first` is set only the first time a descent is found; `second` is updated at every descent, so the second descent overrides the first descent's partner.
+
+### Complexity
+
+- Time: O(n). One in-order walk finds the two out-of-order nodes.
+- Space: O(h). The stack holds one path; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

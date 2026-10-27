@@ -63,3 +63,8 @@ Then `x ≡ x0 + m0·t` modulo `lcm(m0, m)`, which is the new pair `(x0, m0)`. F
 ## Explanation
 
 `x` and `modulus` always describe the solutions found so far as `x mod modulus`. Each step either detects a contradiction or merges one more condition.
+
+### Complexity
+
+- Time: O(k log M). One extended-gcd step (`pow(x, -1, m)`) per congruence (`k` of them, `M` = the lcm).
+- Space: O(1). A few integers.

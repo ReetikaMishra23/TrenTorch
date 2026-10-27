@@ -65,3 +65,8 @@ A recursive function that returns the trimmed subtree for each call does it in `
 ## Explanation
 
 Each call returns the root of the trimmed subtree, so the parent just re-attaches whatever comes back.
+
+### Complexity
+
+- Time: O(n). Every node is visited at most once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

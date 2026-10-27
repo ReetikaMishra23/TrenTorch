@@ -60,3 +60,8 @@ The walk from one start is at most `maxlen` letters long (and usually much short
 ## Explanation
 
 `node.get(text[j])` follows one letter; a `"$"` key means a word ends there. The result is sorted as required.
+
+### Complexity
+
+- Time: O(W + n * L + Z). `W` = total length of the words, `L` = longest word, `Z` = number of pairs found: each start position walks down the trie at most `L` letters.
+- Space: O(W + Z). The trie and the output.

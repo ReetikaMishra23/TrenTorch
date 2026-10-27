@@ -64,3 +64,8 @@ A range sum is `prefix(r) - prefix(l - 1)`; a `set` is an `add` of the differenc
 ## Explanation
 
 `add` and `prefix` walk the blocks with `i & -i`. `values` remembers the current numbers so `set` can compute the difference.
+
+### Complexity
+
+- Time: O(n + q log n). Building takes `n` updates of `log n`; each of the `q` operations touches `log n` cells.
+- Space: O(n). The tree and the copy of the values.

@@ -58,3 +58,8 @@ After handling coin `c`, `ways[a]` is the number of combinations using only the 
 ## Explanation
 
 Processing one coin at a time guarantees every combination is built in one fixed order of coins, so it is counted once.
+
+### Complexity
+
+- Time: O(amount * k). For each of the `k` coins, update every amount up to the target once.
+- Space: O(amount). The table of counts.

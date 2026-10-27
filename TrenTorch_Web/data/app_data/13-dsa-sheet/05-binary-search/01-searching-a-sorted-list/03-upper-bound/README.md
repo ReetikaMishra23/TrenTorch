@@ -63,3 +63,8 @@ In Python these are `bisect.bisect_right` (upper bound) and `bisect.bisect_left`
 ## Explanation
 
 The only difference from the lower bound is the comparison: a value `<= target` is not big enough, so `lo = mid + 1`; a value `> target` could be the answer, so `hi = mid`.
+
+### Complexity
+
+- Time: O(log n). The search range halves at every step.
+- Space: O(1). Two indices.

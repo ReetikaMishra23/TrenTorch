@@ -63,3 +63,8 @@ This "decide later with a heap" trick turns a search into a greedy algorithm: `O
 ## Explanation
 
 `reach` is the farthest position possible with the current fuel. Stations are pushed into the heap as they come within reach, and a refuel is only taken when needed.
+
+### Complexity
+
+- Time: O(n log n). Each station is pushed to the heap once and popped at most once.
+- Space: O(n). The heap.

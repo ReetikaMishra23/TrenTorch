@@ -55,3 +55,8 @@ This is an unbounded knapsack where the item "piece of length `k`" weighs `k` an
 ## Explanation
 
 `best[n]` is built for increasing `n`, trying each first piece length `k`.
+
+### Complexity
+
+- Time: O(n^2). For each length up to `n`, try every first cut.
+- Space: O(n). The table of best prices.

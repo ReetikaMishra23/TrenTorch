@@ -59,3 +59,8 @@ The loop condition `while even and even.next` stops when there is no next odd no
 ## Explanation
 
 `odd` and `even` leapfrog down the list, each skipping over the other. `even_head` was saved before any pointer changed, so the final join `odd.next = even_head` puts the even group after the odd group.
+
+### Complexity
+
+- Time: O(n). One pass relinking nodes into an odd chain and an even chain.
+- Space: O(1). A few pointers.

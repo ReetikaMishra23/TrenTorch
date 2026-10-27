@@ -54,3 +54,8 @@ A clever way is **Brian Kernighan's trick**: `n & (n - 1)` clears the **lowest s
 ## Explanation
 
 Each loop round removes one `1` bit with `n &= n - 1`, so the loop runs exactly as many times as there are set bits.
+
+### Complexity
+
+- Time: O(s). `n & (n - 1)` clears the lowest set bit, so the loop runs once per set bit (`s` <= the number of bits in `n`).
+- Space: O(1). One counter.

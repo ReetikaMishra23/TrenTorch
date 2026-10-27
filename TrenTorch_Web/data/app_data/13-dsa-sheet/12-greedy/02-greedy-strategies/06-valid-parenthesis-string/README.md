@@ -77,3 +77,8 @@ The whole check is `O(n)` with two counters.
 ## Explanation
 
 `lo` is clamped to 0 after every step; `hi < 0` means there is no way to match a `)`. At the end `lo == 0` means some choice of stars closes everything.
+
+### Complexity
+
+- Time: O(n). One pass tracking the lowest and highest possible number of open brackets.
+- Space: O(1). Two counters.

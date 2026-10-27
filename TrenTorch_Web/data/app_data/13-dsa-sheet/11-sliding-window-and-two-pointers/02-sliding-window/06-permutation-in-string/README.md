@@ -56,3 +56,8 @@ Comparing two 26-entry counts costs `O(26)` per step, which is constant. Update 
 ## Explanation
 
 `need` is the count of `s1`. `window` is the count of the current window of `s2`; after each slide they are compared.
+
+### Complexity
+
+- Time: O(n). The window moves one step at a time and comparing two 26-letter counts is O(26).
+- Space: O(1). Two arrays of 26 counts.

@@ -61,3 +61,8 @@ The in-place version of this problem is much harder, because you must preserve o
 ## Explanation
 
 `pos` and `neg` hold the two groups in order. The loop runs for `max(len(pos), len(neg))` steps and appends `pos[i]` then `neg[i]` when they exist, so the alternation starts with a non-negative value and the longer group's tail follows.
+
+### Complexity
+
+- Time: O(n). Two filter passes and one interleaving pass.
+- Space: O(n). The two sign lists and the result.

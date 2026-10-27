@@ -57,3 +57,8 @@ The cost of a pattern with many dots can be larger than the pattern length, but 
 ## Explanation
 
 `go` returns as soon as one branch succeeds. The key `"$"` is skipped when iterating the children of a `.`.
+
+### Complexity
+
+- Time: O(L) to add; O(L) to search, up to O(T) with dots. A search without `.` follows one path; every `.` branches into all children, so the worst case visits the whole trie (`T` nodes).
+- Space: O(T). One trie node per stored letter.

@@ -62,3 +62,8 @@ An empty tree is the special case: the new node is the root. A recursive version
 ## Explanation
 
 The loop keeps `parent` one step behind `node`. When `node` is `None` the new leaf is attached to the correct side of `parent`.
+
+### Complexity
+
+- Time: O(h). The new value follows one root-to-leaf path.
+- Space: O(1). One pointer (one new node); `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

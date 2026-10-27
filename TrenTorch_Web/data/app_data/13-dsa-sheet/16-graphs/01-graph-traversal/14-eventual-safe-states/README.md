@@ -57,3 +57,8 @@ This is Kahn's algorithm on the **reversed graph**: for every node count its out
 ## Explanation
 
 `rev[v]` lists the nodes with an arrow into `v`. The queue starts with the terminal nodes and grows with nodes whose outgoing arrows are all accounted for.
+
+### Complexity
+
+- Time: O(n + e). A topological peel of the reversed graph: a node is safe once all of its out-edges lead to safe nodes.
+- Space: O(n + e). The reversed adjacency lists, the out-degrees and the queue.

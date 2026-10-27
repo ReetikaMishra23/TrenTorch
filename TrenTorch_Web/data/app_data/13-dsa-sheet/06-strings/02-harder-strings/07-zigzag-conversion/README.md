@@ -69,3 +69,8 @@ With a single row the index can neither go up nor down, so handle `rows == 1` (o
 ## Explanation
 
 `lines` holds one list per row. `row` is the current row and `step` is `+1` or `-1`. After placing a character, flip `step` when `row` is `0` or `rows - 1`, then move. Joining all rows gives the row-by-row reading.
+
+### Complexity
+
+- Time: O(n). Each character is placed in its row once.
+- Space: O(n). The row lists hold every character.

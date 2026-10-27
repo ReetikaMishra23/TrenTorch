@@ -64,3 +64,8 @@ This is the **Morris**-style idea of threading a tree using the rightmost node. 
 ## Explanation
 
 The inner loop finds the tail of the left subtree. Linking it to the old right child keeps all nodes reachable after the left subtree is moved.
+
+### Complexity
+
+- Time: O(n). The right-most walk of each left subtree is paid for once: after the splice those nodes are never walked as a tail again.
+- Space: O(1). A couple of pointers; the tree is rewired in place.

@@ -62,3 +62,8 @@ Bottom-up (iterative) version for size `n`: leaves live at `tree[n .. 2n-1]`, no
 ## Explanation
 
 The array `tree` has `2n` entries; the loops climb one level per step, collecting the blocks that exactly cover the query range.
+
+### Complexity
+
+- Time: O(n + q log n). Building is one pass over the `n` nodes; each query or update touches `O(log n)` nodes.
+- Space: O(n). The tree array of `2n` values.

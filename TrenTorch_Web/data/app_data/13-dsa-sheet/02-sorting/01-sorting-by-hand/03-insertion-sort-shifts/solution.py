@@ -1,12 +1,17 @@
 def insertion_sort_shifts(nums):
-    a = list(nums)
+    rank = {v: i + 1 for i, v in enumerate(sorted(set(nums)))}
+    size = len(rank)
+    tree = [0] * (size + 1)
     shifts = 0
-    for i in range(1, len(a)):
-        key = a[i]
-        j = i - 1
-        while j >= 0 and a[j] > key:
-            a[j + 1] = a[j]
-            shifts += 1
-            j -= 1
-        a[j + 1] = key
+    for seen, x in enumerate(nums):
+        i = rank[x]
+        not_bigger = 0
+        while i > 0:
+            not_bigger += tree[i]
+            i -= i & -i
+        shifts += seen - not_bigger
+        i = rank[x]
+        while i <= size:
+            tree[i] += 1
+            i += i & -i
     return shifts

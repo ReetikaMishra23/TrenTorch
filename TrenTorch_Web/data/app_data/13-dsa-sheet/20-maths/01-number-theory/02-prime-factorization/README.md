@@ -56,3 +56,8 @@ Dividing as you go makes `n` smaller, so the stopping point `d * d <= n` comes e
 ## Explanation
 
 The loop condition `d * d <= n` uses the current (shrinking) `n`. A leftover `n > 1` is the last prime factor.
+
+### Complexity
+
+- Time: O(sqrt(n)). Trial division by 2 and then odd numbers up to `sqrt(n)`; `n` shrinks as factors are removed. (Pollard's rho needs only about `n^(1/4)` steps, but trial division is the standard method and fast enough here).
+- Space: O(log n). The factors found (at most about 40 pairs).

@@ -56,3 +56,8 @@ Masks plus shifts let you move groups of bits in one step, without a loop.
 ## Explanation
 
 The two masked parts do not overlap after shifting, because the even bits move to odd positions and the odd bits to even positions. `|` merges them.
+
+### Complexity
+
+- Time: O(1). Two masks and two shifts.
+- Space: O(1). Nothing is stored.

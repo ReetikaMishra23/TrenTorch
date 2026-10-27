@@ -60,3 +60,8 @@ For each `right`, **all** subarrays that end at `right` and start between `left`
 ## Explanation
 
 The check `left <= right` stops the loop when `k <= 1` and even a single element is too big; the window is then empty and adds 0.
+
+### Complexity
+
+- Time: O(n). Each index enters and leaves the window once (values are positive).
+- Space: O(1). A few numbers.

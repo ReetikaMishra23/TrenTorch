@@ -54,3 +54,8 @@ This trick is the heart of the **Fenwick tree** (binary indexed tree), which use
 ## Explanation
 
 `-n` has the same lowest set bit as `n` and the opposite of every bit above it, so `n & -n` is just that one bit. `0 & 0` is `0`.
+
+### Complexity
+
+- Time: O(1). `n & -n` isolates the lowest set bit.
+- Space: O(1). Nothing is stored.

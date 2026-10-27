@@ -59,3 +59,8 @@ The divisor is between `1` and `max(nums)`: at `d = max(nums)` every quotient ro
 ## Explanation
 
 `lo = 1`, `hi = max(nums)`. If the rounded-up sum for `mid` is within the threshold, `mid` works and a smaller one might: `hi = mid`. Otherwise `lo = mid + 1`. The search ends at the smallest valid divisor.
+
+### Complexity
+
+- Time: O(n log M). Binary search over divisors `1..M` (`M` = largest value) costs `log M` probes, and each probe sums `n` ceilings.
+- Space: O(1). Two bounds and a running sum.

@@ -56,3 +56,8 @@ Compare with trying all `n^n` placements, or even all `n!` column permutations: 
 ## Explanation
 
 `go(r)` counts the solutions that extend the rows above `r`. For each column `c` that is not in `cols`, `r - c` is not in `diag1` and `r + c` is not in `diag2`, add the three markers, recurse, and remove them. Reaching `r == n` is one solution.
+
+### Complexity
+
+- Time: O(n!). One queen per row with columns and both diagonals blocked, so at most `n!` placements are explored.
+- Space: O(n). The three sets and the recursion.

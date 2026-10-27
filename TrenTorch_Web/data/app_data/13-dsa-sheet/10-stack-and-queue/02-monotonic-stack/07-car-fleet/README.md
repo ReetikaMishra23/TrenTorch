@@ -62,3 +62,8 @@ To avoid decimals, compare fractions exactly: `a/b > c/d` is `a*d > c*b`.
 ## Explanation
 
 After sorting from the car nearest the target, `slow_num / slow_den` is the arrival time of the fleet ahead. A car needing more time than that starts a new fleet. Exact fractions are compared by cross-multiplying.
+
+### Complexity
+
+- Time: O(n log n). Sorting the cars by position dominates; the scan is one pass.
+- Space: O(n). The sorted list.

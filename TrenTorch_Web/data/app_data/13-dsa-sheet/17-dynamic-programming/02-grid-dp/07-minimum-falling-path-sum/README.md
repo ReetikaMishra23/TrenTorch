@@ -57,3 +57,8 @@ Keep only the previous row. `O(rows × cols)`.
 ## Explanation
 
 `prev` is the previous row of totals. The slice `prev[max(0, c - 1) : c + 2]` takes only the neighbours that exist.
+
+### Complexity
+
+- Time: O(r * c). Every cell is computed once from at most three cells above it.
+- Space: O(c). One row of the table.

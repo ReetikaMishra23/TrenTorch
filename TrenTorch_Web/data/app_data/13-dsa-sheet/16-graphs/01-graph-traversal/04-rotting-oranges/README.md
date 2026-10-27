@@ -59,3 +59,8 @@ At the end, if any fresh orange remains it was unreachable: return `-1`. Countin
 ## Explanation
 
 The `while` loop runs while the queue is non-empty and fresh oranges remain; each pass of the loop is one minute.
+
+### Complexity
+
+- Time: O(r * c). A breadth-first search from all rotten oranges at once; each cell enters the queue at most once.
+- Space: O(r * c). The copy of the grid and the queue.

@@ -61,3 +61,8 @@ The cost is `O(n²)` (removing from a list) or better, instead of `O(n!)`.
 ## Explanation
 
 `k -= 1` turns it into a zero-based index. For each position, `divmod(k, factorial)` gives the index of the number to take from the remaining list and the leftover position inside the block. The chosen number is popped and the factorial shrinks.
+
+### Complexity
+
+- Time: O(n^2). For each of the `n` positions one `divmod` and one `pop` from a list of up to `n` values.
+- Space: O(n). The list of unused numbers and the output.

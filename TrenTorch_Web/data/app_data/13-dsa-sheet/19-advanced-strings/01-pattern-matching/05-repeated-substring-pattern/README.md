@@ -59,3 +59,8 @@ One pass for the prefix function, then a single test. `O(n)`.
 ## Explanation
 
 `period = n - pi[-1]` is the smallest candidate block length; it works if it divides the length and the border is non-zero.
+
+### Complexity
+
+- Time: O(n). The prefix function is computed once; the string is a repetition exactly when its length is a multiple of the smallest period `n - pi[n-1]` and the string has a border.
+- Space: O(n). The prefix function array.

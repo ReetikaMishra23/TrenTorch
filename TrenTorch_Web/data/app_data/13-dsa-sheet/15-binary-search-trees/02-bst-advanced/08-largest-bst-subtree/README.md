@@ -64,3 +64,8 @@ A node is the root of a BST when both children are BSTs, the left maximum is `<`
 ## Explanation
 
 `go(node)` returns `(size, low, high)` for a BST subtree, and `(0, +inf, -inf)` style markers (size 0 with an impossible range) when the subtree is not a BST or is empty. `best` records the largest size seen.
+
+### Complexity
+
+- Time: O(n). One post-order pass; each node combines the facts of its two subtrees in O(1).
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

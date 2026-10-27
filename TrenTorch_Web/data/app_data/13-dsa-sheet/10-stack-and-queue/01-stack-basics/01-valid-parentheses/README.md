@@ -54,3 +54,8 @@ Two things to remember: a closing bracket with an **empty stack** is invalid, an
 ## Explanation
 
 A dictionary maps each closing bracket to its opening bracket. On a closing bracket, the stack must be non-empty and its top must be the matching opener; popping removes it.
+
+### Complexity
+
+- Time: O(n). Each character is pushed or popped at most once.
+- Space: O(n). The stack can hold all opening brackets.

@@ -61,3 +61,8 @@ A neat shortcut stores tuples like `("row", r, digit)`, `("col", c, digit)` and 
 ## Explanation
 
 For every non-empty cell build the three keys for its row, column and box, and put them in `seen`. If a key is already present, the digit repeats in that group and the answer is `False`. The loop covers all `81` cells exactly once.
+
+### Complexity
+
+- Time: O(1). A fixed 81 cells, each checked with three set lookups (O(N^2) for an `N x N` board).
+- Space: O(1). At most 243 keys.

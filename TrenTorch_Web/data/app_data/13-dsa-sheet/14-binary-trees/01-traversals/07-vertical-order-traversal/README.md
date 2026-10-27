@@ -59,3 +59,8 @@ A dictionary `col -> list of (row, value)` also works: sort each group by `(row,
 ## Explanation
 
 The key `(col, row, value)` encodes the whole required order. `groupby`-style grouping then splits by column.
+
+### Complexity
+
+- Time: O(n log n). One pass over the nodes, then each column is sorted by `(row, value)`.
+- Space: O(n). The table of columns.

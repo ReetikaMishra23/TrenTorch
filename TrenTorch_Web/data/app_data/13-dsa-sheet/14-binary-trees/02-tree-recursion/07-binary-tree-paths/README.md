@@ -62,3 +62,8 @@ The total output size can be large (a deep tree has long paths), which is why th
 ## Explanation
 
 `go(node, path)` extends the path with the node's value. When a node has no children, `"->".join(path)` is a finished answer. Visiting left before right gives the left-to-right order.
+
+### Complexity
+
+- Time: O(n + S). `S` is the total length of the answer strings: each leaf writes out its whole path.
+- Space: O(S). The output, plus `O(h)` for the current path.

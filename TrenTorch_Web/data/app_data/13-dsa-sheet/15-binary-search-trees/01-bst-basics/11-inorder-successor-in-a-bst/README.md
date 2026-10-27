@@ -62,3 +62,8 @@ When the walk ends, the recorded candidate is the smallest value above `p` that 
 ## Explanation
 
 `answer` holds the smallest node larger than `p` seen so far. Moving right means the current node is too small, so it is skipped.
+
+### Complexity
+
+- Time: O(h). One root-to-leaf walk remembering the last node that was larger.
+- Space: O(1). One pointer; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

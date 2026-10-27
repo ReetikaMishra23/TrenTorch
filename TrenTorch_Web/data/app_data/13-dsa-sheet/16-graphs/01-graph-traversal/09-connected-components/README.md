@@ -58,3 +58,8 @@ Build the adjacency list first: for each edge `[a, b]` add `b` to `a`'s list and
 ## Explanation
 
 `seen` marks visited nodes; each unvisited start node begins a new component.
+
+### Complexity
+
+- Time: O(n + e). Each node and edge is visited once.
+- Space: O(n + e). The adjacency lists, the visited array and the stack.

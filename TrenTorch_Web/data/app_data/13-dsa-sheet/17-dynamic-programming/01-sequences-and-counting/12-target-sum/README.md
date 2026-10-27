@@ -58,3 +58,8 @@ The number of distinct sums is at most `2 × total + 1`, so the work is `O(n × 
 ## Explanation
 
 `ways` maps each reachable sum to the number of sign choices that give it. The final answer is the count stored for `target`.
+
+### Complexity
+
+- Time: O(n * S). `S` is the number of different sums reachable (at most the total of the numbers): for each number every known sum is extended in two ways.
+- Space: O(S). The table of counts per sum.

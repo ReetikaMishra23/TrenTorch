@@ -1,21 +1,21 @@
 def calculate(s):
-    stack = []
-    num = 0
+    total = last = num = 0
     op = "+"
-    for i, ch in enumerate(s + "+"):
+    for ch in s + "+":
         if ch.isdigit():
             num = num * 10 + int(ch)
         elif ch != " ":
             if op == "+":
-                stack.append(num)
+                total += last
+                last = num
             elif op == "-":
-                stack.append(-num)
+                total += last
+                last = -num
             elif op == "*":
-                stack.append(stack.pop() * num)
+                last *= num
             else:
-                top = stack.pop()
-                q = abs(top) // num
-                stack.append(q if top >= 0 else -q)
+                q = abs(last) // num
+                last = q if last >= 0 else -q
             op = ch
             num = 0
-    return sum(stack)
+    return total + last

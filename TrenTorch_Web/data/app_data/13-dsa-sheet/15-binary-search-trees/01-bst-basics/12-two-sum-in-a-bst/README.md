@@ -61,4 +61,24 @@ Write the inorder list first (simple), then the two pointers. The set approach i
 
 ## Explanation
 
-The inorder list is increasing. If the pair sum is too small the left pointer moves right; if too big the right pointer moves left. The pointers never cross a valid pair.
+An in-order walk lists the values of a BST in increasing order, so this is "two sum on a sorted list" without building the list. Use two walkers: one produces the values in increasing order (go left, then visit, then right) and the other in decreasing order (go right, then visit, then left), each with its own stack.
+
+Take the smallest `lo` and the largest `hi`. If `lo + hi` equals `k` return `True`; if it is smaller, advance the increasing walker; if it is larger, advance the decreasing walker. Stop when `lo >= hi`. Each node is visited at most once by each walker and the stacks hold one path each, so the extra memory is `O(h)` instead of `O(n)`.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                                | Variables                                                                                                                                |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `def ascending(node):`                         | `ascending = <function find_target.<locals>.ascending at 0x000002BDE6F...`                                                               |
+| `def descending(node):`                        | `descending = <function find_target.<locals>.descending at 0x000002BDE6...`                                                              |
+| `up, down = ascending(root), descending(root)` | `up = <generator object find_target.<locals>.ascending at 0x000..., down = <generator object find_target.<locals>.descending at 0x00...` |
+| `lo, hi = next(up, None), next(down, None)`    | `lo = 2, hi = 7`                                                                                                                         |
+| `total = lo + hi`                              | `total = 9`                                                                                                                              |
+| `return`                                       | `returned = True`                                                                                                                        |
+
+### Complexity
+
+- Time: O(n). Two in-order iterators, one ascending and one descending, walk toward each other; every node is visited at most once by each.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the two stacks.

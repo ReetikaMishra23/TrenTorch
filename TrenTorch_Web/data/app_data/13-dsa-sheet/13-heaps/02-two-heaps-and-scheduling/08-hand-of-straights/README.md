@@ -58,3 +58,8 @@ Keep the counts of each number in a dictionary and a min-heap of the distinct nu
 ## Explanation
 
 The heap top is always the smallest number that still has cards. `count[x] -= 1` for each card of the group; a missing one ends the check.
+
+### Complexity
+
+- Time: O(n log n). A heap gives the smallest remaining card, and every card is counted down once.
+- Space: O(n). The counts and the heap.

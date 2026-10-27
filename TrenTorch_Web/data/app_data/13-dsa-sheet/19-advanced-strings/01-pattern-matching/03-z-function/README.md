@@ -59,3 +59,8 @@ Since `r` only moves right, the total number of letter comparisons is `O(n)`. To
 ## Explanation
 
 `l` and `r` are the window. The starting value of `z[i]` reuses the already computed `z[i - l]`; the `while` loop extends only beyond `r`.
+
+### Complexity
+
+- Time: O(n). The window `[left, right)` only moves right, and letters inside it are never compared again.
+- Space: O(n). The result array.

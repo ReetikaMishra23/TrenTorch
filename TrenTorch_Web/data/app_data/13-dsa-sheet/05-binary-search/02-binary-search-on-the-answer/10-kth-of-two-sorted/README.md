@@ -59,3 +59,8 @@ When the split is right, the `k`-th smallest value is the larger of the two larg
 ## Explanation
 
 `a` is the shorter list. `lo = max(0, k - n)` and `hi = min(k, m)` bound how many values can come from `a`. For each `i` (and `j = k - i`) compute the four boundary values with infinities past the ends. A valid split returns `max(a_left, b_left)`; if `a_left > b_right` lower `hi`, else raise `lo`.
+
+### Complexity
+
+- Time: O(log min(n, m)). Binary search on how many values the shorter list gives to the first `k`.
+- Space: O(1). A few indices.

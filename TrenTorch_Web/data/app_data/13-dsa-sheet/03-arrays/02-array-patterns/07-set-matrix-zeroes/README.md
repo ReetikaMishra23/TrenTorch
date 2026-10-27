@@ -56,3 +56,8 @@ Interviewers often ask for `O(1)` extra space, by using the first row and first 
 ## Explanation
 
 `rows` is the set of row indexes that contain a `0`; `cols` is the set of column indexes that contain one. The result is built from the original matrix: `0` where `i in rows or j in cols`, the original value elsewhere.
+
+### Complexity
+
+- Time: O(r * c). One scan to find the zero rows and columns and one to build the result.
+- Space: O(r * c). The result matrix; besides it only the sets of zero rows and columns (`O(r + c)`) are kept.

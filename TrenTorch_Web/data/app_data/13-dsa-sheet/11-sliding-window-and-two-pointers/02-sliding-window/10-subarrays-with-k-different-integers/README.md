@@ -62,3 +62,8 @@ So the answer is `at_most(k) - at_most(k - 1)`. Two passes of `O(n)`.
 ## Explanation
 
 `at_most(m)` slides a window keeping at most `m` different values and adds `right - left + 1` for every `right`. The difference removes the subarrays with fewer than `k` values.
+
+### Complexity
+
+- Time: O(n). Two sliding-window passes: "at most k" minus "at most k - 1".
+- Space: O(k). The count map has at most `k + 1` entries.

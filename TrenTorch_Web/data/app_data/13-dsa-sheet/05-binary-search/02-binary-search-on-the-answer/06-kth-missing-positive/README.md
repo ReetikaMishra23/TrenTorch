@@ -57,3 +57,8 @@ That count never decreases as `i` grows, so you can binary search for the first 
 ## Explanation
 
 `nums[mid] - (mid + 1) < k` means fewer than `k` numbers are missing before `nums[mid]`, so the answer is beyond it: `lo = mid + 1`. Otherwise the answer is before `nums[mid]`: `hi = mid`. At the end `lo` list values lie before the answer, so the answer is `lo + k`.
+
+### Complexity
+
+- Time: O(log n). `nums[i] - (i + 1)` is the count of missing numbers before index `i` and never decreases, so binary search finds where the `k`-th missing number sits.
+- Space: O(1). Two indices.

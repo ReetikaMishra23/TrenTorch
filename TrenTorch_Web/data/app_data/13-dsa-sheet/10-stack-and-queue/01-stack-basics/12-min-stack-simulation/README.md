@@ -60,3 +60,8 @@ The idea of keeping extra information next to each element so a query is instant
 ## Explanation
 
 `mins[-1]` is the smallest value among all values at or below the current top. Because it is pushed and popped together with the value, it is always up to date.
+
+### Complexity
+
+- Time: O(n). Every operation is O(1), with `n` operations.
+- Space: O(n). Two stacks (values and running minimums).

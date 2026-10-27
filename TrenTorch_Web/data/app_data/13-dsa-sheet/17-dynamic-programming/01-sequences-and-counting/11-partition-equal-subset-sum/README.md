@@ -61,3 +61,8 @@ Python tip: the whole table is one big integer used as a **bitset**: bit `s` is 
 ## Explanation
 
 Bit `s` of `bits` means "a subset with sum `s` exists". The shift by `x` adds `x` to every reachable sum at once.
+
+### Complexity
+
+- Time: O(n * S / w). `S` is the total sum and `w` the machine word size: each number shifts and ORs one big integer used as a bit set of reachable sums.
+- Space: O(S / w). The bit set.

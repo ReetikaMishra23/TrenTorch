@@ -64,3 +64,8 @@ A single `O(n)` pass answers it, with the recursion returning "what I found in m
 ## Explanation
 
 When the recursion reaches `p` or `q` it stops and returns that node (a node is an ancestor of itself). The first node with two non-empty answers from its children is the split point.
+
+### Complexity
+
+- Time: O(n). Every node is visited at most once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

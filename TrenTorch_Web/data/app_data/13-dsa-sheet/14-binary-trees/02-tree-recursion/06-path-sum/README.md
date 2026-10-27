@@ -60,3 +60,8 @@ The answer for a node is `True` if either child's subtree has a matching path (`
 ## Explanation
 
 The leaf check `not root.left and not root.right` is where the path ends. For inner nodes the target shrinks by the node's value.
+
+### Complexity
+
+- Time: O(n). Every node is visited at most once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

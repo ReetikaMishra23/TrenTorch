@@ -57,3 +57,8 @@ You can also do it iteratively: start with `[""]` and for each digit replace eve
 ## Explanation
 
 `go(i, prefix)` appends each letter of digit `i` to the prefix and recurses to the next digit; at `i == len(digits)` the prefix is a full answer. An empty digit string returns `[]`, not `[""]`.
+
+### Complexity
+
+- Time: O(n * 4^n). There are at most `4^n` combinations of `n` digits, each of length `n`.
+- Space: O(n * 4^n). The output.

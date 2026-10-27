@@ -53,3 +53,8 @@ This "current vs best" pair appears in many array problems (it is also the heart
 ## Explanation
 
 `current` counts the ones in the run that is being read. On `1` add one and update `best`; on `0` set `current` back to zero.
+
+### Complexity
+
+- Time: O(n). One pass keeping the current run and the best run.
+- Space: O(1). Two counters.

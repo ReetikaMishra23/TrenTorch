@@ -55,3 +55,8 @@ Python's `in` for strings is fast (it uses an optimised search), so this is prac
 ## Explanation
 
 Different lengths can never be rotations. For equal lengths, `s + s` contains every rotation as a substring, so a single `in` test decides it. Two empty strings are rotations of each other.
+
+### Complexity
+
+- Time: O(n). A rotation of `s` is a substring of `s + s`; CPython 3.10+ searches substrings in linear time.
+- Space: O(n). The doubled string.

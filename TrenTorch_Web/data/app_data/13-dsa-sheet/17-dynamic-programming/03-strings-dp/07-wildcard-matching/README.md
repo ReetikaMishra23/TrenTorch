@@ -62,3 +62,8 @@ False
 ## Explanation
 
 `prev` is the row for `i - 1` and `cur` for `i`. The star case combines "empty match" (`cur[j - 1]`) and "one more character" (`prev[j]`).
+
+### Complexity
+
+- Time: O(n * m). Every cell of the table is computed once, in O(1).
+- Space: O(m). Two rows of the table (`n` = len(s), `m` = len(p)).

@@ -55,3 +55,8 @@ That reduces the problem to the previous one: binary search for the minimum, but
 ## Explanation
 
 The same search as the rotated minimum: compare `nums[mid]` with `nums[hi]`, move `lo` or `hi`, and stop when `lo == hi`. That index is where the smallest value sits, which equals the number of left rotations.
+
+### Complexity
+
+- Time: O(log n). The rotation count is the index of the minimum, found by the same halving search.
+- Space: O(1). Two indices.

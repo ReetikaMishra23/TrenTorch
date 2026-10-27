@@ -57,3 +57,8 @@ The validity rules (range and leading zeros) are the whole difficulty; the recur
 ## Explanation
 
 With four parts the whole string must be used (`start == len(s)`). For fewer parts, every length from 1 to 3 is tried; a part is valid when it does not start with `0` (unless it is exactly `"0"`) and is at most `255`. The final list is sorted.
+
+### Complexity
+
+- Time: O(1). At most 3 choices for each of 4 parts, so 81 branches; the string has at most 12 digits.
+- Space: O(1). The output has at most a few dozen addresses.

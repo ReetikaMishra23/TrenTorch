@@ -53,3 +53,8 @@ This "running counter plus its maximum" is the simplest case of a more general i
 ## Explanation
 
 `depth` goes up on `(` and down on `)`. After each increase, `best = max(best, depth)`. Characters other than parentheses do not matter.
+
+### Complexity
+
+- Time: O(n). One pass keeping the current depth.
+- Space: O(1). Two counters.

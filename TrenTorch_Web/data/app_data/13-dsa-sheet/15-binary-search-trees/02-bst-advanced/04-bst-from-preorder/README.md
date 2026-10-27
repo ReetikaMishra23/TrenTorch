@@ -62,3 +62,8 @@ Better: build in **one pass with bounds**. The first value is the root. The next
 ## Explanation
 
 `index` moves forward through the preorder list. A value larger than the bound belongs to an ancestor's right subtree, so the current call stops and returns.
+
+### Complexity
+
+- Time: O(n). Each value is consumed once; the upper bound tells where a subtree ends.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

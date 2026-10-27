@@ -61,3 +61,8 @@ So the pair `(F(n), F(n + 1))` can be computed from the pair for `n // 2`, one d
 ## Explanation
 
 `pair(k)` returns `(F(k), F(k + 1))`. For odd `k` the pair is shifted by one step after doubling.
+
+### Complexity
+
+- Time: O(log n). Fast doubling halves `n` every step.
+- Space: O(log n). The recursion is `log2(n)` deep.

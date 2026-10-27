@@ -57,3 +57,8 @@ It is the previous question with one change: instead of only counting the floods
 ## Explanation
 
 `size` counts the cells taken from the stack during one flood; `best` keeps the largest.
+
+### Complexity
+
+- Time: O(r * c). Every cell is pushed and popped at most once and each has 4 neighbours.
+- Space: O(r * c). The visited grid and the stack.

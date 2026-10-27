@@ -61,3 +61,8 @@ A dynamic programming solution in `O(n²)` exists (the starter), but this greedy
 ## Explanation
 
 `direction` is the sign of the last counted difference. A difference with the opposite sign is a new turn and extends the wiggle by one.
+
+### Complexity
+
+- Time: O(n). One pass counting the turns of direction.
+- Space: O(1). Two numbers.

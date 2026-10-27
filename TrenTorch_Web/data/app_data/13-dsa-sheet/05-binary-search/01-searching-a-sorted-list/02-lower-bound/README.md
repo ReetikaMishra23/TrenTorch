@@ -63,3 +63,8 @@ If `nums[mid] < target`, the answer is to the right: `lo = mid + 1`. Otherwise `
 ## Explanation
 
 `hi` starts at `len(nums)` because "no value is big enough" is a valid answer. A value below the target moves `lo` past it. A value at or above the target keeps `mid` as a candidate with `hi = mid`. The loop ends when the range has one position left, the first index with `nums[i] >= target`.
+
+### Complexity
+
+- Time: O(log n). The search range halves at every step.
+- Space: O(1). Two indices.

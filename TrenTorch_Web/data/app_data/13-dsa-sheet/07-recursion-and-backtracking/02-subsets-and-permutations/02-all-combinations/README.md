@@ -56,3 +56,8 @@ There are `C(n, k)` answers, so the output itself is large. The standard library
 ## Explanation
 
 `need = k - len(current)` is how many numbers are still missing. The loop runs `j` from `start` to `n - need + 1`: beyond that there are not enough numbers left. When `need` is `0`, record a copy.
+
+### Complexity
+
+- Time: O(k * C(n, k)). There are `C(n, k)` combinations; each is copied once, and the loop bound stops branches that cannot reach size `k`.
+- Space: O(k * C(n, k)). The output; the recursion adds only `O(k)`.

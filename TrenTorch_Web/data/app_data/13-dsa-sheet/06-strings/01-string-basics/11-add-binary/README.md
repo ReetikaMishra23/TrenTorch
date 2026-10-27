@@ -55,3 +55,8 @@ Both versions are `O(n)`.
 ## Explanation
 
 The loop walks from the last digits of both strings (using `0` when a string is shorter), adds them with the carry, appends `sum % 2` and keeps `sum // 2` as the next carry. The digits were collected right to left, so reverse them at the end.
+
+### Complexity
+
+- Time: O(max(n, m)). One pass over the digits from the right.
+- Space: O(max(n, m)). The result digits.

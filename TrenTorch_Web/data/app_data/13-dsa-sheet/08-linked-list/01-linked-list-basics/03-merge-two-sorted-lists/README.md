@@ -58,3 +58,8 @@ It takes `O(n + m)` time and `O(1)` extra memory because no node is copied, only
 ## Explanation
 
 The loop takes the smaller front node each time and links it after `tail`. After the loop at most one list still has nodes; `tail.next = a or b` appends that rest in one step.
+
+### Complexity
+
+- Time: O(n + m). Each step attaches one existing node, and each pointer only moves forward.
+- Space: O(1). Nodes are relinked, not copied.

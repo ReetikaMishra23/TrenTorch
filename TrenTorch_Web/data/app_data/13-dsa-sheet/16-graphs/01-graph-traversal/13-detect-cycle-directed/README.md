@@ -59,3 +59,8 @@ A second method is **Kahn's algorithm** (topological sort): repeatedly remove no
 ## Explanation
 
 The iterative DFS keeps an index into each node's adjacency list so it can come back to a node after finishing a child. `state` is 0 (new), 1 (on the path) or 2 (done).
+
+### Complexity
+
+- Time: O(n + e). Depth-first search with three colours; an edge into a node still on the current path closes a cycle.
+- Space: O(n + e). The adjacency lists, the states and the stack.

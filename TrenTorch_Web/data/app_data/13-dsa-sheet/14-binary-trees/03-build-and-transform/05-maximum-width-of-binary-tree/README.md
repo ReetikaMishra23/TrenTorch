@@ -59,3 +59,8 @@ Indices grow quickly in a thin tree (up to `2^depth`); Python integers do not ov
 ## Explanation
 
 The queue stores `(node, index)`. At the start of each level the first index is read, and the width is the last index minus it plus 1.
+
+### Complexity
+
+- Time: O(n). A level-by-level pass visits each node once (the position labels are big integers up to `2^depth`).
+- Space: O(w). `w` is the widest level, at most `n / 2`.

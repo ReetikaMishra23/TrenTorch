@@ -55,3 +55,8 @@ Each cell is visited exactly once: `O(rows * cols)`.
 ## Explanation
 
 The loop `while top <= bottom and left <= right` handles one layer. After walking the top row and the right column, the bottom row is walked only if `top <= bottom` still holds, and the left column only if `left <= right` still holds. These checks stop a single row or column from being walked twice.
+
+### Complexity
+
+- Time: O(r * c). Every cell is appended exactly once while the four borders shrink.
+- Space: O(r * c). The result list holds all cells; nothing else is allocated.

@@ -58,3 +58,8 @@ Do this from every uncoloured node, because the graph can have several component
 ## Explanation
 
 `color[v]` is 0, 1 or -1 (unknown). `1 - color[node]` is the opposite colour. A self-loop `[a, a]` conflicts at once.
+
+### Complexity
+
+- Time: O(n + e). Each node and edge is visited once while the nodes are 2-coloured.
+- Space: O(n + e). The adjacency lists, the colours and the queue.

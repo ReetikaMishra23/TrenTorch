@@ -57,3 +57,8 @@ Use two pointers at the ends: every step uses one boat, always takes the heavies
 ## Explanation
 
 `heavy` always boards. `light` boards with them only if the sum fits; otherwise the heavy person leaves alone and `light` waits for the next, lighter, heavy person.
+
+### Complexity
+
+- Time: O(n log n). Sorting dominates; the two-pointer pairing is O(n).
+- Space: O(n). The sorted copy.

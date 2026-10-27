@@ -61,3 +61,8 @@ The answer is the best `hi` seen. One pass: `O(n)`.
 ## Explanation
 
 `hi` and `lo` are the largest and smallest product of a run ending at the current value. The three candidates `x`, `hi * x`, `lo * x` cover starting a new run, extending the best run, and extending the worst run (useful when `x < 0`). `best` is the maximum `hi` seen.
+
+### Complexity
+
+- Time: O(n). One pass keeping the largest and the smallest product ending here.
+- Space: O(1). Three numbers.

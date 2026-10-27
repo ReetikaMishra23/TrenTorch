@@ -57,3 +57,8 @@ Draw an arrow `b -> a` for each prerequisite pair. All courses can be taken exac
 ## Explanation
 
 `taken` counts the courses removed from the queue. It equals `num_courses` exactly when the graph has no cycle.
+
+### Complexity
+
+- Time: O(n + e). Kahn's algorithm removes each node and edge once.
+- Space: O(n + e). The adjacency lists, the in-degrees and the queue.

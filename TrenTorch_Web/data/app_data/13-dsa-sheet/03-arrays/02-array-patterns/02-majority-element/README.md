@@ -59,3 +59,8 @@ The algorithm only guarantees that a majority value, **if there is one**, is the
 ## Explanation
 
 The first loop finds the candidate by voting. The second counts how often it occurs and returns it only if that is more than `n // 2`; otherwise `-1`. Empty input has no candidate and returns `-1`.
+
+### Complexity
+
+- Time: O(n). Boyer-Moore voting is one pass, and a second pass verifies the candidate.
+- Space: O(1). A candidate and a counter.

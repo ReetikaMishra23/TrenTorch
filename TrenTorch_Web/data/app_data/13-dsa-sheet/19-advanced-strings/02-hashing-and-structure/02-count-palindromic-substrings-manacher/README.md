@@ -59,3 +59,8 @@ Do it twice: `d1[i]` = number of odd-length palindromes centred at `i`, `d2[i]` 
 ## Explanation
 
 `d1[i]` counts the odd palindromes with centre `i` (the radius including the centre itself); `d2[i]` counts the even ones. Each loop keeps the window `[left, right]` of the rightmost palindrome.
+
+### Complexity
+
+- Time: O(n). Manacher's algorithm: the rightmost palindrome only grows, and every centre reuses its mirror's radius inside it.
+- Space: O(n). The two radius arrays.

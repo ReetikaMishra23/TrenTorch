@@ -59,3 +59,8 @@ To sort by several criteria, return a tuple: Python compares tuples element by e
 The key `(-score, name)` sorts by negative score (so higher scores come first), and uses the name only when the scores are equal.
 
 Then pull out the names. Sorting once with a tuple key is faster and clearer than sorting twice.
+
+### Complexity
+
+- Time: O(n log n). One comparison sort (Timsort) with a key; no comparison sort can do better.
+- Space: O(n). The sorted copy and the key list.

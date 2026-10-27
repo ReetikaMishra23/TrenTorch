@@ -57,3 +57,8 @@ Only the last two values are needed. `O(n)`.
 ## Explanation
 
 `prev2` and `prev1` hold `best(i - 2)` and `best(i - 1)`; the loop computes `best(i)` for `i` up to the top.
+
+### Complexity
+
+- Time: O(n). One pass; each step only needs the best costs of the two steps before it.
+- Space: O(1). Two numbers.

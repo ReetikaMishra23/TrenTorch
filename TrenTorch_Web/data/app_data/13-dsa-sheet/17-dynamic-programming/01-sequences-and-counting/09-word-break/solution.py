@@ -1,10 +1,20 @@
 def word_break(s, words):
-    dictionary = set(words)
-    maxlen = max((len(w) for w in dictionary), default=0)
-    can = [True] + [False] * len(s)
-    for i in range(1, len(s) + 1):
-        for j in range(max(0, i - maxlen), i):
-            if can[j] and s[j:i] in dictionary:
-                can[i] = True
+    trie = {}
+    for word in words:
+        node = trie
+        for ch in word:
+            node = node.setdefault(ch, {})
+        node[None] = True  # a word ends here
+    n = len(s)
+    reachable = [True] + [False] * n
+    for i in range(n):
+        if not reachable[i]:
+            continue
+        node = trie
+        for j in range(i, n):
+            node = node.get(s[j])
+            if node is None:
                 break
-    return can[len(s)]
+            if None in node:
+                reachable[j + 1] = True
+    return reachable[n]

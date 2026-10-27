@@ -61,3 +61,8 @@ One binary search plus two extra reads: `O(log n)`.
 ## Explanation
 
 `i` is the lower bound. If `i < n`, `nums[i]` is the ceil, and when it equals the target it is also the floor. Otherwise the floor is `nums[i - 1]` when `i > 0`. Missing values are reported as `-1`; the constraints keep real values non-negative so `-1` is unambiguous.
+
+### Complexity
+
+- Time: O(log n). One binary search for the first value `>= target`; the floor is its neighbour.
+- Space: O(1). Two indices.

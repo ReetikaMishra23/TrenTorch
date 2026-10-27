@@ -59,3 +59,8 @@ Take the maximum over all water cells (and over the existing islands, in case th
 ## Explanation
 
 `label[r][c]` is the island id of a land cell and `size[id]` its size. The set of neighbour ids makes sure a single island is added only once.
+
+### Complexity
+
+- Time: O(r * c). One search labels every island and records its size; then each water cell looks at its 4 neighbours.
+- Space: O(r * c). The label grid and the size table.

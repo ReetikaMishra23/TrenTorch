@@ -57,3 +57,8 @@ Each of the 30 rounds is `O(n)`, so the total is `O(30 n)`. The classic alternat
 ## Explanation
 
 After processing bit `b`, `best` is the largest xor of the numbers' prefixes down to that bit. Trying `best * 2 + 1` asks whether the new bit can be 1; if some pair achieves it, `best` grows, otherwise it takes the bit as 0.
+
+### Complexity
+
+- Time: O(30 * n). The answer is built one bit at a time from the top; each bit needs one pass over the prefixes with O(1) set lookups.
+- Space: O(n). The set of prefixes.

@@ -57,3 +57,8 @@ Rotating one step `k` times, which is what a literal reading suggests, costs `O(
 ## Explanation
 
 After `k %= length`, the cut point is `length - k` nodes from the front. The old tail is linked to the old head to close the circle, and the circle is cut after the new tail.
+
+### Complexity
+
+- Time: O(n). One pass to find the length and the tail, one pass to the new tail.
+- Space: O(1). A few pointers.

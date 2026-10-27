@@ -57,3 +57,8 @@ This is `O(n)` time and `O(1)` memory. Contrast it with an unsorted list, where 
 ## Explanation
 
 The loop compares `cur` with the node after it. A repeat is cut out; a different value lets `cur` advance.
+
+### Complexity
+
+- Time: O(n). One pass; equal neighbours are skipped by relinking.
+- Space: O(1). One pointer.

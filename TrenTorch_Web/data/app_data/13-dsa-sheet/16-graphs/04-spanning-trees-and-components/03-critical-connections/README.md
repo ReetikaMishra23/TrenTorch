@@ -60,3 +60,8 @@ Write the DFS with an explicit stack: with 100,000 nodes a recursive DFS would e
 ## Explanation
 
 The stack holds `(node, parent, iterator position)`. When a child finishes, its `low` is folded into the parent's, and the bridge test is applied.
+
+### Complexity
+
+- Time: O(n + e + b log b). One depth-first search computes discovery and low-link times; `b` bridges are sorted for the output.
+- Space: O(n + e). The adjacency lists, the two time arrays and the stack.

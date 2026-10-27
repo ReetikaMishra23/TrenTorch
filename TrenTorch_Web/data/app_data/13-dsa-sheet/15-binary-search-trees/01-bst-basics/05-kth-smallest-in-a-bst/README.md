@@ -61,3 +61,8 @@ Since inorder gives the values in increasing order, the `k`-th smallest is simpl
 ## Explanation
 
 The stack-based inorder loop counts nodes as they are visited; the `k`-th one is returned immediately.
+
+### Complexity
+
+- Time: O(h + k). An iterative in-order walk stops after `k` nodes; going down the first path costs `h`.
+- Space: O(h). The stack holds one path; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

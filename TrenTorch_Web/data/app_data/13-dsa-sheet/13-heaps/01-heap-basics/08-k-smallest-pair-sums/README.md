@@ -60,3 +60,8 @@ A min-heap holds the candidates `(sum, i, j)`. Start with `(0, 0)` ... or, simpl
 ## Explanation
 
 Starting with the first `k` rows is enough: a row index of `k` or more can never be among the `k` smallest sums, since there are `k` rows before it that are all at most as large.
+
+### Complexity
+
+- Time: O(k log k). A heap with at most `k` entries, one pop and one push per answer.
+- Space: O(k). The heap (the result is output).

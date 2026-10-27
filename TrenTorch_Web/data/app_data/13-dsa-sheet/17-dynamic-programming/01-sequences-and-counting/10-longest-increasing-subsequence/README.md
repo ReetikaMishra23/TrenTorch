@@ -59,3 +59,8 @@ A cleverer method gives `O(n log n)`. Keep a list `tails` where `tails[k]` is th
 ## Explanation
 
 `bisect_left` finds the position where `x` belongs. Using `bisect_left` (not `bisect_right`) makes equal values replace each other, which enforces strictly increasing.
+
+### Complexity
+
+- Time: O(n log n). One binary search per value on the table of smallest tails.
+- Space: O(n). The tails list.

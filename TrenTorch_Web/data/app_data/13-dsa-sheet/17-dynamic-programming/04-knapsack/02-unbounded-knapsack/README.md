@@ -58,3 +58,8 @@ The difference between the two problems is only the direction of one loop. `O(it
 ## Explanation
 
 The upward loop over `w` reuses the freshly updated `best[w - weight]`, which is exactly "take the item again".
+
+### Complexity
+
+- Time: O(n * W). Each of the `n` items updates every capacity up to `W` once (pseudo-polynomial).
+- Space: O(W). One row of the table.

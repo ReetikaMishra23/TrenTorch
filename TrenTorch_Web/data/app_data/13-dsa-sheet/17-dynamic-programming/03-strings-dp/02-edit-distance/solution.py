@@ -1,4 +1,6 @@
 def edit_distance(a, b):
+    if len(b) > len(a):
+        a, b = b, a
     prev = list(range(len(b) + 1))
     for i in range(1, len(a) + 1):
         cur = [i] + [0] * len(b)

@@ -56,3 +56,8 @@ Use a **dummy head** in front of the list. Then removing the first node (when `n
 ## Explanation
 
 `fast` starts `n` steps ahead of `slow`. Both move until `fast.next` is `None`, which leaves `slow` on the node before the one to remove. `slow.next = slow.next.next` unlinks it.
+
+### Complexity
+
+- Time: O(n). One pass: `fast` starts `n` nodes ahead, so when it reaches the end `slow` is just before the node to remove.
+- Space: O(1). Three pointers.

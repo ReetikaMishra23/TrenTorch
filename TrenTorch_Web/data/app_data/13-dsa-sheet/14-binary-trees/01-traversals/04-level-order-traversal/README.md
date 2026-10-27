@@ -61,3 +61,8 @@ Every node enters and leaves the queue once: `O(n)`. Use `collections.deque` for
 ## Explanation
 
 `for _ in range(len(queue))` handles exactly one level, because the children pushed meanwhile are added after the original size was read.
+
+### Complexity
+
+- Time: O(n). Each node enters and leaves the queue once.
+- Space: O(w). `w` is the widest level, at most `n / 2` (the result is output).

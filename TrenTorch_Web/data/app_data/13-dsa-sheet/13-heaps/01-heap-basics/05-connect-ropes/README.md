@@ -59,3 +59,8 @@ A min-heap gives the two shortest ropes in `O(log n)`: pop two, add their sum to
 ## Explanation
 
 Each loop pops the two smallest, adds the cost and pushes the new rope. The heap shrinks by one each round.
+
+### Complexity
+
+- Time: O(n log n). Each of `n - 1` joins pops two ropes and pushes one, `O(log n)` each; always joining the two shortest is optimal (Huffman).
+- Space: O(n). The heap.

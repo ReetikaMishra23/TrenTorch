@@ -61,3 +61,8 @@ If no such `i` exists the whole list is non-increasing, which is the last arrang
 ## Explanation
 
 Find `i`, the rightmost index with `a[i] < a[i + 1]`. If there is none, reverse the whole list. Otherwise find the rightmost `j` with `a[j] > a[i]`, swap `a[i]` and `a[j]`, and reverse `a[i + 1:]`. Using `>=` and `<=` carefully (strict comparisons) handles repeated values.
+
+### Complexity
+
+- Time: O(n). Find the pivot, swap, reverse the suffix: each is one scan.
+- Space: O(n). A copy of the list, because the input must not change.

@@ -62,3 +62,8 @@ Walk down as if searching for `target`. At each node compare its distance to `ta
 ## Explanation
 
 The key `(abs(v - target), v)` makes the tie-break automatic: the smaller distance wins, and for equal distances the smaller value.
+
+### Complexity
+
+- Time: O(h). One root-to-leaf walk toward the target.
+- Space: O(1). Two numbers; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

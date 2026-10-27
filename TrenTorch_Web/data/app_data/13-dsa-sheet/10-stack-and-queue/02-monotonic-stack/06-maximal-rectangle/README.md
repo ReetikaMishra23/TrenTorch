@@ -59,3 +59,8 @@ This is a nice example of **reducing** a new problem to one you already solved.
 ## Explanation
 
 `heights[j]` grows by one for each row with a `1` in column `j` and resets to `0` otherwise. `largest_in_histogram` is the stack solution of the previous question.
+
+### Complexity
+
+- Time: O(r * c). For every row the heights are updated in O(c) and the largest rectangle in the histogram is found in O(c).
+- Space: O(c). The heights and the stack.

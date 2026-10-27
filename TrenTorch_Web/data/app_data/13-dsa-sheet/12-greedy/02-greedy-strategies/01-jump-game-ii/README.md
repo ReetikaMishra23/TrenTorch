@@ -61,3 +61,8 @@ This is `O(n)` and needs no extra memory.
 ## Explanation
 
 Whenever the scan reaches `end`, the current jump count has covered everything it can; one more jump is required and the new range ends at `far`.
+
+### Complexity
+
+- Time: O(n). One pass; each index is passed once while the current jump range is extended.
+- Space: O(1). A few numbers.

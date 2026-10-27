@@ -59,3 +59,8 @@ Another view is a **union-find**: add the cells in order of height and stop when
 ## Explanation
 
 The heap starts with the top-left cell at time `grid[0][0]`. The first pop of the bottom-right cell gives the answer.
+
+### Complexity
+
+- Time: O(r * c * log(r * c)). Dijkstra-like search where the cost of a path is its highest cell; each cell is pushed once.
+- Space: O(r * c). The visited grid and the heap.

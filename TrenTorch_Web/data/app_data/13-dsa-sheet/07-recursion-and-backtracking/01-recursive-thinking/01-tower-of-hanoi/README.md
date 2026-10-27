@@ -59,3 +59,8 @@ The base case is `n = 0`: nothing to move. The number of moves satisfies `T(n) =
 ## Explanation
 
 `move(k, source, target, spare)` does nothing for `k == 0`. Otherwise it moves `k - 1` disks out of the way (to the spare), records `[source, target]` for the big disk, and moves the `k - 1` disks on top of it. The pegs swap roles in the two recursive calls.
+
+### Complexity
+
+- Time: O(2^n). Moving `n` disks takes exactly `2^n - 1` moves, and each is produced once.
+- Space: O(2^n). The list of moves is the output; the recursion is only `n` deep.

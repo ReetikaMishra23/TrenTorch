@@ -57,3 +57,8 @@ If so, copy it to `nums[write]` and advance the writer. This "read ahead, write 
 ## Explanation
 
 `a[write - 2]` is the second-to-last kept value. If the new value differs from it, there are fewer than two copies of the new value kept (the list is sorted), so it can be kept.
+
+### Complexity
+
+- Time: O(n). One pass; a value is kept unless the value two places behind the write position equals it.
+- Space: O(n). A copy of the list is made because the input must not change.

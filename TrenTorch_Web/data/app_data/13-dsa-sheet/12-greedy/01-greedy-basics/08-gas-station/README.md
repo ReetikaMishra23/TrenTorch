@@ -62,3 +62,8 @@ After one pass, if the total is not negative, the last restart point is the answ
 ## Explanation
 
 `total` checks fact 1; `tank` and `start` carry out fact 2. When the tank goes negative at `i`, the start moves to `i + 1`.
+
+### Complexity
+
+- Time: O(n). One pass; if the tank goes negative no station up to here can be the start, so the next one is tried.
+- Space: O(1). A few numbers.

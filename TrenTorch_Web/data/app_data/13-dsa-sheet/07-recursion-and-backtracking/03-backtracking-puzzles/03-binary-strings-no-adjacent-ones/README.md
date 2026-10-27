@@ -53,3 +53,8 @@ Because the rule is checked while building, every branch of the recursion can be
 ## Explanation
 
 `go(prefix)` returns when the prefix has length `n`. It always tries adding `0`, and tries adding `1` only when the prefix is empty or does not end in `1`.
+
+### Complexity
+
+- Time: O(n * F(n)). The number of valid strings is a Fibonacci number, about `1.618^n`, and the check "no `1` after `1`" prunes the rest.
+- Space: O(n * F(n)). The output.

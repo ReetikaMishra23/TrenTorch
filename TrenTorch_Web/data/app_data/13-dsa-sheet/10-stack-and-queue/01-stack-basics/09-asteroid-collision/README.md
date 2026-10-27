@@ -63,3 +63,8 @@ If the stack is empty or its top moves left, the new asteroid survives and is pu
 ## Explanation
 
 `alive` stays `True` while the new left-mover has not been destroyed. The while loop pops smaller right-movers; an equal one is popped with the newcomer; a bigger one stops the newcomer.
+
+### Complexity
+
+- Time: O(n). Each asteroid is pushed once and popped at most once.
+- Space: O(n). The stack.

@@ -59,3 +59,8 @@ This "count, then pick with a composite key" pattern is the second thing to lear
 ## Explanation
 
 `counts` maps each value to its frequency. `min(counts, key=lambda v: (-counts[v], v))` is the value with the biggest count, smallest on ties. `min(counts, key=lambda v: (counts[v], v))` is the value with the smallest count, smallest on ties.
+
+### Complexity
+
+- Time: O(n). One counting pass plus two scans of the `d <= n` distinct values.
+- Space: O(d). The counter holds `d` distinct values.

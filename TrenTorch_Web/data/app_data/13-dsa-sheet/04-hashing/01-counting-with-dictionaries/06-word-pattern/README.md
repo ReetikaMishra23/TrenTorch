@@ -55,3 +55,8 @@ Dictionary keys can be any hashable value, including strings, so the code is the
 ## Explanation
 
 If the lengths differ the answer is `False`. Otherwise the loop keeps `letter_to_word` and `word_to_letter`. A mapping created earlier must match the current pair in both dictionaries.
+
+### Complexity
+
+- Time: O(L). One pass; `L` is the total number of characters in `words`, because hashing a word reads all its characters.
+- Space: O(n). The word-to-letter dictionary may hold one entry per word (`n` = number of words).

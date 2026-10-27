@@ -61,3 +61,8 @@ At the end, `open_count` is the number of `(` still waiting, and each needs an i
 ## Explanation
 
 `need` counts `)` that had no `(` before them (each needs an inserted `(`), and `open_count` ends as the number of `(` left unmatched (each needs an inserted `)`). Their sum is the minimum number of insertions.
+
+### Complexity
+
+- Time: O(n). One pass counting unmatched parentheses.
+- Space: O(1). Two counters.

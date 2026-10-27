@@ -55,3 +55,8 @@ Total work is `O(len(a) + len(b))` with no hashing, and the output comes out sor
 ## Explanation
 
 Equal values are appended and both positions advance, which is what gives `min(x, y)` copies of a repeated value. A smaller value on either side is skipped.
+
+### Complexity
+
+- Time: O(n + m). Two pointers move forward through the sorted lists.
+- Space: O(min(n, m)). The result list can hold at most the shorter list.

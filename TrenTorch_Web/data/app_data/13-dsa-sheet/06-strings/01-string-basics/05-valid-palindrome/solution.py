@@ -1,3 +1,13 @@
 def valid_palindrome(s):
-    cleaned = [ch.lower() for ch in s if ch.isalnum()]
-    return cleaned == cleaned[::-1]
+    i, j = 0, len(s) - 1
+    while i < j:
+        if not s[i].isalnum():
+            i += 1
+        elif not s[j].isalnum():
+            j -= 1
+        else:
+            if s[i].lower() != s[j].lower():
+                return False
+            i += 1
+            j -= 1
+    return True

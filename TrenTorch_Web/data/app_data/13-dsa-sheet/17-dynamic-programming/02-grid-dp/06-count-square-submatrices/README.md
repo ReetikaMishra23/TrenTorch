@@ -57,3 +57,8 @@ So the answer is the **sum of `side(r, c)` over all cells**. `O(rows × cols)`.
 ## Explanation
 
 The same DP as maximal square, but each cell adds its `side` to the total instead of updating a maximum.
+
+### Complexity
+
+- Time: O(r * c). Every cell is computed once from three neighbours.
+- Space: O(c). Two rows of the table.

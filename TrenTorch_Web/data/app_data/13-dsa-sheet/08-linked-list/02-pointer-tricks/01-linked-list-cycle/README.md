@@ -59,3 +59,8 @@ The comparison must be `slow is fast` (the same node), not equal values: differe
 ## Explanation
 
 The loop ends when `fast` reaches `None` (no cycle). Inside a cycle `fast` closes the gap by one node each round, so it catches `slow`.
+
+### Complexity
+
+- Time: O(n). Floyd's tortoise and hare: if there is a cycle, `fast` catches `slow` within one lap of it.
+- Space: O(1). Two pointers.

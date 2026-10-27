@@ -59,3 +59,8 @@ The answer is exactly what the prefix function holds for the last position: `s[:
 ## Explanation
 
 The loop is the standard prefix function; only the last value is used.
+
+### Complexity
+
+- Time: O(n). The last value of the prefix function is the length of the longest border.
+- Space: O(n). The prefix function array.

@@ -57,3 +57,8 @@ Sets also remove repeats for free, which is why the answer is a list of _differe
 ## Explanation
 
 `set(a) & set(b)` is every value present in both lists, each once. `sorted(...)` puts it in order.
+
+### Complexity
+
+- Time: O(n + m + t log t). Building the two sets is linear; `t` is the number of common values, which must be sorted for the output.
+- Space: O(n + m). The two sets.

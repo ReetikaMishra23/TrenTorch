@@ -58,3 +58,8 @@ This is a first taste of **DP**: use answers for smaller inputs to build the ans
 ## Explanation
 
 `i >> 1` is `i` without its lowest bit, so its count is already stored. Adding `i & 1` puts the dropped bit back.
+
+### Complexity
+
+- Time: O(n). Each answer reuses the one for `i >> 1` plus the last bit.
+- Space: O(n). The output list.

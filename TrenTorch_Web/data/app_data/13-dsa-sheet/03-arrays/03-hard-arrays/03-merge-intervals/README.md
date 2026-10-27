@@ -60,3 +60,8 @@ The sort dominates: `O(n log n)`. Without the sort you would have to compare eve
 ## Explanation
 
 `sorted(intervals)` orders by start then end. For each `[start, end]`, if `out` is not empty and `start <= out[-1][1]` the two overlap or touch, so raise the last end to `max(out[-1][1], end)`. Otherwise append a new interval. The interval lists are copied into new lists so the input is not modified.
+
+### Complexity
+
+- Time: O(n log n). Sorting dominates; the merge itself is one pass.
+- Space: O(n). The sorted list and the merged result.

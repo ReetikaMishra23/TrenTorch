@@ -60,3 +60,8 @@ The loop over `i` is `O(n)` and each pointer pass is `O(n)`: `O(n²)` overall, i
 ## Explanation
 
 Ties go to the smaller sum with the key `(abs(s - target), s)`. Each pointer pass moves `lo` or `hi` until they meet.
+
+### Complexity
+
+- Time: O(n^2). Sort once, then fix one value and sweep two pointers over the rest.
+- Space: O(n). The sorted copy.

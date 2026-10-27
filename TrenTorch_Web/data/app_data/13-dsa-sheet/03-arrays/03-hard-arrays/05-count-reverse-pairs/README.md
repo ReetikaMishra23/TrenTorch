@@ -61,3 +61,8 @@ Each level does `O(n)` work and there are `log₂ n` levels: `O(n log n)`.
 ## Explanation
 
 `sort(a)` returns the sorted list and the number of reverse pairs. After sorting both halves, for each `v` in `left` (increasing), advance `j` while `v > 2 * right[j]` and add `j`. Then `sorted(left + right)` merges the halves; Python's sort detects the two sorted runs, so this step is linear.
+
+### Complexity
+
+- Time: O(n log n). Merge sort has `log n` levels; at each level the pairs are counted with two pointers and the halves are merged in linear time.
+- Space: O(n). The merged lists along the recursion path add up to `n`.

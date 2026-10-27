@@ -57,3 +57,8 @@ Two pointers do it in one pass after sorting: advance the cookie pointer until a
 ## Explanation
 
 `child` counts the happy children. Each cookie is looked at once, in increasing size, and it satisfies the current least greedy child if it can.
+
+### Complexity
+
+- Time: O(n log n + m log m). Sorting both lists dominates; the matching is one pass.
+- Space: O(n + m). The two sorted copies.

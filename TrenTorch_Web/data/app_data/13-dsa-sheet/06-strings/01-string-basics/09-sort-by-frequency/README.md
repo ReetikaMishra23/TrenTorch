@@ -57,3 +57,8 @@ Finally repeat each character by its count: `ch * count[ch]` builds the whole gr
 ## Explanation
 
 `counts` holds each character's frequency. The distinct characters are sorted by `(-count, char)`. Each group is `char * count`, and the groups are joined.
+
+### Complexity
+
+- Time: O(n + k log k). One counting pass, then a sort of the `k <= 62` distinct characters, then building the result.
+- Space: O(n). The result string; the counter has at most 62 entries.

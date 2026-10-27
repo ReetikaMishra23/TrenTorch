@@ -59,3 +59,8 @@ Return `False` as soon as one is empty and the other is not, or the values diffe
 ## Explanation
 
 The two-`None` case ends the recursion successfully; every other mismatch returns `False`.
+
+### Complexity
+
+- Time: O(n). Every node pair is compared once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

@@ -64,3 +64,8 @@ This "remember what you have seen in a dictionary" pattern is the foundation of 
 ## Explanation
 
 `first[v]` is the first index of value `v`. For each `j`, if `target - nums[j]` has a first index `i < j`, then `(i, j)` is a candidate. The best candidate is the smallest tuple. The scan covers every `j`, so it cannot miss a pair with a smaller `i` found later.
+
+### Complexity
+
+- Time: O(n). One pass with one dictionary lookup per element (O(1) on average).
+- Space: O(n). The dictionary of first positions.

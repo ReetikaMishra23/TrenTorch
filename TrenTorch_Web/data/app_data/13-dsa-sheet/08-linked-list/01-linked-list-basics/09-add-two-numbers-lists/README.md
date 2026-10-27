@@ -58,3 +58,8 @@ You never need to turn the lists into big numbers: that would be wrong for 100,0
 ## Explanation
 
 The loop condition includes `carry`, so a final carry becomes one more node. `a.val if a else 0` treats a shorter number as padded with zeros.
+
+### Complexity
+
+- Time: O(max(n, m)). One pass over both lists with a carry.
+- Space: O(max(n, m)). The result list is new nodes (one per digit); no other memory is used.

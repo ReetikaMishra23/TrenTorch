@@ -61,3 +61,8 @@ Each value is visited as a start at most once and as a run member at most once, 
 ## Explanation
 
 Build `s = set(nums)`. For each `x` in `s` with `x - 1 not in s`, extend `length` while `x + length in s`, then update the best. Iterating the set removes duplicates. The inner `while` runs only from run starts, which keeps the total linear.
+
+### Complexity
+
+- Time: O(n). Only the start of a run begins a scan, so every value is visited at most twice (O(1) hash lookups on average).
+- Space: O(n). The set of values.

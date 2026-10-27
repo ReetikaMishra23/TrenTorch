@@ -59,3 +59,8 @@ This **count per bit** idea turns many pair problems into counting problems.
 ## Explanation
 
 For each bit, `ones` counts the numbers that have it set; each of them differs there from each of the `n - ones` numbers that do not.
+
+### Complexity
+
+- Time: O(30 * n). For each of the 30 bit positions count the ones; that bit contributes `ones * zeros` pairs.
+- Space: O(1). A few integers.

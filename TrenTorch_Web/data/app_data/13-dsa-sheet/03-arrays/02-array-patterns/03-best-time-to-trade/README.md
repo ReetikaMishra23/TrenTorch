@@ -61,3 +61,8 @@ This "best so far to the left" idea is a close cousin of the running maximum use
 ## Explanation
 
 Update the best profit with `price - lowest` **before** lowering `lowest` with today's price, so you never buy and sell on the same day. The profit starts at `0`, so losing trades are ignored.
+
+### Complexity
+
+- Time: O(n). One pass keeping the lowest price so far.
+- Space: O(1). Two numbers.

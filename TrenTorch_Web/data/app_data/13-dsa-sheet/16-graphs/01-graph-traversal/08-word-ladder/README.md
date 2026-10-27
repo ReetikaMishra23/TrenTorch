@@ -62,3 +62,8 @@ Total `O(n·L²)` (with strings of length `L`), instead of `O(n²·L)`.
 ## Explanation
 
 `groups` maps each wildcard pattern to the words that match it. BFS pops a word, looks up its patterns, and queues the unseen words found there; `steps` counts the words in the chain.
+
+### Complexity
+
+- Time: O(N * L^2). `N` words of length `L`: every word is put in `L` pattern groups, each costing `O(L)` to build, and the search visits each word once.
+- Space: O(N * L^2). The pattern groups hold `N * L` strings of length `L`.

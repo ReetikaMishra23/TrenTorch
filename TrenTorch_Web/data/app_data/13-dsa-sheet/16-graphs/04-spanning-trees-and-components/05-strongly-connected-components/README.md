@@ -62,3 +62,8 @@ Why it works: the node that finishes last in pass 1 belongs to a "source" compon
 ## Explanation
 
 `order` is the post-order of pass 1. The second loop counts how many times a new DFS on the reversed graph is needed.
+
+### Complexity
+
+- Time: O(n + e). Kosaraju's algorithm: two depth-first searches, each visiting every node and edge once.
+- Space: O(n + e). Both adjacency lists, the finish order and the stack.

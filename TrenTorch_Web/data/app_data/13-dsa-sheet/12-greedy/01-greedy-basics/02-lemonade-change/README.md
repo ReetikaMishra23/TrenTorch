@@ -57,3 +57,8 @@ Process the queue, updating the counts; if you cannot make the change at any poi
 ## Explanation
 
 Using the 10 first when a 20 arrives keeps as many 5s as possible. If neither way works, the answer is `False`.
+
+### Complexity
+
+- Time: O(n). One pass keeping the number of 5 and 10 bills.
+- Space: O(1). Two counters.

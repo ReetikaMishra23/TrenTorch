@@ -57,3 +57,8 @@ This is binary search on a **condition that changes once** (rising, then not ris
 ## Explanation
 
 `nums[mid] < nums[mid + 1]` means the peak is strictly right of `mid`; otherwise `mid` could be the peak, so keep it with `hi = mid`. The loop ends with `lo == hi` at the peak index. `mid + 1` is always valid inside `while lo < hi`.
+
+### Complexity
+
+- Time: O(log n). Comparing a value with its right neighbour tells on which side of the peak it is, so the range halves.
+- Space: O(1). Two indices.

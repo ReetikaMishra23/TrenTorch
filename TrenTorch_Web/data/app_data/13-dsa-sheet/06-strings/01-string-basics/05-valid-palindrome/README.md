@@ -52,4 +52,24 @@ The **two-pointer** version avoids building the cleaned string: one pointer from
 
 ## Explanation
 
-`cleaned` keeps only alphanumeric characters, lower-cased. The string is a palindrome when it equals its reverse. Two-pointer code would reach the same answer without the copy.
+Two pointers, one at each end. Skip any character that is not a letter or digit. When both point at letters or digits, compare them in lower case: a difference means it is not a palindrome. Move both inward; reaching the middle means it is one. An empty string, or one with only punctuation, is a palindrome.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line        | Variables         |
+| ---------------------- | ----------------- |
+| `i, j = 0, len(s) - 1` | `i = 0, j = 29`   |
+| `i += 1`               | `i = 3, j = 28`   |
+| `j -= 1`               | `i = 5, j = 25`   |
+| `j -= 1`               | `i = 8, j = 24`   |
+| `j -= 1`               | `i = 10, j = 22`  |
+| `i += 1`               | `i = 12, j = 20`  |
+| `i += 1`               | `i = 15, j = 18`  |
+| `return`               | `returned = True` |
+
+### Complexity
+
+- Time: O(n). Two pointers move toward each other, skipping non-alphanumeric characters.
+- Space: O(1). Two indices.

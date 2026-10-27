@@ -60,3 +60,8 @@ One of the two cases covers the optimal choice, because at most one of the two e
 ## Explanation
 
 `line` is the previous question's loop. The answer is the larger of the two lines that each drop one end.
+
+### Complexity
+
+- Time: O(n). Two passes of the house-robber scan: one without the first house, one without the last.
+- Space: O(n). The two slices of the list.

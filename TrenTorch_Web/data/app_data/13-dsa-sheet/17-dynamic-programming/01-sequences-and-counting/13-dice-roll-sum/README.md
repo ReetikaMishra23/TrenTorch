@@ -60,3 +60,8 @@ Keep one row per number of dice. The sum over `faces` terms can be made `O(1)` w
 ## Explanation
 
 `row[t]` is the number of ways for the current number of dice. `prefix` makes each window sum a subtraction of two prefix values.
+
+### Complexity
+
+- Time: O(dice * target). Prefix sums make each cell of a row O(1) instead of O(faces).
+- Space: O(target). Two rows of the table.

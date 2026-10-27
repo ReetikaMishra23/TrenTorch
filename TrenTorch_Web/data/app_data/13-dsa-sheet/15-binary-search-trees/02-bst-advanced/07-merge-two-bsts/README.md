@@ -61,3 +61,8 @@ The previous topics showed how to get the inorder list with an iterative travers
 ## Explanation
 
 `inorder` returns the sorted values of one tree. The merge loop takes the smaller front value each time and appends the leftovers at the end.
+
+### Complexity
+
+- Time: O(n + m). Two in-order walks and one merge of the sorted lists.
+- Space: O(n + m). The two lists and the merged result.

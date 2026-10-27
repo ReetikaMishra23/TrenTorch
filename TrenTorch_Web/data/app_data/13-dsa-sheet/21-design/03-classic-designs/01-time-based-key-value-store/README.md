@@ -62,3 +62,8 @@ For each key keep the list of its `(time, value)` pairs. Because the times only 
 ## Explanation
 
 `times[key]` and `values[key]` are parallel lists. `bisect_right(times, t)` is the number of entries with time `<= t`, so the entry before that index is the answer.
+
+### Complexity
+
+- Time: O(n log n). A `set` appends in O(1) because times grow; a `get` is one binary search over the times of that key.
+- Space: O(n). All stored values.

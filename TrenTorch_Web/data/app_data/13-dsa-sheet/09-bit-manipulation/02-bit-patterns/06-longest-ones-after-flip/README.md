@@ -56,3 +56,8 @@ The answer is capped at 32 (the number of bits). An all-ones number has no zero 
 ## Explanation
 
 `previous + current + 1` is the run left of the last zero, the flipped zero, and the run right of it. The `min(..., 32)` handles numbers with no zero, where the extra `+ 1` would count a bit that does not exist.
+
+### Complexity
+
+- Time: O(1). One pass over the 32 bits keeping the current and the previous run of ones.
+- Space: O(1). A few integers.

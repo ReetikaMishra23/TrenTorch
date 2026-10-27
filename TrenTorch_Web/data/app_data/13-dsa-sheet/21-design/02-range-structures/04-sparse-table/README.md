@@ -61,3 +61,8 @@ A query `[l, r]` uses the largest `k` with `2^k <= r - l + 1`. Two blocks of len
 ## Explanation
 
 `(r - l + 1).bit_length() - 1` is `floor(log2(length))`. The two table entries cover the range from both ends.
+
+### Complexity
+
+- Time: O(n log n + q). The table has `log n` rows of up to `n` minimums, and each query overlaps two precomputed ranges, so it is O(1).
+- Space: O(n log n). The table.

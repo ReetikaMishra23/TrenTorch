@@ -59,3 +59,8 @@ If `far` reaches the last index, return `True`. `O(n)` time and `O(1)` memory, i
 ## Explanation
 
 Every index up to `far` is reachable, because you can reach `far` by some jump and shorter jumps land on everything in between. An index past `far` can never be reached.
+
+### Complexity
+
+- Time: O(n). One pass keeping the furthest reachable index.
+- Space: O(1). One integer.

@@ -64,3 +64,8 @@ Searching the root in `inorder` each time costs `O(n)`, giving `O(n²)` in total
 ## Explanation
 
 `pos` maps each value to its inorder index. `build(lo, hi)` builds the tree for the inorder range `[lo, hi)` and consumes preorder values left to right with an iterator, because preorder visits the root, then the whole left subtree, then the right.
+
+### Complexity
+
+- Time: O(n). A table of inorder positions gives each root split in O(1), so every node is created once.
+- Space: O(n). The position table (plus `O(h)` recursion).

@@ -59,3 +59,8 @@ After a skip make sure `i != j` and restart `k = 0`. When one candidate reaches 
 ## Explanation
 
 `i` and `j` are the two best candidates; the one that loses a comparison skips ahead past every start it makes worse.
+
+### Complexity
+
+- Time: O(n). Two candidate starts race forward; whenever they differ the loser skips past the letters it has just compared, so the pointers advance at most `2n` times.
+- Space: O(n). The doubled string.

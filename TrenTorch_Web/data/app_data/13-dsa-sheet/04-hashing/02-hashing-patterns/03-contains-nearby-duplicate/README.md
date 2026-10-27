@@ -61,4 +61,24 @@ Remembering only the **most recent** position is the trick: it is enough because
 
 ## Explanation
 
-`last` maps a value to the index where it last appeared. If the same value appeared at most `k` positions ago, return `True`. Always overwrite `last[x]` with the current index. Reaching the end means no close pair exists.
+The set holds the values of the last `k` positions. Before adding `x`, check whether it is already in the set: a hit means the same value appeared at most `k` positions ago, so return `True`. After adding `x`, drop the value that just fell out of range, `nums[i - k]`. With `k = 0` the window is always empty, so the answer is `False`.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                | Variables                       |
+| ------------------------------ | ------------------------------- |
+| `window = set()`               | `window = set()`                |
+| `for i, x in enumerate(nums):` | `i = 0, x = 1`                  |
+| `window.add(x)`                | `window = {1}`                  |
+| `for i, x in enumerate(nums):` | `i = 1, x = 2`                  |
+| `for i, x in enumerate(nums):` | `window = {1, 2}, i = 2, x = 3` |
+| `window.add(x)`                | `window = {1, 2, 3}`            |
+| `for i, x in enumerate(nums):` | `i = 3, x = 1`                  |
+| `return`                       | `returned = True`               |
+
+### Complexity
+
+- Time: O(n). One pass; set lookups, inserts and removals are O(1) on average.
+- Space: O(min(n, k)). The set holds only the last `k` values.

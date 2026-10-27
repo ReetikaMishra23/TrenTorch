@@ -57,3 +57,8 @@ Mapping a 2D structure onto a 1D index with `//` and `%` is a very common trick 
 ## Explanation
 
 An empty matrix (no rows, or rows with no cells) cannot contain the target. Otherwise binary search positions between `0` and `rows * cols - 1`; each probe reads one cell with the division and remainder mapping and compares it with `target`.
+
+### Complexity
+
+- Time: O(log(r * c)). The matrix reads as one sorted list of `r * c` values, so a single binary search works.
+- Space: O(1). Two indices.

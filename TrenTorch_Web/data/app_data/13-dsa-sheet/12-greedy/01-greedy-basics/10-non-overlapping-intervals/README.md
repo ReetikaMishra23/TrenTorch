@@ -59,3 +59,8 @@ The exchange argument is the same: the interval that ends first leaves the most 
 ## Explanation
 
 `last_end` is the end of the last kept interval. An interval that starts earlier than that overlaps it and is removed.
+
+### Complexity
+
+- Time: O(n log n). Sorting by end time dominates; the scan is one pass.
+- Space: O(n). The sorted list.

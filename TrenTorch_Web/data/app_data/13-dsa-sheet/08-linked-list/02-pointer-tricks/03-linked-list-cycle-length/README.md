@@ -57,3 +57,8 @@ This is the same tortoise and hare idea, finished with a short counting loop.
 ## Explanation
 
 After the meeting, `node = slow.next` and `length = 1` start the count; each step moves one node, and the loop ends back at `slow`.
+
+### Complexity
+
+- Time: O(n). Find a node inside the cycle with Floyd, then count one lap.
+- Space: O(1). Two pointers and a counter.

@@ -61,3 +61,8 @@ Pass index ranges `(lo, hi)` instead of slicing the list; slices copy and would 
 ## Explanation
 
 `build(lo, hi)` makes the node for the middle index and builds the two halves around it. An empty range gives `None`.
+
+### Complexity
+
+- Time: O(n). Each value becomes a node once.
+- Space: O(log n). The recursion is `log n` deep (the new tree itself is the output).

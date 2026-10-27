@@ -59,3 +59,8 @@ A depth-first version also works: visit the **right** child before the left, and
 ## Explanation
 
 The inner loop processes one level; `level_last` ends up holding the value of the last node popped from that level.
+
+### Complexity
+
+- Time: O(n). Each node enters and leaves the queue once.
+- Space: O(w). `w` is the widest level, at most `n / 2`.

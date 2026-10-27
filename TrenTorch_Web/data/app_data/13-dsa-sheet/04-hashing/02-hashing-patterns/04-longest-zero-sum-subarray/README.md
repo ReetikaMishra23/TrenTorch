@@ -61,3 +61,8 @@ This is the `k = 0` case of the prefix-sum trick, and the first place most peopl
 ## Explanation
 
 `first` starts with `{0: -1}` (the empty prefix before index 0). For each index update `prefix`; if it was seen before, the run from `first[prefix] + 1` to `i` sums to zero with length `i - first[prefix]`; otherwise store `first[prefix] = i`.
+
+### Complexity
+
+- Time: O(n). One pass; the first index of each prefix sum is stored and a repeated sum closes a zero-sum subarray.
+- Space: O(n). The dictionary of first positions of prefix sums.

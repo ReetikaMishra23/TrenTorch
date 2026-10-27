@@ -58,3 +58,8 @@ The total work is `O(n log log n)`, almost linear. In Python use a `bytearray` a
 ## Explanation
 
 `sieve[i]` is 1 while `i` may be prime. For each prime `i` up to `sqrt(n)`, the whole slice of its multiples is cleared at once. The answer is the sum of the remaining ones.
+
+### Complexity
+
+- Time: O(n log log n). Sieve of Eratosthenes: for each prime `p` up to `sqrt(n)` one slice assignment crosses out its multiples, and the work adds up to `n * (1/2 + 1/3 + 1/5 + ...)`.
+- Space: O(n). A byte per number.

@@ -55,3 +55,8 @@ So: for `(`, add it to the answer only if the depth was already above `0`, then 
 ## Explanation
 
 For `(` the current `depth` before the increase tells whether it is a group's opener (`depth == 0`); for `)` the depth after the decrease tells whether it is a closer (`depth == 0`). Everything else is kept.
+
+### Complexity
+
+- Time: O(n). One pass tracking the depth.
+- Space: O(n). The result string.

@@ -61,3 +61,8 @@ Each step is `O(n)` and uses `O(1)` memory. The skill is recognising that a hard
 ## Explanation
 
 `slow` stops at the end of the first half (the first half is the longer one for odd lengths). The second half is cut off and reversed, and the weave loop links `first -> second -> (first.next)` repeatedly.
+
+### Complexity
+
+- Time: O(n). Find the middle, reverse the second half, then interleave the two halves; each step is one pass.
+- Space: O(1). A few pointers.

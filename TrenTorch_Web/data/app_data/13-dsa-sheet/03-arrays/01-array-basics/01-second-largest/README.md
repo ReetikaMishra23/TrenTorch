@@ -61,3 +61,8 @@ Keeping a few running values and updating them as you scan is the simplest kind 
 `largest` and `second` start as `None`. The branch `x > largest` shifts the old largest down. The branch `x < largest and (second is None or x > second)` updates the second. A value equal to `largest` matches neither branch, so duplicates of the maximum never become the second.
 
 Because all values are at least `0`, the result `-1` can only mean "no second value".
+
+### Complexity
+
+- Time: O(n). One pass with two variables.
+- Space: O(1). Two variables.

@@ -59,3 +59,8 @@ The proof that the pairwise rule gives the global best is an exchange argument: 
 ## Explanation
 
 `key=cmp_to_key(compare)` sorts with `a + b` versus `b + a`. A leading `"0"` after sorting means every number is zero.
+
+### Complexity
+
+- Time: O(n * d * log n). Sorting with the rule "`a + b` before `b + a`" costs `n log n` comparisons of strings of up to `d` digits.
+- Space: O(n * d). The strings.

@@ -58,3 +58,8 @@ Finding the latest free slot by scanning down costs `O(deadline)`; a **union-fin
 ## Explanation
 
 `find(t)` returns the latest free slot `<= t` (`0` means none). After using slot `s`, `parent[s] = s - 1` so later searches skip it.
+
+### Complexity
+
+- Time: O(n log n). Sorting by profit dominates; finding a free slot with union-find is almost O(1) per job.
+- Space: O(n). The union-find array and the sorted list.

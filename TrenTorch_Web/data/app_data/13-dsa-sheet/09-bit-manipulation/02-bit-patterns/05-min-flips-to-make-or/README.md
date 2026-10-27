@@ -57,3 +57,8 @@ Add up the flips over the 31 positions. The shortcut with masks: `needed = (a | 
 ## Explanation
 
 The loop runs over bit positions and applies the case analysis above. Positions where `a | b` already equals `c` cost nothing.
+
+### Complexity
+
+- Time: O(1). Each of the 31 bit positions is checked once.
+- Space: O(1). A few integers.

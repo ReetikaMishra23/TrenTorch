@@ -58,6 +58,11 @@ You could also cache the recursive version with `functools.lru_cache`. Python's 
 
 ## Explanation
 
-`a, b = b, a + b` slides the pair `(F(k), F(k+1))` forward one step. After `n` steps `a` is `F(n)`.
+Fast doubling. If you know the pair `(F(k), F(k+1))`, the pair for `2k` is `F(2k) = F(k) * (2 * F(k+1) - F(k))` and `F(2k+1) = F(k)^2 + F(k+1)^2`. Recurse on `k >> 1`, then step forward once more when `k` is odd. That is only `log2(n)` levels instead of `n` additions.
 
-The numbers get big, so each addition costs time proportional to the number of digits, but 50,000 additions still run well under a second.
+The numbers have thousands of digits, so what costs time is the big multiplications, and the last level dominates.
+
+### Complexity
+
+- Time: O(log n) big-number multiplications. Fast doubling halves `n` at every step; the numbers have about `0.69 * n` bits, so the last multiplications dominate and the total is about the cost of multiplying two `n`-bit numbers.
+- Space: O(n) bits. The result `F(n)` itself has about `0.69 * n` bits; the recursion is only `log2(n)` deep.

@@ -60,3 +60,8 @@ To control ties, sort the `(character, count)` pairs yourself with a tuple key `
 ## Explanation
 
 Count once with `Counter`, then sort the (at most 26) items by `(-count, char)` and cut to `k`. Slicing with `[:k]` already handles `k` larger than the number of items and `k = 0`.
+
+### Complexity
+
+- Time: O(n + k log k). One pass to count the `n` characters, then a sort of the at most `k = 26` distinct letters, so O(n) overall.
+- Space: O(k). The counter and the sorted list hold at most 26 entries.

@@ -60,3 +60,8 @@ Rule of thumb: when the answer must be an exact integer, stay in integers.
 ## Explanation
 
 `math.isqrt` is exact for all sizes. A hand-written alternative is binary search over `r` between `0` and `n`, comparing `r * r` with `n`: about `log₂ n` (roughly 700) steps for a 200-digit number.
+
+### Complexity
+
+- Time: O(M(b)). `math.isqrt` is a Newton-style routine whose cost is about one `b`-bit multiplication, where `b` is the bit length of `n` (at most about 665 here).
+- Space: O(b). A few `b`-bit integers.

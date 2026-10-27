@@ -59,3 +59,8 @@ Each number costs `O(log n)`. Inserting into a sorted list works but costs `O(n)
 ## Explanation
 
 `low` is a max-heap through negation. The two-step push keeps the order between the halves; the size check keeps them balanced so the tops are the middle values.
+
+### Complexity
+
+- Time: O(n log n). Two heaps keep the lower and the upper half, `O(log n)` per value.
+- Space: O(n). The two heaps.
