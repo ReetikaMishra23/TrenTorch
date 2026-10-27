@@ -49,16 +49,6 @@ False
 - The tree is a BST, not deeper than 800 levels.
 - `-10**9 <= k <= 2 * 10**9`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-Two ways. (1) Use a set while traversing: for each value `v`, check whether `k - v` was seen. `O(n)` memory. (2) Use the BST property: the inorder traversal is a **sorted list**, so you can apply the sorted two-pointer technique to it: one pointer at the smallest, one at the largest, move them toward each other depending on the sum.
-
-Write the inorder list first (simple), then the two pointers. The set approach is shorter, the sorted approach shows why the BST matters.
-
 ## Explanation
 
 An in-order walk lists the values of a BST in increasing order, so this is "two sum on a sorted list" without building the list. Use two walkers: one produces the values in increasing order (go left, then visit, then right) and the other in decreasing order (go right, then visit, then left), each with its own stack.

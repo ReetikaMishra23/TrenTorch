@@ -44,12 +44,6 @@ False
 - `0 <= len(s) <= 3 * 10**5`
 - `s` contains printable ASCII characters.
 
-## Theory
-
-Clean the string first, then compare it with its reverse. `str.isalnum()` is `True` for letters and digits, `str.lower()` removes case differences, and `text[::-1]` reverses a string. The whole check is `O(n)`.
-
-The **two-pointer** version avoids building the cleaned string: one pointer from each end, move inward, skip characters that are not letters or digits, and compare the lower-cased characters. It uses `O(1)` extra memory, and it is the version to give in an interview.
-
 ## Explanation
 
 Two pointers, one at each end. Skip any character that is not a letter or digit. When both point at letters or digits, compare them in lower case: a difference means it is not a palindrome. Move both inward; reaching the middle means it is one. An empty string, or one with only punctuation, is a palindrome.

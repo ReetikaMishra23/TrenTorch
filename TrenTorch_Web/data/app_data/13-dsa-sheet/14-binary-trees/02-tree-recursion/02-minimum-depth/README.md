@@ -48,16 +48,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - The tree is not deeper than 800 levels.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-This looks like the maximum depth with `min` instead of `max`, but there is a trap: a node with **only one child** is not a leaf, so the path must continue into that child. `min(depth(left), depth(right))` would wrongly take the empty side as depth 0.
-
-Handle the cases: if a child is missing, the answer comes from the other child (`1 + depth(other)`); if both exist, `1 + min(both)`.
-
-BFS finds it more directly: the first leaf you reach in level order is the closest one. That can stop early without visiting the whole tree.
-
 ## Explanation
 
 The BFS returns the depth of the first node without children. For a tree that is deep on one side only, the recursion would otherwise visit everything.

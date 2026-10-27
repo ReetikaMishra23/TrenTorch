@@ -55,12 +55,6 @@ Output:
 
 - `0 <= n <= 10**6`
 
-## Theory
-
-Each extra nested loop adds a factor of `n`, so three loops give `O(n³)`. Counting exactly is the same game as before, one level deeper.
-
-Fix `i` and `j`: the innermost loop runs `n - j` times. Summing over `j` from `i` to `n-1` gives a triangle number, and summing those over `i` gives a tetrahedral number. The closed form is `n(n+1)(n+2)/6`, the same as choosing 3 items from `n + 2` with repeats.
-
 ## Explanation
 
 The count is the number of triples `i <= j <= k` taken from `0..n-1`. That is the number of multisets of size 3 from `n` items, which is `C(n+2, 3) = n(n+1)(n+2)/6`.

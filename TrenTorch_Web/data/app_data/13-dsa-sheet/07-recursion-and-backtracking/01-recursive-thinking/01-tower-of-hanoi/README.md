@@ -3,6 +3,7 @@ name: sheet-tower-of-hanoi
 title: 'Tower of Hanoi'
 tags: [dsa-sheet, recursion, recursive-thinking]
 difficulty: Intermediate
+theory: designing-a-recursive-solution
 ---
 
 ## Statement
@@ -45,16 +46,6 @@ Output:
 
 - `0 <= n <= 14`
 - The answer has `2^n - 1` moves.
-
-## Theory
-
-This is the textbook example of recursive thinking. To move `n` disks from `source` to `target` using a spare peg:
-
-1. Move the top `n - 1` disks from `source` to `spare` (a smaller version of the same problem).
-2. Move the biggest disk from `source` to `target`.
-3. Move the `n - 1` disks from `spare` to `target` (the same smaller problem again).
-
-The base case is `n = 0`: nothing to move. The number of moves satisfies `T(n) = 2 * T(n - 1) + 1`, so `T(n) = 2^n - 1`: 15 moves for 4 disks, 16,383 for 14. Many problems become easy once you trust the smaller version to work.
 
 ## Explanation
 

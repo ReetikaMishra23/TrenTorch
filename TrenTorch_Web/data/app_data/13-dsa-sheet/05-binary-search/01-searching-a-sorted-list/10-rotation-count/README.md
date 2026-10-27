@@ -46,12 +46,6 @@ Output:
 - `-10**9 <= nums[i] <= 10**9`
 - The big tests count how many values your code reads from the list (the limit is stated in the failure message). Reading every value, or using `in`, `.index`, `.count`, `min` or `sorted` on the whole list, fails them.
 
-## Theory
-
-Rotating a sorted list to the left by `k` puts the smallest value at index `k`. So the number of rotations is simply **the index of the minimum**.
-
-That reduces the problem to the previous one: binary search for the minimum, but return its **index** (`lo`) and not its value. A list that was not rotated at all has its minimum at index `0`, giving `0` rotations.
-
 ## Explanation
 
 The same search as the rotated minimum: compare `nums[mid]` with `nums[hi]`, move `lo` or `hi`, and stop when `lo == hi`. That index is where the smallest value sits, which equals the number of left rotations.

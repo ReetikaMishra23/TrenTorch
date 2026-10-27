@@ -49,14 +49,6 @@ Output:
 - `0 <= k <= 3 * 10**5`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-Count with a `Counter`, then pick the best `k`. Sorting all the distinct values by `(-count, value)` costs `O(m log m)` for `m` distinct values, which is fine here. A **heap** can pick the top `k` faster when `k` is small: `heapq.nsmallest(k, items, key=...)` keeps only `k` candidates, `O(m log k)`.
-
-**Bucket sort** is the `O(n)` way: a frequency can be at most `n`, so put each value into a list at index `count`, then read the buckets from the highest index down. It needs more code but no sorting at all.
-
-The tuple key `(-count, value)` is the standard way to say "bigger count first, smaller value on ties".
-
 ## Explanation
 
 Count the values, then order them by `(-count, value)`: the first `k` in that order are the answer. Instead of sorting all distinct values, use quickselect: pick a random pivot pair, split the pairs into smaller and larger (the pairs are all different because the values are), and keep only the side that contains the `k`-th pair. Then sort just the `k` chosen pairs.

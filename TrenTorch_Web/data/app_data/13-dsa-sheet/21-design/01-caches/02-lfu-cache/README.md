@@ -49,18 +49,6 @@ Output:
 - `0 <= len(ops) <= 100000`
 - `0 <= key, value <= 10**9`
 
-## Theory
-
-In a **design** question you build a small data structure and run a list of operations on it. The operations are given as text, one per string, and you return the answers of the operations that produce one. Think about which operations must be fast and choose the data structure for them.
-
-Two orders matter: the **use count** and, inside one count, the **recency**. Group the keys by their count: `groups[c]` is an `OrderedDict` of the keys used exactly `c` times, oldest first. Keep `min_count`, the smallest count that exists.
-
-- A use of key `k` with count `c`: remove it from `groups[c]`, add it to the end of `groups[c + 1]`; if `groups[c]` became empty and `c == min_count`, `min_count += 1`.
-- Evicting: pop the oldest key of `groups[min_count]`.
-- A new key goes into `groups[1]` and `min_count = 1`.
-
-Every operation is `O(1)`.
-
 ## Explanation
 
 `count` and `value` store each key's data; `groups[c]` holds the keys with count `c` in recency order. `touch` moves a key up one group.

@@ -48,14 +48,6 @@ False
 - `0 <= number of nodes <= 100000`
 - The cycle position `k` is `-1` or a valid index.
 
-## Theory
-
-A set of visited nodes finds a cycle in `O(n)` time but uses `O(n)` memory (and a _list_ of visited nodes is `O(n²)` time, which is why the starter is slow).
-
-**Floyd's tortoise and hare** uses no memory. Move `slow` one step and `fast` two steps. Without a cycle, `fast` falls off the end. With a cycle, both end up circling inside it, and because `fast` gains one step per round on `slow`, it must eventually land **on the same node**. If they ever meet, there is a cycle.
-
-The comparison must be `slow is fast` (the same node), not equal values: different nodes may hold the same value.
-
 ## Explanation
 
 The loop ends when `fast` reaches `None` (no cycle). Inside a cycle `fast` closes the gap by one node each round, so it catches `slow`.

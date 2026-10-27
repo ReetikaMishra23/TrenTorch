@@ -49,14 +49,6 @@ Output:
 - `0 <= x, y <= 10000`
 - All points are different.
 
-## Theory
-
-Many contest problems are about **numbers**, and the input is huge (up to `10^12` or more), so a loop up to `n` is far too slow. The tools: the **square root bound** (a number `n` has a divisor `<= sqrt(n)` unless it is prime), **modular arithmetic** (work with remainders so the numbers stay small), and **formulas** that replace a loop. Python's big integers make the arithmetic itself safe, but the number of steps is what you must control.
-
-Fix a point `p`. Every other point `q` defines a **direction** from `p`; points on the same line through `p` share the same direction. Group the other points by direction and take the largest group (plus `p` itself). Repeat for every `p`.
-
-Directions must be compared **exactly**. Floating-point slopes (`dy / dx`) can be wrong for close directions and fail for vertical lines. Use the integer pair `(dy, dx)` **divided by their gcd**, and fix the sign (make `dx` positive, or `dy` positive when `dx` is 0) so that opposite directions along the same line give the same key. `O(n²)` with a dictionary per point.
-
 ## Explanation
 
 `slopes` counts points by normalised direction from the current point. The best line through it has `max(slopes.values()) + 1` points.

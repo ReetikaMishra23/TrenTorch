@@ -44,12 +44,6 @@ Output:
 - `0 <= len(s) <= 8`
 - `s` contains only lower-case letters.
 
-## Theory
-
-`itertools.permutations(s)` yields every ordering of the characters as tuples. With repeated letters it yields the same string more than once, because it treats positions as different, not values. A `set` removes the duplicates and `sorted` puts them in order.
-
-The number of results is `n!` at most: 8 letters give 40,320. Past about 10 letters the count explodes, which is why constraints on permutation problems are always small.
-
 ## Explanation
 
 Backtracking over the distinct letters, in sorted order, with a count of how many copies of each letter are still unused. At every step try each letter that still has copies left: use one, recurse, put it back. Because each position takes a letter once per distinct letter (not once per copy), no duplicate arrangement is ever built, and sorted letters give sorted output without a final sort.

@@ -48,14 +48,6 @@ Output:
 - `0 <= len(s) <= 20000`
 - Lower-case letters.
 
-## Theory
-
-If a substring of length `L` occurs twice, so does every shorter substring inside it. So "is there a repeated substring of length `L`?" is **monotone** in `L`, and you can **binary search** the answer.
-
-The check for one `L` must be fast. Comparing all substrings of length `L` costs `O(n × L)`; a **rolling hash** makes each window's hash an `O(1)` update: `hash(s[i + 1 : i + L + 1]) = (hash(s[i : i + L]) - s[i] × B^(L-1)) × B + s[i + L]` (modulo a large prime). Put the hashes in a set; a repeated hash means a repeated substring (with a tiny chance of a false positive, which a large modulus makes negligible).
-
-Total `O(n log n)`. The same idea, **Rabin–Karp**, also searches a pattern in a text by comparing hashes.
-
 ## Explanation
 
 Build a suffix automaton of `s`: a small graph whose paths from the start are exactly the substrings of `s`. Each state stands for a group of substrings that end at the same set of positions; it records the longest of them (`length`), a `link` to the state of the longest suffix that ends at more positions, and a count `occ` of how often those substrings occur.

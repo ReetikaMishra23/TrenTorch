@@ -48,14 +48,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - `-10**9 <= val <= 10**9`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-Compute for every node its **column** and its **row** (depth) while traversing (a BFS or DFS passing `(row, col)` down). Collect `(col, row, value)` for every node. Then **sort** these triples: sorting by column groups the columns left to right, then by row gives top to bottom, then by value breaks ties exactly as the question wants. Finally cut the sorted list into groups of equal column.
-
-A dictionary `col -> list of (row, value)` also works: sort each group by `(row, value)` and output the columns in increasing order. `O(n log n)`.
-
 ## Explanation
 
 The key `(col, row, value)` encodes the whole required order. `groupby`-style grouping then splits by column.

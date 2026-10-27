@@ -46,14 +46,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - `-10**9 <= val <= 10**9`
 
-## Theory
-
-You do not know the length in advance, and a linked list cannot jump. Counting the nodes first and walking again works, but there is a neat one-pass trick: **slow and fast pointers**. Move `slow` one step and `fast` two steps each round. When `fast` reaches the end, `slow` has covered half the distance, so it is at the middle.
-
-The loop `while fast and fast.next` stops when `fast` is `None` (even length: `slow` ends on the second middle) or on the last node (odd length: `slow` ends on the exact middle).
-
-The same two-speed idea finds the start of a cycle, the half of a list to reverse, and more.
-
 ## Explanation
 
 `fast` moves twice as fast as `slow`. When `fast` can no longer take two steps, `slow` is exactly halfway. For `1 -> 2 -> 3 -> 4` the loop ends with `slow` on `3`, the second middle.

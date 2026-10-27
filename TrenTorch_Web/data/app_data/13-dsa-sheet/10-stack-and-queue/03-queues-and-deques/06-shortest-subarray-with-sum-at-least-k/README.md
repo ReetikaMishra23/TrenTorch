@@ -49,18 +49,6 @@ Output:
 - `-10**5 <= nums[i] <= 10**5`
 - `1 <= k <= 10**9`
 
-## Theory
-
-With **prefix sums** `P` (`P[0] = 0`, `P[i] = nums[0] + ... + nums[i - 1]`), the sum of `nums[a..b-1]` is `P[b] - P[a]`. We want the smallest `b - a` with `P[b] - P[a] >= k`.
-
-Why a sliding window fails: with negative numbers, extending a window can lower the sum, so you cannot grow and shrink greedily. Use a **monotonic deque of indices with increasing prefix sums**:
-
-- For each `b`, while the **front** `a` satisfies `P[b] - P[a] >= k`, record `b - a` and **pop it from the front**: any later `b` would give a longer length with this `a`.
-- Before adding `b`, **pop from the back** all indices with `P[back] >= P[b]`: a later `b'` prefers the later and smaller `P[b]` (it is closer and has a smaller subtraction).
-- Append `b`.
-
-Every index is added and removed once: `O(n)`.
-
 ## Explanation
 
 The deque holds candidate start indices whose prefix sums increase. The front is the best start (smallest prefix) for the current end; it is removed once used because a later end would only make the subarray longer.

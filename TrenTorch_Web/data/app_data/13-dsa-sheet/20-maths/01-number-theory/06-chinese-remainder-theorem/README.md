@@ -3,6 +3,7 @@ name: sheet-chinese-remainder-theorem
 title: 'Chinese Remainder Theorem'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Mastery
+theory: the-chinese-remainder-theorem
 ---
 
 ## Statement
@@ -48,17 +49,6 @@ Output:
 - `0 <= len(moduli) == len(remainders) <= 20`
 - `1 <= moduli[i] <= 10000`, `0 <= remainders[i] <= 10**9`
 - The least common multiple of the moduli is at most `10**12`.
-
-## Theory
-
-Many contest problems are about **numbers**, and the input is huge (up to `10^12` or more), so a loop up to `n` is far too slow. The tools: the **square root bound** (a number `n` has a divisor `<= sqrt(n)` unless it is prime), **modular arithmetic** (work with remainders so the numbers stay small), and **formulas** that replace a loop. Python's big integers make the arithmetic itself safe, but the number of steps is what you must control.
-
-Combine the conditions **two at a time**. Suppose you know `x ≡ x0 (mod m0)` and add `x ≡ r (mod m)`. Write `x = x0 + m0·t` and solve `m0·t ≡ r - x0 (mod m)`. Let `g = gcd(m0, m)`.
-
-- If `g` does not divide `r - x0`, the two conditions contradict each other: the answer is `-1`.
-- Otherwise divide everything by `g`: `t ≡ ((r - x0) / g) × inverse(m0 / g) (mod m / g)`. The inverse exists because `m0/g` and `m/g` are coprime.
-
-Then `x ≡ x0 + m0·t` modulo `lcm(m0, m)`, which is the new pair `(x0, m0)`. Fold over all conditions. Python's `pow(a, -1, m)` computes the inverse.
 
 ## Explanation
 

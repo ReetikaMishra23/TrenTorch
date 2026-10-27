@@ -51,14 +51,6 @@ Equal values are always 3 positions apart, more than 2.
 - `0 <= k <= 2 * 10**5`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-Comparing each value with its next `k` neighbours costs `O(n * k)`. Remember where each value was **last seen** in a dictionary.
-
-When you reach position `i` with value `x`, the nearest earlier copy of `x` is at `last[x]`. If `i - last[x] <= k` you have found a close pair. Whether or not you found one, update `last[x] = i`: a later copy will be closest to the newest position, so older positions are never needed again.
-
-Remembering only the **most recent** position is the trick: it is enough because the closest pair for any value always uses neighbouring occurrences.
-
 ## Explanation
 
 The set holds the values of the last `k` positions. Before adding `x`, check whether it is already in the set: a hit means the same value appeared at most `k` positions ago, so return `True`. After adding `x`, drop the value that just fell out of range, `nums[i - k]`. With `k = 0` the window is always empty, so the answer is `False`.

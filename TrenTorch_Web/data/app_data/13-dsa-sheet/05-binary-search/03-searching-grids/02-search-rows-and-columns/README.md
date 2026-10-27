@@ -46,14 +46,6 @@ False
 - `-10**9 <= matrix[i][j], target <= 10**9`
 - The big tests count how many cells you read.
 
-## Theory
-
-The flattened matrix is **not** sorted here, so the one-big-list trick fails. But you can still discard a whole row or column with each comparison if you start in the right corner.
-
-Start at the **top-right** cell. It is the biggest value in its row and the smallest in its column. Compare it with the target: if it equals the target you are done. If it is **too big**, nothing below it in its column can help (they are even bigger), so move **left**. If it is **too small**, nothing to its left in its row can help (they are even smaller), so move **down**.
-
-Each step removes a row or a column, so you take at most `rows + cols` steps: `O(rows + cols)`. It looks like a staircase walk toward the target.
-
 ## Explanation
 
 Binary search the middle row of the current block for the first value `>= target`. If it equals `target`, done. Otherwise the target can only be in the block above-right of that spot or the block below-left of it: everything above and to the left is smaller than the target, and everything below and to the right is larger. Search those two smaller blocks the same way; when the block is wider than tall, cut along the middle row, otherwise along the middle column.

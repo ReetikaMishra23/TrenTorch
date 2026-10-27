@@ -3,6 +3,7 @@ name: sheet-euler-totient
 title: 'Euler's Totient Function'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Advanced
+theory: euler-s-totient-function
 ---
 
 ## Statement
@@ -46,18 +47,6 @@ Output:
 ### Constraints
 
 - `1 <= n <= 10**12`
-
-## Theory
-
-Many contest problems are about **numbers**, and the input is huge (up to `10^12` or more), so a loop up to `n` is far too slow. The tools: the **square root bound** (a number `n` has a divisor `<= sqrt(n)` unless it is prime), **modular arithmetic** (work with remainders so the numbers stay small), and **formulas** that replace a loop. Python's big integers make the arithmetic itself safe, but the number of steps is what you must control.
-
-Take all `n` numbers and remove those divisible by some prime factor `p` of `n`: that is a fraction `1/p` of them. Doing it for all prime factors (they are independent) leaves
-
-**`phi(n) = n × (1 - 1/p1) × (1 - 1/p2) × ...`**
-
-over the distinct primes `p` that divide `n`. In integers: start with `result = n` and, for each prime factor `p`, do `result -= result // p`. Factor `n` by trial division up to the square root as in the factorization question. `O(sqrt(n))`.
-
-`phi` appears in modular arithmetic: Euler's theorem says `a^phi(n) ≡ 1 (mod n)` when `gcd(a, n) = 1`.
 
 ## Explanation
 

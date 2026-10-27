@@ -48,14 +48,6 @@ Output:
 - `1 <= k <= len(nums) <= 100000`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-Keep the window's values **in sorted order** and read the middle. When the window slides, one value leaves and one enters. A **sorted list** with `bisect` does exactly that: `bisect.insort` inserts the new value, and `bisect_left` finds the old value to delete with `del`. List insertion and deletion shift elements, but that is a fast `memmove` in C, so it is quick in practice for the sizes here: `O(k)` per move with a tiny constant.
-
-The textbook solution uses **two heaps with lazy deletion** (a heap cannot remove an arbitrary element, so you mark values as deleted and discard them only when they reach the top); it gives `O(n log k)`. The sorted list approach is shorter and just as good here.
-
 ## Explanation
 
 Keep two heaps: `small` (a max-heap) with the lower half of the window and `large` (a min-heap) with the upper half, so the median is at the top of one or both. Adding a value goes to the half it belongs to and the heaps are rebalanced to differ in size by at most one.

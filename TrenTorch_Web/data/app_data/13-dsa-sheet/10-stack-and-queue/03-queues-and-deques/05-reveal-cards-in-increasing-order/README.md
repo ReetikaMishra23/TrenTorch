@@ -48,14 +48,6 @@ Output:
 - `0 <= len(deck) <= 100000`
 - All values are different, `1 <= deck[i] <= 10**9`.
 
-## Theory
-
-Run the process on **positions** instead of on numbers. Simulate it on the list `0, 1, ..., n - 1` with a deque: the position revealed first gets the smallest card, the position revealed second the second smallest, and so on.
-
-So: sort the deck. Put the positions `0..n-1` in a deque. Repeat: take the front position `p` and give it the next smallest card (`result[p] = next card`); then, if the deque is not empty, move its new front to the back. Stop when all positions are used.
-
-The deque makes both "take from the top" and "move to the bottom" `O(1)`, so the whole thing is `O(n log n)` for the sort plus `O(n)`.
-
 ## Explanation
 
 The simulation uses indices of the result list. `popleft` reveals a card; `append(popleft())` moves the next card to the bottom.

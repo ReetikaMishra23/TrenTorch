@@ -14,6 +14,7 @@ export interface QuestionMetadata {
 	kind?: 'module' | 'problemset' | 'dsa';
 	hints?: string[];
 	references?: { title: string; url: string }[];
+	theory?: { step: string; anchor: string };
 	caseCompany?: string;
 	relatedModule?: { partId: string; topicTag: string };
 	hint?: string;

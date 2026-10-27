@@ -48,14 +48,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - `-10**9 <= val <= 10**9`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-The node you see at each level is the **last node of that level** in left-to-right order. With the level-by-level BFS, record only the last value of each level.
-
-A depth-first version also works: visit the **right** child before the left, and the first time you reach a new depth, record that node. The queue version is the simplest. `O(n)`.
-
 ## Explanation
 
 The inner loop processes one level; `level_last` ends up holding the value of the last node popped from that level.

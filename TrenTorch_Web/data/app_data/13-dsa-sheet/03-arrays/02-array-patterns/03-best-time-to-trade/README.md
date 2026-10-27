@@ -50,14 +50,6 @@ The price only falls, so the best is not to trade: 0.
 - `0 <= len(prices) <= 2 * 10**5`
 - `0 <= prices[i] <= 10**9`
 
-## Theory
-
-Trying every buy day and sell day is `O(n²)`. But for a fixed **sell** day, the best buy day is simply the **cheapest price before it**.
-
-So scan once, keeping `lowest`, the minimum price seen so far. On each day the best profit if you sell today is `price - lowest`. Track the maximum of those. Then update `lowest` with today's price.
-
-This "best so far to the left" idea is a close cousin of the running maximum used for leaders and of Kadane's algorithm.
-
 ## Explanation
 
 Update the best profit with `price - lowest` **before** lowering `lowest` with today's price, so you never buy and sell on the same day. The profit starts at `0`, so losing trades are ignored.

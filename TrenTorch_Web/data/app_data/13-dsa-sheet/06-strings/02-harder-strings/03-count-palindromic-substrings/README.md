@@ -50,12 +50,6 @@ Output:
 - `0 <= len(s) <= 1000`
 - `s` contains lower-case letters.
 
-## Theory
-
-The same **expand around the centre** idea counts palindromes without checking each substring from scratch. Every palindromic substring has exactly one centre, and if a substring around a centre is a palindrome, so is every smaller one around the same centre. So when you expand from a centre and the characters match `k` times, you have found exactly `k` palindromes.
-
-Count one for every successful step of the expansion, over all `2n - 1` centres. The worst case (a string of one repeated letter) is `O(n²)`, which is also the number of palindromes it has.
-
 ## Explanation
 
 Manacher's algorithm (see the longest palindromic substring) gives, for every centre of the string with separators, the radius `p` of the longest palindrome around it. That centre is the middle of exactly `(p + 1) // 2` palindromic substrings: the radii `1, 3, 5, ...` for a character centre, and `2, 4, ...` for a gap centre. The answer is the sum over all centres.

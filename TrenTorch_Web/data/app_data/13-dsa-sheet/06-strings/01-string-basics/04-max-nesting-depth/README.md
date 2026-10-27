@@ -44,12 +44,6 @@ Output:
 - `0 <= len(s) <= 3 * 10**5`
 - The parentheses in `s` are balanced and correctly ordered.
 
-## Theory
-
-You do not need to match each parenthesis with its partner. Keep one number, the current **depth**: add `1` on `(`, subtract `1` on `)`, ignore everything else. The answer is the largest value the depth ever reaches.
-
-This "running counter plus its maximum" is the simplest case of a more general idea: scan once, maintain a small summary of what you have seen. A full parenthesis checker with several bracket types needs a **stack**; for a single type a counter is enough.
-
 ## Explanation
 
 `depth` goes up on `(` and down on `)`. After each increase, `best = max(best, depth)`. Characters other than parentheses do not matter.

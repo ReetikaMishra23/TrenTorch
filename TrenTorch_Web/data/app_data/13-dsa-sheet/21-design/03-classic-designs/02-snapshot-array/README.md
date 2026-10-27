@@ -51,16 +51,6 @@ Output:
 - `0 <= len(ops) <= 100000`
 - `0 <= value <= 10**9`
 
-## Theory
-
-In a **design** question you build a small data structure and run a list of operations on it. The operations are given as text, one per string, and you return the answers of the operations that produce one. Think about which operations must be fast and choose the data structure for them.
-
-Copying the array at each `snap` costs `O(length)` time and memory per snapshot. Almost all positions do not change between two snapshots, so store only the **changes**.
-
-For each position keep a list of `(snapshot id, value)` entries, appended when the position is `set`; the id is the number of snapshots taken so far (a second `set` in the same period replaces the entry). A `get i id` needs the value from the **latest entry with a snapshot id `<= id`**: a **binary search** in the position's list. A position with no entry reads 0.
-
-`snap` is `O(1)`, `set` is `O(1)`, `get` is `O(log changes)`. This idea, remembering only the differences, is also how version control stores history.
-
 ## Explanation
 
 `history[i]` holds the ids and values for position `i`. `bisect_right(ids, id) - 1` is the latest entry not after the snapshot.

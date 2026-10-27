@@ -49,14 +49,6 @@ There is no `1`.
 - Every row is sorted: zeros first, then ones.
 - The big tests count how many cells you read.
 
-## Theory
-
-Counting the ones in every row means reading every cell: `O(rows * cols)`. Because each row is sorted, the number of ones in a row is `cols - (index of its first 1)`, and the index of the first `1` is a **lower bound** search: binary search for the first position where the value is `1`.
-
-So the whole matrix costs `rows * log(cols)` reads instead of `rows * cols`. Keep the row with the most ones; comparing with a strict `>` keeps the smallest index when rows tie.
-
-(There is an even faster `O(rows + cols)` staircase walk from the top-right corner, but the per-row binary search is the straightforward application of this topic.)
-
 ## Explanation
 
 Keep `col`, the start of the ones in the best row so far (`col = cols` means no ones yet). For every row, move `col` left while the cell just before it is a one; if it moved, this row has more ones than any earlier one, so remember it. A row that cannot move `col` costs one check.

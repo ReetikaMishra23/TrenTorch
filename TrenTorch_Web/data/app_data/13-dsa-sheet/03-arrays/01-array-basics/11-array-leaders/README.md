@@ -50,12 +50,6 @@ Equal values do not count: only the last `5` is a leader.
 - `0 <= len(nums) <= 3 * 10**5`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-Checking each value against everything to its right is `O(n²)`. Flip the direction: scan from the **right** and remember the largest value seen so far. A value is a leader exactly when it beats that running maximum.
-
-Scanning from the end is a useful trick whenever the answer for a position depends on what comes _after_ it. The leaders are found in right-to-left order, so reverse the list at the end.
-
 ## Explanation
 
 Walk `reversed(nums)`, keeping `best`. A value `x > best` (or the first value, when `best` is `None`) is a leader: append it and raise `best`. Reverse the collected list to restore the left-to-right order.

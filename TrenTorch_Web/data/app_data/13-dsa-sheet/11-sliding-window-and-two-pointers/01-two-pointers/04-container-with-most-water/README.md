@@ -48,14 +48,6 @@ Output:
 - `0 <= len(heights) <= 200000`
 - `0 <= heights[i] <= 10**4`
 
-## Theory
-
-**Two pointers** means keeping two positions in the data (often one at each end, or one behind the other) and moving them according to a rule, so that each position moves at most `n` times in total. That turns a double loop (`O(n²)`) into a single pass (`O(n)`).
-
-Start with the **widest** container: pointers at both ends. Its area is limited by the **shorter** line. Which pointer should move? If you move the **taller** line inwards, the width shrinks and the height is still limited by the same shorter line, so the area cannot improve. So the shorter line is useless in every narrower container too, and you can safely **discard it**: move the pointer of the shorter line inwards.
-
-Repeat, keeping the best area. `O(n)`. The reasoning "this choice can never be part of a better answer, so throw it away" is the heart of many two-pointer solutions.
-
 ## Explanation
 
 Each step computes the area of the current pair and moves the pointer at the shorter line, since keeping it could only give smaller or equal areas.

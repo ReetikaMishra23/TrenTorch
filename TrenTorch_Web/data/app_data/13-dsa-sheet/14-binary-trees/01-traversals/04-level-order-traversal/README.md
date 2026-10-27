@@ -48,16 +48,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - `-10**9 <= val <= 10**9`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-Depth-first traversals (inorder, preorder, postorder) go deep before they go wide. **Level order** goes wide first: it is **breadth-first search (BFS)**, and its tool is a **queue**.
-
-Start with the root in a queue. Repeat while the queue is not empty: the nodes in the queue right now are exactly one level, so remember `size = len(queue)`, pop `size` nodes (record their values as one list), and push their children for the next level.
-
-Every node enters and leaves the queue once: `O(n)`. Use `collections.deque` for an `O(1)` pop from the front.
-
 ## Explanation
 
 `for _ in range(len(queue))` handles exactly one level, because the children pushed meanwhile are added after the original size was read.

@@ -48,14 +48,6 @@ It drops twice (2 to 1, and 4 back to 2).
 - `1 <= len(nums) <= 3 * 10**5`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-You could try every rotation and test whether it is sorted, but that is `O(n²)`. Think about what a rotated sorted list looks like when you walk around it as a **circle**: it climbs, and there is exactly one place where it drops from the biggest value back to the smallest.
-
-So count the **drops**: positions `i` where `nums[i] > nums[i + 1]`, treating the list as circular (the last value is followed by the first). A sorted list has no drop. A rotated sorted list has exactly one. Anything with two or more drops cannot be fixed by a rotation.
-
-The index trick `(i + 1) % n` wraps the last position back to `0`, and it is the standard way to walk a circular array.
-
 ## Explanation
 
 Count `i` in `0..n-1` with `nums[i] > nums[(i + 1) % n]`. If the count is at most `1`, the answer is `True`.

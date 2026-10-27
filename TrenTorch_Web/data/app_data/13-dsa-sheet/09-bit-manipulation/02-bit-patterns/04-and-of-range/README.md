@@ -45,14 +45,6 @@ Output:
 
 - `0 <= left <= right < 2**31`
 
-## Theory
-
-AND keeps a bit only if **every** number has it. Look at what happens to the numbers between `left` and `right`: as you count up, the low bits keep flipping from 0 to 1 and back, so any bit that changes anywhere in the range is `0` in the answer.
-
-What survives is the **common binary prefix** of `left` and `right`: the leading bits on which they agree. The bits after the first difference all vary somewhere in the range.
-
-So shift both numbers right until they are equal, counting the shifts, then shift the common value back left. `O(log n)` time.
-
 ## Explanation
 
 Every number between `left` and `right` shares the bits of their common prefix; below the highest bit where `left` and `right` differ, some number in the range has a `0` in every position, so the AND clears them. The highest differing bit is `(left ^ right).bit_length()`, so shift the common prefix back into place: `left >> shift << shift`.

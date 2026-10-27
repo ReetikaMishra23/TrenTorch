@@ -46,14 +46,6 @@ Output:
 - `0 <= len(fruits) <= 200000`
 - `0 <= fruits[i] < 200000`
 
-## Theory
-
-A **sliding window** is a range `[left, right]` of the data that grows on the right and shrinks on the left. Because each end only moves forward, the whole pass is `O(n)`, while the window always describes one candidate subarray or substring.
-
-This is "longest subarray with at most `k` distinct values" with `k = 2`, the same as the previous question on characters. Keep a dictionary of the fruit types in the window and their counts; when it holds more than 2 types, shrink from the left until one type disappears.
-
-Recognising that a story question is a known pattern in disguise is half the work.
-
 ## Explanation
 
 The dictionary is the contents of the baskets. A type is deleted when its count drops to zero.

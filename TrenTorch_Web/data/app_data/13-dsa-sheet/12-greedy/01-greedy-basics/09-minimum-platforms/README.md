@@ -48,16 +48,6 @@ Output:
 - `0 <= number of trains <= 200000`
 - `0 <= arrivals[i] <= departures[i] <= 10**9`
 
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-The number of platforms needed is the **largest number of trains in the station at the same moment**. That number only changes at arrival and departure times, so you can sweep through time.
-
-Sort the arrival times and the departure times **separately**. Walk through both with two pointers: if the next event is an arrival (arrival time `<=` next departure time, since equal times count as overlap), a train comes in: `current += 1` and update the maximum; otherwise a train leaves: `current -= 1`.
-
-You never need to know which train leaves, only how many are present. `O(n log n)`.
-
 ## Explanation
 
 At equal times the arrival is processed before the departure, which gives the inclusive overlap the statement asks for.

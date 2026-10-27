@@ -55,14 +55,6 @@ Output:
 - Both lists are sorted in increasing order.
 - `-10**9 <= value <= 10**9`
 
-## Theory
-
-Merging is the building block of **merge sort**. Because both inputs are already sorted, the next smallest value overall must be at the front of one of them, so one comparison decides each output value. No looking back is ever needed.
-
-Merging lists of total length `n` costs at most `n - 1` comparisons and `O(n)` time. That is far cheaper than sorting the combined list from scratch, which is the whole point.
-
-Taking from `a` on ties keeps the merge **stable**: equal values stay in the order they came in. Stability matters when you sort records by one field and want earlier orderings kept.
-
 ## Explanation
 
 Two indexes `i` and `j` walk the lists. While both are in range, count one comparison and append the smaller value (using `<=` so ties come from `a`). After the loop, `a[i:]` and `b[j:]` are sorted and at most one of them is non-empty, so extend the result with both.

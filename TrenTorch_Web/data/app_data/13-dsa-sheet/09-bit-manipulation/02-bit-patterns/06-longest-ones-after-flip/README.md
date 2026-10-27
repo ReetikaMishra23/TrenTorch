@@ -43,16 +43,6 @@ Output:
 
 - `0 <= n < 2**32`
 
-## Theory
-
-This is a **sliding window** over the bits with at most one zero inside. Walk through the 32 bits keeping `current` (the length of the run of 1s ending here, counting the flipped zero's right side) and `previous` (the run before the last zero).
-
-- On a `1`: `current += 1`.
-- On a `0`: `previous = current` (if the next bit is 1 the two runs join through this zero) and `current = 0`.
-- After each bit: `best = max(best, previous + current + 1)`, the `+ 1` being the flipped zero.
-
-The answer is capped at 32 (the number of bits). An all-ones number has no zero to flip: the answer is 32.
-
 ## Explanation
 
 `previous + current + 1` is the run left of the last zero, the flipped zero, and the run right of it. The `min(..., 32)` handles numbers with no zero, where the extra `+ 1` would count a bit that does not exist.

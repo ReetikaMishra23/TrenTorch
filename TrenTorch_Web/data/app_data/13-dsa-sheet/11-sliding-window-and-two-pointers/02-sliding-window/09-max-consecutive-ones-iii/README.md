@@ -46,14 +46,6 @@ Output:
 - `0 <= len(nums) <= 200000`
 - `0 <= k <= len(nums)`
 
-## Theory
-
-A **sliding window** is a range `[left, right]` of the data that grows on the right and shrinks on the left. Because each end only moves forward, the whole pass is `O(n)`, while the window always describes one candidate subarray or substring.
-
-Flipping at most `k` zeros means the window may contain **at most `k` zeros**. Slide the window: count the zeros inside; if the count goes above `k`, shrink from the left until it is back to `k`. The longest window seen is the answer.
-
-This is the "longest valid window" template again with the condition `zeros <= k`. `O(n)`.
-
 ## Explanation
 
 `zeros` is the number of zeros in the window. Moving `left` past a zero reduces it.

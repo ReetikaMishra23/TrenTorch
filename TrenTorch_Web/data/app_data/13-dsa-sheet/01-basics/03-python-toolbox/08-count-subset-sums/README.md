@@ -52,12 +52,6 @@ Every pair of positions works: 3 ways.
 - `-100 <= nums[i] <= 100`
 - `-2200 <= target <= 2200`
 
-## Theory
-
-When `n` is small, trying all the choices is the right answer, and the work is how you enumerate them. `itertools.combinations(items, k)` yields every way to pick `k` items without repeats, in order, without writing nested loops. There are `C(n, k)` of them: for `n = 22` and `k = 11` that is 705,432, fine for a computer, impossible by hand.
-
-Related tools in `itertools`: `permutations` (order matters), `product` (cartesian product, with repeats), `combinations_with_replacement`. Knowing which one matches a problem saves a lot of recursion code.
-
 ## Explanation
 
 Meet in the middle. Split `nums` into two halves. For each half, count how many of its subsets have each pair `(size, sum)`; one half has at most `2^(n/2)` subsets. A chosen subset of the whole list is one subset from each half, so for every `(size, sum)` of the right half you look up how many left subsets have `(k - size, target - sum)` and multiply the two counts.

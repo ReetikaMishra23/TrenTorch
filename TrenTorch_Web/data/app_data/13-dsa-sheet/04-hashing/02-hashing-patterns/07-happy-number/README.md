@@ -49,14 +49,6 @@ False
 
 - `1 <= n <= 2**31 - 1`
 
-## Theory
-
-The sequence either reaches `1` or enters a **cycle**. To detect a cycle, remember every value you have seen in a `set`: if a value comes up again, you are looping and the answer is `False`.
-
-Why does the sequence not grow forever? A number with `d` digits has a digit-square sum of at most `81 * d`, which is far smaller than the number once `d` reaches 4. So after a few steps the values stay small, and with finitely many small values a repeat must happen.
-
-A `set` of seen values detects cycles in `O(1)` per step. (Floyd's tortoise-and-hare detects cycles with `O(1)` memory; you will meet it for linked lists.)
-
 ## Explanation
 
 The digit-square sum is a function of the number, so repeating it either reaches `1` or enters a cycle, like a linked list that ends in a loop. Floyd's cycle detection needs no set: `slow` moves one step, `fast` moves two. If `fast` reaches `1` the number is happy; if the two meet first, the walk is in a cycle that does not contain `1`.

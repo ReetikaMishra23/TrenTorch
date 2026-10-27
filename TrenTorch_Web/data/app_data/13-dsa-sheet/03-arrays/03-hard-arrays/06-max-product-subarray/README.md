@@ -50,14 +50,6 @@ The best is `0`; neither `-2` nor `-1` alone is better.
 - `1 <= len(nums) <= 2 * 10**5`
 - `-2 <= nums[i] <= 2`
 
-## Theory
-
-Kadane's algorithm for the best **sum** keeps one running value. For products it is not enough, because a very **negative** product can become the best one when multiplied by another negative value.
-
-So keep **two** running values for the run ending at the current position: the largest product `hi` and the smallest product `lo`. For a new value `x` the new run is one of: just `x`, `hi * x`, or `lo * x`. Take the max for the new `hi` and the min for the new `lo`. A negative `x` swaps their roles, which is handled automatically by taking max/min over all three candidates. A zero resets both to `0` and the run effectively starts again.
-
-The answer is the best `hi` seen. One pass: `O(n)`.
-
 ## Explanation
 
 `hi` and `lo` are the largest and smallest product of a run ending at the current value. The three candidates `x`, `hi * x`, `lo * x` cover starting a new run, extending the best run, and extending the worst run (useful when `x < 0`). `best` is the maximum `hi` seen.

@@ -3,6 +3,7 @@ name: sheet-generate-parentheses
 title: 'Generate Parentheses'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Intermediate
+theory: a-systematic-way-to-design-backtracking
 ---
 
 ## Statement
@@ -42,17 +43,6 @@ Output:
 ### Constraints
 
 - `0 <= n <= 10`
-
-## Theory
-
-Building all `2^(2n)` strings of `(` and `)` and filtering the valid ones wastes almost everything. Instead **only build valid prefixes**. At each position you may add:
-
-- a `(` if you have used fewer than `n` of them, and
-- a `)` only if it would still be matched: the number of `)` used so far must be smaller than the number of `(`.
-
-A prefix that follows these two rules can always be finished into a valid string, so every branch of the recursion leads to an answer. Trying `(` before `)` gives dictionary order.
-
-The number of valid strings is the **Catalan number** (1, 1, 2, 5, 14, 42, ..., 16,796 for `n = 10`).
 
 ## Explanation
 

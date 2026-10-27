@@ -46,14 +46,6 @@ Output:
 - `0 <= len(nums) <= 200000`
 - `nums` is sorted in increasing order.
 
-## Theory
-
-**Two pointers** means keeping two positions in the data (often one at each end, or one behind the other) and moving them according to a rule, so that each position moves at most `n` times in total. That turns a double loop (`O(n²)`) into a single pass (`O(n)`).
-
-The two pointers here are a **reader** that scans every value and a **writer** that marks where the next kept value goes. A value is kept if fewer than two copies of it are already kept. In a sorted list the earlier kept copies are right behind the writer, so the test is simply: `write < 2 or nums[read] != nums[write - 2]`.
-
-If so, copy it to `nums[write]` and advance the writer. This "read ahead, write behind" pattern edits a list in place in `O(n)`. Changing the "2" to any `k` gives "at most `k` copies".
-
 ## Explanation
 
 `a[write - 2]` is the second-to-last kept value. If the new value differs from it, there are fewer than two copies of the new value kept (the list is sorted), so it can be kept.

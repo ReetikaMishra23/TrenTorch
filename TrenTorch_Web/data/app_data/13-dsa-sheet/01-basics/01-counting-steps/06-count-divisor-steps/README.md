@@ -57,12 +57,6 @@ Output:
 - `1 <= n <= 10**10`
 - An answer that loops `n` times will time out on the large tests.
 
-## Theory
-
-For one `i`, the inner loop visits `i, 2i, 3i, ...` up to `n`, which is `n // i` steps. So the total is `n//1 + n//2 + ... + n//n`. Summed over all `i` this is about `n ln n`: the harmonic series. This pattern is why the sieve of Eratosthenes runs in `O(n log log n)`.
-
-The sum itself can be computed faster. The value `n // i` takes at most about `2√n` different values, and long runs of consecutive `i` share the same one. Add each run at once as `value * run_length`.
-
 ## Explanation
 
 Start at `i = 1`. Let `q = n // i`. The largest `j` with `n // j == q` is `n // q`. All `i..j` contribute `q` each, so add `q * (j - i + 1)` and continue from `j + 1`.

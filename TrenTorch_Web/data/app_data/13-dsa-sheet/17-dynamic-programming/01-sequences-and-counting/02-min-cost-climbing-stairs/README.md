@@ -3,6 +3,7 @@ name: sheet-min-cost-climbing-stairs
 title: 'Min Cost Climbing Stairs'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Beginner
+theory: your-first-real-problems
 ---
 
 ## Statement
@@ -45,14 +46,6 @@ Output:
 
 - `0 <= len(cost) <= 1000000`
 - `0 <= cost[i] <= 999`
-
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-**State:** `best(i)`, the cheapest cost to be standing on stair `i` (before paying for it). **Transition:** you arrive from stair `i - 1` (paying `cost[i - 1]`) or from `i - 2` (paying `cost[i - 2]`): `best(i) = min(best(i - 1) + cost[i - 1], best(i - 2) + cost[i - 2])`. **Base cases:** `best(0) = best(1) = 0`. **Answer:** `best(n)`, where `n = len(cost)` is the top.
-
-Only the last two values are needed. `O(n)`.
 
 ## Explanation
 

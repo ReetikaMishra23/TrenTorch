@@ -48,14 +48,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - The tree is a BST, not deeper than 800 levels.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-Searching follows one path from the root: if `val` is smaller than the current value go left, if larger go right, if equal you found it, and if you fall off the tree (`None`) it is not there. No recursion is needed: a simple loop with the current node is enough, with `O(h)` time and `O(1)` memory.
-
 ## Explanation
 
 Each step discards one whole subtree. The loop ends at the matching node, or at `None`.

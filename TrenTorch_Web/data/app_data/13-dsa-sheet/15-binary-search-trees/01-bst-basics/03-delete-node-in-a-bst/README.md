@@ -48,20 +48,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - The tree is a BST, not deeper than 800 levels.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-Find the node to delete with the usual search. Three cases:
-
-1. **Leaf**: remove it (its parent now points to `None`).
-2. **One child**: replace the node by that child.
-3. **Two children**: you cannot simply remove it. Take the **inorder successor**: the smallest node in the right subtree (go right once, then left as far as possible). Copy its value into the node being deleted, then delete the successor from the right subtree (it has no left child, so it is case 1 or 2).
-
-The recursive form returns the new root of each subtree: `node.left = delete(node.left, key)` and so on. Time `O(h)`.
-
 ## Explanation
 
 The first two cases return the surviving child directly. In case 3 the successor's value replaces the deleted one, and the successor is removed from the right subtree with the same function.

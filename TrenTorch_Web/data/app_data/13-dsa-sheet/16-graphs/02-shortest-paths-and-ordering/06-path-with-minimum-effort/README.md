@@ -46,16 +46,6 @@ Output:
 - `1 <= rows, cols <= 100`
 - `1 <= heights[r][c] <= 10**6`
 
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-A **grid** is a graph too: each cell is a node and its neighbours are the cells up, down, left and right (sometimes the diagonals as well).
-
-The cost of a path is a **maximum** of edge costs, not a sum, but Dijkstra's idea still works: always expand the cell with the smallest effort so far. The effort of reaching a neighbour through a cell is `max(effort of the cell, |height difference|)`. The first time the bottom-right cell is popped from the heap, its effort is the minimum.
-
-A heap gives `O(rows·cols·log(rows·cols))`. Another approach: **binary search** the answer `e` and check with a BFS whether the target is reachable using only steps of difference at most `e`.
-
 ## Explanation
 
 `effort[r][c]` is the best known maximum difference to reach the cell. The heap pops cells in order of effort, and `max(...)` combines the path so far with the new step.

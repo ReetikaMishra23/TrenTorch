@@ -47,14 +47,6 @@ Output:
 - `1 <= deadline <= 100000`
 - `1 <= profit <= 10**4`
 
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-The most profitable job is always worth doing if it can be scheduled. So sort the jobs by **profit, highest first**. Put each job in the **latest free slot before its deadline**: the latest one, so the earlier slots stay open for jobs with tighter deadlines. If no slot is free, skip the job.
-
-Finding the latest free slot by scanning down costs `O(deadline)`; a **union-find (disjoint set)** structure makes it nearly `O(1)`: `parent[t]` points to the next free slot at or below `t`. Used slots are linked to the slot below them.
-
 ## Explanation
 
 `find(t)` returns the latest free slot `<= t` (`0` means none). After using slot `s`, `parent[s] = s - 1` so later searches skip it.

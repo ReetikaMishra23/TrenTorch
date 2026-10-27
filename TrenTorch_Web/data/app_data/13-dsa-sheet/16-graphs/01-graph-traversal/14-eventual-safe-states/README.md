@@ -46,14 +46,6 @@ Output:
 - `0 <= n <= 100000`
 - `0 <= len(edges) <= 200000`
 
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-A node is **unsafe** if it lies on a cycle or can reach one. Safe nodes are those that cannot. Work backwards from the terminal nodes: a node whose outgoing arrows **all** lead to safe nodes is itself safe.
-
-This is Kahn's algorithm on the **reversed graph**: for every node count its outgoing arrows (`out_degree`). Start with the terminal nodes (out-degree 0) in a queue. When you pop a node, for each node `p` that has an arrow **to** it, decrease `out_degree[p]`; when it reaches 0, all of `p`'s arrows lead to safe nodes, so `p` is safe: queue it. The safe nodes are the ones that get processed. `O(n + m)`.
-
 ## Explanation
 
 `rev[v]` lists the nodes with an arrow into `v`. The queue starts with the terminal nodes and grows with nodes whose outgoing arrows are all accounted for.

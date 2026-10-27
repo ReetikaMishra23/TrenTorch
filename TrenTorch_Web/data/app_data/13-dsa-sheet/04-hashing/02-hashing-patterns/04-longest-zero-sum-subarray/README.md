@@ -50,14 +50,6 @@ No run adds to 0.
 - `0 <= len(nums) <= 2 * 10**5`
 - `-10**4 <= nums[i] <= 10**4`
 
-## Theory
-
-A run adds up to `0` exactly when the prefix sum **before** it equals the prefix sum **after** it. So you are looking for the two positions with the **same prefix sum** that are the farthest apart.
-
-Keep a dictionary of the **first** index where each prefix sum appeared. When a prefix sum appears again at index `i`, the run between the first occurrence and `i` adds up to zero, and its length is `i - first[prefix]`. Never overwrite the first index: you want the longest run.
-
-This is the `k = 0` case of the prefix-sum trick, and the first place most people see why "store the first index" matters.
-
 ## Explanation
 
 `first` starts with `{0: -1}` (the empty prefix before index 0). For each index update `prefix`; if it was seen before, the run from `first[prefix] + 1` to `i` sums to zero with length `i - first[prefix]`; otherwise store `first[prefix] = i`.

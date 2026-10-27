@@ -50,12 +50,6 @@ Five values need threshold 5, so `d` must be the biggest value, 44.
 - `1 <= nums[i] <= 10**6`
 - Trying every divisor one by one is too slow for the large tests.
 
-## Theory
-
-A bigger divisor makes every quotient smaller (or equal), so the sum **never increases** as `d` grows. So "the sum is at most the threshold" is `False ... False True ... True`, and you want the first `True`: **binary search on the answer**.
-
-The divisor is between `1` and `max(nums)`: at `d = max(nums)` every quotient rounds up to `1`, the smallest possible sum `len(nums)`, which the constraints guarantee fits under the threshold. Evaluate a guess in `O(n)` with the integer ceiling `-(-x // d)`.
-
 ## Explanation
 
 `lo = 1`, `hi = max(nums)`. If the rounded-up sum for `mid` is within the threshold, `mid` works and a smaller one might: `hi = mid`. Otherwise `lo = mid + 1`. The search ends at the smallest valid divisor.

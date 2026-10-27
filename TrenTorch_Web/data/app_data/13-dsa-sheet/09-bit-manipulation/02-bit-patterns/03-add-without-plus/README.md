@@ -43,14 +43,6 @@ Output:
 
 - `-2**31 <= a, b < 2**31`
 
-## Theory
-
-This is how a computer adds. Adding two bits gives a **sum bit** (`x ^ y`, no carry) and a **carry bit** (`x & y`, which belongs one position to the left, so `(x & y) << 1`).
-
-So `a + b = (a ^ b) + ((a & b) << 1)`: the sum without carries, plus the carries. That is still an addition, so **repeat**: put `a ^ b` into `a` and the carries into `b`, until there are no carries (`b == 0`). The loop ends because carries shift left and eventually leave the 32 bits.
-
-Python integers have no fixed width, so negative numbers would carry forever. Keep everything in 32 bits with a mask `0xFFFFFFFF`, and at the end convert back to signed: a result above `2**31 - 1` means a negative number, which is `result - 2**32`.
-
 ## Explanation
 
 `a ^ b` adds without carry; `(a & b) << 1` is the carry. With the mask, values stay in 0..2**32-1, and the final test restores the sign.

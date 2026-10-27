@@ -44,12 +44,6 @@ Output:
 - `0 <= len(s) <= 200000`
 - `s` contains lower-case letters.
 
-## Theory
-
-After a deletion, the two characters on both sides become neighbours, and may be equal too. That chain reaction is what a stack handles naturally. Keep the string built so far on a stack. For each new character: if it equals the top of the stack, **pop** (they cancel); otherwise **push**.
-
-The stack always holds the answer for the part of the string read so far. `O(n)`.
-
 ## Explanation
 
 The top of the stack is the last character that survived. A new character that matches it cancels it; otherwise it is kept.

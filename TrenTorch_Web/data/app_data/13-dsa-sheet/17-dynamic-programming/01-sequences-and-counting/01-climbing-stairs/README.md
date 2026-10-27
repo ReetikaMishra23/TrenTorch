@@ -3,6 +3,7 @@ name: sheet-climbing-stairs
 title: 'Climbing Stairs'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Beginner
+theory: your-first-real-problems
 ---
 
 ## Statement
@@ -46,14 +47,6 @@ Output:
 ### Constraints
 
 - `0 <= n <= 1000000`
-
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-**State:** `ways(i)`, the number of ways to reach step `i`. **Transition:** the last move came from step `i - 1` or step `i - 2`, so `ways(i) = ways(i - 1) + ways(i - 2)`. **Base cases:** `ways(0) = ways(1) = 1`. These are the **Fibonacci numbers**.
-
-The recursion `ways(n - 1) + ways(n - 2)` computes `ways(n - 3)` twice, `ways(n - 4)` three times, and so on: the number of calls grows exponentially. Computing the values **in order** from the bottom and keeping only the last two removes all the repetition: `O(n)` time and `O(1)` memory.
 
 ## Explanation
 

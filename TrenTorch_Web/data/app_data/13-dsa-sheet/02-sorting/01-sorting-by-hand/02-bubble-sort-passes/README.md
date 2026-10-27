@@ -63,14 +63,6 @@ No swaps in the first pass, so it stops after 1.
 - `0 <= len(nums) <= 1500`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-After the first pass the largest value has "bubbled" to the end, after the second pass the second largest is in place, and so on. Each pass fixes at least one more value, so there are at most `n` passes, and each pass costs `n - 1` comparisons: `O(n²)` in the worst case.
-
-The `swapped` flag gives it a fast path. If the input is already sorted, one pass finds nothing to swap and stops in `O(n)`.
-
-A value only moves left by **one place per pass**. So a small value that starts far to the right needs many passes to arrive. The number of passes is decided by the element that has to travel left the farthest, and you can read that distance straight from the input without simulating.
-
 ## Explanation
 
 In each pass, an element that has a bigger value somewhere before it moves exactly one place to the left. So the number of passes that make a swap is the largest "how many bigger values are before me" over all elements, and the final pass without swaps adds one.

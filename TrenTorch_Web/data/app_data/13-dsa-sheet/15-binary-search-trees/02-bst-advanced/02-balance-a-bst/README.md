@@ -48,16 +48,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - The tree is a BST, not deeper than 800 levels.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-A tree is only as fast as it is shallow. To rebalance, do two steps you already know: (1) the **inorder** traversal turns the BST into a **sorted list**; (2) build a balanced BST from a sorted list by taking the **middle** as the root and recursing on the halves.
-
-There are in-place rotations (AVL and red-black trees do small rotations after each insert), but rebuilding is simple and `O(n)`.
-
 ## Explanation
 
 The first loop collects the values in sorted order; `build` makes the balanced tree from index ranges.

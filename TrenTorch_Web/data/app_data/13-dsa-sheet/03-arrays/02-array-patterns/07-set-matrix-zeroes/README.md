@@ -45,14 +45,6 @@ Output:
 - All rows have the same length.
 - `-10**9 <= matrix[i][j] <= 10**9`
 
-## Theory
-
-A trap: if you clear a row as soon as you find a zero, the new zeros you write would trigger more clearing and wipe the whole matrix. So work in **two phases**: first _record_ which rows and columns contain a zero, then _write_ the result.
-
-Recording takes one pass over the cells and stores two small sets, so memory is `O(rows + cols)`. Writing is another pass: a cell becomes `0` if its row or its column is in the recorded sets, and keeps its value otherwise. Total time is `O(rows * cols)`, which is the size of the input.
-
-Interviewers often ask for `O(1)` extra space, by using the first row and first column of the matrix as the marker storage. The two-phase version is the clearest to learn first.
-
 ## Explanation
 
 `rows` is the set of row indexes that contain a `0`; `cols` is the set of column indexes that contain one. The result is built from the original matrix: `0` where `i in rows or j in cols`, the original value elsewhere.

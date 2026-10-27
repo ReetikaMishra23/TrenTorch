@@ -48,12 +48,6 @@ Output:
 - `0 <= len(ops) <= 100000`
 - Pages are words without spaces; `1 <= k <= 100`.
 
-## Theory
-
-In a **design** question you build a small data structure and run a list of operations on it. The operations are given as text, one per string, and you return the answers of the operations that produce one. Think about which operations must be fast and choose the data structure for them.
-
-Keep the history in a **list** and an **index** of the current page. `visit`: drop everything after the index (`del history[index + 1:]`), append the new page, move the index to it. `back k`: `index = max(0, index - k)`. `forward k`: `index = min(len(history) - 1, index + k)`. Every operation is `O(1)` amortised (the deletion of the forward pages is paid by the earlier visits).
-
 ## Explanation
 
 The list is the whole history and `index` points into it. `del history[index + 1 :]` forgets the forward pages on a visit.

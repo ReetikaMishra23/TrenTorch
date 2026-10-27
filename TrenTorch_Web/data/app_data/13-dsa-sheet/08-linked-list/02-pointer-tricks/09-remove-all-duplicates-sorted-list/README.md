@@ -46,14 +46,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - The list is sorted in increasing order.
 
-## Theory
-
-Unlike the earlier version, a whole group of equal values must disappear, including the first node of the group, so the **head can be removed**: use a dummy head.
-
-Keep `prev` (the last node kept) and `cur`. If `cur.val == cur.next.val`, remember that value and skip **all** nodes with it (`while cur and cur.val == value: cur = cur.next`), then link `prev.next = cur`. Otherwise `cur` is unique: `prev = cur`, advance.
-
-Notice that `prev` only moves when a node is confirmed unique, so later duplicates are still cut out correctly.
-
 ## Explanation
 
 A repeat triggers an inner loop that skips the whole group. The outer pointers move on only when the node is unique.

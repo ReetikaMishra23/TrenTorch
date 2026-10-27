@@ -45,12 +45,6 @@ Output:
 - `0 <= k <= 3 * 10**5`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-Sorting everything costs `O(n log n)` even if you only need a few results. A **heap** is a structure that always gives you its smallest (or largest) item quickly. `heapq.nsmallest(k, nums)` keeps only the `k` best candidates while it scans the list, which is `O(n log k)`. When `k` is small compared to `n` that is a big saving.
-
-Python's `heapq` is a _min_-heap stored in a plain list. The functions `heappush`, `heappop`, `nsmallest` and `nlargest` cover most interview problems. For a tiny `k` it also beats `sorted(nums)[:k]` on memory, since it never builds a second full-size list.
-
 ## Explanation
 
 Quickselect. Pick a random pivot and split the pool into `less`, `equal` and `greater`. If all `k` wanted values lie inside `less`, continue with `less` only. If they reach into the `equal` block, take all of `less` and just enough copies of the pivot. Otherwise keep all of `less` and `equal` and continue with `greater` for the rest.

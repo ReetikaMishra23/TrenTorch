@@ -50,14 +50,6 @@ On day 12 everything has bloomed: `[7,7,7]` and `[7,7,7]` around the `12`.
 - `1 <= m, k <= 2 * 10**4`
 - Trying every day one by one is too slow for the large tests.
 
-## Theory
-
-Again **binary search on the answer**: the answer is a day, and once enough bouquets are possible on day `d`, they are possible on every later day (flowers do not un-bloom). So "possible by day `d`" goes `False ... False True ... True`.
-
-Impossible is easy to spot first: you need `m * k` flowers, so if `m * k > len(bloom)` return `-1`.
-
-To check a day `d`, sweep the flowers once, counting the current run of bloomed neighbours: a flower with `bloom[i] <= d` extends the run; when the run reaches `k`, count a bouquet and start a new run; an unbloomed flower resets the run. The day range is `min(bloom)` to `max(bloom)`. `O(n log M)`.
-
 ## Explanation
 
 If `m * k` is more than the number of flowers, return `-1`. Otherwise search days between the earliest and latest bloom. `possible(day)` counts bouquets in one pass using the run length. A day that works keeps the lower half, a day that does not moves `lo` up.

@@ -46,14 +46,6 @@ Output:
 - `0 <= len(ops) <= 20000`
 - Words and patterns are lower-case letters (patterns also `.`), 1 to 12 long.
 
-## Theory
-
-A **trie** (prefix tree) stores a set of words letter by letter: every node is one letter, a word is a path from the root, and words that share a prefix share the start of their path. Each node has up to 26 children (a dictionary `letter -> node` in Python) and a flag that says "a word ends here". Inserting or searching a word of length `L` takes `O(L)` no matter how many words are stored, and a trie answers **prefix** questions ("does any word start with `ab`?") that a plain set of words cannot answer quickly. A node can be a small dictionary: `node = {}`; mark the end of a word with a special key such as `"$"`.
-
-A search with a wildcard cannot follow one path: at a `.` **every child** is a possibility. Use a recursive DFS `go(node, i)`: if `i` is the end of the pattern, the answer is whether `node` is a word end; if the pattern letter is a normal letter, follow that child only (if it exists); if it is `.`, try every child and return `True` if any of them works.
-
-The cost of a pattern with many dots can be larger than the pattern length, but it never exceeds the size of the trie.
-
 ## Explanation
 
 `go` returns as soon as one branch succeeds. The key `"$"` is skipped when iterating the children of a `.`.

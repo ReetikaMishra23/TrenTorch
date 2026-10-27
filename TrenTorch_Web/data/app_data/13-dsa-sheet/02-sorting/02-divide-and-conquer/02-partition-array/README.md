@@ -62,14 +62,6 @@ A single value is already in place at index 0.
 - `1 <= len(nums) <= 3 * 10**5`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-After partitioning, the pivot is in its **final sorted position**: everything before it is `<=` it, everything after is `>` it, and neither side is sorted yet. Quicksort then partitions the left part and the right part the same way. On average this splits the list in about half each time: `O(n log n)`.
-
-Lomuto's scheme keeps a boundary `i`: positions `0..i` hold values `<=` the pivot. Scanning with `j`, every small value is swapped to just past the boundary. It is simple and needs `O(1)` extra memory, but it does more swaps than Hoare's original scheme and it handles many equal values poorly.
-
-Choosing the last value as the pivot is risky: on an already sorted list every partition is lopsided and quicksort degrades to `O(n²)`. Real implementations choose the pivot at random or take a median of a few values.
-
 ## Explanation
 
 Copy the list, then run the loop exactly as given. `i + 1` is where the pivot belongs after the final swap, and it is the second item to return.

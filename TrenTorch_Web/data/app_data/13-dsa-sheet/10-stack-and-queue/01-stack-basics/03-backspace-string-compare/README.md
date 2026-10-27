@@ -46,12 +46,6 @@ False
 - `0 <= len(s), len(t) <= 200000`
 - Letters `a` to `z` and `#`.
 
-## Theory
-
-A text editor is a stack: a letter is pushed and a backspace pops (unless the stack is empty). Build the final text of each string with this rule and compare them.
-
-There is a trick with `O(1)` memory: scan both strings **from the end**, skipping characters that a backspace erases, and compare what is left, but the stack version is the clear first step.
-
 ## Explanation
 
 Compare the two strings from the right, so that a `#` is seen before the characters it erases. A helper moves an index left to the next character that is really typed, counting `#` marks as characters to skip. If the two helpers land on different characters, or only one string has a character left, the results differ. Reaching the start of both at the same time means they are equal. No stack or copy is needed.

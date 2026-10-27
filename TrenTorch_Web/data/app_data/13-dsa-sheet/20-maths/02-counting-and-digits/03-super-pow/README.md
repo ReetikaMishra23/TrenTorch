@@ -3,6 +3,7 @@ name: sheet-super-pow
 title: 'Super Power'
 tags: [dsa-sheet, maths, counting-and-digits]
 difficulty: Advanced
+theory: fast-exponentiation
 ---
 
 ## Statement
@@ -46,14 +47,6 @@ Output:
 - `1 <= a <= 2**31 - 1`
 - `1 <= len(b) <= 2000`
 - Each digit is `0` to `9`; `b` has no leading zero unless `b = [0]`.
-
-## Theory
-
-Many contest problems are about **numbers**, and the input is huge (up to `10^12` or more), so a loop up to `n` is far too slow. The tools: the **square root bound** (a number `n` has a divisor `<= sqrt(n)` unless it is prime), **modular arithmetic** (work with remainders so the numbers stay small), and **formulas** that replace a loop. Python's big integers make the arithmetic itself safe, but the number of steps is what you must control.
-
-Turning `b` into a normal integer and computing `a ** b` is impossible (the result has billions of digits). Use the digits directly with the identity `a^(10·q + d) = (a^q)^10 × a^d`. Process the digits from the left: keep `result = a^(prefix of b) mod 1337`. For the next digit `d`: `result = pow(result, 10, 1337) × pow(a, d, 1337) % 1337`.
-
-That is one small modular power per digit, `O(len(b))` in total.
 
 ## Explanation
 

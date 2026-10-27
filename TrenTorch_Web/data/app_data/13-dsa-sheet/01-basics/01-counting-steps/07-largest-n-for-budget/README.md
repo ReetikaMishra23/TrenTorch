@@ -61,12 +61,6 @@ Costs: n=1 is 0, n=2 is 2, n=3 is 3, n=4 is 8, n=8 is 24 ... n=25 is 100.
 - `growth` is one of the five strings above.
 - Trying every `n` one by one is too slow for the large budgets.
 
-## Theory
-
-This is the question you ask before writing any code: given the limits in the problem, which complexity can pass? A typical judge allows about `10⁸` simple operations. So with `n = 10⁵` an `O(n²)` solution (`10¹⁰`) fails and `O(n log n)` (`1.7 * 10⁶`) is fine. With `n = 20` even `O(2ⁿ)` is fine.
-
-Because the cost never decreases as `n` grows, you can find the biggest affordable `n` with binary search instead of a scan. For `2ⁿ` skip the search: `n` is at most about `60` because `2⁶⁰ > 10¹⁸`.
-
 ## Explanation
 
 The cost functions are non-decreasing in `n`, so binary search works. The cost is at least `n` once `n >= 2`, so `budget + 1` is a safe upper bound for the search.

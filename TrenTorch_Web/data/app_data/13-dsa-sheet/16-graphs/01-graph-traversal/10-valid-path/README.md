@@ -47,12 +47,6 @@ False
 - `0 <= len(edges) <= 200000`
 - `0 <= source, destination < n`
 
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-Build the adjacency list, then run a BFS or DFS from `source`. If you reach `destination` the answer is `True`; if the search ends without it, `False`. A node is its own destination (`source == destination` is `True`). You can stop the search as soon as the destination is seen. `O(n + m)`.
-
 ## Explanation
 
 The search marks nodes as seen so each is processed once, and stops early when the destination is found.

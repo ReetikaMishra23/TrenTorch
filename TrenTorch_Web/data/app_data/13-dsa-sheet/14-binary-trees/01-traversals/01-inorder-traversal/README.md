@@ -49,14 +49,6 @@ Output:
 - The tree is not deeper than 800 levels.
 - `-10**9 <= val <= 10**9`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **traversal** visits every node once. For **inorder**, the recursion is three lines: inorder of the left subtree, the node's value, inorder of the right subtree. (For a binary _search_ tree, inorder gives the values in sorted order.)
-
-The recursive version is the clearest. The **iterative** version replaces the call stack with your own stack: go as far **left** as you can, pushing every node on the way; then pop a node, record its value, and move to its **right** child. Repeat until the stack is empty and there is no current node. It uses `O(h)` memory, where `h` is the tree height.
-
 ## Explanation
 
 `stack` holds the ancestors still waiting for their turn. When no more left child exists, the top of the stack is the next node in inorder.

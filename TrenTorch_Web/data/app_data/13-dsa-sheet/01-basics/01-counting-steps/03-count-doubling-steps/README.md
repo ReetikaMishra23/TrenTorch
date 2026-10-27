@@ -57,12 +57,6 @@ Output:
 
 - `1 <= n <= 10**18`
 
-## Theory
-
-Doubling and halving are the same idea seen from two sides: both take `log₂ n` steps. A loop whose counter is multiplied each round is `O(log n)`.
-
-The tricky part is the boundary. The loop runs while `i < n`, so for `n = 8` it stops when `i` reaches `8` (3 steps), but for `n = 9` it needs one more (4 steps). The answer is the smallest `k` with `2**k >= n`.
-
 ## Explanation
 
 After `k` rounds `i = 2**k`. The loop stops at the first `k` with `2**k >= n`, which is `ceil(log₂ n)`.

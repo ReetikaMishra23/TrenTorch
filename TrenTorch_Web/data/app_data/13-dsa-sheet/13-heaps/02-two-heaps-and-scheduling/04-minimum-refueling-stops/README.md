@@ -50,16 +50,6 @@ Output:
 - `0 <= len(stations) <= 100000`, sorted by position, positions below `target`
 - `1 <= fuel <= 10**9`
 
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-You do not need to decide where to stop at the time you drive past a station. Think backwards: drive as far as the fuel allows, and **only when you run out**, imagine you had stopped at the **best station you already passed** (the one with the most fuel). Passing stations are collected in a **max-heap of their fuel amounts**.
-
-Loop: while the current reach is below the target, add all stations within reach to the heap; if the heap is empty you are stuck (`-1`); otherwise take the largest fuel (one more stop) and add it to your reach. Count the stops.
-
-This "decide later with a heap" trick turns a search into a greedy algorithm: `O(n log n)`.
-
 ## Explanation
 
 `reach` is the farthest position possible with the current fuel. Stations are pushed into the heap as they come within reach, and a refuel is only taken when needed.

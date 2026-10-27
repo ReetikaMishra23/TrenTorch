@@ -3,6 +3,7 @@ name: sheet-combination-sum-ii
 title: 'Combination Sum, Each Number Once'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Intermediate
+theory: canonical-order-prevents-duplicates
 ---
 
 ## Statement
@@ -46,12 +47,6 @@ Output:
 - `0 <= len(candidates) <= 14`
 - `1 <= candidates[i] <= 30`
 - `1 <= target <= 60`
-
-## Theory
-
-This mixes two ideas you already have. Each number can be used **once**, so recurse with `j + 1` (as in subsets). The input may contain **duplicates**, so skip an equal value at the same level (`j > start and a[j] == a[j - 1]`), as in subsets with duplicates. And **prune** with the sorted order: once `a[j]` is bigger than the remainder, stop the loop.
-
-When you meet a new problem in this family, ask three questions: _can a value be reused?_ (same index or next index), _can the input repeat?_ (skip equal values at the same level), and _can I cut a branch early?_ (pruning).
 
 ## Explanation
 

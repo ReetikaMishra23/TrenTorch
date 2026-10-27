@@ -48,16 +48,6 @@ Output:
 - `0 <= len(heights) <= 200000`
 - `0 <= heights[i] <= 10**5`
 
-## Theory
-
-The water above bar `i` has height `min(tallest bar to the left, tallest bar to the right) - heights[i]` (never below zero). Computing both tallest bars from scratch for every `i` costs `O(n²)`.
-
-**Two pointers** means keeping two positions in the data (often one at each end, or one behind the other) and moving them according to a rule, so that each position moves at most `n` times in total. That turns a double loop (`O(n²)`) into a single pass (`O(n)`).
-
-Keep `left_max` and `right_max`, the tallest bars seen so far from each end, with a pointer at each end. The side with the **smaller** max decides the water level on that side, because the other side already has a taller wall: so process that side's bar: water there is `its_max - height`, then move that pointer inwards.
-
-`O(n)` time and `O(1)` memory. (A prefix-maximum array for each side also works with `O(n)` memory.)
-
 ## Explanation
 
 When `left_max < right_max`, the water at `left` is limited by `left_max` no matter what is further right, since a wall at least as tall exists on the right. Symmetrically for the right side.

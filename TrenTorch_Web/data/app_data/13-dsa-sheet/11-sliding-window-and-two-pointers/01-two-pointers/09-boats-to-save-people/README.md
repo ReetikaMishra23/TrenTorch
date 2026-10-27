@@ -46,14 +46,6 @@ Output:
 - `0 <= len(people) <= 200000`
 - `1 <= people[i] <= limit <= 30000`
 
-## Theory
-
-**Two pointers** means keeping two positions in the data (often one at each end, or one behind the other) and moving them according to a rule, so that each position moves at most `n` times in total. That turns a double loop (`O(n²)`) into a single pass (`O(n)`).
-
-Sort the weights. Look at the **heaviest** person: the best partner for them is the **lightest** one, because the lightest person is the one most likely to fit. If heaviest + lightest fits in a boat, they go together; if not, no one else fits with the heaviest either (everyone else is heavier than the lightest), so the heaviest goes alone.
-
-Use two pointers at the ends: every step uses one boat, always takes the heaviest, and takes the lightest too when it fits. This is a **greedy** choice backed by the sorted order. `O(n log n)` for the sort, `O(n)` for the pass.
-
 ## Explanation
 
 `heavy` always boards. `light` boards with them only if the sum fits; otherwise the heavy person leaves alone and `light` waits for the next, lighter, heavy person.

@@ -48,14 +48,6 @@ False
 - `0 <= len(s), len(t) <= 3 * 10**5`
 - Both strings contain lower-case letters.
 
-## Theory
-
-You need a **one-to-one mapping** (a bijection) between the letters. Checking only that `s -> t` is consistent is not enough: `"ab"` and `"aa"` would pass (`a -> a`, `b -> a`), yet two different letters map to the same one.
-
-Check both directions. Keep a dictionary `forward` from each letter of `s` to the letter of `t`, and `backward` from each letter of `t` to the letter of `s`. For each position, a letter that already has a mapping must keep it, in both dictionaries. Any conflict means the strings are not isomorphic.
-
-A shortcut: two strings are isomorphic exactly when they have the same **pattern**. Replacing every letter by the position where it first appeared gives the same sequence for both.
-
 ## Explanation
 
 The loop zips both strings. `forward.setdefault(a, b)` stores the first mapping and returns the stored one afterwards; if it differs from `b`, the mapping is inconsistent. The same check on `backward` stops two letters from mapping to one.

@@ -44,14 +44,6 @@ Output:
 - `0 <= rows, cols`, and `rows * cols <= 250000`
 - All rows have the same length.
 
-## Theory
-
-The spiral peels the matrix like an onion, one **layer** at a time. Keep four boundaries: `top`, `bottom`, `left`, `right`. Walk the top row, then shrink `top`; walk the right column, then shrink `right`; walk the bottom row, then shrink `bottom`; walk the left column, then shrink `left`. Repeat while the boundaries have not crossed.
-
-The easy bug is the last layer. When it is a single row or a single column, the "bottom row" or "left column" walk would revisit cells. That is why you must check that `top <= bottom` and `left <= right` again **before** the third and fourth walks.
-
-Each cell is visited exactly once: `O(rows * cols)`.
-
 ## Explanation
 
 The loop `while top <= bottom and left <= right` handles one layer. After walking the top row and the right column, the bottom row is walked only if `top <= bottom` still holds, and the left column only if `left <= right` still holds. These checks stop a single row or column from being walked twice.

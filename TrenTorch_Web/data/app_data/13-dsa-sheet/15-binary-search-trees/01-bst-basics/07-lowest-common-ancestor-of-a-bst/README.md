@@ -49,16 +49,6 @@ Output:
 - The tree is a BST, not deeper than 800 levels.
 - `p` and `q` are values in the tree.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-In a general tree the LCA needs a search of both subtrees. A BST tells you where each value is without searching. Stand at the root: if **both** `p` and `q` are smaller than the node's value, the LCA is in the left subtree; if **both** are larger, it is in the right subtree; otherwise the values are on different sides (or one of them is the node itself), and this node is the split point: the answer.
-
-A simple loop, `O(h)` time and `O(1)` memory.
-
 ## Explanation
 
 The loop descends while both values are on the same side. The first node where they split (or equal one of them) is returned.

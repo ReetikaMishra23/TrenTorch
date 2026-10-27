@@ -46,14 +46,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - `0 <= val, node value <= 1000`
 
-## Theory
-
-To delete a node you change the `next` of the node **before** it. So walk with a `prev` pointer: if the current node matches, set `prev.next = cur.next`; otherwise move `prev` forward. `cur` always moves forward.
-
-The head is the awkward case: it has no node before it. A **dummy node** placed in front of the head fixes this, because then every real node has a predecessor. Return `dummy.next`.
-
-Several matches in a row work correctly because `prev` stays where it is until a non-matching node appears.
-
 ## Explanation
 
 `prev` is the last node we kept. A match is skipped by linking `prev` straight to the node after it; a non-match becomes the new `prev`.

@@ -50,12 +50,6 @@ Capacity 6 ships `3 2`, `2 4`, `1 4` in 3 days.
 - `1 <= weights[i] <= 10**4`
 - Trying every capacity one by one is too slow for the large tests.
 
-## Theory
-
-The answer is a capacity, and a ship that can carry `c` can also carry any bigger `c`, so "shippable within `days`" is `False ... False True ... True`: **binary search on the answer**.
-
-The capacity must be at least `max(weights)` (every package has to fit alone) and never needs to exceed `sum(weights)` (one day for everything). To test a capacity, simulate greedily: load packages until the next one would overflow, then start a new day. Count the days; the capacity works if the count is at most `days`. `O(n log S)`.
-
 ## Explanation
 
 `lo = max(weights)`, `hi = sum(weights)`. `needed(mid)` starts at one day and counts a new day whenever adding the next weight would exceed `mid`. A working capacity keeps the lower half, otherwise `lo = mid + 1`.

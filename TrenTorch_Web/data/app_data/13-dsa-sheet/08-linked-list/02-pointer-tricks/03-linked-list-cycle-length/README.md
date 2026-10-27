@@ -46,14 +46,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - The cycle position `k` is `-1` or a valid index.
 
-## Theory
-
-Once slow and fast pointers **meet**, they are both inside the cycle. Leave `fast` where it is and walk another pointer around the cycle until it returns to the meeting node, counting the steps. That count is the cycle length.
-
-If `fast` falls off the end instead, there is no cycle: return `0`.
-
-This is the same tortoise and hare idea, finished with a short counting loop.
-
 ## Explanation
 
 After the meeting, `node = slow.next` and `length = 1` start the count; each step moves one node, and the loop ends back at `slow`.

@@ -52,14 +52,6 @@ No shared node: the answer is `None`, shown as `-1`.
 - `0 <= number of nodes <= 100000` in each list
 - Neither list has a cycle.
 
-## Theory
-
-If one list is longer, the two start at different distances from the shared tail. Two ways to fix that: measure both lengths, skip the extra nodes of the longer one, then walk together; or use a neat trick with **two pointers that switch lists**.
-
-Let `pa` walk list A and, when it falls off the end, continue on list B. Let `pb` do the same the other way around. Both pointers walk `len(A) + len(B)` steps in total, so after changing lists they are **aligned**: they reach the shared node at the same moment. If there is no shared node, both become `None` together at the very end, and the loop stops with `None`.
-
-Compare nodes with `is`, never by value.
-
 ## Explanation
 
 Each pointer travels its own list and then the other one. The shorter list's pointer switches earlier, which removes the length difference. The loop ends when the pointers are the same node or both `None`.

@@ -48,16 +48,6 @@ Output:
 - `0 <= len(nums) <= 200000`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-Scanning right from every element repeats work: `O(n²)`. A **monotonic stack** answers all positions in one pass. Walk the list from left to right and keep the **indices still waiting for their answer**. These indices always have values that do not increase from bottom to top (that is why the stack is "monotonic").
-
-For each new value `x`, it is the next greater element of every waiting index whose value is smaller: **pop** them one by one and set their answer to `x`. Then push the current index to wait. Indices left in the end have no greater value: `-1`.
-
-Each index is pushed once and popped once, so the whole thing is `O(n)`. This pattern solves a whole family of "nearest bigger/smaller" questions.
-
 ## Explanation
 
 The stack holds indices of values still without an answer, in non-increasing order of value. A new value that is bigger than the top answers it, and keeps answering the new top while it is bigger.

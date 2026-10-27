@@ -49,14 +49,6 @@ Output:
 - The tree is not deeper than 800 levels.
 - All values are different and `start` is in the tree.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-The fire moves along the edges one step per minute, so the time to burn the tree is the **largest distance** from the start node to any node: the **farthest node**. This is the same setup as "nodes at distance k": record the parent of every node, then run a **BFS** from the start in all three directions, and count the number of levels.
-
-The answer is the number of BFS rounds needed to reach the last node (the depth of the BFS minus... count rounds after the first). `O(n)`.
-
 ## Explanation
 
 Each round of the BFS is one minute. The loop stops when no new node can be reached; the number of completed rounds that reached new nodes is the answer.

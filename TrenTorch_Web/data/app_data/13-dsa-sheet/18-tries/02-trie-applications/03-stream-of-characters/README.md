@@ -50,14 +50,6 @@ Output:
 - `0 <= len(stream) <= 100000`
 - Lower-case letters.
 
-## Theory
-
-A **trie** (prefix tree) stores a set of words letter by letter: every node is one letter, a word is a path from the root, and words that share a prefix share the start of their path. Each node has up to 26 children (a dictionary `letter -> node` in Python) and a flag that says "a word ends here". Inserting or searching a word of length `L` takes `O(L)` no matter how many words are stored, and a trie answers **prefix** questions ("does any word start with `ab`?") that a plain set of words cannot answer quickly. A node can be a small dictionary: `node = {}`; mark the end of a word with a special key such as `"$"`.
-
-You are asked about the **end** of the stream, while a trie matches **starts** of words. Reverse the words: insert each word **reversed** into a trie. Then, after each new letter, walk the trie along the stream **backwards** (the newest letter first). If the walk reaches a node marked as a word end, some suffix of the stream is a word.
-
-Words are at most `maxlen` long, so look back at most `maxlen` letters: `O(maxlen)` per letter instead of `O(words)`.
-
 ## Explanation
 
 Aho-Corasick turns the list of words into one automaton that is fed one letter at a time and always knows the longest suffix of the stream that is a prefix of some word. Build a trie of the words; a node `fail` link points to the node for the longest proper suffix that is also in the trie (found breadth first), and a node is marked as an end if its word, or any word reachable through `fail` links, ends there.

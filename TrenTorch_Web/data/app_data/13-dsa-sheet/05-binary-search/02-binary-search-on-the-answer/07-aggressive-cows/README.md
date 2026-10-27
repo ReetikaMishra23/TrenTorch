@@ -49,14 +49,6 @@ Cows at 1, 5 and 10 give a smallest distance of 4.
 - `0 <= stalls[i] <= 10**9`, and the positions are different
 - Trying every distance one by one is too slow for the large tests.
 
-## Theory
-
-This one **maximises a minimum**, which is a classic sign of binary search on the answer. If you can place the cows with every pair at least `d` apart, you can also do it for any smaller `d`. So "possible with distance `d`" goes `True ... True False ... False`, and you want the last `True`.
-
-Check a distance greedily: sort the stalls, put the first cow in the first stall, and keep putting the next cow in the first stall that is at least `d` farther than the last one. If you manage to place all the cows, `d` works. Greedy is optimal because pushing each cow as far left as possible leaves the most room.
-
-The distance ranges from `1` to `max - min`. `O(n log M)` plus the sort.
-
 ## Explanation
 
 Sort `stalls`. `place(d)` puts a cow in the first stall, then a cow in each next stall at least `d` after the previous cow, counting them. Search `d` upward: if `place(mid) >= cows` the distance works and `lo = mid`, otherwise `hi = mid - 1`. The `+ 1` in `mid = (lo + hi + 1) // 2` stops an endless loop when `lo` can move.

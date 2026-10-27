@@ -50,14 +50,6 @@ Output:
 - `0 <= len(s) <= 1000`
 - `s` contains lower-case letters.
 
-## Theory
-
-Checking every substring is `O(n²)` substrings times `O(n)` for each check: `O(n³)`. Use the structure of a palindrome instead: it is **symmetric around its centre**. So grow outwards from every possible centre and stop at the first mismatch.
-
-A palindrome of odd length has a character as its centre; one of even length has a gap between two characters. That is `2n - 1` centres in total. From each centre, extend `left` and `right` while the characters match. Each expansion costs up to `O(n)`, so the total is `O(n²)`, which is fine for `n = 1000`.
-
-There is an `O(n)` algorithm (Manacher's), but expanding around centres is the one to write first. Visiting centres from left to right and replacing the best only on a **strictly longer** palindrome keeps the leftmost one on ties.
-
 ## Explanation
 
 Manacher's algorithm. Put a separator between every pair of characters (and at both ends) so that even and odd palindromes both have a single centre, then compute at each centre the radius of the longest palindrome around it.

@@ -3,6 +3,7 @@ name: sheet-decode-ways
 title: 'Decode Ways'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
+theory: three-questions-to-ask-about-every-dp
 ---
 
 ## Statement
@@ -59,17 +60,6 @@ Output:
 
 - `0 <= len(s) <= 200000`
 - `s` contains only digits.
-
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-**State:** `ways(i)`, the number of ways to decode the first `i` digits. **Transition:** the last letter uses either one digit or two:
-
-- one digit `s[i - 1]` is valid when it is not `"0"`: add `ways(i - 1)`;
-- two digits `s[i - 2:i]` are valid when they form a number from 10 to 26: add `ways(i - 2)`.
-
-**Base cases:** `ways(0) = 1` (the empty string has one way). The table can be shrunk to two variables. `O(n)`.
 
 ## Explanation
 

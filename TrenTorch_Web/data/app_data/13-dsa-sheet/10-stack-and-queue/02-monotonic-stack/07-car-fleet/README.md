@@ -49,16 +49,6 @@ Output:
 - `0 <= position < target <= 10**9`, all positions different
 - `1 <= speed <= 10**6`
 
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-Sort the cars by position, **closest to the target first**. For each car compute the **time it would need alone**: `(target - position) / speed`. Going from the front of the road to the back: if a car behind needs **no more time** than the fleet ahead of it, it catches that fleet and joins it. If it needs **more time**, it is slower and forms a new fleet.
-
-So the number of fleets is the number of times the arrival time becomes **strictly larger** than every time before it (a new maximum). A stack keeps the fleets' times; the car behind is pushed only if its time is larger than the top.
-
-To avoid decimals, compare fractions exactly: `a/b > c/d` is `a*d > c*b`.
-
 ## Explanation
 
 After sorting from the car nearest the target, `slow_num / slow_den` is the arrival time of the fleet ahead. A car needing more time than that starts a new fleet. Exact fractions are compared by cross-multiplying.

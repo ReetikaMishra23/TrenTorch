@@ -44,14 +44,6 @@ False
 - `0 <= len(s), len(goal) <= 3 * 10**5`
 - Both strings contain lower-case letters.
 
-## Theory
-
-Trying every rotation costs `O(n²)`. There is a one-line trick: **every rotation of `s` appears inside `s + s`**. For `"abcde"`, `s + s = "abcdeabcde"` contains `"cdeab"` (starting at index 2), `"deabc"` (index 3), and so on.
-
-So `goal` is a rotation of `s` exactly when the lengths are equal and `goal in s + s`. The length check matters: `"ab"` is inside `"abab"`... and so is `"aba"`, which is not a rotation of `"ab"`.
-
-Python's `in` for strings is fast (it uses an optimised search), so this is practically linear.
-
 ## Explanation
 
 Different lengths can never be rotations. For equal lengths, `s + s` contains every rotation as a substring, so a single `in` test decides it. Two empty strings are rotations of each other.

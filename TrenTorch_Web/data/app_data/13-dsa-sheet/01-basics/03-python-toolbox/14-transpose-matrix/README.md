@@ -47,12 +47,6 @@ Output:
 - All rows have the same length.
 - Return new lists; do not change the input.
 
-## Theory
-
-`zip(a, b, c)` walks several iterables in step and yields tuples: the first elements together, then the second elements, and so on. If you give `zip` the **rows** of a matrix, it yields the **columns**: that is a transpose.
-
-`zip(*matrix)` unpacks the list of rows into separate arguments, so it works for any number of rows. Each result is a tuple, so wrap it with `list(...)` when lists are needed. List comprehensions like `[[row[j] for row in matrix] for j in range(cols)]` do the same job but are longer and slower.
-
 ## Explanation
 
 `[list(col) for col in zip(*matrix)]` builds each new row from one column. For `[]`, `zip()` yields nothing, and for `[[], []]` every row is empty, so `zip` stops immediately. Both give `[]`.

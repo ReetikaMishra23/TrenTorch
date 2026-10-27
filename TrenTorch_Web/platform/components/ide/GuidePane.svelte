@@ -77,6 +77,13 @@
 		);
 	});
 
+	// DSA sheet: the question's theory lives on the step's theory page, not in a tab.
+	let theoryHref = $derived.by(() => {
+		const theory = content.metadata.theory;
+		if (!theory) return null;
+		return resolve('/dsa/theory/[step]', { step: theory.step }) + `#${theory.anchor}`;
+	});
+
 	let activeTab = $state<'description' | 'theory' | 'hints' | 'solution' | 'discussion'>(
 		'description'
 	);
@@ -455,6 +462,22 @@
 			{#if constraintsHtml}
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				<div class="question-prose ide-prose">{@html constraintsHtml}</div>
+			{/if}
+			{#if theoryHref}
+				<div class="mt-8 border-t border-border pt-5">
+					<h2 class="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+						Theory
+					</h2>
+					<!-- eslint-disable svelte/no-navigation-without-resolve -- already passed through resolve() in theoryHref -->
+					<a
+						href={theoryHref}
+						class="inline-flex items-center gap-2 text-sm text-foreground underline decoration-border underline-offset-2 hover:decoration-foreground/50"
+					>
+						<BookOpen class="size-4 text-muted-foreground" />
+						Go to Theory
+					</a>
+					<!-- eslint-enable svelte/no-navigation-without-resolve -->
+				</div>
 			{/if}
 			{#if content.metadata.tags.length}
 				<div class="mt-8 border-t border-border pt-5">

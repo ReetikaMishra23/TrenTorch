@@ -47,14 +47,6 @@ Output:
 - `1 <= nums[i] <= 10**12`
 - The answer can have thousands of digits.
 
-## Theory
-
-The greatest common divisor (GCD) and LCM are linked: `lcm(a, b) = a * b // gcd(a, b)`. Python has both in `math`: `math.gcd` and, since Python 3.9, `math.lcm`, which accepts any number of arguments.
-
-To fold a list down to one value, `functools.reduce(f, items, start)` applies `f` to the running result and each next item. With `start = 1` an empty list falls out naturally as `1`.
-
-Python integers have no size limit, so the result can be as big as memory allows. That is a big advantage over languages with 64-bit integers, where this problem needs modular arithmetic or big-number classes.
-
 ## Explanation
 
 `reduce(math.lcm, nums, 1)` combines the values one at a time. Because `math.lcm(x, y)` is exact for any size, there is no overflow to worry about.

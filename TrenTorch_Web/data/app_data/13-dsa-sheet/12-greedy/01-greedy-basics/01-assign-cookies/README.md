@@ -46,14 +46,6 @@ Output:
 - `0 <= len(greed), len(sizes) <= 200000`
 - `1 <= greed[i], sizes[j] <= 10**9`
 
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-Give each cookie to the **least greedy child it can still satisfy**. Sort both lists. Go through the children from the least greedy; for each, use the **smallest cookie** that is big enough. A bigger cookie would also work, but it might be needed by a greedier child later, so using the smallest sufficient cookie wastes nothing.
-
-Two pointers do it in one pass after sorting: advance the cookie pointer until a cookie satisfies the current child, then move to the next child. `O(n log n)` for the sorts.
-
 ## Explanation
 
 `child` counts the happy children. Each cookie is looked at once, in increasing size, and it satisfies the current least greedy child if it can.

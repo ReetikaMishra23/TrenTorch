@@ -49,14 +49,6 @@ Output:
 - The tree is not deeper than 800 levels.
 - `-10**9 <= val <= 10**9`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-**Preorder** visits a node **before** its children. It is the order in which you would copy a tree, or print a folder with its contents indented below it.
-
-Iteratively, use a stack that holds the nodes still to be visited. Pop a node, record its value, then push its **right** child first and its **left** child second, so that the left child is popped next. Pushing right before left is the detail that keeps the order correct.
-
 ## Explanation
 
 The stack always has the next node on top. Because a stack is last in, first out, pushing right then left makes left come out first.

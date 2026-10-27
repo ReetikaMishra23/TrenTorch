@@ -43,14 +43,6 @@ Output:
 
 - `0 <= n < 2**62`
 
-## Theory
-
-`n & (n - 1)` clears the lowest set bit. The opposite, **isolating** it, is `n & -n`.
-
-Why it works: in two's complement, `-n` is `~n + 1`. Flipping all bits of `n` and adding 1 flips everything above the lowest set bit and keeps that bit and the zeros below it. So `n` and `-n` agree on exactly one set bit, the lowest, and `&` keeps only it.
-
-This trick is the heart of the **Fenwick tree** (binary indexed tree), which uses `i & -i` to jump around a prefix-sum array.
-
 ## Explanation
 
 `-n` has the same lowest set bit as `n` and the opposite of every bit above it, so `n & -n` is just that one bit. `0 & 0` is `0`.

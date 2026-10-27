@@ -49,12 +49,6 @@ Output:
 - `1 <= left` and `1 <= size`
 - `left + size - 1 <= number of nodes`
 
-## Theory
-
-Reversing the whole list is easy; reversing a middle part means reconnecting both **ends** of the part. Find the node `prev` just before position `left` (a dummy head handles `left = 1`). Then repeat `size - 1` times: take the node after the part's first node (`cur`), and **insert it right after `prev`**.
-
-Each round moves one node to the front of the part, which builds the reversed order one node at a time, and `cur` (the original first node of the part) slowly slides to the back, so its `next` ends up pointing at the rest of the list automatically. No separate reconnecting step is needed.
-
 ## Explanation
 
 `cur = prev.next` is the part's first node and stays fixed. In each round `nxt = cur.next` is cut out and put right after `prev`. After `size - 1` rounds the part is reversed and `cur` links to whatever followed it.

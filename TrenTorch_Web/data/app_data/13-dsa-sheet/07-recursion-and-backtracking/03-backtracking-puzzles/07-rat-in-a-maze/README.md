@@ -3,6 +3,7 @@ name: sheet-rat-in-a-maze
 title: 'Rat in a Maze'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Intermediate
+theory: find-a-path-through-a-maze
 ---
 
 ## Statement
@@ -45,14 +46,6 @@ Output:
 
 - `0 <= rows, cols <= 6`
 - Each cell is `0` or `1`.
-
-## Theory
-
-A depth-first search that **records the path** and **backtracks**: from the current cell try each of the four moves; if the next cell is inside the grid, open and not yet used on this path, step there and continue. When you reach the goal, save the path string. Then **unmark** the cell so other paths can use it.
-
-Trying the moves in the order `D, L, R, U` (alphabetical) makes the paths come out already sorted.
-
-The difference from a shortest-path search is that you want **all** paths, so you must undo the visited marks when you backtrack: a cell that was used by one path may be used by another.
 
 ## Explanation
 
