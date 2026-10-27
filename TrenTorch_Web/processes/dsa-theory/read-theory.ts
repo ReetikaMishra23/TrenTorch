@@ -9,7 +9,10 @@
 //     Python / C++ switch.
 // Math is written $inline$ or $$display$$ (KaTeX), same as every other curriculum markdown.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { cppLanguage } from '@codemirror/lang-cpp';
+import { pythonLanguage } from '@codemirror/lang-python';
+import { classHighlighter, highlightCode } from '@lezer/highlight';
 import DOMPurify from 'isomorphic-dompurify';
 import { Marked } from 'marked';
 import { markdownMath } from '../markdown/markdown-math';
@@ -78,6 +81,58 @@ function groupCodeBlocks(markdown: string): string {
 	);
 }
 
+const escapeHtml = (text: string) =>
+	text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/** Colours a code block at build time with the same parsers the code editor uses. */
+function highlight(code: string, lang: string | undefined): string {
+	const language = lang === 'python' ? pythonLanguage : lang === 'cpp' ? cppLanguage : null;
+	if (!language) return escapeHtml(code);
+	const tree = language.parser.parse(code);
+	let html = '';
+	highlightCode(
+		code,
+		tree,
+		classHighlighter,
+		(text, classes) => {
+			html += classes ? `<span class="${classes}">${escapeHtml(text)}</span>` : escapeHtml(text);
+		},
+		() => {
+			html += '\n';
+		}
+	);
+	return html;
+}
+
+/** Title -> question id for every question under a step folder, read from the README frontmatter. */
+function questionIds(stepDir: string): Map<string, string> {
+	const ids = new Map<string, string>();
+	for (const topic of readdirSync(stepDir, { withFileTypes: true })) {
+		if (!topic.isDirectory()) continue;
+		for (const question of readdirSync(join(stepDir, topic.name), { withFileTypes: true })) {
+			if (!question.isDirectory()) continue;
+			const readme = join(stepDir, topic.name, question.name, 'README.md');
+			if (!existsSync(readme)) continue;
+			const head = readFileSync(readme, 'utf8').split('\n---')[0];
+			const name = /^name: (.+)$/m.exec(head)?.[1]?.trim();
+			const title = /^title: '?(.+?)'?\s*$/m.exec(head)?.[1];
+			if (name && title) ids.set(title.replace(/''/g, "'"), name);
+		}
+	}
+	return ids;
+}
+
+/** Turns "the problem *Name*" into a link to that question when the sheet has it. */
+function linkQuestions(markdown: string, ids: Map<string, string>): string {
+	return markdown.replace(
+		/(problems?) (\*\*|\*|_)([^*_\n]+)\2/g,
+		(all, word: string, _mark: string, title: string) => {
+			const id = ids.get(title.trim());
+			return id ? `${word} [${title}](/ide/${id})` : all;
+		}
+	);
+}
+
 export function renderTheory(step: TheoryStep): TheoryPage {
 	const markdown = readFileSync(step.file, 'utf8');
 	const toc: TocEntry[] = [];
@@ -92,6 +147,11 @@ export function renderTheory(step: TheoryStep): TheoryPage {
 	marked.use(markdownMath({ throwOnError: false }));
 	marked.use({
 		renderer: {
+			code({ text, lang }) {
+				const language = lang?.trim().split(/\s+/)[0];
+				const cls = language ? ` class="language-${escapeHtml(language)}"` : '';
+				return `<pre><code${cls}>${highlight(text, language)}</code></pre>\n`;
+			},
 			heading({ tokens, depth }) {
 				const html = this.parser.parseInline(tokens);
 				const text = tokens.map((t) => ('text' in t ? String(t.text) : '')).join('');
@@ -106,7 +166,10 @@ export function renderTheory(step: TheoryStep): TheoryPage {
 		}
 	});
 
-	const dirty = marked.parse(groupCodeBlocks(markdown), { async: false }) as string;
+	const dirty = marked.parse(
+		groupCodeBlocks(linkQuestions(markdown, questionIds(dirname(step.file)))),
+		{ async: false }
+	) as string;
 	const html = DOMPurify.sanitize(dirty);
 	return { step: step.step, title: step.title, html, toc };
 }

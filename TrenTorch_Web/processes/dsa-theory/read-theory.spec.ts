@@ -55,3 +55,12 @@ describe('question theory anchors', () => {
 		30_000
 	);
 });
+
+describe('question links', () => {
+	it('turns "the problem *Title*" into a link to that sheet question', () => {
+		const step = listTheorySteps().find((s) => s.step === 'dynamic-programming');
+		if (!step) throw new Error('dynamic-programming theory missing');
+		const html = renderTheory(step).html;
+		expect(html).toContain('<a href="/ide/sheet-house-robber">House Robber</a>');
+	}, 60_000);
+});

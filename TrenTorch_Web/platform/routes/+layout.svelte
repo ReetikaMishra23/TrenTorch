@@ -20,8 +20,11 @@
 	let showFooter = $derived(page.url.pathname === '/');
 
 	// The IDE has its own single top bar (logo, back, Run, Submit, account), so the
-	// site navbar steps aside there and the workspace gets its height back.
-	let showNavbar = $derived(!page.url.pathname.startsWith('/ide'));
+	// site navbar steps aside there and the workspace gets its height back. The long theory
+	// pages hide it too, so the side menu and the text get the full height.
+	let showNavbar = $derived(
+		!page.url.pathname.startsWith('/ide') && !page.url.pathname.startsWith('/dsa/theory')
+	);
 </script>
 
 <svelte:head>
