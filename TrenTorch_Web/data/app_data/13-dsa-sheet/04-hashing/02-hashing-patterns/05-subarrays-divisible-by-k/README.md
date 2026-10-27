@@ -3,6 +3,7 @@ name: sheet-subarrays-divisible-by-k
 title: 'Subarrays Divisible by K'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Advanced
+theory: remainders-instead-of-sums
 ---
 
 ## Statement

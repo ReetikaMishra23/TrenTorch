@@ -3,6 +3,7 @@ name: sheet-set-matrix-zeroes
 title: 'Set Matrix Zeroes'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: row-and-column-flags
 ---
 
 ## Statement

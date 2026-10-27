@@ -3,6 +3,7 @@ name: sheet-and-of-range
 title: 'Bitwise AND of a Range'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Advanced
+theory: and-of-a-range-of-numbers
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-majority-element-thirds
 title: 'Elements Appearing More Than n/3 Times'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: more-than-a-third
 ---
 
 ## Statement

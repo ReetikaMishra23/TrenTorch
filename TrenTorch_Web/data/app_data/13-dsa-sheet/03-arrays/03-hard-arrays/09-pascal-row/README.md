@@ -3,6 +3,7 @@ name: sheet-pascal-row
 title: 'A Row of Pascal's Triangle'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Intermediate
+theory: a-row-of-pascal-s-triangle
 ---
 
 ## Statement

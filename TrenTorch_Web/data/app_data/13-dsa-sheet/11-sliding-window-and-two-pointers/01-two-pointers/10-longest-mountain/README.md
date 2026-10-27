@@ -3,6 +3,7 @@ name: sheet-longest-mountain
 title: 'Longest Mountain in an Array'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Intermediate
+theory: the-longest-mountain
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-next-greater-element
 title: 'Next Greater Element'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: a-waiting-room
 ---
 
 ## Statement

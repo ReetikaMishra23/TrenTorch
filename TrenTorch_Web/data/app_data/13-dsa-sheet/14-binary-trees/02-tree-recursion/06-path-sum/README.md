@@ -3,6 +3,7 @@ name: sheet-path-sum
 title: 'Root-to-Leaf Path Sum'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Beginner
+theory: root-to-leaf-path-sum
 ---
 
 ## Statement

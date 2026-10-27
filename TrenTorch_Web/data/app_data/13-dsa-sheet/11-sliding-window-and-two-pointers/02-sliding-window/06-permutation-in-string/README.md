@@ -3,6 +3,7 @@ name: sheet-permutation-in-string
 title: 'Permutation in a String'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: windows-of-letter-counts
 ---
 
 ## Statement

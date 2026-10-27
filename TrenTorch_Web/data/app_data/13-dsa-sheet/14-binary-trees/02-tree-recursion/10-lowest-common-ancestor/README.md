@@ -3,6 +3,7 @@ name: sheet-lowest-common-ancestor
 title: 'Lowest Common Ancestor'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Intermediate
+theory: lowest-common-ancestor
 ---
 
 ## Statement

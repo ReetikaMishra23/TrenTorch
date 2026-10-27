@@ -3,6 +3,7 @@ name: sheet-majority-element
 title: 'Majority Element'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: the-majority-vote
 ---
 
 ## Statement

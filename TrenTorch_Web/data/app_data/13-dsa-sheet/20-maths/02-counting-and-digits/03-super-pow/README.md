@@ -3,7 +3,7 @@ name: sheet-super-pow
 title: 'Super Power'
 tags: [dsa-sheet, maths, counting-and-digits]
 difficulty: Advanced
-theory: fast-exponentiation
+theory: powers-with-a-huge-exponent-given-as-digits
 ---
 
 ## Statement

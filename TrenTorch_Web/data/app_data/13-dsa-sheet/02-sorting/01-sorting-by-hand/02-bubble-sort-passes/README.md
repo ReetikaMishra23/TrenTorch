@@ -3,6 +3,7 @@ name: sheet-bubble-sort-passes
 title: 'How Many Bubble Sort Passes?'
 tags: [dsa-sheet, sorting, sorting-by-hand]
 difficulty: Beginner
+theory: how-many-passes
 ---
 
 ## Statement

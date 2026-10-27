@@ -3,6 +3,7 @@ name: sheet-reverse-vowels
 title: 'Reverse the Vowels'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: swapping-from-both-ends
 ---
 
 ## Statement

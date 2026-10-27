@@ -3,7 +3,7 @@ name: sheet-unique-permutations
 title: 'Permutations With Repeated Values'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Intermediate
-theory: unique-permutations
+theory: repeated-values-in-permutations
 ---
 
 ## Statement

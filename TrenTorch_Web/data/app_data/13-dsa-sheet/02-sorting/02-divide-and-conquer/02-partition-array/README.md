@@ -3,6 +3,7 @@ name: sheet-partition-array
 title: 'Partition Around the Last Value'
 tags: [dsa-sheet, sorting, divide-and-conquer]
 difficulty: Intermediate
+theory: partition-step-by-step
 ---
 
 ## Statement

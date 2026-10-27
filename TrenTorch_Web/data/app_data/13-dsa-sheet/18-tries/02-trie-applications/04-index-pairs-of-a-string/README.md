@@ -3,6 +3,7 @@ name: sheet-index-pairs-of-a-string
 title: 'Index Pairs of a String'
 tags: [dsa-sheet, tries, trie-applications]
 difficulty: Intermediate
+theory: all-stored-words-that-start-at-a-position
 ---
 
 ## Statement

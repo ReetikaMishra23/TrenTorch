@@ -3,6 +3,7 @@ name: sheet-count-inversions
 title: 'Count Inversions'
 tags: [dsa-sheet, sorting, divide-and-conquer]
 difficulty: Advanced
+theory: counting-while-merging
 ---
 
 ## Statement

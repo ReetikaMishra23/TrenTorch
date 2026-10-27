@@ -3,6 +3,7 @@ name: sheet-implement-trie
 title: 'Implement a Trie'
 tags: [dsa-sheet, tries, trie-basics]
 difficulty: Beginner
+theory: search-and-starts-with
 ---
 
 ## Statement

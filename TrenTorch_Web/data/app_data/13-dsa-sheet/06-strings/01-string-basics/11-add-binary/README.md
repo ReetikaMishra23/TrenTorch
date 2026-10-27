@@ -3,6 +3,7 @@ name: sheet-add-binary
 title: 'Add Binary Strings'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: adding-with-a-carry
 ---
 
 ## Statement

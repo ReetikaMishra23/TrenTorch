@@ -3,7 +3,7 @@ name: sheet-all-subsets
 title: 'All Subsets'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Beginner
-theory: generate-subsets-with-include-exclude
+theory: subsets-in-dictionary-order
 ---
 
 ## Statement

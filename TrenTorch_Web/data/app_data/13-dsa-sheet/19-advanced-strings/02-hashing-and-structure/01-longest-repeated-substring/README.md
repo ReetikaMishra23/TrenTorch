@@ -3,6 +3,7 @@ name: sheet-longest-repeated-substring
 title: 'Longest Repeated Substring'
 tags: [dsa-sheet, advanced-strings, hashing-and-structure]
 difficulty: Mastery
+theory: binary-search-on-the-length-longest-repeated-substring
 ---
 
 ## Statement

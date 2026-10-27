@@ -3,6 +3,7 @@ name: sheet-single-number-ii
 title: 'Single Number, Others Three Times'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Advanced
+theory: everything-else-appears-three-times
 ---
 
 ## Statement

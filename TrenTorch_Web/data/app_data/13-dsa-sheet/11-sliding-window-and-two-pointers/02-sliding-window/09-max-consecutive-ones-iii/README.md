@@ -3,6 +3,7 @@ name: sheet-max-consecutive-ones-iii
 title: 'Longest Run of Ones After K Flips'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: flipping-zeros
 ---
 
 ## Statement

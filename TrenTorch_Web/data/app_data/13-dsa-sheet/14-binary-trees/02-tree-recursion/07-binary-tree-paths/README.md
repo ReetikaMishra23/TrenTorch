@@ -3,6 +3,7 @@ name: sheet-binary-tree-paths
 title: 'All Root-to-Leaf Paths'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Intermediate
+theory: listing-all-root-to-leaf-paths
 ---
 
 ## Statement

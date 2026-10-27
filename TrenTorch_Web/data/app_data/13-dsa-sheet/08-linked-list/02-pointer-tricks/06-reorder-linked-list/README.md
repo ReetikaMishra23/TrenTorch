@@ -3,6 +3,7 @@ name: sheet-reorder-linked-list
 title: 'Reorder a Linked List'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Advanced
+theory: halve-reverse-weave
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-nth-fibonacci
 title: 'Nth Fibonacci Number'
 tags: [dsa-sheet, basics, make-it-fast]
 difficulty: Intermediate
+theory: fibonacci-slowly-and-then-very-quickly
 ---
 
 ## Statement

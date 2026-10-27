@@ -3,6 +3,7 @@ name: sheet-linked-list-cycle-start
 title: 'Where Does the Cycle Start?'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Advanced
+theory: where-does-the-loop-begin
 ---
 
 ## Statement

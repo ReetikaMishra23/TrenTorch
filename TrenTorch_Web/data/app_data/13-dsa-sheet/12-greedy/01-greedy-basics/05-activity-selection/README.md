@@ -3,6 +3,7 @@ name: sheet-activity-selection
 title: 'Activity Selection'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Intermediate
+theory: activity-selection
 ---
 
 ## Statement

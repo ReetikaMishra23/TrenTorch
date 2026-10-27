@@ -3,6 +3,7 @@ name: sheet-rotation-count
 title: 'How Many Times Was It Rotated?'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Intermediate
+theory: how-many-rotations
 ---
 
 ## Statement

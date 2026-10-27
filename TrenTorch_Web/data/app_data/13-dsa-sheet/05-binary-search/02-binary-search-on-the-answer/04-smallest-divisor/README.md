@@ -3,6 +3,7 @@ name: sheet-smallest-divisor
 title: 'Smallest Divisor Within a Threshold'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Intermediate
+theory: same-pattern-new-stories
 ---
 
 ## Statement

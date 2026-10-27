@@ -3,7 +3,7 @@ name: sheet-n-queens-count
 title: 'N Queens: Count the Solutions'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Advanced
-theory: faster-conflict-tracking
+theory: queens-that-do-not-attack
 ---
 
 ## Statement

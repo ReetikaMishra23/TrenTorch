@@ -3,6 +3,7 @@ name: sheet-calculator-ii
 title: 'Basic Calculator'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: plus-minus-times-and-divide
 ---
 
 ## Statement

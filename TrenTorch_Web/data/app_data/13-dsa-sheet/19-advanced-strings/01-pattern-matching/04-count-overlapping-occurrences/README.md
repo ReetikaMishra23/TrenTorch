@@ -3,6 +3,7 @@ name: sheet-count-overlapping-occurrences
 title: 'Count Overlapping Occurrences'
 tags: [dsa-sheet, advanced-strings, pattern-matching]
 difficulty: Intermediate
+theory: counting-overlapping-occurrences
 ---
 
 ## Statement

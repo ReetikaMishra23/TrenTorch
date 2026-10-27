@@ -3,6 +3,7 @@ name: sheet-count-subarrays-xor-k
 title: 'Subarrays With XOR K'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: prefix-xor
 ---
 
 ## Statement

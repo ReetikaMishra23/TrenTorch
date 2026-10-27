@@ -3,6 +3,7 @@ name: sheet-repeating-and-missing
 title: 'Repeating and Missing Number'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Intermediate
+theory: two-unknowns-need-two-equations
 ---
 
 ## Statement

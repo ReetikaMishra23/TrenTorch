@@ -3,6 +3,7 @@ name: sheet-count-halving-steps
 title: 'Halving Steps'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Beginner
+theory: halving-gives-a-logarithm
 ---
 
 ## Statement

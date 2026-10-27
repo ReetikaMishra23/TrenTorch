@@ -3,6 +3,7 @@ name: sheet-first-unique-character
 title: 'First Unique Character'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Beginner
+theory: counting-letters
 ---
 
 ## Statement

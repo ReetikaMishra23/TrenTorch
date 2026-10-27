@@ -3,6 +3,7 @@ name: sheet-largest-n-for-budget
 title: 'How Big Can n Be?'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Intermediate
+theory: how-big-can-n-be
 ---
 
 ## Statement

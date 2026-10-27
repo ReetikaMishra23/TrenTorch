@@ -3,6 +3,7 @@ name: sheet-remove-linked-list-elements
 title: 'Remove Matching Nodes'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Beginner
+theory: delete-every-match
 ---
 
 ## Statement

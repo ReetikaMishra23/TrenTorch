@@ -3,6 +3,7 @@ name: sheet-swap-nodes-in-pairs
 title: 'Swap Nodes in Pairs'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Intermediate
+theory: swapping-neighbours
 ---
 
 ## Statement

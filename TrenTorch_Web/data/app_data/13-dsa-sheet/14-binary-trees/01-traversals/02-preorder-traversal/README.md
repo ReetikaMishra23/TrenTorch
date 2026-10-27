@@ -3,6 +3,7 @@ name: sheet-preorder-traversal
 title: 'Preorder Traversal'
 tags: [dsa-sheet, binary-trees, traversals]
 difficulty: Beginner
+theory: iterative-preorder
 ---
 
 ## Statement

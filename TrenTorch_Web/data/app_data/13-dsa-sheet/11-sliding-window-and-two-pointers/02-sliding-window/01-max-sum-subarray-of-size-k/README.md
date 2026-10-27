@@ -3,6 +3,7 @@ name: sheet-max-sum-subarray-of-size-k
 title: 'Maximum Sum of K Consecutive Values'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Beginner
+theory: the-best-block-of-k-values
 ---
 
 ## Statement

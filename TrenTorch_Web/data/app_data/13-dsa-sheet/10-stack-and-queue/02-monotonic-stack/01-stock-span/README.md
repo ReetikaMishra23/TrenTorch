@@ -3,6 +3,7 @@ name: sheet-stock-span
 title: 'Stock Span'
 tags: [dsa-sheet, stack-and-queue, monotonic-stack]
 difficulty: Intermediate
+theory: looking-to-the-left
 ---
 
 ## Statement

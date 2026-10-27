@@ -3,6 +3,7 @@ name: sheet-subarray-product-less-than-k
 title: 'Subarrays With Product Less Than K'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: counting-windows-product-below-k
 ---
 
 ## Statement

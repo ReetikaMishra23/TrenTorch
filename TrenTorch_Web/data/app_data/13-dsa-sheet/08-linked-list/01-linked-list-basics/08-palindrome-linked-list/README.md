@@ -3,6 +3,7 @@ name: sheet-palindrome-linked-list
 title: 'Palindrome Linked List'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Intermediate
+theory: halve-reverse-compare
 ---
 
 ## Statement

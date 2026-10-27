@@ -3,6 +3,7 @@ name: sheet-container-with-most-water
 title: 'Container With Most Water'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Intermediate
+theory: the-widest-container
 ---
 
 ## Statement

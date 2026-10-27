@@ -3,6 +3,7 @@ name: sheet-string-to-integer
 title: 'String to Integer'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Intermediate
+theory: parsing-a-number-with-rules
 ---
 
 ## Statement

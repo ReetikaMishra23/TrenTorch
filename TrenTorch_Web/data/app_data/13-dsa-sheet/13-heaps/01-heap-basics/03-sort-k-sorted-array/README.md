@@ -3,6 +3,7 @@ name: sheet-sort-k-sorted-array
 title: 'Sort a Nearly Sorted Array'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: a-sliding-buffer-for-nearly-sorted-data
 ---
 
 ## Statement

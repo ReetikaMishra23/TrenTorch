@@ -3,6 +3,7 @@ name: sheet-search-suggestions-system
 title: 'Search Suggestions'
 tags: [dsa-sheet, tries, trie-basics]
 difficulty: Intermediate
+theory: suggestions-after-every-typed-letter
 ---
 
 ## Statement

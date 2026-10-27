@@ -3,6 +3,7 @@ name: sheet-postorder-traversal
 title: 'Postorder Traversal'
 tags: [dsa-sheet, binary-trees, traversals]
 difficulty: Intermediate
+theory: iterative-postorder
 ---
 
 ## Statement

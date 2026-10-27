@@ -3,6 +3,7 @@ name: sheet-minimum-arrows-to-burst-balloons
 title: 'Minimum Arrows to Burst Balloons'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Intermediate
+theory: fewest-arrows-for-balloons
 ---
 
 ## Statement

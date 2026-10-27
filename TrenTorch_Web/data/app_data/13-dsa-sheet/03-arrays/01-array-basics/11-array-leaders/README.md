@@ -3,6 +3,7 @@ name: sheet-array-leaders
 title: 'Leaders in an Array'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: scanning-from-the-right
 ---
 
 ## Statement

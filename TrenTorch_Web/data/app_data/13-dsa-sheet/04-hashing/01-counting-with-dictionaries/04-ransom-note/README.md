@@ -3,6 +3,7 @@ name: sheet-ransom-note
 title: 'Ransom Note'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Beginner
+theory: counting-up-and-counting-down
 ---
 
 ## Statement

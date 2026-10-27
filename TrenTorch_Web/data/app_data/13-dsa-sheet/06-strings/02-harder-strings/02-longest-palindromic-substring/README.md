@@ -3,6 +3,7 @@ name: sheet-longest-palindromic-substring
 title: 'Longest Palindromic Substring'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Advanced
+theory: the-longest-palindromic-substring
 ---
 
 ## Statement

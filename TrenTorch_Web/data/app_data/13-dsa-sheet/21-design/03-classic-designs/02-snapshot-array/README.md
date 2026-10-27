@@ -3,6 +3,7 @@ name: sheet-snapshot-array
 title: 'Snapshot Array'
 tags: [dsa-sheet, design, classic-designs]
 difficulty: Advanced
+theory: snapshots-without-copying
 ---
 
 ## Statement

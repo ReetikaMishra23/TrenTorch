@@ -3,6 +3,7 @@ name: sheet-kth-of-two-sorted
 title: 'Kth Value of Two Sorted Lists'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Mastery
+theory: searching-for-the-cut
 ---
 
 ## Statement

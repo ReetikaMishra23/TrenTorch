@@ -3,6 +3,7 @@ name: sheet-longest-zero-sum-subarray
 title: 'Longest Zero-Sum Subarray'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Intermediate
+theory: equal-prefix-sums-mean-a-zero-run
 ---
 
 ## Statement

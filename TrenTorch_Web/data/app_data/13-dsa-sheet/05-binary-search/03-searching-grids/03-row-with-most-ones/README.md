@@ -3,6 +3,7 @@ name: sheet-row-with-most-ones
 title: 'Row With the Most Ones'
 tags: [dsa-sheet, binary-search, searching-grids]
 difficulty: Intermediate
+theory: the-row-with-the-most-ones
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-build-tree-from-preorder-and-inorder
 title: 'Build a Tree From Preorder and Inorder'
 tags: [dsa-sheet, binary-trees, build-and-transform]
 difficulty: Advanced
+theory: building-from-preorder-and-inorder
 ---
 
 ## Statement

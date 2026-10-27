@@ -3,6 +3,7 @@ name: sheet-shortest-subarray-with-sum-at-least-k
 title: 'Shortest Subarray With Sum at Least K'
 tags: [dsa-sheet, stack-and-queue, queues-and-deques]
 difficulty: Mastery
+theory: negative-numbers-and-prefix-sums
 ---
 
 ## Statement

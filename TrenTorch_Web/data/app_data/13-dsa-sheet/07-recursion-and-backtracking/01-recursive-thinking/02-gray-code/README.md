@@ -3,7 +3,7 @@ name: sheet-gray-code
 title: 'Gray Code'
 tags: [dsa-sheet, recursion, recursive-thinking]
 difficulty: Intermediate
-theory: designing-a-recursive-solution
+theory: building-a-list-from-a-smaller-list
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-kth-largest
 title: 'Kth Largest Value'
 tags: [dsa-sheet, sorting, divide-and-conquer]
 difficulty: Intermediate
+theory: k-th-largest-and-the-cost
 ---
 
 ## Statement

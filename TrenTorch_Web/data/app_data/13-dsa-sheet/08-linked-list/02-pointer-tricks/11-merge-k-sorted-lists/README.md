@@ -3,6 +3,7 @@ name: sheet-merge-k-sorted-lists
 title: 'Merge K Sorted Lists'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Advanced
+theory: always-take-the-smallest-front
 ---
 
 ## Statement

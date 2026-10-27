@@ -3,6 +3,7 @@ name: sheet-queue-with-two-stacks
 title: 'Queue Made of Two Stacks'
 tags: [dsa-sheet, stack-and-queue, queues-and-deques]
 difficulty: Intermediate
+theory: why-it-is-fast-on-average
 ---
 
 ## Statement

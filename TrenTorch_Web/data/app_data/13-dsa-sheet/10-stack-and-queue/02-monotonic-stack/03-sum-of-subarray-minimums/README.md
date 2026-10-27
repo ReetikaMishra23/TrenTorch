@@ -3,6 +3,7 @@ name: sheet-sum-of-subarray-minimums
 title: 'Sum of Subarray Minimums'
 tags: [dsa-sheet, stack-and-queue, monotonic-stack]
 difficulty: Advanced
+theory: counting-by-contribution
 ---
 
 ## Statement

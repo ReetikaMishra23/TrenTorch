@@ -3,6 +3,7 @@ name: sheet-find-the-needle
 title: 'Find the Needle'
 tags: [dsa-sheet, advanced-strings, pattern-matching]
 difficulty: Intermediate
+theory: find-the-first-occurrence
 ---
 
 ## Statement

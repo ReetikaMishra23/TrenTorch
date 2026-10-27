@@ -3,6 +3,7 @@ name: sheet-count-and-say
 title: 'Count and Say'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Intermediate
+theory: reading-a-string-aloud
 ---
 
 ## Statement

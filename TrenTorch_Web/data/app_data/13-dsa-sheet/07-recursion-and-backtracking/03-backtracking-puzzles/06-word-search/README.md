@@ -3,7 +3,7 @@ name: sheet-word-search
 title: 'Word Search'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Intermediate
-theory: grid-paths-and-maze-search
+theory: hunting-for-a-word-in-a-grid
 ---
 
 ## Statement

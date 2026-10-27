@@ -3,6 +3,7 @@ name: sheet-search-in-rotated
 title: 'Search in a Rotated List'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Intermediate
+theory: searching-a-rotated-list
 ---
 
 ## Statement

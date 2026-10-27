@@ -3,6 +3,7 @@ name: sheet-median-two-sorted
 title: 'Median of Two Sorted Lists'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Mastery
+theory: the-median
 ---
 
 ## Statement

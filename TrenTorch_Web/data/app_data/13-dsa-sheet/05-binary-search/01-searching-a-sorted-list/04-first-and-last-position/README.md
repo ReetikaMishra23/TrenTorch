@@ -3,6 +3,7 @@ name: sheet-first-and-last-position
 title: 'First and Last Position'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Intermediate
+theory: first-last-and-how-many
 ---
 
 ## Statement

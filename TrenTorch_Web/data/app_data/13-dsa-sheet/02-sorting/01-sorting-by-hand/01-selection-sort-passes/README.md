@@ -3,6 +3,7 @@ name: sheet-selection-sort-passes
 title: 'Selection Sort, Pass by Pass'
 tags: [dsa-sheet, sorting, sorting-by-hand]
 difficulty: Beginner
+theory: selection-sort-pass-by-pass
 ---
 
 ## Statement

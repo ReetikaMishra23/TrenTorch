@@ -3,6 +3,7 @@ name: sheet-zigzag-conversion
 title: 'Zigzag Conversion'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Intermediate
+theory: bouncing-up-and-down
 ---
 
 ## Statement

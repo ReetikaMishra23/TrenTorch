@@ -3,6 +3,7 @@ name: sheet-count-set-bits
 title: 'Count the Set Bits'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Beginner
+theory: counting-set-bits-faster
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-maximum-points-from-cards
 title: 'Maximum Points From Cards'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: taking-cards-from-the-ends
 ---
 
 ## Statement

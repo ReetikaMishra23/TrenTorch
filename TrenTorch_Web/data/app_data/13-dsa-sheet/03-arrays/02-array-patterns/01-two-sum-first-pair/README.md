@@ -3,6 +3,7 @@ name: sheet-two-sum-first-pair
 title: 'Two Sum: First Pair'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Beginner
+theory: looking-back-for-a-partner
 ---
 
 ## Statement

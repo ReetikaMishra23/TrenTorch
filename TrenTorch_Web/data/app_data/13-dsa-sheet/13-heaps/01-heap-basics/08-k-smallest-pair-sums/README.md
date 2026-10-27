@@ -3,6 +3,7 @@ name: sheet-k-smallest-pair-sums
 title: 'K Smallest Pair Sums'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Advanced
+theory: pairs-are-secretly-sorted-lists
 ---
 
 ## Statement

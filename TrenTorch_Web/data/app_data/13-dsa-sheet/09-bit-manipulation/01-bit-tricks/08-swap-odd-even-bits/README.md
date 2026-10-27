@@ -3,6 +3,7 @@ name: sheet-swap-odd-even-bits
 title: 'Swap Odd and Even Bits'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Intermediate
+theory: masks-that-pick-out-many-bits
 ---
 
 ## Statement

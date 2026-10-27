@@ -3,6 +3,7 @@ name: sheet-gas-station
 title: 'Gas Station'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Intermediate
+theory: gas-station
 ---
 
 ## Statement

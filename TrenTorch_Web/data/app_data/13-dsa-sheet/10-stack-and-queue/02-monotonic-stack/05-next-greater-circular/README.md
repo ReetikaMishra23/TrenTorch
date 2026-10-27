@@ -3,6 +3,7 @@ name: sheet-next-greater-circular
 title: 'Next Greater Element in a Circle'
 tags: [dsa-sheet, stack-and-queue, monotonic-stack]
 difficulty: Intermediate
+theory: going-around-a-circle
 ---
 
 ## Statement

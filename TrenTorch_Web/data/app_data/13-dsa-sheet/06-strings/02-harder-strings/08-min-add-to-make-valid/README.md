@@ -3,6 +3,7 @@ name: sheet-min-add-to-make-valid
 title: 'Minimum Insertions to Balance Parentheses'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Intermediate
+theory: when-the-counter-cannot-go-below-zero
 ---
 
 ## Statement

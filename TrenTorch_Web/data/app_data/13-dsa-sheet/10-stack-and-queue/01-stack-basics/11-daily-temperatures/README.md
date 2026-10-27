@@ -3,6 +3,7 @@ name: sheet-daily-temperatures
 title: 'Daily Temperatures'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: counting-the-days-until
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-rotate-linked-list
 title: 'Rotate a Linked List'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Intermediate
+theory: rotating-with-a-ring
 ---
 
 ## Statement

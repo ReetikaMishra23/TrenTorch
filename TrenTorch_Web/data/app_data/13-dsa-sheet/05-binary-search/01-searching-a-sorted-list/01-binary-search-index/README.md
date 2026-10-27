@@ -3,6 +3,7 @@ name: sheet-binary-search-index
 title: 'Binary Search'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Beginner
+theory: binary-search-on-a-list
 ---
 
 ## Statement

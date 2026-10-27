@@ -3,6 +3,7 @@ name: sheet-total-hamming-distance
 title: 'Total Hamming Distance'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Advanced
+theory: total-hamming-distance
 ---
 
 ## Statement

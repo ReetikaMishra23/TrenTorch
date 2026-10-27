@@ -3,6 +3,7 @@ name: sheet-three-sum-closest
 title: 'Three Sum Closest'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Intermediate
+theory: three-numbers-closest-sum
 ---
 
 ## Statement

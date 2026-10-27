@@ -3,6 +3,7 @@ name: sheet-longest-common-prefix
 title: 'Longest Common Prefix'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: comparing-column-by-column
 ---
 
 ## Statement

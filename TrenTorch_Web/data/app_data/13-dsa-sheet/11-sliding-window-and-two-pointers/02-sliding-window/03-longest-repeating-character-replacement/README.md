@@ -3,6 +3,7 @@ name: sheet-longest-repeating-character-replacement
 title: 'Longest Repeating Character Replacement'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Advanced
+theory: replacing-letters
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-common-values
 title: 'Common Values'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Beginner
+theory: sets-for-comparing-two-lists
 ---
 
 ## Statement

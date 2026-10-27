@@ -3,6 +3,7 @@ name: sheet-insert-into-a-bst
 title: 'Insert into a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Beginner
+theory: inserting-a-new-leaf
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-valid-palindrome
 title: 'Valid Palindrome'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: skipping-characters-we-do-not-care-about
 ---
 
 ## Statement

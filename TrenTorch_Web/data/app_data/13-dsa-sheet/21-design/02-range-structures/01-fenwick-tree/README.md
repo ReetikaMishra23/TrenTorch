@@ -3,6 +3,7 @@ name: sheet-fenwick-tree
 title: 'Fenwick Tree (Prefix Sums With Updates)'
 tags: [dsa-sheet, design, range-structures]
 difficulty: Advanced
+theory: query-update-and-set
 ---
 
 ## Statement

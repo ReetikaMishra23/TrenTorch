@@ -3,6 +3,7 @@ name: sheet-exact-isqrt
 title: 'Exact Square Root'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: maths-helpers-and-big-numbers
 ---
 
 ## Statement

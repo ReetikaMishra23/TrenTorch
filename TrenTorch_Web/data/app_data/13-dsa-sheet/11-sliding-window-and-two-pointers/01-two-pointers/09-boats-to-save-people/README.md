@@ -3,6 +3,7 @@ name: sheet-boats-to-save-people
 title: 'Boats to Save People'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Intermediate
+theory: pairing-the-heavy-with-the-light
 ---
 
 ## Statement

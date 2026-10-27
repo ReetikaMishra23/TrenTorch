@@ -3,7 +3,7 @@ name: sheet-graph-coloring
 title: 'Can the Graph Be Coloured?'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Advanced
-theory: graph-coloring
+theory: colouring-a-graph
 ---
 
 ## Statement

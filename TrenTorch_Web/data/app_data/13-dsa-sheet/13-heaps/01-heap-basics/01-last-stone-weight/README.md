@@ -3,6 +3,7 @@ name: sheet-last-stone-weight
 title: 'Last Stone Weight'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Beginner
+theory: smash-the-heaviest-stones
 ---
 
 ## Statement

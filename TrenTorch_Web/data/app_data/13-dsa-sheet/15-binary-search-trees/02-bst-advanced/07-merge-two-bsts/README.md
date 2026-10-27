@@ -3,6 +3,7 @@ name: sheet-merge-two-bsts
 title: 'Merge Two BSTs into a Sorted List'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Intermediate
+theory: merging-two-bsts-into-a-sorted-list
 ---
 
 ## Statement

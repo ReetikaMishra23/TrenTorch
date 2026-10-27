@@ -3,6 +3,7 @@ name: sheet-sort-by-frequency
 title: 'Sort Characters by Frequency'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: sorting-the-characters-of-a-string
 ---
 
 ## Statement

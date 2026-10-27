@@ -3,6 +3,7 @@ name: sheet-compress-runs
 title: 'Compress Repeated Characters'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: compressing-runs
 ---
 
 ## Statement

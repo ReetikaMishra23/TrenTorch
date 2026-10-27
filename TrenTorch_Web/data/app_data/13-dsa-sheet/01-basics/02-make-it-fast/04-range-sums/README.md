@@ -3,6 +3,7 @@ name: sheet-range-sums
 title: 'Range Sum Queries'
 tags: [dsa-sheet, basics, make-it-fast]
 difficulty: Intermediate
+theory: prefix-sums-for-many-range-questions
 ---
 
 ## Statement

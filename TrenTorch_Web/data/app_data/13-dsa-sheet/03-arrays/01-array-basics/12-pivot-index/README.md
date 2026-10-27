@@ -3,6 +3,7 @@ name: sheet-pivot-index
 title: 'Balance Point'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: left-sum-equals-right-sum
 ---
 
 ## Statement

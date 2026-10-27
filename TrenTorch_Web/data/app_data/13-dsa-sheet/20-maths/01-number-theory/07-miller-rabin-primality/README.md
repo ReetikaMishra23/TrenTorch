@@ -3,7 +3,7 @@ name: sheet-miller-rabin-primality
 title: 'Is It Prime? (Large Numbers)'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Mastery
-theory: the-miller-rabin-idea
+theory: the-stronger-test
 ---
 
 ## Statement

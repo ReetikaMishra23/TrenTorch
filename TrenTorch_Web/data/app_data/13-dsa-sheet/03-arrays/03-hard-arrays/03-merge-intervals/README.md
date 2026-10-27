@@ -3,6 +3,7 @@ name: sheet-merge-intervals
 title: 'Merge Intervals'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Intermediate
+theory: merging-overlapping-intervals
 ---
 
 ## Statement

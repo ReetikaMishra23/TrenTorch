@@ -3,6 +3,7 @@ name: sheet-remove-adjacent-duplicates
 title: 'Remove Adjacent Duplicates'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Beginner
+theory: neighbours-that-cancel
 ---
 
 ## Statement

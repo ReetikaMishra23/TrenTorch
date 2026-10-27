@@ -3,6 +3,7 @@ name: sheet-maximal-rectangle
 title: 'Maximal Rectangle of Ones'
 tags: [dsa-sheet, stack-and-queue, monotonic-stack]
 difficulty: Mastery
+theory: rectangles-inside-a-grid
 ---
 
 ## Statement

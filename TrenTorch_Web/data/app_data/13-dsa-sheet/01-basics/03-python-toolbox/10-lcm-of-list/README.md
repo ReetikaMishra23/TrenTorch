@@ -3,6 +3,7 @@ name: sheet-lcm-of-list
 title: 'Least Common Multiple of a List'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: maths-helpers-and-big-numbers
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-merge-k-sorted-arrays
 title: 'Merge K Sorted Arrays'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: merging-many-lists-with-a-heap
 ---
 
 ## Statement

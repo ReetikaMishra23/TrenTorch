@@ -3,6 +3,7 @@ name: sheet-multiply-strings
 title: 'Multiply Big Numbers'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Advanced
+theory: schoolbook-multiplication
 ---
 
 ## Statement

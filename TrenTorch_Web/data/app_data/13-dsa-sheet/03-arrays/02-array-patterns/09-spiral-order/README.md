@@ -3,6 +3,7 @@ name: sheet-spiral-order
 title: 'Spiral Order'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: walking-around-the-edge
 ---
 
 ## Statement

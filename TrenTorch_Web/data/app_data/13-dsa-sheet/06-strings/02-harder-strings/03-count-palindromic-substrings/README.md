@@ -3,6 +3,7 @@ name: sheet-count-palindromic-substrings
 title: 'Count Palindromic Substrings'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Intermediate
+theory: counting-all-palindromic-substrings
 ---
 
 ## Statement

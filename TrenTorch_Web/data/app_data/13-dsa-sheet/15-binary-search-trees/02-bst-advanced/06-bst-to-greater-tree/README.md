@@ -3,6 +3,7 @@ name: sheet-bst-to-greater-tree
 title: 'BST to Greater Sum Tree'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Intermediate
+theory: greater-sum-tree-by-reverse-inorder
 ---
 
 ## Statement

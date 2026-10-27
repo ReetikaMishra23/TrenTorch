@@ -3,6 +3,7 @@ name: sheet-partition-labels
 title: 'Partition Labels'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Intermediate
+theory: partition-labels
 ---
 
 ## Statement

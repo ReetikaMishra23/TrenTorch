@@ -3,6 +3,7 @@ name: sheet-symmetric-tree
 title: 'Symmetric Tree'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Beginner
+theory: same-tree-and-symmetric-tree
 ---
 
 ## Statement

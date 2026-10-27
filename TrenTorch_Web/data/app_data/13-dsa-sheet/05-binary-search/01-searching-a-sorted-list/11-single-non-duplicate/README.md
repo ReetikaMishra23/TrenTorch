@@ -3,6 +3,7 @@ name: sheet-single-non-duplicate
 title: 'The Single Element in a Sorted List'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Intermediate
+theory: the-single-lonely-value
 ---
 
 ## Statement

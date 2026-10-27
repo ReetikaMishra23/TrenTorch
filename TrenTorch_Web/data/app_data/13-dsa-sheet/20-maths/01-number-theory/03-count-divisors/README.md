@@ -3,7 +3,7 @@ name: sheet-count-divisors
 title: 'Count the Divisors'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Intermediate
-theory: count-the-divisors
+theory: counting-the-divisors-from-the-factors
 ---
 
 ## Statement

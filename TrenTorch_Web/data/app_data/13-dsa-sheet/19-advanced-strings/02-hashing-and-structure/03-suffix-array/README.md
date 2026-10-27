@@ -3,6 +3,7 @@ name: sheet-suffix-array
 title: 'Suffix Array'
 tags: [dsa-sheet, advanced-strings, hashing-and-structure]
 difficulty: Mastery
+theory: prefix-doubling
 ---
 
 ## Statement

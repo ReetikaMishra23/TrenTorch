@@ -3,6 +3,7 @@ name: sheet-largest-rectangle-histogram
 title: 'Largest Rectangle in a Histogram'
 tags: [dsa-sheet, stack-and-queue, monotonic-stack]
 difficulty: Advanced
+theory: the-largest-rectangle-in-a-histogram
 ---
 
 ## Statement

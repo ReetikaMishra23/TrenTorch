@@ -3,6 +3,7 @@ name: sheet-max-nesting-depth
 title: 'Maximum Nesting Depth'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: keeping-a-running-number
 ---
 
 ## Statement

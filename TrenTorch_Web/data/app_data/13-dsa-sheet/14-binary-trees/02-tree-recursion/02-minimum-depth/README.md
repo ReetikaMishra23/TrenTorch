@@ -3,6 +3,7 @@ name: sheet-minimum-depth
 title: 'Minimum Depth'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Beginner
+theory: minimum-depth
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-remove-nth-from-end
 title: 'Remove the Nth Node From the End'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Intermediate
+theory: two-runners-with-a-gap
 ---
 
 ## Statement

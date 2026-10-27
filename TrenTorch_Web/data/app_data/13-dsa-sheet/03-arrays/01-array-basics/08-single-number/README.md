@@ -3,6 +3,7 @@ name: sheet-single-number
 title: 'The Number That Appears Once'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: xor-the-cancelling-operator
 ---
 
 ## Statement

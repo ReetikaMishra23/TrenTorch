@@ -3,6 +3,7 @@ name: sheet-add-without-plus
 title: 'Add Without the Plus Sign'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Advanced
+theory: adding-without-the-plus-sign
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-longest-word-built-one-letter-at-a-time
 title: 'Longest Word Built Letter by Letter'
 tags: [dsa-sheet, tries, trie-basics]
 difficulty: Intermediate
+theory: only-walk-through-words
 ---
 
 ## Statement

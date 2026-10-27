@@ -3,6 +3,7 @@ name: sheet-minimum-platforms
 title: 'Minimum Platforms'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Intermediate
+theory: counting-overlaps-platforms
 ---
 
 ## Statement

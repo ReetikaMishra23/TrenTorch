@@ -3,7 +3,7 @@ name: sheet-combination-sum
 title: 'Combination Sum'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Intermediate
-theory: pruning-stop-exploring-impossible-branches
+theory: sums-where-items-repeat
 ---
 
 ## Statement

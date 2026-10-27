@@ -3,6 +3,7 @@ name: sheet-lowest-set-bit
 title: 'The Lowest Set Bit'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Beginner
+theory: isolating-the-lowest-set-bit
 ---
 
 ## Statement

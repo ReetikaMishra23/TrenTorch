@@ -3,6 +3,7 @@ name: sheet-range-sum-of-a-bst
 title: 'Range Sum of a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Beginner
+theory: range-sum-with-pruning
 ---
 
 ## Statement

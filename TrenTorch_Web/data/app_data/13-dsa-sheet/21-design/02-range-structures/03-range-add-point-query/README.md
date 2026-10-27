@@ -3,6 +3,7 @@ name: sheet-range-add-point-query
 title: 'Range Add, Point Query'
 tags: [dsa-sheet, design, range-structures]
 difficulty: Advanced
+theory: range-add-with-a-difference-array
 ---
 
 ## Statement

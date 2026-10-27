@@ -3,6 +3,7 @@ name: sheet-vertical-order-traversal
 title: 'Vertical Order Traversal'
 tags: [dsa-sheet, binary-trees, traversals]
 difficulty: Advanced
+theory: vertical-order-with-columns
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-is-subsequence
 title: 'Is It a Subsequence?'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Beginner
+theory: both-pointers-moving-forward-subsequences
 ---
 
 ## Statement

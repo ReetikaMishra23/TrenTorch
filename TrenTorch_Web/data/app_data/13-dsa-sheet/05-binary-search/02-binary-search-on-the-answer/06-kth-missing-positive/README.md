@@ -3,6 +3,7 @@ name: sheet-kth-missing-positive
 title: 'Kth Missing Positive Number'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Advanced
+theory: counting-the-missing-numbers
 ---
 
 ## Statement

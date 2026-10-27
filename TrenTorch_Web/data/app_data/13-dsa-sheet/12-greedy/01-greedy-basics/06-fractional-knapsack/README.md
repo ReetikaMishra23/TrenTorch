@@ -3,6 +3,7 @@ name: sheet-fractional-knapsack
 title: 'Fractional Knapsack'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Intermediate
+theory: best-value-per-kilogram
 ---
 
 ## Statement

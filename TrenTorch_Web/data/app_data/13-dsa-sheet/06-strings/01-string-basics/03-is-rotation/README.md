@@ -3,6 +3,7 @@ name: sheet-is-rotation
 title: 'Is It a Rotation?'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: the-doubling-trick
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-invert-binary-tree
 title: 'Invert a Binary Tree'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Beginner
+theory: inverting-a-tree
 ---
 
 ## Statement

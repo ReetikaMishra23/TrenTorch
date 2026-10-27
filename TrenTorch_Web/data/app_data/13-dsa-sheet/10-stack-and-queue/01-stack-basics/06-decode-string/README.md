@@ -3,6 +3,7 @@ name: sheet-decode-string
 title: 'Decode a String'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: nested-repeats
 ---
 
 ## Statement

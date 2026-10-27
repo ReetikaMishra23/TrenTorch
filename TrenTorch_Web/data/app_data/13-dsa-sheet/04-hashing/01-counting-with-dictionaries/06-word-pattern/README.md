@@ -3,6 +3,7 @@ name: sheet-word-pattern
 title: 'Word Pattern'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Intermediate
+theory: checking-both-directions
 ---
 
 ## Statement

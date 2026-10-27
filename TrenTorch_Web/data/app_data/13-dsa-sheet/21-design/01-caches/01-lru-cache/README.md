@@ -3,6 +3,7 @@ name: sheet-lru-cache
 title: 'LRU Cache'
 tags: [dsa-sheet, design, caches]
 difficulty: Intermediate
+theory: dictionary-plus-list
 ---
 
 ## Statement

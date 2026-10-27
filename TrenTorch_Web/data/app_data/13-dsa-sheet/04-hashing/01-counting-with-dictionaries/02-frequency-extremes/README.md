@@ -3,6 +3,7 @@ name: sheet-frequency-extremes
 title: 'Most and Least Frequent Value'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Beginner
+theory: picking-the-winner-and-breaking-ties
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-max-product-subarray
 title: 'Maximum Product Subarray'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: products-need-a-minimum-too
 ---
 
 ## Statement

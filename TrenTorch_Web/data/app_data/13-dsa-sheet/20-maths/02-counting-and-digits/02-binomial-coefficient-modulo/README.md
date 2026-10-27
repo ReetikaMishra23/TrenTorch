@@ -3,7 +3,7 @@ name: sheet-binomial-coefficient-modulo
 title: 'Binomial Coefficient Modulo a Prime'
 tags: [dsa-sheet, maths, counting-and-digits]
 difficulty: Advanced
-theory: factorials-and-binomial-coefficients-modulo-a-prime
+theory: factorials-and-binomial-coefficients
 ---
 
 ## Statement

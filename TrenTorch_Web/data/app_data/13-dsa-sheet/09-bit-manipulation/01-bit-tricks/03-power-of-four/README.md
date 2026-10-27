@@ -3,6 +3,7 @@ name: sheet-power-of-four
 title: 'Is It a Power of Four?'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Intermediate
+theory: is-it-a-power-of-four
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-monotone-increasing-digits
 title: 'Largest Number With Non-Decreasing Digits'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Intermediate
+theory: largest-number-with-rising-digits
 ---
 
 ## Statement

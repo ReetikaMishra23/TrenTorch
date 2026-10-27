@@ -3,6 +3,7 @@ name: sheet-floor-and-ceil-in-a-bst
 title: 'Floor and Ceil in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: floor-and-ceil
 ---
 
 ## Statement

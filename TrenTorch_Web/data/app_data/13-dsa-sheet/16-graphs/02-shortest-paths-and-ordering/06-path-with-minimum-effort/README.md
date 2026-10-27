@@ -3,7 +3,7 @@ name: sheet-path-with-minimum-effort
 title: 'Path With Minimum Effort'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Advanced
-theory: variations-minimum-effort-and-counting-paths
+theory: minimum-effort-paths
 ---
 
 ## Statement

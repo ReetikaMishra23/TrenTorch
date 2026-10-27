@@ -3,6 +3,7 @@ name: sheet-count-subset-sums
 title: 'Count Subsets With Sum'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Intermediate
+theory: combinations-permutations-and-meeting-in-the-middle
 ---
 
 ## Statement

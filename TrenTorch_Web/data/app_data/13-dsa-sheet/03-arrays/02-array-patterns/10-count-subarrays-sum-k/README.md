@@ -3,6 +3,7 @@ name: sheet-count-subarrays-sum-k
 title: 'Subarrays With Sum K'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: prefix-sums-and-counting
 ---
 
 ## Statement

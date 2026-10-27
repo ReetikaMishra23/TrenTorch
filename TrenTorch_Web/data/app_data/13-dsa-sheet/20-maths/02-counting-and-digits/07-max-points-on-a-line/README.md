@@ -3,6 +3,7 @@ name: sheet-max-points-on-a-line
 title: 'Max Points on a Line'
 tags: [dsa-sheet, maths, counting-and-digits]
 difficulty: Advanced
+theory: points-on-one-line
 ---
 
 ## Statement

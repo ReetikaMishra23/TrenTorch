@@ -3,6 +3,7 @@ name: sheet-z-function
 title: 'The Z-Function'
 tags: [dsa-sheet, advanced-strings, pattern-matching]
 difficulty: Advanced
+theory: the-window-trick
 ---
 
 ## Statement

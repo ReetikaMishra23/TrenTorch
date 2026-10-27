@@ -3,6 +3,7 @@ name: sheet-group-anagrams
 title: 'Group Anagrams'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Intermediate
+theory: keys-that-ignore-the-order
 ---
 
 ## Statement

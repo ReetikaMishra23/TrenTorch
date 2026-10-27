@@ -3,7 +3,7 @@ name: sheet-fast-power
 title: 'Fast Power With a Remainder'
 tags: [dsa-sheet, recursion, recursive-thinking]
 difficulty: Intermediate
-theory: power
+theory: fast-power-with-a-remainder
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-best-time-to-trade
 title: 'Best Time to Buy and Sell'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Beginner
+theory: remembering-the-best-so-far
 ---
 
 ## Statement

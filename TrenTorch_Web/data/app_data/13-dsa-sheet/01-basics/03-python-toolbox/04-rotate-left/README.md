@@ -3,6 +3,7 @@ name: sheet-rotate-left
 title: 'Rotate Left'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: slicing-and-zip
 ---
 
 ## Statement

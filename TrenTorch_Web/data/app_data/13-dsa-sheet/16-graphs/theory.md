@@ -4,7 +4,7 @@
 
 Graphs are everywhere: maps, friendships, web pages, game boards, task lists. This course teaches how to think about them and how to answer the questions interviewers love to ask. It assumes only that you can write loops and a simple function.
 
-The course is a staircase. **Chapter 1 is gentle**: what a graph is and how to store one. Chapters 2 and 3 teach the two basic ways of walking through a graph. After that each chapter adds one new tool: finding cycles, putting tasks in order, shortest paths, union-find, spanning trees, and finally bridges and strongly connected components. The last two chapters are optional extras that combine graphs with dynamic programming. If a later chapter looks hard, do not worry; every chapter only uses what came before.
+The course is a staircase. **Chapter 1 is gentle**: what a graph is and how to store one. Chapters 2 and 3 teach the two basic ways of walking through a graph. After that each chapter adds one new tool: finding cycles, putting tasks in order, shortest paths, union-find, spanning trees, and bridges and strongly connected components. The last two chapters combine graphs with dynamic programming, first on graphs without cycles and then on graphs with cycles. If a later chapter looks hard, do not worry; every chapter only uses what came before.
 
 Every code example is shown in Python and in C++, so pick whichever language you like.
 
@@ -12,296 +12,201 @@ Every code example is shown in Python and in C++, so pick whichever language you
 
 ## 1.1 What a graph is
 
-A **graph** is a collection of dots and lines. The dots are called **vertices** (or nodes) and the lines are called **edges**.  
-Think of a map: cities are vertices, roads are edges. Or a social network: people are vertices, friendships are edges.  
-The web is a graph too: pages are vertices, hyperlinks are edges.
+A **graph** is a collection of dots joined by lines. The dots are called **vertices** (or nodes) and the lines are called **edges**. Think of a map: cities are vertices and roads are edges. Or a social network: people are vertices and friendships are edges. Even the web is a graph, with pages as vertices and links as edges.
 
-An edge can be **directed** (one-way) or **undirected** (two-way). A one-way street is a directed edge; a friendship is usually undirected.  
-An edge can also carry a **weight** (a number), like the distance between two cities or the time to send a message.
+An edge can be **undirected**, meaning it works in both directions like a friendship, or **directed**, meaning it works in one direction only like a one-way street. An edge can also carry a **weight**, a number such as the length of a road. A **path** is a walk along edges from one vertex to another, and a **cycle** is a path that comes back to where it started. A graph is **connected** when you can walk from any vertex to any other.
 
-A **path** is a sequence of vertices where each consecutive pair is connected by an edge.  
-A **cycle** is a path that starts and ends at the same vertex without repeating other vertices.  
-A graph is **connected** if there is a path between every pair of vertices (for undirected graphs).
-
-In this course vertices are numbered `0, 1, …, n-1`. An edge list is a list of pairs `(u, v)`.
-
-```python
-# Example: a tiny undirected graph with 4 vertices and 3 edges
-n = 4
-edges = [(0, 1), (1, 2), (2, 3)]  # 0-1-2-3
-
-# Build adjacency list
-adj = [[] for _ in range(n)]
-for u, v in edges:
-    adj[u].append(v)
-    adj[v].append(u)
-
-assert adj == [[1], [0, 2], [1, 3], [2]]
-```
-
-```cpp
-// C++ version: same tiny graph
-int n = 4;
-vector<vector<int>> adj(n);
-vector<pair<int,int>> edges = {{0,1},{1,2},{2,3}};
-for (auto [u,v] : edges) {
-    adj[u].push_back(v);
-    adj[v].push_back(u);
-}
-// adj = [[1], [0,2], [1,3], [2]]
-```
+Throughout this course the vertices are numbered $0, 1, \dots, n-1$, and the graph is given as a list of edges, each a pair of numbers. The first job is always to turn that list into something a program can walk through quickly.
 
 ## 1.2 Storing a graph
 
-Two common ways to store a graph in memory are the **adjacency list** and the **adjacency matrix**.
-
-**Adjacency list**: for each vertex we keep a list of its neighbours.  
-**Adjacency matrix**: an `n × n` grid where `mat[u][v] = 1` if there is an edge `u-v`, else `0`.
-
-For our tiny graph (4 vertices, edges 0-1, 1-2, 2-3):
-
-Adjacency list:  
-`0: [1]`  
-`1: [0, 2]`  
-`2: [1, 3]`  
-`3: [2]`
-
-Adjacency matrix:
-
-```
-  0 1 2 3
-0 0 1 0 0
-1 1 0 1 0
-2 0 1 0 1
-3 0 0 1 0
-```
-
-When to choose which?
-
-- If the graph is **sparse** (few edges, `m` much smaller than `n²`), adjacency list uses less memory (`O(n+m)`) and iterating neighbours is fast.
-- If the graph is **dense** (many edges, `m` close to `n²`), adjacency matrix (`O(n²)`) lets you check if an edge exists in `O(1)` time.
+The usual choice is the **adjacency list**: for every vertex we keep a list of its neighbours. For the edges 0-1, 1-2 and 2-3 the lists are `0: [1]`, `1: [0, 2]`, `2: [1, 3]` and `3: [2]`. Because the edges are undirected, each edge is written twice, once in each endpoint's list. For a directed graph you write it once only, in the list of the vertex where the arrow starts.
 
 ```python
-# Build both representations from an edge list
-def build_graph(n, edges):
-    # adjacency list
+def build_adj(n, edges, directed=False):
     adj = [[] for _ in range(n)]
-    # adjacency matrix
-    mat = [[0]*n for _ in range(n)]
     for u, v in edges:
         adj[u].append(v)
-        adj[v].append(u)
-        mat[u][v] = 1
-        mat[v][u] = 1
-    return adj, mat
-
-n = 4
-edges = [(0,1), (1,2), (2,3)]
-adj, mat = build_graph(n, edges)
-assert adj == [[1], [0,2], [1,3], [2]]
-assert mat == [
-    [0,1,0,0],
-    [1,0,1,0],
-    [0,1,0,1],
-    [0,0,1,0]
-]
-```
-
-```cpp
-// Build both representations
-pair<vector<vector<int>>, vector<vector<int>>> build_graph(int n, vector<pair<int,int>> edges) {
-    vector<vector<int>> adj(n);
-    vector<vector<int>> mat(n, vector<int>(n, 0));
-    for (auto [u,v] : edges) {
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-        mat[u][v] = 1;
-        mat[v][u] = 1;
-    }
-    return {adj, mat};
-}
-```
-
-## 1.3 A grid is a graph
-
-A rectangular grid (like a chessboard or a maze) is a graph where each cell is a vertex.  
-Edges connect a cell to its four neighbours: up, down, left, right (if inside the grid).
-
-We can use a **direction array** to loop over the four moves without writing four separate `if` statements:
-
-```python
-# Directions: up, right, down, left
-dr = [-1, 0, 1, 0]
-dc = [0, 1, 0, -1]
-
-def grid_to_adj(R, C):
-    """Return adjacency list for an R x C grid. Vertex id = r*C + c."""
-    n = R * C
-    adj = [[] for _ in range(n)]
-    for r in range(R):
-        for c in range(C):
-            u = r * C + c
-            for k in range(4):
-                nr = r + dr[k]
-                nc = c + dc[k]
-                if 0 <= nr < R and 0 <= nc < C:
-                    v = nr * C + nc
-                    adj[u].append(v)
+        if not directed:
+            adj[v].append(u)
     return adj
 
-# 2x3 grid: vertices 0..5
-adj = grid_to_adj(2, 3)
-# Check a few: vertex 0 (0,0) -> neighbours 1 (0,1) and 3 (1,0)
-assert adj[0] == [1, 3]
-assert adj[4] == [1, 5, 3]  # vertex 4 is (1,1)
+assert build_adj(4, [(0, 1), (1, 2), (2, 3)]) == [[1], [0, 2], [1, 3], [2]]
+assert build_adj(3, [(0, 1), (1, 2)], True) == [[1], [2], []]
 ```
 
 ```cpp
-// Grid to adjacency list
-vector<vector<int>> grid_to_adj(int R, int C) {
-    int n = R * C;
+vector<vector<int>> build_adj(int n, const vector<pair<int,int>>& edges, bool directed = false) {
     vector<vector<int>> adj(n);
-    int dr[4] = {-1, 0, 1, 0};
-    int dc[4] = {0, 1, 0, -1};
-    for (int r = 0; r < R; ++r) {
-        for (int c = 0; c < C; ++c) {
-            int u = r * C + c;
-            for (int k = 0; k < 4; ++k) {
-                int nr = r + dr[k];
-                int nc = c + dc[k];
-                if (0 <= nr && nr < R && 0 <= nc && nc < C) {
-                    int v = nr * C + nc;
-                    adj[u].push_back(v);
-                }
-            }
-        }
+    for (auto [u, v] : edges) {
+        adj[u].push_back(v);
+        if (!directed) adj[v].push_back(u);
     }
     return adj;
 }
 ```
 
-## 1.4 Connected components
+When edges have weights, we store pairs `(neighbour, weight)` instead of plain numbers. We will do that in the chapter on shortest paths.
 
-A **connected component** is a maximal set of vertices where every vertex can reach every other vertex via edges.  
-In an undirected graph, the components partition the vertices.
+The other classic choice is the **adjacency matrix**, an $n \times n$ table where entry `[u][v]` is 1 if the edge exists and 0 otherwise. It answers "is there an edge between $u$ and $v$?" in a single step, but it always uses $O(n^2)$ memory, and listing the neighbours of a vertex means scanning a whole row. The list needs only $O(n+m)$ memory for $m$ edges and lists neighbours instantly, so it is the right default whenever the graph is sparse, which is almost always. We use adjacency lists for the rest of the course.
 
-To find all components we can run a graph traversal (Depth-First Search or Breadth-First Search) from each unvisited vertex.  
-Each traversal marks one whole component. The total work is `O(n + m)` because each vertex and edge is processed once.
+## 1.3 A grid is a graph
 
-This is exactly the problem **Connected Components**.  
-A related problem **Valid Path** asks whether two given vertices lie in the same component.
-
-We'll show two implementations of DFS: recursive (simple) and iterative (avoids recursion depth limits).
+A maze or a chessboard is a graph too: every cell is a vertex, and a cell is joined to the cells above, below, left and right of it, when those exist. Nobody builds an adjacency list for a grid. Instead we write the four moves once, as a **direction array**, and loop over them. A cell $(r, c)$ then has the neighbours $(r + dr_k, c + dc_k)$ for $k = 0, 1, 2, 3$, and we keep only those inside the grid.
 
 ```python
-from collections import deque
+DR = [-1, 0, 1, 0]
+DC = [0, 1, 0, -1]
 
-def connected_components_recursive(adj):
-    """Return list of components, each a list of vertices. Recursive DFS."""
-    n = len(adj)
-    used = [False] * n
-    comps = []
+def neighbours(R, C, r, c):
+    result = []
+    for k in range(4):
+        nr, nc = r + DR[k], c + DC[k]
+        if 0 <= nr < R and 0 <= nc < C:
+            result.append((nr, nc))
+    return result
 
-    def dfs(v, comp):
-        used[v] = True
-        comp.append(v)
-        for u in adj[v]:
-            if not used[u]:
-                dfs(u, comp)
-
-    for v in range(n):
-        if not used[v]:
-            comp = []
-            dfs(v, comp)
-            comps.append(comp)
-    return comps
-
-def connected_components_iterative(adj):
-    """Return list of components using an explicit stack."""
-    n = len(adj)
-    used = [False] * n
-    comps = []
-    for v in range(n):
-        if not used[v]:
-            comp = []
-            stack = [v]
-            while stack:
-                cur = stack.pop()
-                if not used[cur]:
-                    used[cur] = True
-                    comp.append(cur)
-                    # push neighbours; order doesn't matter for components
-                    for u in adj[cur]:
-                        if not used[u]:
-                            stack.append(u)
-            comps.append(comp)
-    return comps
-
-# Test on graph with two components: 0-1-2 and 3-4
-adj = [[1], [0,2], [1], [4], [3]]
-assert sorted(connected_components_recursive(adj)) == sorted([[0,1,2], [3,4]])
-assert sorted(connected_components_iterative(adj)) == sorted([[0,1,2], [3,4]])
+assert neighbours(2, 3, 0, 0) == [(0, 1), (1, 0)]
+assert neighbours(2, 3, 1, 1) == [(0, 1), (1, 2), (1, 0)]
 ```
 
 ```cpp
-// Recursive DFS for connected components
-vector<vector<int>> connected_components_recursive(const vector<vector<int>>& adj) {
-    int n = adj.size();
-    vector<bool> used(n, false);
-    vector<vector<int>> comps;
-    vector<int> comp;
-    function<void(int)> dfs = [&](int v) {
-        used[v] = true;
-        comp.push_back(v);
-        for (int u : adj[v]) {
-            if (!used[u]) dfs(u);
-        }
-    };
-    for (int v = 0; v < n; ++v) {
-        if (!used[v]) {
-            comp.clear();
-            dfs(v);
-            comps.push_back(comp);
-        }
-    }
-    return comps;
-}
+const int DR[4] = {-1, 0, 1, 0};
+const int DC[4] = {0, 1, 0, -1};
 
-// Iterative DFS for connected components
-vector<vector<int>> connected_components_iterative(const vector<vector<int>>& adj) {
-    int n = adj.size();
-    vector<bool> used(n, false);
-    vector<vector<int>> comps;
-    for (int v = 0; v < n; ++v) {
-        if (!used[v]) {
-            vector<int> comp;
-            stack<int> st;
-            st.push(v);
-            while (!st.empty()) {
-                int cur = st.top(); st.pop();
-                if (!used[cur]) {
-                    used[cur] = true;
-                    comp.push_back(cur);
-                    for (int u : adj[cur]) {
-                        if (!used[u]) st.push(u);
-                    }
-                }
-            }
-            comps.push_back(comp);
-        }
+vector<pair<int,int>> neighbours(int R, int C, int r, int c) {
+    vector<pair<int,int>> result;
+    for (int k = 0; k < 4; ++k) {
+        int nr = r + DR[k], nc = c + DC[k];
+        if (0 <= nr && nr < R && 0 <= nc && nc < C) result.push_back({nr, nc});
     }
-    return comps;
+    return result;
 }
 ```
 
-Both versions run in `O(n + m)` time and `O(n)` extra space (for the `used` array and the recursion stack or explicit stack).
+The moves are in the order up, right, down, left. In the second test the cell in row 1, column 1 of a grid with 2 rows and 3 columns has no cell below it, so it has three neighbours. If a problem also allows diagonal moves, extend both arrays to eight entries and nothing else changes.
+
+## 1.4 Connected components
+
+Take an undirected graph and start walking from some vertex, always stepping to neighbours you have not seen yet. Sooner or later you run out of new vertices. Everything you reached forms one **connected component**: a group of vertices that can all reach each other, with no edge leaving the group. Every vertex belongs to exactly one component.
+
+To find all components, keep a `seen` array and a to-do pile (a plain stack). For each vertex in turn, if it is not seen, a new component starts there. Mark it, put it on the pile, and then, while the pile is not empty, take a vertex off it and put each unseen neighbour on the pile after marking it. Counting how many times a new component starts gives the number of components. (Chapters 2 and 3 study the two classic orders for walking, breadth-first and depth-first. For counting, any order works.)
+
+Take $n = 5$ and the edges 0-1, 1-2, 3-4. Vertex 0 starts component one and reaches 1 and 2. Vertex 3 starts component two and reaches 4. Nothing is left, so the answer is 2. This is exactly the problem _Number of Connected Components_.
+
+```python
+def count_components(n, edges):
+    adj = [[] for _ in range(n)]
+    for u, v in edges:
+        adj[u].append(v)
+        adj[v].append(u)
+    seen = [False] * n
+    count = 0
+    for start in range(n):
+        if seen[start]:
+            continue
+        count += 1
+        seen[start] = True
+        pile = [start]
+        while pile:
+            v = pile.pop()
+            for u in adj[v]:
+                if not seen[u]:
+                    seen[u] = True
+                    pile.append(u)
+    return count
+
+assert count_components(5, [(0, 1), (1, 2), (3, 4)]) == 2
+assert count_components(3, []) == 3
+```
+
+```cpp
+int count_components(int n, const vector<pair<int,int>>& edges) {
+    vector<vector<int>> adj(n);
+    for (auto [u, v] : edges) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    vector<bool> seen(n, false);
+    int count = 0;
+    for (int start = 0; start < n; ++start) {
+        if (seen[start]) continue;
+        ++count;
+        seen[start] = true;
+        vector<int> pile = {start};
+        while (!pile.empty()) {
+            int v = pile.back();
+            pile.pop_back();
+            for (int u : adj[v]) {
+                if (!seen[u]) {
+                    seen[u] = true;
+                    pile.push_back(u);
+                }
+            }
+        }
+    }
+    return count;
+}
+```
+
+Each vertex is marked once and each edge is looked at twice, so this runs in $O(n+m)$ time and uses $O(n+m)$ space.
+
+The same walk answers "is there a path from $a$ to $b$?". Start the walk at $a$ and report whether $b$ gets reached. This is exactly the problem _Is There a Path?_. We can even stop as soon as $b$ comes off the pile.
+
+```python
+def has_path(n, edges, a, b):
+    adj = [[] for _ in range(n)]
+    for u, v in edges:
+        adj[u].append(v)
+        adj[v].append(u)
+    seen = [False] * n
+    seen[a] = True
+    pile = [a]
+    while pile:
+        v = pile.pop()
+        if v == b:
+            return True
+        for u in adj[v]:
+            if not seen[u]:
+                seen[u] = True
+                pile.append(u)
+    return False
+
+assert has_path(3, [(0, 1), (1, 2), (2, 0)], 0, 2)
+assert not has_path(6, [(0, 1), (0, 2), (3, 5), (5, 4), (4, 3)], 0, 5)
+```
+
+```cpp
+bool has_path(int n, const vector<pair<int,int>>& edges, int a, int b) {
+    vector<vector<int>> adj(n);
+    for (auto [u, v] : edges) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    vector<bool> seen(n, false);
+    seen[a] = true;
+    vector<int> pile = {a};
+    while (!pile.empty()) {
+        int v = pile.back();
+        pile.pop_back();
+        if (v == b) return true;
+        for (int u : adj[v]) {
+            if (!seen[u]) {
+                seen[u] = true;
+                pile.push_back(u);
+            }
+        }
+    }
+    return false;
+}
+```
 
 ## 1.5 Check yourself
 
-1. In an undirected graph with vertices 0..4 and edges (0,1), (1,2), (3,4), how many connected components are there?
-2. If you run the iterative DFS on a component of 5 vertices arranged in a line, what is the maximum size the explicit stack will reach?
-3. Why does an adjacency matrix use `O(n²)` memory even for a sparse graph?
-4. Given a 3x3 grid, what is the vertex id of the cell at row 1, column 2 (0-indexed)?
+1. How many connected components has a graph with 6 vertices and the edges 0-1, 1-2 and 4-5?
+2. Why is an edge of an undirected graph stored twice in an adjacency list?
+3. A grid has 3 rows and 4 columns. How many neighbours does the cell in row 0, column 0 have?
+4. Why do we mark a vertex as seen when we put it on the pile, rather than when we take it off?
 
 # Chapter 2. Breadth-first search
 
@@ -740,43 +645,21 @@ vector<int> zero_one_bfs(int n, const vector<vector<pair<int, int>>>& adj, int s
 
 ## 3.1 The idea: go deep, then back up
 
-Imagine you are standing at the entrance of a maze. You have a piece of chalk. You walk forward until you hit a dead end. Then you turn around, walk back to the last junction where you saw an unexplored passage, and go down that one. You repeat this — always going as deep as you can before backing up — until you have seen every corridor reachable from the start. That is depth-first search.
+Imagine standing at the entrance of a maze with a piece of chalk. You walk forward until you hit a dead end, marking each junction you pass. Then you walk back to the last junction that still has an unexplored passage and go down that one. You keep going, always as deep as you can before backing up, until every corridor you can reach has been seen. That is **depth-first search**, or **DFS**.
 
-A graph is a collection of vertices (dots) connected by edges (lines). In code we usually number the vertices `0` through `n-1` and store for each vertex a list of its neighbours. This list is called an **adjacency list**. Depth-first search (DFS) visits every vertex reachable from a chosen starting vertex exactly once. It does this by recursively stepping to an unvisited neighbour, then returning when no unvisited neighbours remain.
-
-The first time we see a vertex we mark it **visited** so we never process it again. This simple rule guarantees we do not loop forever in cycles.
+Where breadth-first search (Chapter 2) explores in rings and uses a queue, DFS dives along one route at a time. It is easiest to write with **recursion**, a function that calls itself: `dfs(v)` marks `v` as visited and then calls `dfs(u)` for every neighbour `u` that is not visited yet. The mark is what stops us from walking around a cycle forever. The calls waiting for their turn form a stack, and that stack plays the role the queue played in BFS.
 
 ## 3.2 Recursive DFS traced by hand
 
-Let us trace DFS on a tiny graph with five vertices numbered 0 to 4 and the edges 0-1, 0-2, 1-3 and 2-4. The adjacency list looks like this:
+Take five vertices with the edges 0-1, 0-2, 1-3 and 2-4. The adjacency lists are `0: [1, 2]`, `1: [0, 3]`, `2: [0, 4]`, `3: [1]` and `4: [2]`.
 
-```
-0: [1, 2]
-1: [0, 3]
-2: [0, 4]
-3: [1]
-4: [2]
-```
+We call `dfs(0)`. Vertex 0 is marked and its first neighbour 1 is unvisited, so we call `dfs(1)`. Vertex 1 looks at 0 (already visited) and then at 3, so we call `dfs(3)`. Vertex 3 sees only 1, which is visited, so the call to `dfs(3)` returns. Back in vertex 1 there is nothing left, so it returns too. Now vertex 0 moves on to its second neighbour 2 and calls `dfs(2)`, which in turn calls `dfs(4)`. Both return, and so does `dfs(0)`.
 
-We start at vertex 0. The recursive call stack grows like this:
-
-1. Enter 0, mark visited. Neighbours: 1, 2. Pick 1 first.
-2. Enter 1, mark visited. Neighbours: 0, 3. 0 is already visited, so pick 3.
-3. Enter 3, mark visited. Neighbour: 1 (visited). No unvisited neighbours. Return from 3.
-4. Back in 1, no more unvisited neighbours. Return from 1.
-5. Back in 0, next neighbour is 2 (unvisited). Enter 2, mark visited.
-6. Enter 2, neighbour 0 visited, neighbour 4 unvisited. Enter 4, mark visited.
-7. Enter 4, neighbour 2 visited. Return from 4.
-8. Return from 2.
-9. Return from 0. Done.
-
-Visit order: 0, 1, 3, 2, 4. Every vertex and every edge is examined a constant number of times. If `n` is the number of vertices and `m` the number of edges, the total work is $O(n + m)$. The recursion depth can reach $n$ in the worst case, so the call stack uses $O(n)$ extra space.
+The vertices were visited in the order 0, 1, 3, 2, 4. Notice how the walk went all the way down the branch 0, 1, 3 before it came back to try 2.
 
 ```python
-def dfs_recursive(adj, start):
-    """Return list of vertices in the order they are first visited."""
-    n = len(adj)
-    visited = [False] * n
+def dfs_order(adj, start):
+    visited = [False] * len(adj)
     order = []
 
     def dfs(v):
@@ -789,21 +672,13 @@ def dfs_recursive(adj, start):
     dfs(start)
     return order
 
-# Hand-checked example from the text above
-adj = [
-    [1, 2],   # 0
-    [0, 3],   # 1
-    [0, 4],   # 2
-    [1],      # 3
-    [2]       # 4
-]
-assert dfs_recursive(adj, 0) == [0, 1, 3, 2, 4]
+adj = [[1, 2], [0, 3], [0, 4], [1], [2]]
+assert dfs_order(adj, 0) == [0, 1, 3, 2, 4]
 ```
 
 ```cpp
-vector<int> dfs_recursive(const vector<vector<int>>& adj, int start) {
-    int n = adj.size();
-    vector<bool> visited(n, false);
+vector<int> dfs_order(const vector<vector<int>>& adj, int start) {
+    vector<bool> visited(adj.size(), false);
     vector<int> order;
     function<void(int)> dfs = [&](int v) {
         visited[v] = true;
@@ -817,11 +692,13 @@ vector<int> dfs_recursive(const vector<vector<int>>& adj, int start) {
 }
 ```
 
+Every vertex is entered once and every edge is looked at a constant number of times, so DFS runs in $O(n+m)$ time. The stack of waiting calls can be as deep as $n$ (on a long path), so the extra space is $O(n)$. One practical warning: Python stops a recursion at about a thousand levels by default. For graphs with a very long path, such as a big grid full of land, use the explicit-stack style of the next sections.
+
 ## 3.3 Flood fill and counting islands
 
-A grid of 0s and 1s can be seen as a graph: each cell is a vertex, and edges connect a cell to its four orthogonal neighbours (up, down, left, right) that share the same value. Running DFS from every unvisited 1-cell counts **connected components** of land — this is exactly the problem _Number of Islands_. While exploring one component we can also count its cells to get the _Max Area of Island_. Changing the value of every visited cell in a component performs _Flood Fill_.
+A grid of 0s and 1s is a graph in which every cell is a vertex joined to its four neighbours (Chapter 1). A group of land cells (1s) joined up, down, left and right is an **island**. Counting islands is exactly counting connected components: scan the cells in order, and every time you meet a land cell that is not visited yet, you have found a new island, so you count it and flood the whole island so that none of its cells is counted again.
 
-Let us trace a 3×3 grid by hand:
+Take this grid.
 
 ```
 1 1 0
@@ -829,289 +706,297 @@ Let us trace a 3×3 grid by hand:
 0 0 1
 ```
 
-Coordinates are (row, col). Start at (0,0), value 1. DFS visits (0,0) → (0,1) → (1,1). That component has size 3. Next unvisited 1 is at (2,2), size 1. So number of islands = 2, max area = 3.
+Scanning row by row, we meet the land cell (0, 0) first. Flooding from it reaches (0, 1) and then (1, 1), three cells in all. The scan continues and the next unvisited land cell is (2, 2), whose island has one cell. So there are 2 islands, and the largest has 3 cells. This is exactly the problem _Number of Islands_, and keeping the biggest flood size instead of counting floods is exactly the problem _Largest Island_.
 
-For Flood Fill we start at a given cell and change all connected cells of the same original colour to a new colour.
+To avoid the recursion limit on big grids, the flood below uses an explicit stack. It does the same thing as the recursive version: take a cell off the stack, push its unvisited land neighbours. It returns how many cells it flooded.
 
 ```python
-from collections import deque
+DR = [-1, 0, 1, 0]
+DC = [0, 1, 0, -1]
+
+def flood(grid, seen, r, c):
+    # marks the island containing (r, c) and returns its size
+    R, C = len(grid), len(grid[0])
+    seen[r][c] = True
+    stack = [(r, c)]
+    size = 0
+    while stack:
+        r, c = stack.pop()
+        size += 1
+        for k in range(4):
+            nr, nc = r + DR[k], c + DC[k]
+            if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1 and not seen[nr][nc]:
+                seen[nr][nc] = True
+                stack.append((nr, nc))
+    return size
 
 def num_islands(grid):
-    """Return number of islands (4-directionally connected groups of '1')."""
-    if not grid:
+    if not grid or not grid[0]:
         return 0
-    rows, cols = len(grid), len(grid[0])
-    visited = [[False] * cols for _ in range(rows)]
-
-    def dfs(r, c):
-        if r < 0 or r >= rows or c < 0 or c >= cols:
-            return
-        if visited[r][c] or grid[r][c] != '1':
-            return
-        visited[r][c] = True
-        dfs(r + 1, c)
-        dfs(r - 1, c)
-        dfs(r, c + 1)
-        dfs(r, c - 1)
-
+    R, C = len(grid), len(grid[0])
+    seen = [[False] * C for _ in range(R)]
     count = 0
-    for r in range(rows):
-        for c in range(cols):
-            if grid[r][c] == '1' and not visited[r][c]:
+    for r in range(R):
+        for c in range(C):
+            if grid[r][c] == 1 and not seen[r][c]:
                 count += 1
-                dfs(r, c)
+                flood(grid, seen, r, c)
     return count
 
-def max_area_of_island(grid):
-    """Return the area of the largest island."""
-    if not grid:
+def max_island_area(grid):
+    if not grid or not grid[0]:
         return 0
-    rows, cols = len(grid), len(grid[0])
-    visited = [[False] * cols for _ in range(rows)]
-
-    def dfs(r, c):
-        if r < 0 or r >= rows or c < 0 or c >= cols:
-            return 0
-        if visited[r][c] or grid[r][c] != '1':
-            return 0
-        visited[r][c] = True
-        return 1 + dfs(r + 1, c) + dfs(r - 1, c) + dfs(r, c + 1) + dfs(r, c - 1)
-
+    R, C = len(grid), len(grid[0])
+    seen = [[False] * C for _ in range(R)]
     best = 0
-    for r in range(rows):
-        for c in range(cols):
-            if grid[r][c] == '1' and not visited[r][c]:
-                best = max(best, dfs(r, c))
+    for r in range(R):
+        for c in range(C):
+            if grid[r][c] == 1 and not seen[r][c]:
+                best = max(best, flood(grid, seen, r, c))
     return best
 
-def flood_fill(image, sr, sc, new_color):
-    """Classic flood fill: change the connected component of (sr,sc) to new_color."""
-    if not image:
-        return image
-    rows, cols = len(image), len(image[0])
-    orig = image[sr][sc]
-    if orig == new_color:
-        return image
-
-    def dfs(r, c):
-        if r < 0 or r >= rows or c < 0 or c >= cols:
-            return
-        if image[r][c] != orig:
-            return
-        image[r][c] = new_color
-        dfs(r + 1, c)
-        dfs(r - 1, c)
-        dfs(r, c + 1)
-        dfs(r, c - 1)
-
-    dfs(sr, sc)
-    return image
-
-# Tiny hand-checked tests
-grid1 = [
-    ["1","1","0"],
-    ["0","1","0"],
-    ["0","0","1"]
-]
-assert num_islands(grid1) == 2
-assert max_area_of_island(grid1) == 3
-
-img = [[1,1,1],[1,1,0],[1,0,1]]
-assert flood_fill([row[:] for row in img], 1, 1, 2) == [[2,2,2],[2,2,0],[2,0,1]]
+g = [[1, 1, 0], [0, 1, 0], [0, 0, 1]]
+assert num_islands(g) == 2
+assert max_island_area(g) == 3
+assert num_islands([[0, 0], [0, 0]]) == 0
 ```
 
 ```cpp
-int numIslands(vector<vector<char>>& grid) {
-    if (grid.empty()) return 0;
-    int rows = grid.size(), cols = grid[0].size();
-    vector<vector<bool>> vis(rows, vector<bool>(cols, false));
-    function<void(int,int)> dfs = [&](int r, int c) {
-        if (r < 0 || r >= rows || c < 0 || c >= cols) return;
-        if (vis[r][c] || grid[r][c] != '1') return;
-        vis[r][c] = true;
-        dfs(r+1, c); dfs(r-1, c); dfs(r, c+1); dfs(r, c-1);
-    };
+const int DR[4] = {-1, 0, 1, 0};
+const int DC[4] = {0, 1, 0, -1};
+
+int flood(const vector<vector<int>>& grid, vector<vector<bool>>& seen, int r, int c) {
+    int R = grid.size(), C = grid[0].size();
+    seen[r][c] = true;
+    vector<pair<int,int>> stack = {{r, c}};
+    int size = 0;
+    while (!stack.empty()) {
+        auto [cr, cc] = stack.back();
+        stack.pop_back();
+        ++size;
+        for (int k = 0; k < 4; ++k) {
+            int nr = cr + DR[k], nc = cc + DC[k];
+            if (0 <= nr && nr < R && 0 <= nc && nc < C && grid[nr][nc] == 1 && !seen[nr][nc]) {
+                seen[nr][nc] = true;
+                stack.push_back({nr, nc});
+            }
+        }
+    }
+    return size;
+}
+
+int num_islands(const vector<vector<int>>& grid) {
+    if (grid.empty() || grid[0].empty()) return 0;
+    int R = grid.size(), C = grid[0].size();
+    vector<vector<bool>> seen(R, vector<bool>(C, false));
     int count = 0;
-    for (int r = 0; r < rows; ++r)
-        for (int c = 0; c < cols; ++c)
-            if (grid[r][c] == '1' && !vis[r][c]) {
+    for (int r = 0; r < R; ++r)
+        for (int c = 0; c < C; ++c)
+            if (grid[r][c] == 1 && !seen[r][c]) {
                 ++count;
-                dfs(r, c);
+                flood(grid, seen, r, c);
             }
     return count;
 }
 
-int maxAreaOfIsland(vector<vector<char>>& grid) {
-    if (grid.empty()) return 0;
-    int rows = grid.size(), cols = grid[0].size();
-    vector<vector<bool>> vis(rows, vector<bool>(cols, false));
-    function<int(int,int)> dfs = [&](int r, int c) {
-        if (r < 0 || r >= rows || c < 0 || c >= cols) return 0;
-        if (vis[r][c] || grid[r][c] != '1') return 0;
-        vis[r][c] = true;
-        return 1 + dfs(r+1,c) + dfs(r-1,c) + dfs(r,c+1) + dfs(r,c-1);
-    };
+int max_island_area(const vector<vector<int>>& grid) {
+    if (grid.empty() || grid[0].empty()) return 0;
+    int R = grid.size(), C = grid[0].size();
+    vector<vector<bool>> seen(R, vector<bool>(C, false));
     int best = 0;
-    for (int r = 0; r < rows; ++r)
-        for (int c = 0; c < cols; ++c)
-            if (grid[r][c] == '1' && !vis[r][c])
-                best = max(best, dfs(r, c));
+    for (int r = 0; r < R; ++r)
+        for (int c = 0; c < C; ++c)
+            if (grid[r][c] == 1 && !seen[r][c])
+                best = max(best, flood(grid, seen, r, c));
     return best;
 }
+```
 
-vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
-    if (image.empty()) return image;
-    int rows = image.size(), cols = image[0].size();
-    int orig = image[sr][sc];
-    if (orig == newColor) return image;
-    function<void(int,int)> dfs = [&](int r, int c) {
-        if (r < 0 || r >= rows || c < 0 || c >= cols) return;
-        if (image[r][c] != orig) return;
-        image[r][c] = newColor;
-        dfs(r+1, c); dfs(r-1, c); dfs(r, c+1); dfs(r, c-1);
-    };
-    dfs(sr, sc);
+Each cell is pushed at most once, so both functions run in $O(R \cdot C)$ time and use $O(R \cdot C)$ space for the `seen` table and the stack.
+
+**Flood fill** is the paint-bucket tool of a drawing program. You click a cell, and its colour spreads to every connected cell of the same original colour. The walk is the same as before, except that no `seen` table is needed: recolouring a cell already marks it, because a cell with the new colour no longer matches the old colour. The one trap is when the new colour equals the old one. Then recolouring would not mark anything and the walk would never stop, so we return at once. This is exactly the problem _Flood Fill_.
+
+```python
+def flood_fill(image, sr, sc, color):
+    old = image[sr][sc]
+    if old == color:
+        return image
+    R, C = len(image), len(image[0])
+    image[sr][sc] = color
+    stack = [(sr, sc)]
+    while stack:
+        r, c = stack.pop()
+        for k in range(4):
+            nr, nc = r + DR[k], c + DC[k]
+            if 0 <= nr < R and 0 <= nc < C and image[nr][nc] == old:
+                image[nr][nc] = color
+                stack.append((nr, nc))
+    return image
+
+assert flood_fill([[1, 1, 1], [1, 1, 0], [1, 0, 1]], 1, 1, 2) == [[2, 2, 2], [2, 2, 0], [2, 0, 1]]
+assert flood_fill([[0, 0], [0, 0]], 0, 0, 0) == [[0, 0], [0, 0]]
+```
+
+```cpp
+vector<vector<int>> flood_fill(vector<vector<int>> image, int sr, int sc, int color) {
+    int old = image[sr][sc];
+    if (old == color) return image;
+    int R = image.size(), C = image[0].size();
+    image[sr][sc] = color;
+    vector<pair<int,int>> stack = {{sr, sc}};
+    while (!stack.empty()) {
+        auto [r, c] = stack.back();
+        stack.pop_back();
+        for (int k = 0; k < 4; ++k) {
+            int nr = r + DR[k], nc = c + DC[k];
+            if (0 <= nr && nr < R && 0 <= nc && nc < C && image[nr][nc] == old) {
+                image[nr][nc] = color;
+                stack.push_back({nr, nc});
+            }
+        }
+    }
     return image;
 }
 ```
 
 ## 3.4 DFS from the borders
 
-In _Pacific Atlantic Water Flow_ we have a height grid. Water can flow from a cell to a neighbour of equal or lower height. A cell can reach the Pacific if there is a path to the top or left border; it can reach the Atlantic if there is a path to the bottom or right border. Instead of starting DFS from every cell, we reverse the thinking: start DFS from all Pacific-border cells simultaneously (only moving to neighbours of **greater or equal** height, because we are going uphill), mark all cells that can reach Pacific. Do the same for Atlantic. The answer is the intersection of the two marked sets.
+Sometimes the cheap way to answer a question about every cell is to run the search backwards from the answer. In _Pacific Atlantic Water Flow_ each cell has a height, and water flows from a cell to a neighbour of equal or lower height. The Pacific touches the top and left edges of the grid and the Atlantic touches the bottom and right edges. We want every cell from which water can reach both oceans.
+
+Starting a search from each cell would repeat the same work over and over. Instead start from the ocean. The cells next to the Pacific can obviously reach it. A cell next to one of those can reach it too if water can flow from that cell into it, which means the neighbour must be **at least as high**. So we flood from all the Pacific-side border cells at once, moving only to neighbours of greater or equal height, and mark everything we reach. We do the same from the Atlantic side. The cells marked by both floods are the answer.
+
+Take this 3 by 3 grid.
+
+```
+2 1 3
+1 4 2
+3 1 1
+```
+
+The Pacific flood starts from the whole top row and the whole left column. From the 1 at (0, 1) it can step to (1, 1), because 4 is higher than 1 (water on the 4 can flow down to the 1 and so on to the Pacific). From (1, 1) the neighbours (1, 2) = 2 and (2, 1) = 1 are lower than 4, so they are not reached this way, and (1, 2) is not reached from (0, 2) either, since 2 is lower than 3. The Pacific set is (0, 0), (0, 1), (0, 2), (1, 0), (1, 1) and (2, 0). The Atlantic flood, from the bottom row and right column, reaches (0, 2), (1, 1), (1, 2), (2, 0), (2, 1) and (2, 2). The two sets share exactly (0, 2), (1, 1) and (2, 0).
 
 ```python
 def pacific_atlantic(heights):
-    """Return list of [r,c] that can flow to both oceans."""
-    if not heights:
+    if not heights or not heights[0]:
         return []
-    rows, cols = len(heights), len(heights[0])
-    pac = [[False] * cols for _ in range(rows)]
-    atl = [[False] * cols for _ in range(rows)]
+    R, C = len(heights), len(heights[0])
+    DR = [-1, 0, 1, 0]
+    DC = [0, 1, 0, -1]
 
-    def dfs(r, c, visited, prev_h):
-        if r < 0 or r >= rows or c < 0 or c >= cols:
-            return
-        if visited[r][c] or heights[r][c] < prev_h:
-            return
-        visited[r][c] = True
-        h = heights[r][c]
-        dfs(r + 1, c, visited, h)
-        dfs(r - 1, c, visited, h)
-        dfs(r, c + 1, visited, h)
-        dfs(r, c - 1, visited, h)
+    def reach(starts):
+        seen = [[False] * C for _ in range(R)]
+        stack = []
+        for r, c in starts:
+            if not seen[r][c]:
+                seen[r][c] = True
+                stack.append((r, c))
+        while stack:
+            r, c = stack.pop()
+            for k in range(4):
+                nr, nc = r + DR[k], c + DC[k]
+                if (0 <= nr < R and 0 <= nc < C and not seen[nr][nc]
+                        and heights[nr][nc] >= heights[r][c]):
+                    seen[nr][nc] = True
+                    stack.append((nr, nc))
+        return seen
 
-    # Pacific from top and left borders
-    for c in range(cols):
-        dfs(0, c, pac, heights[0][c])
-    for r in range(rows):
-        dfs(r, 0, pac, heights[r][0])
+    pacific = reach([(0, c) for c in range(C)] + [(r, 0) for r in range(R)])
+    atlantic = reach([(R - 1, c) for c in range(C)] + [(r, C - 1) for r in range(R)])
+    return [[r, c] for r in range(R) for c in range(C) if pacific[r][c] and atlantic[r][c]]
 
-    # Atlantic from bottom and right borders
-    for c in range(cols):
-        dfs(rows - 1, c, atl, heights[rows - 1][c])
-    for r in range(rows):
-        dfs(r, cols - 1, atl, heights[r][cols - 1])
-
-    ans = []
-    for r in range(rows):
-        for c in range(cols):
-            if pac[r][c] and atl[r][c]:
-                ans.append([r, c])
-    return ans
-
-# Tiny hand-checked example
-h = [
-    [1, 2, 2, 3, 5],
-    [3, 2, 3, 4, 4],
-    [2, 4, 5, 3, 1],
-    [6, 7, 1, 4, 5],
-    [5, 1, 1, 2, 4]
-]
-# Known answer from LeetCode example
-expected = [[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]
-assert sorted(pacific_atlantic(h)) == sorted(expected)
+assert pacific_atlantic([[2, 1, 3], [1, 4, 2], [3, 1, 1]]) == [[0, 2], [1, 1], [2, 0]]
+assert pacific_atlantic([[1]]) == [[0, 0]]
 ```
 
 ```cpp
-vector<vector<int>> pacificAtlantic(vector<vector<int>>& heights) {
-    if (heights.empty()) return {};
-    int rows = heights.size(), cols = heights[0].size();
-    vector<vector<bool>> pac(rows, vector<bool>(cols, false));
-    vector<vector<bool>> atl(rows, vector<bool>(cols, false));
+vector<vector<int>> pacific_atlantic(const vector<vector<int>>& heights) {
+    if (heights.empty() || heights[0].empty()) return {};
+    int R = heights.size(), C = heights[0].size();
+    int DR[4] = {-1, 0, 1, 0};
+    int DC[4] = {0, 1, 0, -1};
 
-    function<void(int,int,vector<vector<bool>>&,int)> dfs = [&](int r, int c, auto& vis, int prev) {
-        if (r < 0 || r >= rows || c < 0 || c >= cols) return;
-        if (vis[r][c] || heights[r][c] < prev) return;
-        vis[r][c] = true;
-        int h = heights[r][c];
-        dfs(r+1, c, vis, h);
-        dfs(r-1, c, vis, h);
-        dfs(r, c+1, vis, h);
-        dfs(r, c-1, vis, h);
+    auto reach = [&](const vector<pair<int,int>>& starts) {
+        vector<vector<bool>> seen(R, vector<bool>(C, false));
+        vector<pair<int,int>> stack;
+        for (auto [r, c] : starts) {
+            if (!seen[r][c]) {
+                seen[r][c] = true;
+                stack.push_back({r, c});
+            }
+        }
+        while (!stack.empty()) {
+            auto [r, c] = stack.back();
+            stack.pop_back();
+            for (int k = 0; k < 4; ++k) {
+                int nr = r + DR[k], nc = c + DC[k];
+                if (0 <= nr && nr < R && 0 <= nc && nc < C && !seen[nr][nc]
+                        && heights[nr][nc] >= heights[r][c]) {
+                    seen[nr][nc] = true;
+                    stack.push_back({nr, nc});
+                }
+            }
+        }
+        return seen;
     };
 
-    for (int c = 0; c < cols; ++c) dfs(0, c, pac, heights[0][c]);
-    for (int r = 0; r < rows; ++r) dfs(r, 0, pac, heights[r][0]);
-    for (int c = 0; c < cols; ++c) dfs(rows-1, c, atl, heights[rows-1][c]);
-    for (int r = 0; r < rows; ++r) dfs(r, cols-1, atl, heights[r][cols-1]);
+    vector<pair<int,int>> pacStarts, atlStarts;
+    for (int c = 0; c < C; ++c) { pacStarts.push_back({0, c}); atlStarts.push_back({R - 1, c}); }
+    for (int r = 0; r < R; ++r) { pacStarts.push_back({r, 0}); atlStarts.push_back({r, C - 1}); }
+    auto pacific = reach(pacStarts);
+    auto atlantic = reach(atlStarts);
 
-    vector<vector<int>> ans;
-    for (int r = 0; r < rows; ++r)
-        for (int c = 0; c < cols; ++c)
-            if (pac[r][c] && atl[r][c])
-                ans.push_back({r, c});
-    return ans;
+    vector<vector<int>> answer;
+    for (int r = 0; r < R; ++r)
+        for (int c = 0; c < C; ++c)
+            if (pacific[r][c] && atlantic[r][c]) answer.push_back({r, c});
+    return answer;
 }
 ```
 
-## 3.5 Entry and exit times, and iterative DFS
+Each of the two floods touches every cell at most once, so the time is $O(R \cdot C)$ and the space is $O(R \cdot C)$. The trick of searching **from the targets, in the reverse direction** shows up again whenever a question asks "which starting points can reach X?".
 
-During recursive DFS we can note the moment we first enter a vertex and the moment we leave it. A global counter `timer` increases by one at each event. The **entry time** `tin[v]` is the counter value when we first see `v`. The **exit time** `tout[v]` is the counter value when we finish all recursive calls from `v`. These times have a useful property: for any two vertices `u` and `v` in the same DFS tree, `u` is an ancestor of `v` if and only if `tin[u] < tin[v]` and `tout[u] > tout[v]`. This lets us answer ancestor queries in $O(1)$ after one DFS.
+## 3.5 Entry and exit times
 
-Sometimes recursion depth is too large for the system stack. We can write DFS iteratively with our own stack. Each stack element holds a vertex and the index of the next neighbour to explore. When we pop a vertex whose neighbours are all processed, we record its exit time.
+While DFS runs we can write down two moments for every vertex using a counter that goes up by one at each event. The **entry time** `tin[v]` is the counter value when DFS first arrives at `v`. The **exit time** `tout[v]` is the counter value when DFS has finished everything below `v` and leaves it. These numbers make the structure of the walk visible: vertex `u` is an **ancestor** of `v` (meaning DFS reached `v` while still inside `u`) exactly when `u` was entered before `v` and left after `v`. Chapter 9 relies on entry times.
+
+On the five-vertex graph of Section 3.2, the events happen in this order: enter 0, enter 1, enter 3, leave 3, leave 1, enter 2, enter 4, leave 4, leave 2, leave 0. Numbering them from 0 gives `tin = [0, 1, 5, 2, 6]` and `tout = [9, 4, 8, 3, 7]`. Vertex 1 is an ancestor of 3 because $1 \le 2$ and $3 \le 4$, but 1 is not an ancestor of 2 because 2 was entered after 1 was already left.
+
+To compute these numbers without recursion we keep our own stack of frames. A frame holds a vertex and the position of the next neighbour to try. At each step we look at the top frame. If it has a neighbour left, we advance its position, and if that neighbour is new we enter it and push a new frame. If it has no neighbours left, we record its exit time and pop it. This copies exactly what the call stack does in the recursive version.
 
 ```python
 def dfs_times(adj, start):
-    """Return (tin, tout) arrays for vertices reachable from start.
-       Unreachable vertices keep tin = tout = -1.
-    """
     n = len(adj)
     tin = [-1] * n
     tout = [-1] * n
     timer = 0
-    stack = [(start, 0, False)]  # (vertex, next neighbour index, entered_flag)
-
+    tin[start] = timer
+    timer += 1
+    stack = [[start, 0]]  # [vertex, index of next neighbour to try]
     while stack:
-        v, idx, entered = stack.pop()
-        if not entered:
-            tin[v] = timer
-            timer += 1
-            # push exit marker
-            stack.append((v, 0, True))
-            # push neighbours in reverse order to mimic recursive order
-            for u in reversed(adj[v]):
-                if tin[u] == -1:
-                    stack.append((u, 0, False))
+        frame = stack[-1]
+        v = frame[0]
+        if frame[1] < len(adj[v]):
+            u = adj[v][frame[1]]
+            frame[1] += 1
+            if tin[u] == -1:
+                tin[u] = timer
+                timer += 1
+                stack.append([u, 0])
         else:
             tout[v] = timer
             timer += 1
+            stack.pop()
     return tin, tout
 
-# Hand-checked on the 5-vertex graph from section 3.2
-adj = [
-    [1, 2],
-    [0, 3],
-    [0, 4],
-    [1],
-    [2]
-]
+def is_ancestor(tin, tout, u, v):
+    return tin[u] <= tin[v] and tout[v] <= tout[u]
+
+adj = [[1, 2], [0, 3], [0, 4], [1], [2]]
 tin, tout = dfs_times(adj, 0)
-# Recursive order was 0,1,3,2,4. Entry times increase along that path.
-# 0 enters first, exits last. 3 enters before 2, exits before 2.
-assert tin[0] < tin[1] < tin[3]
-assert tin[0] < tin[2] < tin[4]
-assert tout[3] < tout[1] < tout[0]
-assert tout[4] < tout[2] < tout[0]
+assert tin == [0, 1, 5, 2, 6]
+assert tout == [9, 4, 8, 3, 7]
+assert is_ancestor(tin, tout, 1, 3)
+assert not is_ancestor(tin, tout, 1, 2)
 ```
 
 ```cpp
@@ -1119,255 +1004,213 @@ pair<vector<int>, vector<int>> dfs_times(const vector<vector<int>>& adj, int sta
     int n = adj.size();
     vector<int> tin(n, -1), tout(n, -1);
     int timer = 0;
-    struct Frame { int v, idx; bool entered; };
-    vector<Frame> st;
-    st.push_back({start, 0, false});
-
-    while (!st.empty()) {
-        auto [v, idx, entered] = st.back();
-        st.pop_back();
-        if (!entered) {
-            tin[v] = timer++;
-            st.push_back({v, 0, true}); // exit marker
-            for (int i = (int)adj[v].size() - 1; i >= 0; --i) {
-                int u = adj[v][i];
-                if (tin[u] == -1) st.push_back({u, 0, false});
+    tin[start] = timer++;
+    vector<pair<int,int>> stack = {{start, 0}};  // {vertex, index of next neighbour}
+    while (!stack.empty()) {
+        int v = stack.back().first;
+        int idx = stack.back().second;
+        if (idx < (int)adj[v].size()) {
+            stack.back().second++;
+            int u = adj[v][idx];
+            if (tin[u] == -1) {
+                tin[u] = timer++;
+                stack.push_back({u, 0});
             }
         } else {
             tout[v] = timer++;
+            stack.pop_back();
         }
     }
     return {tin, tout};
 }
+
+bool is_ancestor(const vector<int>& tin, const vector<int>& tout, int u, int v) {
+    return tin[u] <= tin[v] && tout[v] <= tout[u];
+}
 ```
+
+The time is $O(n+m)$ and the space is $O(n)$, with no risk of overflowing the call stack.
 
 ## 3.6 Check yourself
 
-1. In recursive DFS, why do we mark a vertex visited before making recursive calls to its neighbours?
-2. If a grid has 10 rows and 10 columns, what is the maximum recursion depth DFS could reach when flooding from one corner?
-3. In the Pacific-Atlantic problem, why do we start DFS from the ocean borders and move to cells with greater or equal height?
-4. Given entry and exit times `tin[u]=5, tout[u]=12` and `tin[v]=7, tout[v]=10`, is `u` an ancestor of `v` in the DFS tree?
+1. In recursive DFS, why do we mark a vertex as visited before calling DFS on its neighbours?
+2. A grid is a single row of 1000 land cells. How deep can a recursive flood from one end go, and why can that be a problem in Python?
+3. In the Pacific Atlantic problem, why do we start at the ocean and move to cells of greater or equal height?
+4. If `tin[u] = 5`, `tout[u] = 12`, `tin[v] = 7` and `tout[v] = 10`, is `u` an ancestor of `v`?
 
 # Chapter 4. Cycles, two colours and safe nodes
 
 ## 4.1 Cycles in an undirected graph
 
-In an undirected graph a cycle appears when a depth‑first search (DFS) reaches a vertex that has already been visited **and** that vertex is not the immediate parent we just came from. The parent check avoids mistaking the edge we used to enter the current vertex for a cycle.
+A cycle is a walk that leaves a vertex and returns to it without using the same edge twice. Depth-first search finds one the moment it stumbles on a vertex it has already visited, with one exception: the edge we just came along always leads back to a visited vertex (the one we came from), and that is not a cycle. So the rule is: **while exploring `v`, if an edge leads to an already visited vertex, and it is not the very edge we used to enter `v`, there is a cycle.**
 
-Imagine a small graph with four vertices and edges `0–1`, `1–2`, `2–0`, `1–3`.  
-Start DFS at vertex 0 (parent `-1`).
+Notice that we say "the very edge", not "the parent vertex". If the input contains the same edge twice, say `0-1` and `1-0`, they form a cycle of length 2 even though both lead to the same neighbour. Giving every edge a number and remembering the number of the edge we arrived by handles that case, and also self-loops (an edge from a vertex to itself), for free. In the adjacency list we therefore store pairs `(neighbour, edge number)`.
 
-- From 0 go to 1 (parent 0).
-- From 1 go to 2 (parent 1).
-- From 2 see neighbour 0. Vertex 0 is already visited and it is **not** the parent of 2 (parent is 1).  
-  → We found a cycle `0–1–2–0`.
-- The search continues but we already know the answer.
-
-This is exactly the problem _Detect Cycle Undirected_.
+Let us trace it on the edges 0-1 (number 0), 1-2 (number 1), 2-0 (number 2) and 1-3 (number 3), starting at vertex 0. We go from 0 to 1 along edge 0. At 1 we skip edge 0, because it is the edge we arrived by, and go to 2 along edge 1. At 2 we skip edge 1 and then meet vertex 0 along edge 2. Vertex 0 is already visited and edge 2 is not the edge we came by, so we report a cycle. This is exactly the problem _Cycle in an Undirected Graph_.
 
 ```python
 def has_cycle_undirected(n, edges):
-    """Return True if the undirected graph has a cycle."""
     adj = [[] for _ in range(n)]
-    for u, v in edges:
-        adj[u].append(v)
-        adj[v].append(u)
-
+    for i, (u, v) in enumerate(edges):
+        adj[u].append((v, i))
+        adj[v].append((u, i))
     visited = [False] * n
 
-    def dfs(v, parent):
+    def dfs(v, parent_edge):
         visited[v] = True
-        for u in adj[v]:
-            if u == parent:
+        for u, e in adj[v]:
+            if e == parent_edge:
                 continue
-            if visited[u]:
-                return True
-            if dfs(u, v):
+            if visited[u] or dfs(u, e):
                 return True
         return False
 
     for v in range(n):
-        if not visited[v]:
-            if dfs(v, -1):
-                return True
+        if not visited[v] and dfs(v, -1):
+            return True
     return False
 
-
-# Tiny hand‑checked example:
-# 0-1, 1-2, 2-0 (triangle) + isolated 3 -> cycle exists
-assert has_cycle_undirected(4, [[0,1],[1,2],[2,0]]) == True
-# 0-1, 1-2, 2-3 (path of length 3) -> no cycle
-assert has_cycle_undirected(4, [[0,1],[1,2],[2,3]]) == False
+assert has_cycle_undirected(4, [[0, 1], [1, 2], [2, 0], [1, 3]])
+assert not has_cycle_undirected(4, [[0, 1], [1, 2], [2, 3]])
+assert has_cycle_undirected(2, [[0, 1], [1, 0]])
+assert has_cycle_undirected(1, [[0, 0]])
 ```
 
 ```cpp
-bool hasCycleUndirected(int n, const vector<vector<int>>& edges) {
-    vector<vector<int>> adj(n);
-    for (auto& e : edges) {
-        adj[e[0]].push_back(e[1]);
-        adj[e[1]].push_back(e[0]);
+bool has_cycle_undirected(int n, const vector<vector<int>>& edges) {
+    vector<vector<pair<int,int>>> adj(n);
+    for (int i = 0; i < (int)edges.size(); ++i) {
+        int u = edges[i][0], v = edges[i][1];
+        adj[u].push_back({v, i});
+        adj[v].push_back({u, i});
     }
     vector<bool> visited(n, false);
-    function<bool(int,int)> dfs = [&](int v, int parent) {
+    function<bool(int,int)> dfs = [&](int v, int parent_edge) {
         visited[v] = true;
-        for (int u : adj[v]) {
-            if (u == parent) continue;
-            if (visited[u]) return true;
-            if (dfs(u, v)) return true;
+        for (auto [u, e] : adj[v]) {
+            if (e == parent_edge) continue;
+            if (visited[u] || dfs(u, e)) return true;
         }
-        return false;
-    };
-    for (int v = 0; v < n; ++v) {
-        if (!visited[v] && dfs(v, -1)) return true;
-    }
-    return false;
-}
-```
-
-The algorithm visits every vertex and edge once, so its time cost is $O(n + m)$ and space cost is $O(n)$ for the visited array and recursion stack.
-
-## 4.2 Cycles in a directed graph: three colours
-
-In a directed graph we cannot use a simple parent check because edges have direction. Instead we give each vertex one of three colours:
-
-- **White (0)** – not visited yet.
-- **Grey (1)** – currently on the recursion stack (DFS entered this vertex but has not finished it).
-- **Black (2)** – completely processed (DFS finished this vertex and all its descendants).
-
-If during DFS we follow an edge to a **grey** vertex, that vertex is an ancestor on the current recursion stack, so we have found a directed cycle. Edges to white vertices continue the search; edges to black vertices go to an already finished branch and cannot form a cycle with the current path.
-
-Consider a directed graph with edges `0→1`, `1→2`, `2→0`, `3→4`.  
-Start at 0 (white→grey).
-
-- Go to 1 (white→grey).
-- Go to 2 (white→grey).
-- From 2 see edge to 0. Vertex 0 is **grey** → cycle `0→1→2→0` detected.  
-  Later we start at 3 (white→grey), go to 4 (white→grey→black), backtrack, 3 becomes black. No cycle there.
-
-This is exactly the problem _Detect Cycle Directed_.
-
-```python
-def has_cycle_directed(n, edges):
-    """Return True if the directed graph has a cycle."""
-    adj = [[] for _ in range(n)]
-    for u, v in edges:
-        adj[u].append(v)
-
-    # 0 = white, 1 = grey, 2 = black
-    color = [0] * n
-
-    def dfs(v):
-        color[v] = 1  # grey
-        for u in adj[v]:
-            if color[u] == 0:
-                if dfs(u):
-                    return True
-            elif color[u] == 1:
-                return True
-        color[v] = 2  # black
-        return False
-
-    for v in range(n):
-        if color[v] == 0:
-            if dfs(v):
-                return True
-    return False
-
-
-# Hand‑checked examples:
-# 0->1, 1->2, 2->0 (cycle) + 3->4 (no cycle) -> True
-assert has_cycle_directed(5, [[0,1],[1,2],[2,0],[3,4]]) == True
-# 0->1, 1->2, 2->3 (path) -> False
-assert has_cycle_directed(4, [[0,1],[1,2],[2,3]]) == False
-```
-
-```cpp
-bool hasCycleDirected(int n, const vector<vector<int>>& edges) {
-    vector<vector<int>> adj(n);
-    for (auto& e : edges) adj[e[0]].push_back(e[1]);
-    vector<int> color(n, 0); // 0 white, 1 grey, 2 black
-    function<bool(int)> dfs = [&](int v) {
-        color[v] = 1;
-        for (int u : adj[v]) {
-            if (color[u] == 0) {
-                if (dfs(u)) return true;
-            } else if (color[u] == 1) {
-                return true;
-            }
-        }
-        color[v] = 2;
         return false;
     };
     for (int v = 0; v < n; ++v)
-        if (color[v] == 0 && dfs(v)) return true;
+        if (!visited[v] && dfs(v, -1)) return true;
     return false;
 }
 ```
 
-Time cost is $O(n + m)$, space cost is $O(n)$ for the colour array and recursion stack.
+The search touches each vertex and edge a constant number of times, so the time is $O(n+m)$ and the space is $O(n+m)$. For very long paths the recursion can get too deep in Python. A neat alternative needs no recursion at all: a connected component with $k$ vertices and $e$ edges is a tree exactly when $e = k-1$, so a cycle exists as soon as some component has $e \ge k$. Chapter 7 gives a third method, union-find.
+
+## 4.2 Cycles in a directed graph
+
+In a directed graph "visited before" is not enough. Take the edges 0→1, 0→2 and 1→2. DFS from 0 visits 1, then 2, then comes back and sees 2 again as a neighbour of 0, but there is no cycle, because the arrows never lead back to 0. What matters is whether the vertex we meet is still **being explored**, that is, whether it is one of the vertices on the current chain of calls.
+
+So we use three colours. A vertex is **white** if DFS has not seen it, **grey** if DFS is inside it right now (it was entered but not finished), and **black** if DFS has completely finished it. Following an edge into a white vertex continues the search. Following an edge into a black vertex is harmless, because that vertex finished without finding a way back. But an edge into a grey vertex goes back to a vertex on our current chain, so the chain plus this edge is a cycle.
+
+Take the edges 0→1, 1→2, 2→0 and 3→4. DFS from 0 turns 0, 1 and 2 grey in turn. At 2 the edge to 0 leads to a grey vertex, so we report a cycle. This is exactly the problem _Cycle in a Directed Graph_. Had that edge not existed, vertices would turn black on the way back (2, then 1, then 0), and the search from 3 would colour 4 and then 3 black without a surprise.
+
+```python
+def has_cycle_directed(n, edges):
+    adj = [[] for _ in range(n)]
+    for u, v in edges:
+        adj[u].append(v)
+    WHITE, GREY, BLACK = 0, 1, 2
+    colour = [WHITE] * n
+
+    def dfs(v):
+        colour[v] = GREY
+        for u in adj[v]:
+            if colour[u] == GREY:
+                return True
+            if colour[u] == WHITE and dfs(u):
+                return True
+        colour[v] = BLACK
+        return False
+
+    for v in range(n):
+        if colour[v] == WHITE and dfs(v):
+            return True
+    return False
+
+assert has_cycle_directed(5, [[0, 1], [1, 2], [2, 0], [3, 4]])
+assert not has_cycle_directed(3, [[0, 1], [0, 2], [1, 2]])
+assert has_cycle_directed(1, [[0, 0]])
+```
+
+```cpp
+bool has_cycle_directed(int n, const vector<vector<int>>& edges) {
+    vector<vector<int>> adj(n);
+    for (auto& e : edges) adj[e[0]].push_back(e[1]);
+    const int WHITE = 0, GREY = 1, BLACK = 2;
+    vector<int> colour(n, WHITE);
+    function<bool(int)> dfs = [&](int v) {
+        colour[v] = GREY;
+        for (int u : adj[v]) {
+            if (colour[u] == GREY) return true;
+            if (colour[u] == WHITE && dfs(u)) return true;
+        }
+        colour[v] = BLACK;
+        return false;
+    };
+    for (int v = 0; v < n; ++v)
+        if (colour[v] == WHITE && dfs(v)) return true;
+    return false;
+}
+```
+
+Time is $O(n+m)$ and space is $O(n+m)$.
 
 ## 4.3 Bipartite graphs and two colours
 
-A graph is **bipartite** if we can split its vertices into two groups such that every edge connects a vertex from one group to a vertex from the other group. Equivalently, we can colour every vertex with one of two colours (say 0 and 1) so that adjacent vertices always have different colours.
+A graph is **bipartite** if its vertices can be split into two teams so that every edge joins one team to the other, with no edge inside a team. Equivalently, you can paint every vertex with one of two colours so that the two ends of every edge have different colours. A square 0-1-2-3-0 is bipartite (paint 0 and 2 red, 1 and 3 blue), but a triangle is not.
 
-We can test this with a BFS (or DFS) that spreads colours level by level. Start from any uncoloured vertex, give it colour 0, and put it in a queue. While the queue is not empty, pop a vertex `v`, and for each neighbour `u`:
-
-- If `u` is uncoloured, give it the opposite colour (`colour[v] ^ 1`) and push it.
-- If `u` already has a colour, check that it differs from `v`'s colour. If it is the same, the graph is **not** bipartite.
-
-Why does an odd cycle break bipartiteness? Walk around a cycle of length 3: colours must alternate 0,1,0 but the last edge connects two 0s. In general, an odd cycle forces two adjacent vertices to share a colour. Conversely, if a graph has no odd cycles, the alternating colouring always works.
-
-This is exactly the problem _Is Graph Bipartite_.
+The test is a search that paints as it goes. Start at an unpainted vertex and paint it 0. Take a vertex off the queue, and for each neighbour: if it is unpainted, paint it with the opposite colour and queue it; if it is already painted with the same colour as the current vertex, two teammates are joined by an edge and the answer is no. Because a graph may have several components, we restart the painting from every unpainted vertex. The reason a triangle fails is that colours must alternate along a walk, so after three steps you are back at the start with the wrong colour. The same happens for any cycle with an odd number of vertices, and a graph with no odd cycle always paints successfully. This is exactly the problem _Is the Graph Bipartite?_.
 
 ```python
 from collections import deque
 
 def is_bipartite(n, edges):
-    """Return True if the undirected graph is bipartite."""
     adj = [[] for _ in range(n)]
     for u, v in edges:
         adj[u].append(v)
         adj[v].append(u)
-
-    colour = [-1] * n  # -1 = uncoloured, 0 or 1 = colour
+    colour = [-1] * n
     for start in range(n):
         if colour[start] != -1:
             continue
         colour[start] = 0
-        q = deque([start])
-        while q:
-            v = q.popleft()
+        queue = deque([start])
+        while queue:
+            v = queue.popleft()
             for u in adj[v]:
                 if colour[u] == -1:
                     colour[u] = colour[v] ^ 1
-                    q.append(u)
+                    queue.append(u)
                 elif colour[u] == colour[v]:
                     return False
     return True
 
-
-# Hand‑checked examples:
-# Even cycle 0-1-2-3-0 (4 vertices) -> bipartite
-assert is_bipartite(4, [[0,1],[1,2],[2,3],[3,0]]) == True
-# Odd cycle 0-1-2-0 (triangle) -> not bipartite
-assert is_bipartite(3, [[0,1],[1,2],[2,0]]) == False
+assert is_bipartite(4, [[0, 1], [1, 2], [2, 3], [3, 0]])
+assert not is_bipartite(3, [[0, 1], [1, 2], [2, 0]])
+assert not is_bipartite(1, [[0, 0]])
 ```
 
 ```cpp
-bool isBipartite(int n, const vector<vector<int>>& edges) {
+bool is_bipartite(int n, const vector<vector<int>>& edges) {
     vector<vector<int>> adj(n);
     for (auto& e : edges) {
         adj[e[0]].push_back(e[1]);
         adj[e[1]].push_back(e[0]);
     }
     vector<int> colour(n, -1);
-    queue<int> q;
     for (int start = 0; start < n; ++start) {
         if (colour[start] != -1) continue;
         colour[start] = 0;
+        queue<int> q;
         q.push(start);
         while (!q.empty()) {
-            int v = q.front(); q.pop();
+            int v = q.front();
+            q.pop();
             for (int u : adj[v]) {
                 if (colour[u] == -1) {
                     colour[u] = colour[v] ^ 1;
@@ -1382,105 +1225,84 @@ bool isBipartite(int n, const vector<vector<int>>& edges) {
 }
 ```
 
-Time cost is $O(n + m)$, space cost is $O(n)$ for the colour array and queue.
+The expression `colour[v] ^ 1` flips 0 to 1 and 1 to 0. The time is $O(n+m)$ and the space is $O(n+m)$.
 
 ## 4.4 Eventual safe states
 
-A node is **eventually safe** if every possible path starting from it eventually reaches a terminal node (a node with no outgoing edges) and never enters a cycle. In other words, the node cannot reach any cycle.
+In a directed graph, call a vertex a **terminal** if it has no outgoing edges. A vertex is **safe** if every path that starts at it ends at a terminal, in other words if it can never get trapped walking round a cycle forever. A vertex on a cycle is not safe, and neither is a vertex that has some path leading into a cycle.
 
-Instead of searching forward from every node (which would repeat work), we reverse the graph and think backwards. In the reversed graph, terminal nodes become sources (indegree 0). Any node that can reach a terminal node in the original graph becomes reachable from a source in the reversed graph. Nodes that are part of a cycle, or that lead into a cycle, will never be reached by this backward propagation because cycles have no terminal nodes.
+Checking each vertex separately would repeat a lot of work, so let us flip the question around. A terminal is safe. A vertex is safe if all of its outgoing edges lead to safe vertices. This suggests peeling the graph from the end, a lot like the course-ordering idea of the next chapter. Count the outgoing edges of every vertex. Put the terminals (count 0) in a queue. When a vertex `v` is taken from the queue it is safe, so each vertex `u` that has an edge `u→v` has one fewer unsafe-or-unknown edge left: lower `u`'s count by one, and when it reaches 0, all of `u`'s edges lead to safe vertices, so `u` is safe too and joins the queue. To find the vertices `u` pointing at `v` we store the **reversed** graph.
 
-Algorithm (Kahn’s topological sort on the reversed graph):
-
-1. Build the reversed adjacency list `rev_adj` and compute the outdegree of each node in the original graph (which is the indegree in the reversed graph).
-2. Start a queue with all nodes whose outdegree is 0 (terminal nodes).
-3. While the queue is not empty, pop a node `v`. For each predecessor `u` in `rev_adj[v]`, decrement `outdegree[u]`. If `outdegree[u]` becomes 0, push `u`.
-4. All nodes that get popped from the queue are eventually safe.
-
-Consider a graph with edges `0→1`, `1→2`, `2→3`, `3→4`, `4→5`, `5→6`, `6→3` (cycle 3‑4‑5‑6) and `7→8`, `8→9` (9 terminal).  
-Terminal nodes: 9. Queue starts with 9.  
-Process 9 → decrement outdegree of 8 (becomes 0) → push 8.  
-Process 8 → decrement outdegree of 7 (becomes 0) → push 7.  
-Nodes 3,4,5,6 never reach outdegree 0 because they are in a cycle. Nodes 0,1,2 point into the cycle, so their outdegree never drops to 0.  
-Safe nodes: 7, 8, 9.
-
-This is exactly the problem _Eventual Safe States_.
+Take the edges 0→1, 1→2, 2→3, 3→4, 4→5, 5→6, 6→3 (a cycle on 3, 4, 5, 6) and 7→8, 8→9, with 10 vertices. The only terminal is 9. Taking 9 lowers the count of 8 to zero, so 8 joins. Taking 8 frees 7. Taking 7 frees nobody. The vertices 3 to 6 each keep one outgoing edge that never gets removed, and 0, 1, 2 keep an edge into the cycle, so the safe vertices are 7, 8 and 9. This is exactly the problem _Eventual Safe Nodes_.
 
 ```python
 from collections import deque
 
 def eventual_safe_nodes(n, edges):
-    """Return sorted list of eventually safe nodes."""
-    rev_adj = [[] for _ in range(n)]
-    outdeg = [0] * n
+    reverse = [[] for _ in range(n)]
+    out_count = [0] * n
     for u, v in edges:
-        rev_adj[v].append(u)
-        outdeg[u] += 1
-
-    q = deque([v for v in range(n) if outdeg[v] == 0])
+        reverse[v].append(u)
+        out_count[u] += 1
+    queue = deque(v for v in range(n) if out_count[v] == 0)
     safe = [False] * n
-    while q:
-        v = q.popleft()
+    while queue:
+        v = queue.popleft()
         safe[v] = True
-        for u in rev_adj[v]:
-            outdeg[u] -= 1
-            if outdeg[u] == 0:
-                q.append(u)
+        for u in reverse[v]:
+            out_count[u] -= 1
+            if out_count[u] == 0:
+                queue.append(u)
     return [v for v in range(n) if safe[v]]
 
-
-# Hand‑checked example:
-# 0->1, 1->2, 2->3, 3->4, 4->5, 5->6, 6->3 (cycle)
-# 7->8, 8->9 (9 terminal)
-n = 10
-edges = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,3],[7,8],[8,9]]
-assert eventual_safe_nodes(n, edges) == [7,8,9]
+edges = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 3], [7, 8], [8, 9]]
+assert eventual_safe_nodes(10, edges) == [7, 8, 9]
+assert eventual_safe_nodes(7, [[0, 1], [0, 2], [1, 2], [1, 3], [2, 5], [3, 0], [4, 5]]) == [2, 4, 5, 6]
 ```
 
 ```cpp
-vector<int> eventualSafeNodes(int n, const vector<vector<int>>& edges) {
-    vector<vector<int>> rev_adj(n);
-    vector<int> outdeg(n, 0);
+vector<int> eventual_safe_nodes(int n, const vector<vector<int>>& edges) {
+    vector<vector<int>> reverse_adj(n);
+    vector<int> out_count(n, 0);
     for (auto& e : edges) {
-        rev_adj[e[1]].push_back(e[0]);
-        outdeg[e[0]]++;
+        reverse_adj[e[1]].push_back(e[0]);
+        out_count[e[0]]++;
     }
     queue<int> q;
     for (int v = 0; v < n; ++v)
-        if (outdeg[v] == 0) q.push(v);
+        if (out_count[v] == 0) q.push(v);
     vector<bool> safe(n, false);
     while (!q.empty()) {
-        int v = q.front(); q.pop();
+        int v = q.front();
+        q.pop();
         safe[v] = true;
-        for (int u : rev_adj[v]) {
-            if (--outdeg[u] == 0) q.push(u);
+        for (int u : reverse_adj[v]) {
+            if (--out_count[u] == 0) q.push(u);
         }
     }
-    vector<int> ans;
+    vector<int> answer;
     for (int v = 0; v < n; ++v)
-        if (safe[v]) ans.push_back(v);
-    return ans;
+        if (safe[v]) answer.push_back(v);
+    return answer;
 }
 ```
 
-Time cost is $O(n + m)$, space cost is $O(n + m)$ for the reversed adjacency list and queues.
+Each vertex enters the queue once and each edge is processed once, so the time is $O(n+m)$ and the space is $O(n+m)$.
 
 ## 4.5 Check yourself
 
-1. In an undirected DFS, why do we ignore the edge that leads back to the parent vertex?
-2. What does a grey vertex mean during a directed DFS, and why does seeing a grey neighbour prove a cycle exists?
-3. If a graph contains a triangle (3‑cycle), can it be bipartite? Explain in one sentence.
-4. In the eventual safe states algorithm, why do we start the queue with nodes whose outdegree is zero?
+1. In undirected cycle detection, why do we skip the edge we arrived by, and why is skipping it by number safer than skipping the parent vertex?
+2. What does a grey vertex mean during a directed DFS, and why does meeting one prove that a cycle exists?
+3. Can a graph that contains a triangle be bipartite? Answer in one sentence.
+4. In the safe-nodes algorithm, why do we start the queue with the vertices that have no outgoing edges?
 
 # Chapter 5. Topological sort
 
 ## 5.1 Prerequisites as arrows
 
-Imagine you have a set of tasks. Some tasks must be finished before others can start. For example, you must put on socks before shoes. We can draw an arrow from "socks" to "shoes" to show that dependency. If we have many tasks and many arrows, we get a **directed graph**: vertices are tasks, edges are prerequisites.
+Imagine a set of tasks where some must be finished before others can start: socks before shoes, foundations before walls, a course before the course that needs it. Draw an arrow from each task to the tasks that depend on it and you get a **directed graph**. A **topological order** is a way to line up all the tasks so that every arrow points forward, that is, every task appears after everything it depends on.
 
-A **topological order** is a linear ordering of the vertices so that every arrow points forward. In the sock‑shoe example, "socks" comes before "shoes". If the graph has a cycle (e.g., A before B, B before C, C before A), no ordering can satisfy all arrows.
-
-Here is a tiny graph with four tasks:
+Here is a small graph with four tasks, drawn with edges 0→1, 0→2, 1→3 and 2→3.
 
 ```
 0 → 1
@@ -1488,75 +1310,43 @@ Here is a tiny graph with four tasks:
 2 → 3
 ```
 
-Edges: 0→1, 0→2, 1→3, 2→3. One valid order is `[0, 1, 2, 3]`; another is `[0, 2, 1, 3]`. Both respect every arrow.
-
-This idea appears in many problems. The sheet problem _Course Schedule_ asks whether an order exists (cycle detection). _Course Schedule Order_ asks for one valid order. _Alien Dictionary_ builds a graph from sorted words and then finds a topological order of letters.
+Both `[0, 1, 2, 3]` and `[0, 2, 1, 3]` are valid orders. If the arrows form a cycle (A before B, B before C, C before A), no order can exist, since each task would have to come before itself. So a topological order exists exactly when the graph has no directed cycle. Such a graph is called a **DAG**, a directed acyclic graph.
 
 ## 5.2 Kahn's algorithm
 
-Kahn's algorithm builds the order by repeatedly removing vertices that have no incoming edges (in‑degree zero). Those vertices can safely go next because nothing must precede them.
+The first task in any order must be one that nothing points to, so its **in-degree**, the number of arrows coming in, is zero. Kahn's algorithm uses this repeatedly: put every vertex of in-degree zero in a queue. Take a vertex out, write it in the answer, and "remove" it from the graph, which means lowering by one the in-degree of every vertex it points to. Any vertex whose in-degree drops to zero has had all its prerequisites written down, so it joins the queue. Continue until the queue is empty.
 
-Let's trace on the graph above. We'll keep a table of in‑degrees and a queue of zero‑in‑degree vertices.
+Trace it on the graph above. The in-degrees are 0, 1, 1, 2 for vertices 0 to 3, so the queue starts as `[0]`. We take 0, which lowers the in-degrees of 1 and 2 to zero, so the queue is `[1, 2]`. We take 1, which lowers vertex 3 from 2 to 1. We take 2, which lowers vertex 3 to 0, so 3 joins. We take 3. The answer is `[0, 1, 2, 3]`.
 
-**Initial in‑degrees:**
-
-| vertex | 0   | 1   | 2   | 3   |
-| ------ | --- | --- | --- | --- |
-| in‑deg | 0   | 1   | 1   | 2   |
-
-Queue starts with `[0]`. Pop 0, add to order. Decrease in‑degree of its neighbors (1 and 2). New in‑degrees: 1→0, 2→0, 3→2. Queue becomes `[1, 2]`.
-
-Pop 1, add to order. Neighbor 3 in‑degree becomes 1. Queue: `[2]`.
-
-Pop 2, add to order. Neighbor 3 in‑degree becomes 0. Queue: `[3]`.
-
-Pop 3, add to order. Queue empty. Final order: `[0, 1, 2, 3]`.
-
-If the graph had a cycle, at some point the queue would become empty before all vertices are processed. That tells us no topological order exists.
-
-**Time and space:** $O(V+E)$ for both.
+If the graph has a cycle, the vertices on it never reach in-degree zero, because each waits for another one on the cycle. The queue then runs dry while some vertices are still unwritten. So **if the answer has fewer than $n$ vertices, a cycle exists.**
 
 ```python
 from collections import deque
-from typing import List, Optional
 
-def topological_sort_kahn(n: int, edges: List[List[int]]) -> Optional[List[int]]:
-    """Return a topological order of n vertices (0..n-1) given directed edges.
-    If a cycle exists, return None."""
+def topological_order(n, edges):
     adj = [[] for _ in range(n)]
     indeg = [0] * n
     for u, v in edges:
         adj[u].append(v)
         indeg[v] += 1
-
-    q = deque([i for i in range(n) if indeg[i] == 0])
+    queue = deque(v for v in range(n) if indeg[v] == 0)
     order = []
-    while q:
-        u = q.popleft()
+    while queue:
+        u = queue.popleft()
         order.append(u)
         for v in adj[u]:
             indeg[v] -= 1
             if indeg[v] == 0:
-                q.append(v)
+                queue.append(v)
+    return order if len(order) == n else None
 
-    if len(order) == n:
-        return order
-    return None
-
-# Tiny test from the traced example
-edges = [[0,1],[0,2],[1,3],[2,3]]
-assert topological_sort_kahn(4, edges) in ([0,1,2,3], [0,2,1,3])
-# Cycle test
-cycle_edges = [[0,1],[1,2],[2,0]]
-assert topological_sort_kahn(3, cycle_edges) is None
+assert topological_order(4, [[0, 1], [0, 2], [1, 3], [2, 3]]) == [0, 1, 2, 3]
+assert topological_order(3, [[0, 1], [1, 2], [2, 0]]) is None
 ```
 
 ```cpp
-#include <vector>
-#include <queue>
-using namespace std;
-
-vector<int> topological_sort_kahn(int n, const vector<vector<int>>& edges) {
+// returns an empty vector when a cycle exists (for n > 0)
+vector<int> topological_order(int n, const vector<vector<int>>& edges) {
     vector<vector<int>> adj(n);
     vector<int> indeg(n, 0);
     for (auto& e : edges) {
@@ -1564,11 +1354,12 @@ vector<int> topological_sort_kahn(int n, const vector<vector<int>>& edges) {
         indeg[e[1]]++;
     }
     queue<int> q;
-    for (int i = 0; i < n; ++i)
-        if (indeg[i] == 0) q.push(i);
+    for (int v = 0; v < n; ++v)
+        if (indeg[v] == 0) q.push(v);
     vector<int> order;
     while (!q.empty()) {
-        int u = q.front(); q.pop();
+        int u = q.front();
+        q.pop();
         order.push_back(u);
         for (int v : adj[u]) {
             if (--indeg[v] == 0) q.push(v);
@@ -1579,849 +1370,725 @@ vector<int> topological_sort_kahn(int n, const vector<vector<int>>& edges) {
 }
 ```
 
+Every vertex enters the queue once and every edge is relaxed once, so the time is $O(n+m)$ and the space is $O(n+m)$.
+
 ## 5.3 The DFS version
 
-Depth‑first search can also produce a topological order. The idea: when we finish exploring a vertex (all its descendants are done), we append it to a list. Because every edge goes from a vertex to a descendant, the descendant finishes first and appears earlier in the list. Reversing the list gives a valid order.
+Depth-first search gives a second way. Run DFS, and write a vertex down at the moment it is **finished**, meaning all the vertices reachable from it have already been finished. A vertex is always finished after everything it points to, so the finishing list has every arrow pointing backwards, and reversing it gives a valid order. Cycles show up as in Chapter 4: meeting a vertex that is still being explored (grey) means a cycle.
 
-Let's run DFS on the same graph starting from 0. We'll use a recursion stack to detect cycles.
-
-```
-dfs(0):
-  visit 1:
-    visit 3: finish 3
-  finish 1
-  visit 2:
-    3 already visited
-  finish 2
-finish 0
-```
-
-Finish order (post‑order): `[3, 1, 2, 0]`. Reverse → `[0, 2, 1, 3]` (a valid order).
-
-If we encounter a vertex that is already on the current recursion stack, we have a cycle.
-
-**Time and space:** $O(V+E)$.
+On our graph, DFS from 0 goes to 1, then to 3. Vertex 3 finishes, then 1 finishes. Next 0 tries 2, whose only neighbour 3 is already done, so 2 finishes, and finally 0 finishes. The finishing list is `[3, 1, 2, 0]`, and reversed it is `[0, 2, 1, 3]`, another valid order.
 
 ```python
-from typing import List, Optional
-
-def topological_sort_dfs(n: int, edges: List[List[int]]) -> Optional[List[int]]:
-    """Return a topological order using DFS. None if cycle."""
+def topological_order_dfs(n, edges):
     adj = [[] for _ in range(n)]
     for u, v in edges:
         adj[u].append(v)
+    state = [0] * n  # 0 = new, 1 = being explored, 2 = finished
+    finished = []
 
-    visited = [0] * n   # 0=unvisited, 1=visiting, 2=done
-    order = []
-    has_cycle = False
-
-    def dfs(u: int):
-        nonlocal has_cycle
-        if has_cycle:
-            return
-        visited[u] = 1
+    def dfs(u):
+        state[u] = 1
         for v in adj[u]:
-            if visited[v] == 0:
-                dfs(v)
-            elif visited[v] == 1:
-                has_cycle = True
-                return
-        visited[u] = 2
-        order.append(u)
+            if state[v] == 1:
+                return False
+            if state[v] == 0 and not dfs(v):
+                return False
+        state[u] = 2
+        finished.append(u)
+        return True
 
-    for i in range(n):
-        if visited[i] == 0:
-            dfs(i)
-        if has_cycle:
+    for u in range(n):
+        if state[u] == 0 and not dfs(u):
             return None
-    order.reverse()
-    return order
+    return finished[::-1]
 
-# Same tests
-edges = [[0,1],[0,2],[1,3],[2,3]]
-assert topological_sort_dfs(4, edges) in ([0,1,2,3], [0,2,1,3])
-cycle_edges = [[0,1],[1,2],[2,0]]
-assert topological_sort_dfs(3, cycle_edges) is None
+assert topological_order_dfs(4, [[0, 1], [0, 2], [1, 3], [2, 3]]) == [0, 2, 1, 3]
+assert topological_order_dfs(3, [[0, 1], [1, 2], [2, 0]]) is None
 ```
 
 ```cpp
-#include <vector>
-using namespace std;
-
-bool dfs(int u, const vector<vector<int>>& adj, vector<int>& state, vector<int>& order) {
-    state[u] = 1; // visiting
-    for (int v : adj[u]) {
-        if (state[v] == 0) {
-            if (!dfs(v, adj, state, order)) return false;
-        } else if (state[v] == 1) {
-            return false; // cycle
-        }
-    }
-    state[u] = 2; // done
-    order.push_back(u);
-    return true;
-}
-
-vector<int> topological_sort_dfs(int n, const vector<vector<int>>& edges) {
+// returns an empty vector when a cycle exists (for n > 0)
+vector<int> topological_order_dfs(int n, const vector<vector<int>>& edges) {
     vector<vector<int>> adj(n);
     for (auto& e : edges) adj[e[0]].push_back(e[1]);
-    vector<int> state(n, 0), order;
-    for (int i = 0; i < n; ++i) {
-        if (state[i] == 0) {
-            if (!dfs(i, adj, state, order)) return {};
+    vector<int> state(n, 0), finished;
+    function<bool(int)> dfs = [&](int u) {
+        state[u] = 1;
+        for (int v : adj[u]) {
+            if (state[v] == 1) return false;
+            if (state[v] == 0 && !dfs(v)) return false;
         }
-    }
-    reverse(order.begin(), order.end());
-    return order;
+        state[u] = 2;
+        finished.push_back(u);
+        return true;
+    };
+    for (int u = 0; u < n; ++u)
+        if (state[u] == 0 && !dfs(u)) return {};
+    reverse(finished.begin(), finished.end());
+    return finished;
 }
 ```
 
+The time is $O(n+m)$ and the space is $O(n+m)$. Kahn's algorithm is easier to turn into an iterative loop and to tweak (as in Section 5.5), while the DFS version is the one that generalises to the strongly connected components of Chapter 9.
+
 ## 5.4 Course schedule
 
-The _Course Schedule_ problem gives `n` courses labeled `0..n-1` and a list of prerequisite pairs `[a, b]` meaning you must take `b` before `a`. This is exactly a directed edge `b → a`. We need to decide if a cycle exists (impossible) and, for _Course Schedule Order_, output one valid sequence.
-
-We can reuse either Kahn or DFS. Here is a complete solver using Kahn:
+In _Course Schedule_ you get `num_courses` courses and pairs `[a, b]` meaning "take `b` before `a`", and must decide whether all courses can be taken. Each pair is the arrow `b → a`. All courses can be taken exactly when no directed cycle exists, which is what Kahn's algorithm tells us: count the courses it manages to take. This is exactly the problem _Course Schedule_. The only new work is reading the pairs in the right direction.
 
 ```python
 from collections import deque
-from typing import List, Optional
 
-def can_finish(num_courses: int, prerequisites: List[List[int]]) -> bool:
-    """Return True if all courses can be finished (no cycle)."""
+def can_finish(num_courses, prerequisites):
     adj = [[] for _ in range(num_courses)]
     indeg = [0] * num_courses
-    for a, b in prerequisites:  # b -> a
+    for a, b in prerequisites:  # b must come before a
         adj[b].append(a)
         indeg[a] += 1
-    q = deque([i for i in range(num_courses) if indeg[i] == 0])
+    queue = deque(v for v in range(num_courses) if indeg[v] == 0)
     taken = 0
-    while q:
-        u = q.popleft()
+    while queue:
+        u = queue.popleft()
         taken += 1
         for v in adj[u]:
             indeg[v] -= 1
             if indeg[v] == 0:
-                q.append(v)
+                queue.append(v)
     return taken == num_courses
 
-def find_order(num_courses: int, prerequisites: List[List[int]]) -> List[int]:
-    """Return one topological order, or empty list if impossible."""
+assert can_finish(2, [[1, 0]])
+assert not can_finish(2, [[1, 0], [0, 1]])
+assert can_finish(3, [])
+```
+
+```cpp
+bool can_finish(int num_courses, const vector<vector<int>>& prerequisites) {
+    vector<vector<int>> adj(num_courses);
+    vector<int> indeg(num_courses, 0);
+    for (auto& p : prerequisites) {  // p[1] must come before p[0]
+        adj[p[1]].push_back(p[0]);
+        indeg[p[0]]++;
+    }
+    queue<int> q;
+    for (int v = 0; v < num_courses; ++v)
+        if (indeg[v] == 0) q.push(v);
+    int taken = 0;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        ++taken;
+        for (int v : adj[u]) {
+            if (--indeg[v] == 0) q.push(v);
+        }
+    }
+    return taken == num_courses;
+}
+```
+
+## 5.5 The smallest order first
+
+Often there are many valid orders and a problem asks for the **lexicographically smallest** one, meaning the one that wins when you compare the first entries, then the second, and so on. The greedy answer is simple: at every step, among all the vertices that are available (in-degree zero), take the smallest. Kahn's queue gives no such promise, so we replace it by a **min-heap**, a container from which you can always pull out the smallest item quickly.
+
+Take 5 courses with the arrows 3→0, 3→1, 4→1 and 1→2. At the start the available courses are 3 and 4, and we take 3. Now 0 becomes available while 1 still waits for 4, so the heap holds 0 and 4 and we take 0. Then only 4 is available, we take it, which frees 1, and 1 in turn frees 2. The order is `[3, 0, 4, 1, 2]`. A plain queue would have produced `[3, 4, 0, 1, 2]`, which is valid but not the smallest. This is exactly the problem _Course Order_.
+
+```python
+import heapq
+
+def smallest_order(num_courses, prerequisites):
     adj = [[] for _ in range(num_courses)]
     indeg = [0] * num_courses
-    for a, b in prerequisites:
+    for a, b in prerequisites:  # b must come before a
         adj[b].append(a)
         indeg[a] += 1
-    q = deque([i for i in range(num_courses) if indeg[i] == 0])
+    heap = [v for v in range(num_courses) if indeg[v] == 0]
+    heapq.heapify(heap)
     order = []
-    while q:
-        u = q.popleft()
+    while heap:
+        u = heapq.heappop(heap)
         order.append(u)
         for v in adj[u]:
             indeg[v] -= 1
             if indeg[v] == 0:
-                q.append(v)
+                heapq.heappush(heap, v)
     return order if len(order) == num_courses else []
 
-# Example: 4 courses, prerequisites: [1,0], [2,0], [3,1], [3,2]
-# 0 -> 1, 0 -> 2, 1 -> 3, 2 -> 3
-prereqs = [[1,0],[2,0],[3,1],[3,2]]
-assert can_finish(4, prereqs) == True
-assert find_order(4, prereqs) in ([0,1,2,3], [0,2,1,3])
-# Cycle example
-assert can_finish(2, [[0,1],[1,0]]) == False
-assert find_order(2, [[0,1],[1,0]]) == []
+assert smallest_order(5, [[0, 3], [1, 3], [1, 4], [2, 1]]) == [3, 0, 4, 1, 2]
+assert smallest_order(4, [[1, 0], [2, 0], [3, 1], [3, 2]]) == [0, 1, 2, 3]
+assert smallest_order(2, [[1, 0], [0, 1]]) == []
 ```
 
 ```cpp
-#include <vector>
-#include <queue>
-using namespace std;
-
-bool can_finish(int numCourses, vector<vector<int>>& prerequisites) {
-    vector<vector<int>> adj(numCourses);
-    vector<int> indeg(numCourses, 0);
-    for (auto& p : prerequisites) {
+vector<int> smallest_order(int num_courses, const vector<vector<int>>& prerequisites) {
+    vector<vector<int>> adj(num_courses);
+    vector<int> indeg(num_courses, 0);
+    for (auto& p : prerequisites) {  // p[1] must come before p[0]
         adj[p[1]].push_back(p[0]);
         indeg[p[0]]++;
     }
-    queue<int> q;
-    for (int i = 0; i < numCourses; ++i)
-        if (indeg[i] == 0) q.push(i);
-    int taken = 0;
-    while (!q.empty()) {
-        int u = q.front(); q.pop();
-        taken++;
-        for (int v : adj[u]) {
-            if (--indeg[v] == 0) q.push(v);
-        }
-    }
-    return taken == numCourses;
-}
-
-vector<int> find_order(int numCourses, vector<vector<int>>& prerequisites) {
-    vector<vector<int>> adj(numCourses);
-    vector<int> indeg(numCourses, 0);
-    for (auto& p : prerequisites) {
-        adj[p[1]].push_back(p[0]);
-        indeg[p[0]]++;
-    }
-    queue<int> q;
-    for (int i = 0; i < numCourses; ++i)
-        if (indeg[i] == 0) q.push(i);
+    priority_queue<int, vector<int>, greater<int>> heap;
+    for (int v = 0; v < num_courses; ++v)
+        if (indeg[v] == 0) heap.push(v);
     vector<int> order;
-    while (!q.empty()) {
-        int u = q.front(); q.pop();
+    while (!heap.empty()) {
+        int u = heap.top();
+        heap.pop();
         order.push_back(u);
         for (int v : adj[u]) {
-            if (--indeg[v] == 0) q.push(v);
+            if (--indeg[v] == 0) heap.push(v);
         }
     }
-    if ((int)order.size() == numCourses) return order;
+    if ((int)order.size() == num_courses) return order;
     return {};
 }
 ```
 
-## 5.5 Alien dictionary
+Each vertex goes through the heap once, so the time is $O(n \log n + m)$ and the space is $O(n+m)$.
 
-In _Alien Dictionary_ we receive a list of words sorted according to an unknown alphabet. We must reconstruct a possible order of letters. For example, words `["wrt","wrf","er","ett","rftt"]` imply:
+## 5.6 Alien dictionary
 
-- `wrt` before `wrf` → first difference at index 2: `t` before `f` → edge `t → f`.
-- `wrf` before `er` → `w` before `e` → `w → e`.
-- `er` before `ett` → `r` before `t` → `r → t`.
-- `ett` before `rftt` → `e` before `r` → `e → r`.
+Sometimes the graph is hidden. In _Alien Dictionary_ you get words that are sorted by an unknown alphabet, and you must recover an order of the letters that explains the list. Each pair of neighbouring words tells us one fact: at the first position where the two words differ, the letter of the first word comes before the letter of the second. Letters after that position tell us nothing, and neither do the letters before it, since they are equal.
 
-Graph edges: `t→f`, `w→e`, `r→t`, `e→r`. A topological order: `w, e, r, t, f` (letters not appearing in edges can go anywhere).
+For `["wrt", "wrf", "er", "ett", "rftt"]` the neighbouring pairs give `t→f` (from wrt, wrf), `w→e` (from wrf, er), `r→t` (from er, ett) and `e→r` (from ett, rftt). The graph has the unique topological order `w, e, r, t, f`, so the answer is `"wertf"`.
 
-We build the graph by comparing adjacent words, find the first differing character, add that edge. Then run topological sort. If a cycle appears, the dictionary is invalid.
+There are two traps. If a longer word is placed directly before its own prefix (`"abc"` then `"ab"`) the list cannot be sorted in any alphabet, so we return an empty string. And letters with no constraints between them can come in any order, so to return the smallest alphabetical order we use the heap of the previous section. If the letters contain a cycle, the answer is again the empty string. This is exactly the problem _Alien Dictionary_.
 
 ```python
-from collections import deque, defaultdict
-from typing import List, Optional
+import heapq
 
-def alien_order(words: List[str]) -> str:
-    # Collect all unique letters
-    letters = set("".join(words))
-    # Build graph
-    adj = {c: set() for c in letters}
+def alien_order(words):
+    letters = sorted(set("".join(words)))
+    after = {c: set() for c in letters}
     indeg = {c: 0 for c in letters}
-    for i in range(len(words)-1):
-        w1, w2 = words[i], words[i+1]
-        # Find first difference
+    for w1, w2 in zip(words, words[1:]):
         for c1, c2 in zip(w1, w2):
             if c1 != c2:
-                if c2 not in adj[c1]:
-                    adj[c1].add(c2)
+                if c2 not in after[c1]:
+                    after[c1].add(c2)
                     indeg[c2] += 1
                 break
         else:
-            # w1 is prefix of w2 but w1 comes after w2 -> invalid
             if len(w1) > len(w2):
                 return ""
-    # Kahn
-    q = deque([c for c in letters if indeg[c] == 0])
+    heap = [c for c in letters if indeg[c] == 0]
+    heapq.heapify(heap)
     order = []
-    while q:
-        u = q.popleft()
-        order.append(u)
-        for v in adj[u]:
-            indeg[v] -= 1
-            if indeg[v] == 0:
-                q.append(v)
-    if len(order) != len(letters):
-        return ""  # cycle
-    return "".join(order)
+    while heap:
+        c = heapq.heappop(heap)
+        order.append(c)
+        for d in after[c]:
+            indeg[d] -= 1
+            if indeg[d] == 0:
+                heapq.heappush(heap, d)
+    return "".join(order) if len(order) == len(letters) else ""
 
-# Test from the example
-words = ["wrt","wrf","er","ett","rftt"]
-assert alien_order(words) in ("wertf", "wetrf", "ewrtf", "wertf")  # multiple valid
-# Invalid case: ["abc","ab"] -> prefix but longer first
-assert alien_order(["abc","ab"]) == ""
+assert alien_order(["wrt", "wrf", "er", "ett", "rftt"]) == "wertf"
+assert alien_order(["ba", "bc"]) == "abc"
+assert alien_order(["abc", "ab"]) == ""
+assert alien_order(["z", "x", "z"]) == ""
 ```
 
 ```cpp
-#include <vector>
-#include <string>
-#include <queue>
-#include <unordered_set>
-#include <unordered_map>
-using namespace std;
-
-string alienOrder(vector<string>& words) {
-    unordered_set<char> letters;
+string alien_order(const vector<string>& words) {
+    set<char> letters;
     for (auto& w : words) for (char c : w) letters.insert(c);
-    unordered_map<char, unordered_set<char>> adj;
-    unordered_map<char, int> indeg;
-    for (char c : letters) {
-        adj[c] = {};
-        indeg[c] = 0;
-    }
-    for (int i = 0; i+1 < (int)words.size(); ++i) {
-        string& w1 = words[i];
-        string& w2 = words[i+1];
-        int len = min(w1.size(), w2.size());
-        int j = 0;
-        while (j < len && w1[j] == w2[j]) j++;
+    map<char, set<char>> after;
+    map<char, int> indeg;
+    for (char c : letters) indeg[c] = 0;
+    for (size_t i = 0; i + 1 < words.size(); ++i) {
+        const string& w1 = words[i];
+        const string& w2 = words[i + 1];
+        size_t len = min(w1.size(), w2.size());
+        size_t j = 0;
+        while (j < len && w1[j] == w2[j]) ++j;
         if (j == len) {
-            if (w1.size() > w2.size()) return ""; // invalid prefix
-        } else {
-            char c1 = w1[j], c2 = w2[j];
-            if (!adj[c1].count(c2)) {
-                adj[c1].insert(c2);
-                indeg[c2]++;
-            }
+            if (w1.size() > w2.size()) return "";
+        } else if (!after[w1[j]].count(w2[j])) {
+            after[w1[j]].insert(w2[j]);
+            indeg[w2[j]]++;
         }
     }
-    queue<char> q;
-    for (char c : letters) if (indeg[c] == 0) q.push(c);
+    priority_queue<char, vector<char>, greater<char>> heap;
+    for (char c : letters)
+        if (indeg[c] == 0) heap.push(c);
     string order;
-    while (!q.empty()) {
-        char u = q.front(); q.pop();
-        order.push_back(u);
-        for (char v : adj[u]) {
-            if (--indeg[v] == 0) q.push(v);
+    while (!heap.empty()) {
+        char c = heap.top();
+        heap.pop();
+        order.push_back(c);
+        for (char d : after[c]) {
+            if (--indeg[d] == 0) heap.push(d);
         }
     }
-    if ((int)order.size() != (int)letters.size()) return "";
-    return order;
+    if (order.size() == letters.size()) return order;
+    return "";
 }
 ```
 
-## 5.6 Check yourself
+The graph has at most 26 vertices and at most one edge per pair of neighbouring words, so building it takes time proportional to the total length of the words, and the topological sort itself is tiny.
 
-1. In a directed graph, what does an edge `u → v` mean for a topological order?
-2. Why does Kahn's algorithm fail to process all vertices when the graph contains a cycle?
-3. In the DFS version, why do we reverse the post‑order list to get a topological order?
-4. When building the graph for Alien Dictionary, why do we only add an edge from the first differing character of two adjacent words?
+## 5.7 Check yourself
+
+1. In a graph with the arrows 0→1 and 1→2, what are the in-degrees of the vertices, and which vertex goes first?
+2. Why does Kahn's algorithm stop with fewer than $n$ vertices when the graph has a cycle?
+3. In the DFS version, why does reversing the finishing list give a valid order?
+4. For the words `["ab", "ac"]`, which fact about the alphabet do we learn, and why do the letters before the difference teach us nothing?
 
 # Chapter 6. Shortest paths with weights
 
 ## 6.1 Why BFS is not enough
 
-Breadth-first search finds the shortest path when every edge has the same cost, because it explores vertices in layers: first all vertices one step away, then two steps away, and so on. The first time we reach a vertex, we have used the fewest possible edges.
+Breadth-first search finds the shortest path when every edge costs the same, because it explores in layers and the first time it reaches a vertex it has used the fewest edges. When edges have different costs, the path with the fewest edges is not always the cheapest.
 
-When edges have different costs, the path with the fewest edges is not always the cheapest. Imagine a graph with three vertices 0, 1, 2 and these directed edges:
-
-- 0 → 1 with cost 5
-- 0 → 2 with cost 2
-- 2 → 1 with cost 2
-
-BFS starting at 0 visits 1 and 2 in the first layer (both are one edge away). It would say the distance to 1 is 1 step, but the actual cheapest cost from 0 to 1 is 0 → 2 → 1 with total cost 4, which uses two edges. BFS cannot see this because it treats every edge as equal.
-
-We need an algorithm that always expands the vertex with the smallest _total cost so far_, not the fewest edges. That idea leads to Dijkstra's algorithm.
+Take three vertices with the one-way edges 0→1 costing 5, 0→2 costing 2, and 2→1 costing 2. BFS from 0 reaches vertex 1 in a single step and stops caring. But the route 0→2→1 uses two edges and costs only 4, which beats the direct edge costing 5. We need an algorithm that always works on the vertex with the smallest **total cost so far**, not the fewest edges. That idea is Dijkstra's algorithm.
 
 ## 6.2 Dijkstra: the idea and a worked example
 
-Dijkstra's algorithm keeps a current best distance to every vertex. Initially only the start vertex has distance 0; all others are infinity. Repeatedly, it picks the unvisited vertex with the smallest distance, marks it visited, and _relaxes_ its outgoing edges: for each edge to a neighbor, it checks whether going through this vertex gives a shorter path to the neighbor.
+Dijkstra's algorithm keeps a best-known distance for every vertex: 0 for the start and infinity for the others. It repeatedly takes the unfinished vertex with the smallest best-known distance, declares that distance final, and then **relaxes** the edges leaving it. To relax an edge from `u` to `v` of cost `w` means to ask: is `dist[u] + w` smaller than the best-known `dist[v]`? If so, we have found a better route to `v`, and we update it.
 
-Let's trace Dijkstra on this small graph (vertices 0..3, undirected edges shown as pairs with cost):
+Why is the smallest unfinished distance already final? Any other route to that vertex must leave the finished region through some unfinished vertex, whose distance is at least as large, and since edge costs are never negative, going further can only add to it. So no route can beat the smallest one.
 
-```
-0 --1-- 1
-|       |
-4       2
-|       |
-2 --1-- 3
-```
+Let us trace it on four vertices with the undirected edges 0-1 (cost 1), 0-2 (cost 4), 1-3 (cost 2) and 2-3 (cost 1), starting at 0.
 
-Edges: (0,1,1), (0,2,4), (1,3,2), (2,3,1). Start at 0.
+| Step | Take vertex | Relaxations               | dist afterwards |
+| ---- | ----------- | ------------------------- | --------------- |
+| 0    | none        | none                      | [0, ∞, ∞, ∞]    |
+| 1    | 0 (dist 0)  | 1 becomes 1, 2 becomes 4  | [0, 1, 4, ∞]    |
+| 2    | 1 (dist 1)  | 3 becomes 1 + 2 = 3       | [0, 1, 4, 3]    |
+| 3    | 3 (dist 3)  | 3 + 1 = 4 does not beat 4 | [0, 1, 4, 3]    |
+| 4    | 2 (dist 4)  | nothing improves          | [0, 1, 4, 3]    |
 
-We maintain a table of distances `dist` and a visited set. Initially `dist = [0, ∞, ∞, ∞]`.
-
-| Step | Pick vertex | Visited   | Relax edges from picked vertex | dist after step |
-| ---- | ----------- | --------- | ------------------------------ | --------------- |
-| 0    | –           | {}        | –                              | [0, ∞, ∞, ∞]    |
-| 1    | 0 (dist 0)  | {0}       | 0→1: dist[1]=1; 0→2: dist[2]=4 | [0, 1, 4, ∞]    |
-| 2    | 1 (dist 1)  | {0,1}     | 1→3: dist[3]=1+2=3             | [0, 1, 4, 3]    |
-| 3    | 3 (dist 3)  | {0,1,3}   | 3→2: 3+1=4, no improvement     | [0, 1, 4, 3]    |
-| 4    | 2 (dist 4)  | {0,1,3,2} | no outgoing to unvisited       | [0, 1, 4, 3]    |
-
-Final distances from 0: `[0, 1, 4, 3]`. The shortest path to 3 is 0→1→3 with cost 3.
-
-The naive way to pick the smallest unvisited distance scans all vertices each time, giving $O(n^2)$ total. For sparse graphs we use a min-heap (priority queue) to get $O((n+m)\log n)$. Each vertex enters the heap when its distance improves; we may have stale entries, so we skip them when popped.
-
-This is exactly the problem _Dijkstra Shortest Paths_.
+To find the unfinished vertex with the smallest distance quickly we keep a **min-heap** of pairs `(distance, vertex)`. Whenever a distance improves, we push the new pair. The old, larger pair for the same vertex stays in the heap; when it is popped later its distance no longer matches `dist[vertex]`, so we simply skip it. This is exactly the problem _Dijkstra: Shortest Distances_, where unreachable vertices are reported as `-1`.
 
 ```python
 import heapq
-from typing import List, Tuple
 
-def dijkstra(n: int, adj: List[List[Tuple[int, int]]], start: int) -> List[int]:
-    """
-    Returns list of shortest distances from start to every vertex.
-    adj[u] = list of (v, weight) pairs.
-    """
+def shortest_distances(n, edges, source):
+    # directed edges [a, b, w] with w >= 0; unreachable -> -1
+    adj = [[] for _ in range(n)]
+    for a, b, w in edges:
+        adj[a].append((b, w))
     INF = 10**18
     dist = [INF] * n
-    dist[start] = 0
-    pq = [(0, start)]  # (distance, vertex)
-    while pq:
-        d, u = heapq.heappop(pq)
+    dist[source] = 0
+    heap = [(0, source)]
+    while heap:
+        d, u = heapq.heappop(heap)
         if d != dist[u]:
-            continue  # stale entry
+            continue  # an old, outdated entry
         for v, w in adj[u]:
-            nd = d + w
-            if nd < dist[v]:
-                dist[v] = nd
-                heapq.heappush(pq, (nd, v))
-    return dist
+            if d + w < dist[v]:
+                dist[v] = d + w
+                heapq.heappush(heap, (dist[v], v))
+    return [-1 if d == INF else d for d in dist]
 
-# Hand-checked example from the table above:
-# 4 vertices, edges: 0-1(1), 0-2(4), 1-3(2), 2-3(1)
-adj = [
-    [(1, 1), (2, 4)],
-    [(0, 1), (3, 2)],
-    [(0, 4), (3, 1)],
-    [(1, 2), (2, 1)],
-]
-assert dijkstra(4, adj, 0) == [0, 1, 4, 3]
-assert dijkstra(4, adj, 2) == [4, 3, 0, 1]
+assert shortest_distances(3, [[0, 1, 4], [0, 2, 1], [2, 1, 2]], 0) == [0, 3, 1]
+assert shortest_distances(3, [[1, 2, 5]], 0) == [0, -1, -1]
+undirected = [[0, 1, 1], [1, 0, 1], [0, 2, 4], [2, 0, 4], [1, 3, 2], [3, 1, 2], [2, 3, 1], [3, 2, 1]]
+assert shortest_distances(4, undirected, 0) == [0, 1, 4, 3]
 ```
 
 ```cpp
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-const ll INF = (1LL<<60);
-
-vector<ll> dijkstra(int n, const vector<vector<pair<int,int>>>& adj, int start) {
-    vector<ll> dist(n, INF);
-    dist[start] = 0;
-    using pli = pair<ll,int>;
-    priority_queue<pli, vector<pli>, greater<pli>> pq;
-    pq.emplace(0, start);
-    while (!pq.empty()) {
-        auto [d, u] = pq.top(); pq.pop();
-        if (d != dist[u]) continue;
+vector<long long> shortest_distances(int n, const vector<vector<int>>& edges, int source) {
+    vector<vector<pair<int,int>>> adj(n);
+    for (auto& e : edges) adj[e[0]].push_back({e[1], e[2]});
+    const long long INF = (long long)1e18;
+    vector<long long> dist(n, INF);
+    dist[source] = 0;
+    priority_queue<pair<long long,int>, vector<pair<long long,int>>, greater<>> heap;
+    heap.push({0, source});
+    while (!heap.empty()) {
+        auto [d, u] = heap.top();
+        heap.pop();
+        if (d != dist[u]) continue;  // an old, outdated entry
         for (auto [v, w] : adj[u]) {
-            ll nd = d + w;
-            if (nd < dist[v]) {
-                dist[v] = nd;
-                pq.emplace(nd, v);
+            if (d + w < dist[v]) {
+                dist[v] = d + w;
+                heap.push({dist[v], v});
             }
         }
     }
+    for (auto& d : dist)
+        if (d == INF) d = -1;
     return dist;
 }
 ```
 
+Each edge can push at most one heap entry, so the heap holds at most $m$ entries and each operation costs $O(\log m)$. The total time is $O((n+m)\log n)$ and the space is $O(n+m)$. Scanning all vertices to find the smallest each time would cost $O(n^2)$ instead, which is too slow for large sparse graphs.
+
 ## 6.3 Why Dijkstra needs non-negative weights
 
-Dijkstra's correctness relies on the fact that when we pick the unvisited vertex with the smallest distance, that distance can never improve later. This is true only if all edge weights are non-negative. If an edge has negative weight, a path that goes through already-visited vertices could become cheaper after they are marked visited.
+The argument of the previous section breaks as soon as an edge has a negative cost, because then going further can make a route cheaper. Take 0→1 costing 1, 0→2 costing 2, and 2→1 costing $-4$. Dijkstra starts at 0 and learns that vertex 1 is at distance 1 and vertex 2 at distance 2. The smaller one, vertex 1, is declared final with distance 1. Only later does it look at vertex 2 and see that 0→2→1 costs $2 - 4 = -2$, but vertex 1 is already final and is never fixed. The answer 1 is wrong. For graphs with negative edges we need Bellman-Ford (Section 6.6).
 
-Consider three vertices 0, 1, 2 with the edges 0 → 1 with cost 1, 0 → 2 with cost 2, and 2 → 1 with cost $-4$. Dijkstra starts at 0 and finds the distances 1 for vertex 1 and 2 for vertex 2. The smallest unvisited distance belongs to vertex 1, so vertex 1 is finalised with distance 1. Only then does it look at vertex 2 and see that the route 0 → 2 → 1 costs $2 - 4 = -2$, which is better. But vertex 1 is already finalised, so the algorithm never fixes it and reports 1 instead of $-2$. With negative edges we need Bellman-Ford (next section).
+## 6.4 Minimum effort paths
 
-## 6.4 Variations: minimum effort and counting paths
+Sometimes the cost of a route is not the sum of its steps but the **worst single step**. In _Path With Minimum Effort_ you walk across a grid of heights from the top-left to the bottom-right cell, and the effort of a walk is the largest height difference between two neighbouring cells on it. We want the walk with the smallest effort.
 
-Sometimes the cost of a path is not the sum of edge weights but the **maximum** edge weight along the path. Two classic problems use this idea: _Path with Minimum Effort_ and _Swim in Rising Water_. In both, we want a path from start to target that minimizes the maximum edge weight encountered. This is exactly the same as Dijkstra, except the relaxation uses `max` instead of `+`:
-
-```
-new_cost = max(current_cost, edge_weight)
-```
-
-The algorithm still picks the unvisited vertex with the smallest current cost, because any path extending from a vertex with a larger current maximum can never yield a smaller overall maximum.
-
-Another variation: **counting the number of shortest paths**. While running Dijkstra, we keep a `ways` array. When we find a strictly shorter distance to a vertex, we set `ways[v] = ways[u]`. When we find an equal distance, we add `ways[u]` to `ways[v]`. This works because Dijkstra processes vertices in increasing distance order, so by the time we relax edges from `u`, all shortest paths to `u` are already counted.
-
-This covers the problems _Path with Minimum Effort_, _Swim in Rising Water_, and _Number of Shortest Paths_.
+Dijkstra still works if we change just one line. Instead of the new cost `d + w`, the cost of arriving at a neighbour is `max(d, w)`, the larger of the effort so far and the new step. This cost never decreases along a walk, which is the only property the correctness argument needed. Let us trace the grid `[[1, 3], [4, 2]]`. From the start (effort 0) we can reach 3 with effort 2 or 4 with effort 3. We take the effort-2 cell first. From it the step to the bottom-right 2 has difference 1, so the effort there is $\max(2, 1) = 2$. When we take that cell, we are done: the answer is 2, and the other route (effort 3) is never needed. This is exactly the problem _Path With Minimum Effort_.
 
 ```python
 import heapq
-from typing import List, Tuple
 
-def min_max_path(n: int, adj: List[List[Tuple[int, int]]], start: int, target: int) -> int:
-    """
-    Returns the minimum possible maximum edge weight on any path from start to target.
-    """
+def minimum_effort_path(heights):
+    R, C = len(heights), len(heights[0])
+    DR = [-1, 0, 1, 0]
+    DC = [0, 1, 0, -1]
     INF = 10**18
-    best = [INF] * n
-    best[start] = 0
-    pq = [(0, start)]
-    while pq:
-        cost, u = heapq.heappop(pq)
-        if cost != best[u]:
+    best = [[INF] * C for _ in range(R)]
+    best[0][0] = 0
+    heap = [(0, 0, 0)]  # (effort, row, col)
+    while heap:
+        effort, r, c = heapq.heappop(heap)
+        if effort != best[r][c]:
             continue
-        if u == target:
-            return cost
-        for v, w in adj[u]:
-            nc = max(cost, w)
-            if nc < best[v]:
-                best[v] = nc
-                heapq.heappush(pq, (nc, v))
-    return -1  # unreachable
+        if r == R - 1 and c == C - 1:
+            return effort
+        for k in range(4):
+            nr, nc = r + DR[k], c + DC[k]
+            if 0 <= nr < R and 0 <= nc < C:
+                ne = max(effort, abs(heights[nr][nc] - heights[r][c]))
+                if ne < best[nr][nc]:
+                    best[nr][nc] = ne
+                    heapq.heappush(heap, (ne, nr, nc))
+    return -1
 
-def count_shortest_paths(n: int, adj: List[List[Tuple[int, int]]], start: int) -> Tuple[List[int], List[int]]:
-    """
-    Returns (dist, ways) where ways[v] is the number of shortest paths from start to v.
-    Assumes non-negative weights.
-    """
-    MOD = 10**9 + 7
-    INF = 10**18
-    dist = [INF] * n
-    ways = [0] * n
-    dist[start] = 0
-    ways[start] = 1
-    pq = [(0, start)]
-    while pq:
-        d, u = heapq.heappop(pq)
-        if d != dist[u]:
-            continue
-        for v, w in adj[u]:
-            nd = d + w
-            if nd < dist[v]:
-                dist[v] = nd
-                ways[v] = ways[u]
-                heapq.heappush(pq, (nd, v))
-            elif nd == dist[v]:
-                ways[v] = (ways[v] + ways[u]) % MOD
-    return dist, ways
-
-# Tiny hand-checked examples
-adj1 = [  # 0-1(5), 1-2(3), 0-2(10)
-    [(1, 5), (2, 10)],
-    [(0, 5), (2, 3)],
-    [(0, 10), (1, 3)],
-]
-assert min_max_path(3, adj1, 0, 2) == 5  # path 0-1-2 has max edge 5, direct 0-2 has max 10
-
-adj2 = [  # 0-1(1), 0-2(1), 1-3(1), 2-3(1) -> two shortest paths 0-1-3 and 0-2-3 to 3
-    [(1, 1), (2, 1)],
-    [(0, 1), (3, 1)],
-    [(0, 1), (3, 1)],
-    [(1, 1), (2, 1)],
-]
-dist, ways = count_shortest_paths(4, adj2, 0)
-assert dist == [0, 1, 1, 2]
-assert ways == [1, 1, 1, 2]
+assert minimum_effort_path([[1, 3], [4, 2]]) == 2
+assert minimum_effort_path([[7]]) == 0
+assert minimum_effort_path([[1, 10, 6, 7, 9, 10, 4, 9]]) == 9
 ```
 
 ```cpp
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-const ll INF = (1LL<<60);
-const int MOD = 1'000'000'007;
-
-int min_max_path(int n, const vector<vector<pair<int,int>>>& adj, int start, int target) {
-    vector<int> best(n, INT_MAX);
-    best[start] = 0;
-    using pii = pair<int,int>;
-    priority_queue<pii, vector<pii>, greater<pii>> pq;
-    pq.emplace(0, start);
-    while (!pq.empty()) {
-        auto [cost, u] = pq.top(); pq.pop();
-        if (cost != best[u]) continue;
-        if (u == target) return cost;
-        for (auto [v, w] : adj[u]) {
-            int nc = max(cost, w);
-            if (nc < best[v]) {
-                best[v] = nc;
-                pq.emplace(nc, v);
+int minimum_effort_path(const vector<vector<int>>& heights) {
+    int R = heights.size(), C = heights[0].size();
+    int DR[4] = {-1, 0, 1, 0};
+    int DC[4] = {0, 1, 0, -1};
+    const int INF = INT_MAX;
+    vector<vector<int>> best(R, vector<int>(C, INF));
+    best[0][0] = 0;
+    priority_queue<tuple<int,int,int>, vector<tuple<int,int,int>>, greater<>> heap;
+    heap.push({0, 0, 0});  // (effort, row, col)
+    while (!heap.empty()) {
+        auto [effort, r, c] = heap.top();
+        heap.pop();
+        if (effort != best[r][c]) continue;
+        if (r == R - 1 && c == C - 1) return effort;
+        for (int k = 0; k < 4; ++k) {
+            int nr = r + DR[k], nc = c + DC[k];
+            if (0 <= nr && nr < R && 0 <= nc && nc < C) {
+                int ne = max(effort, abs(heights[nr][nc] - heights[r][c]));
+                if (ne < best[nr][nc]) {
+                    best[nr][nc] = ne;
+                    heap.push({ne, nr, nc});
+                }
             }
         }
     }
     return -1;
 }
+```
 
-pair<vector<ll>, vector<int>> count_shortest_paths(int n, const vector<vector<pair<int,int>>>& adj, int start) {
-    vector<ll> dist(n, INF);
+The grid has $R \cdot C$ vertices, so the time is $O(RC \log (RC))$ and the space is $O(RC)$.
+
+_Swim in Rising Water_ is the same idea with a different step cost. The water level rises with time, and you may enter a cell once the level reaches its height. So a walk needs time equal to the **largest height it touches**, including the starting cell. The cost of arriving at a neighbour is therefore `max(time so far, height of the neighbour)`, and we want the smallest such time for reaching the bottom-right corner. On `[[0, 2], [1, 3]]` the start has time 0, the neighbour 1 costs time 1 and the neighbour 2 costs time 2; from the cell with 1 the corner costs $\max(1, 3) = 3$, and from 2 also 3. The answer is 3. This is exactly the problem _Swim in Rising Water_.
+
+```python
+def swim_in_water(grid):
+    R, C = len(grid), len(grid[0])
+    DR = [-1, 0, 1, 0]
+    DC = [0, 1, 0, -1]
+    INF = 10**18
+    best = [[INF] * C for _ in range(R)]
+    best[0][0] = grid[0][0]
+    heap = [(grid[0][0], 0, 0)]
+    while heap:
+        t, r, c = heapq.heappop(heap)
+        if t != best[r][c]:
+            continue
+        if r == R - 1 and c == C - 1:
+            return t
+        for k in range(4):
+            nr, nc = r + DR[k], c + DC[k]
+            if 0 <= nr < R and 0 <= nc < C:
+                nt = max(t, grid[nr][nc])
+                if nt < best[nr][nc]:
+                    best[nr][nc] = nt
+                    heapq.heappush(heap, (nt, nr, nc))
+    return -1
+
+assert swim_in_water([[0, 2], [1, 3]]) == 3
+assert swim_in_water([[0]]) == 0
+assert swim_in_water([[3, 2], [0, 1]]) == 3
+```
+
+```cpp
+int swim_in_water(const vector<vector<int>>& grid) {
+    int R = grid.size(), C = grid[0].size();
+    int DR[4] = {-1, 0, 1, 0};
+    int DC[4] = {0, 1, 0, -1};
+    const int INF = INT_MAX;
+    vector<vector<int>> best(R, vector<int>(C, INF));
+    best[0][0] = grid[0][0];
+    priority_queue<tuple<int,int,int>, vector<tuple<int,int,int>>, greater<>> heap;
+    heap.push({grid[0][0], 0, 0});
+    while (!heap.empty()) {
+        auto [t, r, c] = heap.top();
+        heap.pop();
+        if (t != best[r][c]) continue;
+        if (r == R - 1 && c == C - 1) return t;
+        for (int k = 0; k < 4; ++k) {
+            int nr = r + DR[k], nc = c + DC[k];
+            if (0 <= nr && nr < R && 0 <= nc && nc < C) {
+                int nt = max(t, grid[nr][nc]);
+                if (nt < best[nr][nc]) {
+                    best[nr][nc] = nt;
+                    heap.push({nt, nr, nc});
+                }
+            }
+        }
+    }
+    return -1;
+}
+```
+
+## 6.5 Counting shortest paths
+
+How many different routes achieve the shortest distance? While Dijkstra runs, keep a second array `ways`, where `ways[v]` is the number of shortest routes found so far to `v`. When a relaxation finds a **strictly shorter** distance to `v` through `u`, all earlier routes are obsolete, so `ways[v]` becomes `ways[u]`. When it finds an **equal** distance, we have found additional routes, so `ways[u]` is added to `ways[v]`. Because every road takes at least 1 unit of time, `u` is finished before any vertex that is reached through it, so `ways[u]` is complete at the moment we use it. (With zero-length edges this argument would fail.)
+
+Take five vertices with the roads 0-1, 0-2, 1-3, 2-3, 3-4, each taking time 1, and one long road 0-4 taking time 10. The distances from 0 are 0, 1, 1, 2, 3. Vertex 3 can be reached through 1 or through 2, both at distance 2, so `ways[3] = 1 + 1 = 2`. Vertex 4 is reached from 3 at distance 3 (better than the long road, which costs 10), so `ways[4] = 2`. This is exactly the problem _Number of Shortest Paths_, where the count is taken modulo $10^9+7$ because it can be huge.
+
+```python
+import heapq
+
+def count_shortest_paths(n, roads):
+    MOD = 10**9 + 7
+    adj = [[] for _ in range(n)]
+    for a, b, t in roads:
+        adj[a].append((b, t))
+        adj[b].append((a, t))
+    INF = 10**18
+    dist = [INF] * n
+    ways = [0] * n
+    dist[0] = 0
+    ways[0] = 1
+    heap = [(0, 0)]
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d != dist[u]:
+            continue
+        for v, t in adj[u]:
+            if d + t < dist[v]:
+                dist[v] = d + t
+                ways[v] = ways[u]
+                heapq.heappush(heap, (dist[v], v))
+            elif d + t == dist[v]:
+                ways[v] = (ways[v] + ways[u]) % MOD
+    return ways[n - 1]
+
+roads = [[0, 1, 1], [0, 2, 1], [1, 3, 1], [2, 3, 1], [3, 4, 1], [0, 4, 10]]
+assert count_shortest_paths(5, roads) == 2
+assert count_shortest_paths(1, []) == 1
+assert count_shortest_paths(2, []) == 0
+```
+
+```cpp
+int count_shortest_paths(int n, const vector<vector<int>>& roads) {
+    const int MOD = 1'000'000'007;
+    vector<vector<pair<int,int>>> adj(n);
+    for (auto& r : roads) {
+        adj[r[0]].push_back({r[1], r[2]});
+        adj[r[1]].push_back({r[0], r[2]});
+    }
+    const long long INF = (long long)1e18;
+    vector<long long> dist(n, INF);
     vector<int> ways(n, 0);
-    dist[start] = 0;
-    ways[start] = 1;
-    using pli = pair<ll,int>;
-    priority_queue<pli, vector<pli>, greater<pli>> pq;
-    pq.emplace(0, start);
-    while (!pq.empty()) {
-        auto [d, u] = pq.top(); pq.pop();
+    dist[0] = 0;
+    ways[0] = 1;
+    priority_queue<pair<long long,int>, vector<pair<long long,int>>, greater<>> heap;
+    heap.push({0, 0});
+    while (!heap.empty()) {
+        auto [d, u] = heap.top();
+        heap.pop();
         if (d != dist[u]) continue;
-        for (auto [v, w] : adj[u]) {
-            ll nd = d + w;
-            if (nd < dist[v]) {
-                dist[v] = nd;
+        for (auto [v, t] : adj[u]) {
+            if (d + t < dist[v]) {
+                dist[v] = d + t;
                 ways[v] = ways[u];
-                pq.emplace(nd, v);
-            } else if (nd == dist[v]) {
+                heap.push({dist[v], v});
+            } else if (d + t == dist[v]) {
                 ways[v] = (ways[v] + ways[u]) % MOD;
             }
         }
     }
-    return {dist, ways};
+    return ways[n - 1];
 }
 ```
 
-## 6.5 Bellman-Ford and negative weights
+The time is $O((n+m)\log n)$ and the space is $O(n+m)$. Chapter 10 shows the same idea as a dynamic program over the shortest-path graph.
 
-Bellman-Ford works even when edges have negative weights, as long as there is no negative cycle reachable from the start. The idea is simple: repeat $n-1$ times the following step — scan **all** edges and try to relax each one. After $n-1$ rounds, every shortest path (which has at most $n-1$ edges) has been fully relaxed.
+## 6.6 Bellman-Ford and negative weights
 
-If we do one more round and some distance still improves, that means a negative cycle is reachable. We can then mark all vertices reachable from that cycle as having $-\infty$ distance.
+Bellman-Ford handles negative edges with a very simple loop: **scan all edges and relax each one, and repeat**. A shortest path never needs more than $n-1$ edges (a longer one would revisit a vertex, which can be cut out without raising the cost, if there is no negative cycle). After round $i$, every shortest path using at most $i$ edges has been found, so after $n-1$ rounds all distances are correct.
 
-Let's trace on a tiny graph with a negative edge but no negative cycle: vertices 0,1,2; edges 0→1 (4), 0→2 (5), 2→1 (-3). Start at 0.
+Trace it on the edges 0→1 (cost 4), 0→2 (cost 5) and 2→1 (cost $-3$), scanned in this order from vertex 0. Round 1: `dist[1]` becomes 4, `dist[2]` becomes 5, then the edge 2→1 gives $5 - 3 = 2$, which beats 4, so `dist[1]` becomes 2. Round 2 changes nothing, so we stop with `[0, 2, 5]`.
 
-Initial: `dist = [0, ∞, ∞]`
-
-Round 1: relax all edges
-
-- 0→1: dist[1] = 4
-- 0→2: dist[2] = 5
-- 2→1: dist[1] = min(4, 5 + (-3)) = 2
-
-Round 2: no further changes. Final distances: `[0, 2, 5]`. The path 0→2→1 costs 2, better than direct 0→1 (4).
-
-Time complexity is $O(nm)$, space $O(n)$.
-
-This is exactly the problem _Bellman Ford_.
+A **negative cycle** is a cycle whose costs add up to less than zero; going around it again and again lowers the cost forever, so shortest distances do not exist. If a negative cycle is reachable from the start, relaxation never settles, and some edge still relaxes in round $n$. So: if round $n$ still changes something, report the negative cycle. In this sheet problem we return an empty list for it, and `None` for unreachable vertices. This is exactly the problem _Bellman-Ford With Negative Edges_.
 
 ```python
-from typing import List, Tuple
-
-def bellman_ford(n: int, edges: List[Tuple[int, int, int]], start: int) -> List[float]:
-    """
-    edges: list of (u, v, w) directed edges.
-    Returns distances; unreachable = inf, negative-cycle-reachable = -inf.
-    """
-    INF = float('inf')
+def bellman_ford(n, edges, source):
+    INF = 10**18
     dist = [INF] * n
-    dist[start] = 0
-    # n-1 rounds of full relaxation
-    for _ in range(n - 1):
-        updated = False
-        for u, v, w in edges:
-            if dist[u] != INF and dist[u] + w < dist[v]:
-                dist[v] = dist[u] + w
-                updated = True
-        if not updated:
+    dist[source] = 0
+    for _ in range(n):
+        changed = False
+        for a, b, w in edges:
+            if dist[a] != INF and dist[a] + w < dist[b]:
+                dist[b] = dist[a] + w
+                changed = True
+        if not changed:
             break
-    # one more round to detect negative cycles
-    on_neg_cycle = [False] * n
-    for u, v, w in edges:
-        if dist[u] != INF and dist[u] + w < dist[v]:
-            on_neg_cycle[v] = True
-    # propagate -inf to all vertices reachable from any vertex on a negative cycle
-    # (simple BFS/DFS from those vertices)
-    from collections import deque
-    q = deque([i for i, flag in enumerate(on_neg_cycle) if flag])
-    while q:
-        u = q.popleft()
-        dist[u] = -INF
-        for uu, vv, ww in edges:
-            if uu == u and not on_neg_cycle[vv]:
-                on_neg_cycle[vv] = True
-                q.append(vv)
-    return dist
+    else:
+        return []  # still changing in round n: a negative cycle is reachable
+    return [None if d == INF else d for d in dist]
 
-# Hand-checked example: 0->1(4), 0->2(5), 2->1(-3)
-edges = [(0, 1, 4), (0, 2, 5), (2, 1, -3)]
-assert bellman_ford(3, edges, 0) == [0, 2, 5]
-
-# Negative cycle example: 0->1(1), 1->2(-1), 2->0(-1) cycle sum -1
-edges2 = [(0, 1, 1), (1, 2, -1), (2, 0, -1)]
-d = bellman_ford(3, edges2, 0)
-assert d[0] == -float('inf') and d[1] == -float('inf') and d[2] == -float('inf')
+assert bellman_ford(3, [[0, 1, 4], [0, 2, 5], [2, 1, -3]], 0) == [0, 2, 5]
+assert bellman_ford(3, [[0, 1, 1], [1, 2, -3], [2, 1, 1]], 0) == []
+assert bellman_ford(3, [[1, 2, -5]], 0) == [0, None, None]
 ```
 
 ```cpp
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-const ll INF = (1LL<<60);
-
-struct Edge { int u, v; ll w; };
-
-vector<ll> bellman_ford(int n, const vector<Edge>& edges, int start) {
-    vector<ll> dist(n, INF);
-    dist[start] = 0;
-    // n-1 rounds
-    for (int i = 0; i < n - 1; ++i) {
-        bool any = false;
-        for (auto e : edges) {
-            if (dist[e.u] != INF && dist[e.u] + e.w < dist[e.v]) {
-                dist[e.v] = dist[e.u] + e.w;
-                any = true;
+vector<optional<long long>> bellman_ford(int n, const vector<vector<int>>& edges, int source) {
+    const long long INF = (long long)1e18;
+    vector<long long> dist(n, INF);
+    dist[source] = 0;
+    bool settled = false;
+    for (int round = 0; round < n; ++round) {
+        bool changed = false;
+        for (auto& e : edges) {
+            int a = e[0], b = e[1], w = e[2];
+            if (dist[a] != INF && dist[a] + w < dist[b]) {
+                dist[b] = dist[a] + w;
+                changed = true;
             }
         }
-        if (!any) break;
-    }
-    // detect negative cycles
-    vector<bool> on_neg(n, false);
-    for (auto e : edges) {
-        if (dist[e.u] != INF && dist[e.u] + e.w < dist[e.v]) {
-            on_neg[e.v] = true;
+        if (!changed) {
+            settled = true;
+            break;
         }
     }
-    // propagate -INF
-    queue<int> q;
-    for (int i = 0; i < n; ++i) if (on_neg[i]) q.push(i);
-    while (!q.empty()) {
-        int u = q.front(); q.pop();
-        dist[u] = -INF;
-        for (auto e : edges) {
-            if (e.u == u && !on_neg[e.v]) {
-                on_neg[e.v] = true;
-                q.push(e.v);
-            }
-        }
-    }
-    return dist;
+    if (!settled) return {};  // a negative cycle is reachable
+    vector<optional<long long>> result(n);
+    for (int v = 0; v < n; ++v)
+        if (dist[v] != INF) result[v] = dist[v];
+    return result;
 }
 ```
 
-## 6.6 Cheapest flights within K stops
+The time is $O(n \cdot m)$ and the space is $O(n)$. Notice the `dist[a] != INF` test: without it, the sum `INF + w` with a negative `w` would look like a real distance.
 
-The problem _Cheapest Flights within K Stops_ asks for the cheapest path from source to destination using at most $K$ edges (i.e., $K$ stops means $K+1$ edges). This is exactly Bellman-Ford run for $K+1$ rounds, because after $i$ rounds `dist[v]` holds the cheapest cost using at most $i$ edges.
+## 6.7 Cheapest flights within K stops
 
-We must be careful: in each round we relax edges based on the distances from the _previous_ round only, otherwise a single round could chain multiple edges. So we copy the distance array at the start of each round.
+In _Cheapest Flights Within K Stops_ we want the cheapest trip from a source to a destination that uses at most $k$ stops in between, which means at most $k+1$ flights. Plain Dijkstra fails here: the cheapest route may need too many flights, and a pricier route with fewer flights is the one allowed.
 
-Example: 3 cities, flights 0→1 (100), 1→2 (100), 0→2 (500). K=1 (at most 2 edges). Round 0: `dist=[0,∞,∞]`. Round 1 (1 edge): relax all → `dist=[0,100,500]`. Round 2 (2 edges): use copy of round 1 → 1→2 gives 200, so `dist=[0,100,200]`. Answer 200.
+Bellman-Ford fits perfectly, because after round $i$ it knows the cheapest cost using **at most $i$ edges**. We simply run exactly $k+1$ rounds. There is one catch: in each round we must relax using the distances of the **previous** round only, otherwise one round could chain several flights together. So we write the new distances into a copy.
 
-Time $O(K \cdot m)$, space $O(n)$.
+Take four cities with the flights 0→1 (10), 1→2 (10), 2→3 (10) and 0→3 (100), going from 0 to 3. After round 1 (one flight) the distances are `[0, 10, ∞, 100]`. After round 2 they are `[0, 10, 20, 100]`. After round 3 they are `[0, 10, 20, 30]`. So with $k = 1$ (two flights) the answer is 100, and with $k = 2$ it is 30. This is exactly the problem _Cheapest Flights Within K Stops_.
 
 ```python
-from typing import List, Tuple
-
-def cheapest_flights(n: int, flights: List[Tuple[int, int, int]], src: int, dst: int, K: int) -> int:
-    """
-    flights: (u, v, price). At most K stops = at most K+1 edges.
-    Returns -1 if no such route.
-    """
+def cheapest_price(n, flights, src, dst, k):
     INF = 10**18
     dist = [INF] * n
     dist[src] = 0
-    for _ in range(K + 1):
-        ndist = dist[:]  # copy previous round
-        for u, v, w in flights:
-            if dist[u] != INF and dist[u] + w < ndist[v]:
-                ndist[v] = dist[u] + w
-        dist = ndist
+    for _ in range(k + 1):
+        new = dist[:]
+        for a, b, price in flights:
+            if dist[a] != INF and dist[a] + price < new[b]:
+                new[b] = dist[a] + price
+        dist = new
     return -1 if dist[dst] == INF else dist[dst]
 
-# Example from description
-flights = [(0, 1, 100), (1, 2, 100), (0, 2, 500)]
-assert cheapest_flights(3, flights, 0, 2, 1) == 200
-assert cheapest_flights(3, flights, 0, 2, 0) == 500  # direct only
+flights = [[0, 1, 10], [1, 2, 10], [2, 3, 10], [0, 3, 100]]
+assert cheapest_price(4, flights, 0, 3, 1) == 100
+assert cheapest_price(4, flights, 0, 3, 2) == 30
+assert cheapest_price(4, flights, 3, 0, 3) == -1
 ```
 
 ```cpp
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-const ll INF = (1LL<<60);
-
-struct Flight { int u, v, w; };
-
-int cheapest_flights(int n, const vector<Flight>& flights, int src, int dst, int K) {
-    vector<ll> dist(n, INF);
+int cheapest_price(int n, const vector<vector<int>>& flights, int src, int dst, int k) {
+    const long long INF = (long long)1e18;
+    vector<long long> dist(n, INF);
     dist[src] = 0;
-    for (int i = 0; i <= K; ++i) {
-        vector<ll> ndist = dist;
-        for (auto f : flights) {
-            if (dist[f.u] != INF && dist[f.u] + f.w < ndist[f.v]) {
-                ndist[f.v] = dist[f.u] + f.w;
-            }
+    for (int round = 0; round <= k; ++round) {
+        vector<long long> next = dist;
+        for (auto& f : flights) {
+            int a = f[0], b = f[1], price = f[2];
+            if (dist[a] != INF && dist[a] + price < next[b])
+                next[b] = dist[a] + price;
         }
-        dist.swap(ndist);
+        dist = next;
     }
     return dist[dst] == INF ? -1 : (int)dist[dst];
 }
 ```
 
-## 6.7 Floyd-Warshall: all pairs
+The time is $O(k \cdot m)$ and the space is $O(n)$. Another way to see the same problem is to let the vertex of a Dijkstra search be the pair (city, flights used so far). Chapter 11 shows that idea.
 
-Floyd-Warshall finds shortest paths between **all pairs** of vertices. It works for negative edges (no negative cycles) and is extremely simple: three nested loops over an $n \times n$ distance matrix.
+## 6.8 Floyd-Warshall: all pairs
 
-Let `dist[i][j]` be the current best distance from $i$ to $j$. Initially `dist[i][j]` is the edge weight if an edge exists, 0 if $i=j$, otherwise infinity. Then for each intermediate vertex $k$ from 0 to $n-1$, we try to improve every pair $(i,j)$ by going through $k$:
+Sometimes we need the shortest distance between **every** pair of vertices. Floyd-Warshall keeps a table `dist[i][j]`, starting with 0 on the diagonal, the edge cost where an edge exists, and infinity elsewhere. Then it allows the vertices as stopovers one at a time. After deciding the vertices $0, 1, \dots, k$ may be used as stopovers, `dist[i][j]` is the shortest distance from `i` to `j` using only those as intermediate vertices. Allowing vertex $k$ means trying, for every pair, the route through it:
 
-```
-dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
-```
+$$\text{dist}[i][j] = \min(\text{dist}[i][j],\ \text{dist}[i][k] + \text{dist}[k][j])$$
 
-After all $k$, `dist[i][j]` is the shortest path distance. If `dist[i][i] < 0` for any $i$, there is a negative cycle.
-
-Example: 3 vertices, edges 0→1 (2), 1→2 (3), 0→2 (10). Initial matrix:
-
-```
-  0  1  2
-0 0  2  10
-1 ∞  0  3
-2 ∞  ∞  0
-```
-
-k=0: nothing improves (no paths into 0).
-k=1: 0→2 via 1: 2+3=5 < 10 → update to 5.
-k=2: no new improvements.
-Final: 0→2 = 5.
-
-Time $O(n^3)$, space $O(n^2)$. This is exactly the problem _Floyd Warshall_.
+Take the edges 0→1 (cost 2), 1→2 (cost 3) and 0→2 (cost 10). Initially `dist[0][2]` is 10. Allowing vertex 0 as stopover changes nothing (nothing points into 0). Allowing vertex 1 finds the route $0 \to 1 \to 2$ costing $2 + 3 = 5$, which beats 10. Allowing vertex 2 changes nothing. So `dist[0][2] = 5`. The outer loop over $k$ must be outermost, which is the most common mistake. This is exactly the problem _Floyd-Warshall: All Pairs_, where unreachable pairs are reported as `-1`.
 
 ```python
-from typing import List, Tuple
-
-def floyd_warshall(n: int, edges: List[Tuple[int, int, int]]) -> List[List[float]]:
-    """
-    edges: (u, v, w) directed. Returns n x n matrix of shortest distances.
-    Unreachable = inf. Negative cycle detected by dist[i][i] < 0.
-    """
-    INF = float('inf')
+def all_pairs_shortest(n, edges):
+    INF = 10**18
     dist = [[INF] * n for _ in range(n)]
     for i in range(n):
         dist[i][i] = 0
-    for u, v, w in edges:
-        dist[u][v] = min(dist[u][v], w)  # keep smallest if multi-edges
+    for a, b, w in edges:
+        dist[a][b] = min(dist[a][b], w)
     for k in range(n):
         for i in range(n):
             if dist[i][k] == INF:
                 continue
             for j in range(n):
-                if dist[k][j] == INF:
-                    continue
-                nd = dist[i][k] + dist[k][j]
-                if nd < dist[i][j]:
-                    dist[i][j] = nd
-    return dist
+                if dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+    return [[-1 if d >= INF else d for d in row] for row in dist]
 
-# Hand-checked example
-edges = [(0, 1, 2), (1, 2, 3), (0, 2, 10)]
-d = floyd_warshall(3, edges)
-assert d[0][2] == 5
-assert d[1][0] == float('inf')
-assert d[0][0] == 0
-
-# Negative cycle detection
-edges2 = [(0, 1, 1), (1, 2, -1), (2, 0, -1)]
-d2 = floyd_warshall(3, edges2)
-assert d2[0][0] < 0
+assert all_pairs_shortest(3, [[0, 1, 4], [1, 2, 1], [0, 2, 7]]) == [[0, 4, 5], [-1, 0, 1], [-1, -1, 0]]
+assert all_pairs_shortest(2, []) == [[0, -1], [-1, 0]]
+assert all_pairs_shortest(3, [[0, 1, 2], [1, 2, 3], [0, 2, 10]])[0][2] == 5
 ```
 
 ```cpp
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-const ll INF = (1LL<<60);
-
-vector<vector<ll>> floyd_warshall(int n, const vector<tuple<int,int,ll>>& edges) {
-    vector<vector<ll>> dist(n, vector<ll>(n, INF));
+vector<vector<long long>> all_pairs_shortest(int n, const vector<vector<int>>& edges) {
+    const long long INF = (long long)1e18;
+    vector<vector<long long>> dist(n, vector<long long>(n, INF));
     for (int i = 0; i < n; ++i) dist[i][i] = 0;
-    for (auto [u, v, w] : edges) {
-        dist[u][v] = min(dist[u][v], w);
-    }
-    for (int k = 0; k < n; ++k) {
+    for (auto& e : edges) dist[e[0]][e[1]] = min(dist[e[0]][e[1]], (long long)e[2]);
+    for (int k = 0; k < n; ++k)
         for (int i = 0; i < n; ++i) {
             if (dist[i][k] == INF) continue;
-            for (int j = 0; j < n; ++j) {
-                if (dist[k][j] == INF) continue;
-                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
-            }
+            for (int j = 0; j < n; ++j)
+                if (dist[i][k] + dist[k][j] < dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
         }
-    }
+    for (auto& row : dist)
+        for (auto& d : row)
+            if (d >= INF) d = -1;
     return dist;
 }
 ```
 
-## 6.8 Check yourself
+The three loops give a time of $O(n^3)$, and the table takes $O(n^2)$ space. We skip rows where `dist[i][k]` is infinite, and an unreachable `dist[k][j]` equals $10^{18}$, so the sum can never beat a real distance. With negative edges (but no negative cycles) the same code still works, and a negative number on the diagonal `dist[i][i]` reveals a negative cycle through `i`.
 
-1. In the worked Dijkstra table, why did vertex 3 get picked before vertex 2 in step 3?
-2. Give a tiny graph with a negative edge where Dijkstra gives the wrong answer.
-3. In the minimum-effort variation, why does the algorithm still pick the vertex with the smallest current maximum?
-4. How many rounds of Bellman-Ford are needed to guarantee all shortest paths are found if there are no negative cycles?
-5. In Floyd-Warshall, what does a negative value on the diagonal `dist[i][i]` indicate?
+## 6.9 Check yourself
+
+1. In the worked Dijkstra table, why is vertex 3 taken before vertex 2 in step 3?
+2. Give a three-vertex graph with a negative edge on which Dijkstra gives the wrong answer.
+3. In the minimum-effort variation, why can we replace "add the edge cost" by "take the larger of the two"?
+4. In cheapest flights, why do we write the new distances into a copy of the array?
+5. In Floyd-Warshall, why must the loop over the stopover vertex be the outermost loop?
 
 # Chapter 7. Disjoint sets (union-find)
 
@@ -2761,7 +2428,65 @@ There are two classic ways to build one, and both are greedy: they keep choosing
 
 ## 8.2 Kruskal: cheapest edge first
 
-**Kruskal's algorithm** looks at all edges from the cheapest to the most expensive. It takes an edge if it joins two vertices that are not yet connected, and skips it if it would close a cycle. We already have the perfect tool to check this: the union-find structure from Chapter 7, whose `DSU` class the code below uses. `union` returns `False` exactly when an edge would close a cycle.
+**Kruskal's algorithm** looks at all edges from the cheapest to the most expensive. It takes an edge if it joins two vertices that are not yet connected, and skips it if it would close a cycle. We already have the perfect tool to check this: the union-find structure from Chapter 7. To keep this chapter self-contained, here is its short form again (path compression and union by size). `union` returns `False` exactly when the two vertices are already in the same group, that is, when an edge would close a cycle.
+
+```python
+class DSU:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.size = [1] * n
+        self.groups = n
+
+    def find(self, x):
+        root = x
+        while self.parent[root] != root:
+            root = self.parent[root]
+        while self.parent[x] != root:
+            self.parent[x], x = root, self.parent[x]
+        return root
+
+    def union(self, a, b):
+        a, b = self.find(a), self.find(b)
+        if a == b:
+            return False
+        if self.size[a] < self.size[b]:
+            a, b = b, a
+        self.parent[b] = a
+        self.size[a] += self.size[b]
+        self.groups -= 1
+        return True
+
+d = DSU(3)
+assert d.union(0, 1) and not d.union(1, 0)
+assert d.groups == 2
+```
+
+```cpp
+struct DSU {
+    vector<int> parent, size;
+    int groups;
+
+    DSU(int n) : parent(n), size(n, 1), groups(n) {
+        iota(parent.begin(), parent.end(), 0);
+    }
+
+    int find(int x) {
+        if (parent[x] != x) parent[x] = find(parent[x]);
+        return parent[x];
+    }
+
+    bool unite(int a, int b) {
+        a = find(a);
+        b = find(b);
+        if (a == b) return false;
+        if (size[a] < size[b]) swap(a, b);
+        parent[b] = a;
+        size[a] += size[b];
+        groups--;
+        return true;
+    }
+};
+```
 
 Let us trace it on four vertices 0, 1, 2, 3 with the edges (0,1) weight 1, (1,2) weight 2, (0,2) weight 3, (2,3) weight 4 and (1,3) weight 5. Sorted by weight, the order is already the order we listed them.
 
@@ -2794,7 +2519,7 @@ long long kruskal(int n, vector<vector<int>> edges) {
 }
 ```
 
-(The `DSU` class is the one from Chapter 7.) Sorting the $m$ edges costs $O(m \log m)$ and the union-find work is almost free, so Kruskal runs in $O(m \log m)$ time. At the end, if more than one group is left, the graph was not connected and we return $-1$.
+Sorting the $m$ edges costs $O(m \log m)$ and the union-find work is almost free, so Kruskal runs in $O(m \log m)$ time. At the end, if more than one group is left, the graph was not connected and we return $-1$.
 
 ## 8.3 Prim: grow one tree
 
@@ -2929,155 +2654,201 @@ int min_cost_connect(const vector<vector<int>>& points) {
 
 # Chapter 9. Bridges, cut vertices and strongly connected components
 
-## 9.1 Bridges and cut vertices
+## 9.1 Weak spots in a network
 
-Imagine a map of towns connected by roads. A **bridge** is a road that, if it closes, leaves some pair of towns with no path between them. A **cut vertex** (also called an articulation point) is a town that, if it disappears along with all roads touching it, splits the map into more pieces than before. Finding these weak spots is exactly the problem _Critical Connections_ for bridges and _Articulation Points_ for cut vertices.
+Picture towns joined by roads. A **bridge** is a road whose closure leaves some pair of towns with no route between them. A **cut vertex** (also called an **articulation point**) is a town whose disappearance, together with every road touching it, splits the remaining towns into more separate pieces than before. These are the weak spots of a network: a single cable or a single server that everything depends on. Both ideas are about undirected graphs.
 
-Both problems live on undirected graphs. We will use a depth first search that numbers each vertex with the moment we first arrive. That number is called the **entry time** `tin[v]`. We also keep a second number `low[v]`: the earliest entry time we can reach from `v` by walking down the DFS tree and then taking at most one back edge (an edge that goes to an ancestor in the DFS tree). If a child `to` of `v` has `low[to] > tin[v]`, then the edge `(v, to)` is a bridge — nothing from `to`'s subtree reaches `v` or above except that edge. For a cut vertex (not the root), if some child `to` has `low[to] >= tin[v]`, then `v` is an articulation point — removing `v` separates `to`'s subtree from the rest. The root is special: it is a cut vertex only when it has more than one child in the DFS tree.
+The test is not obvious from a picture of a big graph, so we use depth-first search with the entry times of Chapter 3. DFS builds a **DFS tree**: the edges along which it walked into new vertices. Every other edge of an undirected graph is a **back edge** that joins a vertex to one of its ancestors in the tree. A back edge is a shortcut around part of the tree, and bridges are exactly the tree edges that no shortcut covers.
 
-Both algorithms run in $O(n+m)$ time and $O(n)$ space, where $n$ is the number of vertices and $m$ the number of edges.
-
-Let's trace a tiny graph by hand before we write code.
+Take this graph with the edges 0-1, 1-2, 0-3, 3-4 and 1-4.
 
 ```
-0 -- 1 -- 2
-|    |
-3 -- 4
+0 --- 1 --- 2
+|     |
+3 --- 4
 ```
 
-Vertices 0..4. Edges: (0,1), (1,2), (0,3), (3,4), (1,4). Start DFS at 0.
+Vertices 0, 1, 4, 3 form a cycle, so none of its edges is a bridge, while the road to vertex 2 is the only way in or out of it, so 1-2 is a bridge. Vertex 1 is a cut vertex, because removing it cuts 2 off from the rest, and no other vertex is. The rest of the chapter finds such things automatically.
 
-- Visit 0: `tin[0]=0`, `low[0]=0`.
-- Go to 1: `tin[1]=1`, `low[1]=1`.
-- Go to 2: `tin[2]=2`, `low[2]=2`. Backtrack: `low[1]=min(1,2)=1`. Edge (1,2) has `low[2]=2 > tin[1]=1` → bridge.
-- From 1 go to 4: `tin[4]=3`, `low[4]=3`.
-- From 4 go to 3: `tin[3]=4`, `low[3]=4`.
-- From 3 see 0 (already visited, not parent): `low[3]=min(4,0)=0`. Backtrack: `low[4]=min(3,0)=0`. Backtrack: `low[1]=min(1,0)=0`.
-- Edge (0,1) has `low[1]=0 ≤ tin[0]=0` → not a bridge.
-- Vertex 1 is not root; child 2 gave `low[2]=2 ≥ tin[1]=1` → 1 is a cut vertex. Child 4 gave `low[4]=0 < tin[1]=1` → does not make 1 a cut vertex again.
-- Root 0 has only one child (1) → not a cut vertex.
+## 9.2 Entry times and low-link values
 
-Bridges: (1,2). Cut vertices: 1.
+During DFS we number every vertex with its entry time `tin[v]`. For every vertex we also compute `low[v]`: **the smallest entry time that can be reached from `v`'s subtree by walking down tree edges and then using at most one back edge.** Think of it as "how high up the tree can this subtree climb by shortcut". It starts as `tin[v]` itself, and then it is lowered by two kinds of events. If `v` has a back edge to an already visited vertex `u` (other than its parent), then `low[v]` becomes at most `tin[u]`. And when we come back from a child `c`, then `low[v]` becomes at most `low[c]`, because whatever the child's subtree can reach, so can `v`'s.
+
+Now the tests are short. A tree edge from `v` to its child `c` is a **bridge** exactly when $low[c] > tin[v]$, meaning the subtree of `c` cannot reach `v` or anything above it except through this very edge. A non-root vertex `v` is a **cut vertex** when some child `c` has $low[c] \ge tin[v]$, meaning that subtree cannot get above `v` without passing through `v` itself (it may touch `v` by a back edge, which is still not enough to escape). The root of the DFS tree is special, because it has no "above". It is a cut vertex exactly when it has two or more children in the DFS tree.
+
+Let us trace the graph above, starting at 0, and visiting neighbours in the order they were listed. Vertex 0 gets `tin = low = 0`. We go to 1 (`tin = low = 1`), then to 2 (`tin = low = 2`). Vertex 2 has no other edges, so we return to 1 with `low[2] = 2`, which is greater than `tin[1] = 1`: the edge 1-2 is a bridge, and since $low[2] \ge tin[1]$ and 1 is not the root, vertex 1 is a cut vertex. Next 1 goes to 4 (`tin = low = 3`), and 4 goes to 3 (`tin = low = 4`). Vertex 3 sees its neighbour 0, which is already visited and is not its parent, so `low[3] = 0`. Returning, `low[4]` becomes 0, then `low[1]` becomes 0. For the child 4 of vertex 1, $low[4] = 0 < tin[1]$, so it does not make 1 a cut vertex, and the edge 1-4 is not a bridge. Finally the edge 0-1 is not a bridge since $low[1] = 0 \not> tin[0] = 0$, and the root 0 has only one child. The bridges are just 1-2 and the cut vertices just 1.
+
+All of this takes one DFS, so the time is $O(n+m)$. (In Python, a very deep graph can overflow the recursion limit. Then use the explicit-stack DFS of Section 3.5. The logic is identical.)
+
+## 9.3 Critical connections
+
+A **critical connection** is simply a bridge. The code below computes `tin` and `low` as described and collects each tree edge `(v, to)` with $low[to] > tin[v]$. We skip the edge back to the parent, since it is the same road we arrived by (the problem guarantees that there are no repeated roads). Each bridge is reported as a pair `[a, b]` with `a < b`, in sorted order. This is exactly the problem _Critical Connections (Bridges)_.
 
 ```python
-def find_bridges_and_cut_vertices(n, adj):
-    timer = 0
+def critical_connections(n, connections):
+    adj = [[] for _ in range(n)]
+    for a, b in connections:
+        adj[a].append(b)
+        adj[b].append(a)
     tin = [-1] * n
-    low = [-1] * n
-    visited = [False] * n
-    is_cut = [False] * n
+    low = [0] * n
+    timer = [0]
     bridges = []
 
-    def dfs(v, p):
-        nonlocal timer
-        visited[v] = True
-        tin[v] = low[v] = timer
-        timer += 1
-        children = 0
+    def dfs(v, parent):
+        tin[v] = low[v] = timer[0]
+        timer[0] += 1
         for to in adj[v]:
-            if to == p:
+            if to == parent:
                 continue
-            if visited[to]:
+            if tin[to] != -1:
                 low[v] = min(low[v], tin[to])
             else:
                 dfs(to, v)
                 low[v] = min(low[v], low[to])
                 if low[to] > tin[v]:
-                    bridges.append((v, to))
-                if low[to] >= tin[v] and p != -1:
-                    is_cut[v] = True
-                children += 1
-        if p == -1 and children > 1:
-            is_cut[v] = True
+                    bridges.append([min(v, to), max(v, to)])
 
-    for i in range(n):
-        if not visited[i]:
-            dfs(i, -1)
-    return bridges, [i for i, v in enumerate(is_cut) if v]
+    for s in range(n):
+        if tin[s] == -1:
+            dfs(s, -1)
+    return sorted(bridges)
 
-# test on the traced graph
-n = 5
-adj = [[] for _ in range(n)]
-edges = [(0,1),(1,2),(0,3),(3,4),(1,4)]
-for u,v in edges:
-    adj[u].append(v)
-    adj[v].append(u)
-bridges, cuts = find_bridges_and_cut_vertices(n, adj)
-assert bridges == [(1,2)]
-assert cuts == [1]
+assert critical_connections(4, [[0, 1], [1, 2], [2, 0], [1, 3]]) == [[1, 3]]
+assert critical_connections(5, [[0, 1], [1, 2], [0, 3], [3, 4], [1, 4]]) == [[1, 2]]
+assert critical_connections(2, [[0, 1]]) == [[0, 1]]
 ```
 
 ```cpp
-vector<int> tin, low;
-vector<bool> visited, is_cut;
-vector<pair<int,int>> bridges;
-int timer = 0;
-
-void dfs(int v, int p, const vector<vector<int>>& adj) {
-    visited[v] = true;
-    tin[v] = low[v] = timer++;
-    int children = 0;
-    for (int to : adj[v]) {
-        if (to == p) continue;
-        if (visited[to]) {
-            low[v] = min(low[v], tin[to]);
-        } else {
-            dfs(to, v, adj);
-            low[v] = min(low[v], low[to]);
-            if (low[to] > tin[v])
-                bridges.emplace_back(v, to);
-            if (low[to] >= tin[v] && p != -1)
-                is_cut[v] = true;
-            children++;
-        }
+vector<vector<int>> critical_connections(int n, const vector<vector<int>>& connections) {
+    vector<vector<int>> adj(n);
+    for (auto& e : connections) {
+        adj[e[0]].push_back(e[1]);
+        adj[e[1]].push_back(e[0]);
     }
-    if (p == -1 && children > 1)
-        is_cut[v] = true;
-}
-
-pair<vector<pair<int,int>>, vector<int>> find_bridges_and_cut_vertices(int n, const vector<vector<int>>& adj) {
-    timer = 0;
-    tin.assign(n, -1);
-    low.assign(n, -1);
-    visited.assign(n, false);
-    is_cut.assign(n, false);
-    bridges.clear();
-    for (int i = 0; i < n; ++i)
-        if (!visited[i])
-            dfs(i, -1, adj);
-    vector<int> cuts;
-    for (int i = 0; i < n; ++i)
-        if (is_cut[i]) cuts.push_back(i);
-    return {bridges, cuts};
+    vector<int> tin(n, -1), low(n, 0);
+    int timer = 0;
+    vector<vector<int>> bridges;
+    function<void(int,int)> dfs = [&](int v, int parent) {
+        tin[v] = low[v] = timer++;
+        for (int to : adj[v]) {
+            if (to == parent) continue;
+            if (tin[to] != -1) {
+                low[v] = min(low[v], tin[to]);
+            } else {
+                dfs(to, v);
+                low[v] = min(low[v], low[to]);
+                if (low[to] > tin[v]) bridges.push_back({min(v, to), max(v, to)});
+            }
+        }
+    };
+    for (int s = 0; s < n; ++s)
+        if (tin[s] == -1) dfs(s, -1);
+    sort(bridges.begin(), bridges.end());
+    return bridges;
 }
 ```
 
-## 9.2 Entry times and low-link values
+The time is $O(n + m + b \log b)$ for $b$ bridges (the last term is the final sort), and the space is $O(n+m)$.
 
-The `tin` array is simply a counter that increases each time we first step onto a vertex. The `low` value of a vertex `v` is the smallest `tin` we can see from `v` by going down zero or more tree edges and then possibly one back edge. In the trace above, vertex 3 saw vertex 0 through the back edge (3,0), so `low[3]` became 0. That information bubbled up: `low[4]` became 0, then `low[1]` became 0. Because `low[1]` dropped to 0, the edge (0,1) is not a bridge — there is an alternative route from 1's side back to 0.
+## 9.4 Articulation points
 
-Think of `low` as "the highest ancestor (earliest entry time) my subtree can touch". If a child's `low` is strictly greater than my `tin`, my child's subtree cannot touch me or my ancestors — the edge to that child is a bridge. If a child's `low` is at least my `tin`, my child's subtree cannot escape above me — I am a cut vertex (unless I am the root).
-
-## 9.3 Critical connections and articulation points
-
-The code in the previous section already solves both _Critical Connections_ (collect every edge where `low[to] > tin[v]`) and _Articulation Points_ (collect every vertex `v` where the condition holds). The root rule (a root is a cut vertex only when it has more than one DFS child) is handled in the same pass.
-
-Time: $O(n+m)$. Space: $O(n)$ for the arrays plus recursion stack.
-
-## 9.4 Strongly connected components
-
-Now switch to directed graphs. A **strongly connected component** (SCC) is a maximal set of vertices where every vertex can reach every other vertex following the directed edges. The problem _Strongly Connected Components_ asks for all SCCs. Kosaraju's algorithm finds them in two DFS passes.
-
-First pass: run DFS on the original graph, pushing each vertex onto a list `order` when we finish it (exit time). This gives vertices in increasing exit time. Second pass: reverse every edge to get the transpose graph. Process vertices from `order` in reverse (decreasing exit time). Each DFS on the transpose graph starting from an unvisited vertex collects exactly one SCC. The reason: the first vertex we pick from `order` lies in a "source" SCC of the condensation graph (no incoming edges from other SCCs). In the transpose graph that SCC becomes a "sink" — DFS cannot leave it.
-
-Let us trace Kosaraju on a small graph with the edges 0 → 1, 1 → 2, 2 → 0, 2 → 3, 3 → 4 and 4 → 3. The vertices 0, 1, 2 form one loop and the vertices 3, 4 form another, so there are two components, and the single edge 2 → 3 leads from the first into the second.
-
-First pass: start the DFS at 0. We go 0 → 1 → 2, and from 2 we skip 0 (already seen) and go on to 3 and 4. Vertex 4 finishes first, then 3, then 2, then 1, then 0. The finishing order is `[4, 3, 2, 1, 0]`.
-
-Second pass: reverse every edge, so we now have 1 → 0, 2 → 1, 0 → 2, 3 → 2, 4 → 3 and 3 → 4. Take the vertices in the reverse of the finishing order, which is 0, 1, 2, 3, 4. A DFS from 0 reaches 2 and 1 and then gets stuck, because the only edge that leaves their group in the original graph (2 → 3) now points the other way. So the first component is {0, 1, 2}. The next unvisited vertex is 3, and its DFS reaches 4, giving the component {3, 4}.
+The same DFS finds the cut vertices. For a non-root vertex `v`, we mark it as soon as one child has $low[child] \ge tin[v]$. For the root we only count its DFS children, and mark it if there are at least two. Notice that the root test is different because the root has no ancestors to escape to: with a single child, the whole graph hangs below the root and removing it just removes one end. This is exactly the problem _Articulation Points_.
 
 ```python
-def kosaraju_scc(n, adj):
+def articulation_points(n, edges):
+    adj = [[] for _ in range(n)]
+    for a, b in edges:
+        adj[a].append(b)
+        adj[b].append(a)
+    tin = [-1] * n
+    low = [0] * n
+    timer = [0]
+    is_cut = [False] * n
+
+    def dfs(v, parent):
+        tin[v] = low[v] = timer[0]
+        timer[0] += 1
+        children = 0
+        for to in adj[v]:
+            if to == parent:
+                continue
+            if tin[to] != -1:
+                low[v] = min(low[v], tin[to])
+            else:
+                dfs(to, v)
+                low[v] = min(low[v], low[to])
+                children += 1
+                if parent != -1 and low[to] >= tin[v]:
+                    is_cut[v] = True
+        if parent == -1 and children >= 2:
+            is_cut[v] = True
+
+    for s in range(n):
+        if tin[s] == -1:
+            dfs(s, -1)
+    return [v for v in range(n) if is_cut[v]]
+
+assert articulation_points(5, [[0, 1], [1, 2], [2, 0], [1, 3], [3, 4]]) == [1, 3]
+assert articulation_points(3, [[0, 1], [1, 2], [2, 0]]) == []
+assert articulation_points(5, [[0, 1], [1, 2], [0, 3], [3, 4], [1, 4]]) == [1]
+assert articulation_points(3, [[1, 0], [1, 2]]) == [1]
+```
+
+```cpp
+vector<int> articulation_points(int n, const vector<vector<int>>& edges) {
+    vector<vector<int>> adj(n);
+    for (auto& e : edges) {
+        adj[e[0]].push_back(e[1]);
+        adj[e[1]].push_back(e[0]);
+    }
+    vector<int> tin(n, -1), low(n, 0);
+    vector<bool> is_cut(n, false);
+    int timer = 0;
+    function<void(int,int)> dfs = [&](int v, int parent) {
+        tin[v] = low[v] = timer++;
+        int children = 0;
+        for (int to : adj[v]) {
+            if (to == parent) continue;
+            if (tin[to] != -1) {
+                low[v] = min(low[v], tin[to]);
+            } else {
+                dfs(to, v);
+                low[v] = min(low[v], low[to]);
+                ++children;
+                if (parent != -1 && low[to] >= tin[v]) is_cut[v] = true;
+            }
+        }
+        if (parent == -1 && children >= 2) is_cut[v] = true;
+    };
+    for (int s = 0; s < n; ++s)
+        if (tin[s] == -1) dfs(s, -1);
+    vector<int> result;
+    for (int v = 0; v < n; ++v)
+        if (is_cut[v]) result.push_back(v);
+    return result;
+}
+```
+
+The time is $O(n+m)$ and the space is $O(n+m)$. The last assertion shows the root rule at work: with the edges 1-0 and 1-2 the search starts at 0, so 1 is not the root and is a cut vertex through its child 2. Starting at the middle vertex would have given the root two children and the same answer.
+
+## 9.5 Strongly connected components
+
+Now switch to directed graphs, where reachability can be one-way. A **strongly connected component**, or **SCC**, is a largest possible group of vertices in which every vertex can reach every other one by following arrows. Every vertex lies in exactly one SCC (a vertex alone is a component by itself). If we squeeze each SCC into a single dot, the result has no cycles, because a cycle would have merged its dots into one component.
+
+**Kosaraju's algorithm** finds all SCCs with two DFS passes. In the first pass we run DFS over the whole graph and write each vertex in a list `order` at the moment it finishes. The vertex that finishes last belongs to a component with no arrows entering it from other components (a "source" component), because otherwise DFS would have visited it earlier from somewhere else and finished it earlier. In the second pass we **reverse every arrow** and go through `order` from the end. Reversing makes the source component a dead end: a DFS in the reversed graph starting inside it cannot leave it, so it collects exactly that component. We then remove it from consideration (by keeping the vertices marked) and the next vertex in the list lies in a source component of what remains.
+
+Trace it on the arrows 0→1, 1→2, 2→0, 2→3, 3→4, 4→3. The vertices 0, 1, 2 form one loop and 3, 4 form another, with a single arrow 2→3 from the first into the second. In the first pass, DFS from 0 goes 0, 1, 2, then 3, then 4. Vertex 4 finishes first, then 3, 2, 1, 0, so `order = [4, 3, 2, 1, 0]`. In the second pass the arrows are reversed (now 0→2, 1→0, 2→1, 3→2, 3→4, 4→3). We read `order` backwards: 0 first. DFS from 0 reaches 2 and then 1, and cannot reach 3 or 4, because the arrow that connected them now points the other way. So {0, 1, 2} is a component. The next unvisited vertex in the backwards order is 3, whose DFS reaches 4: the component {3, 4}.
+
+The answer to "how many SCCs?" is the number of components found. This is exactly the problem _Strongly Connected Components_.
+
+```python
+def strongly_connected_components(n, edges):
+    adj = [[] for _ in range(n)]
+    radj = [[] for _ in range(n)]
+    for a, b in edges:
+        adj[a].append(b)
+        radj[b].append(a)
     visited = [False] * n
     order = []
 
@@ -3088,23 +2859,17 @@ def kosaraju_scc(n, adj):
                 dfs1(to)
         order.append(v)
 
-    for i in range(n):
-        if not visited[i]:
-            dfs1(i)
-
-    # transpose
-    adj_rev = [[] for _ in range(n)]
     for v in range(n):
-        for to in adj[v]:
-            adj_rev[to].append(v)
+        if not visited[v]:
+            dfs1(v)
 
     visited = [False] * n
-    comps = []
+    components = []
 
     def dfs2(v, comp):
         visited[v] = True
         comp.append(v)
-        for to in adj_rev[v]:
+        for to in radj[v]:
             if not visited[to]:
                 dfs2(to, comp)
 
@@ -3112,512 +2877,785 @@ def kosaraju_scc(n, adj):
         if not visited[v]:
             comp = []
             dfs2(v, comp)
-            comps.append(comp)
-    return comps
+            components.append(comp)
+    return components
 
-# test on the example
-n = 6
-adj = [[] for _ in range(n)]
-edges = [(0,1),(1,2),(2,3),(3,0),(1,4),(4,1),(2,5)]
-for u,v in edges:
-    adj[u].append(v)
-comps = kosaraju_scc(n, adj)
-# sort each component and the list for stable comparison
-comps = [sorted(c) for c in comps]
-comps.sort()
-assert comps == [[0,1,2,3,4], [5]]
+def count_scc(n, edges):
+    return len(strongly_connected_components(n, edges))
+
+chain = [[0, 1], [1, 2], [2, 0], [2, 3], [3, 4], [4, 3]]
+comps = strongly_connected_components(5, chain)
+assert [sorted(c) for c in comps] == [[0, 1, 2], [3, 4]]
+assert count_scc(5, [[0, 1], [1, 2], [2, 0], [1, 3], [3, 4]]) == 3
+assert count_scc(3, []) == 3
 ```
 
 ```cpp
-vector<int> order;
-vector<bool> visited;
-
-void dfs1(int v, const vector<vector<int>>& adj) {
-    visited[v] = true;
-    for (int to : adj[v])
-        if (!visited[to])
-            dfs1(to, adj);
-    order.push_back(v);
-}
-
-void dfs2(int v, const vector<vector<int>>& adj_rev, vector<int>& comp) {
-    visited[v] = true;
-    comp.push_back(v);
-    for (int to : adj_rev[v])
-        if (!visited[to])
-            dfs2(to, adj_rev, comp);
-}
-
-vector<vector<int>> kosaraju_scc(int n, const vector<vector<int>>& adj) {
-    visited.assign(n, false);
-    order.clear();
-    for (int i = 0; i < n; ++i)
-        if (!visited[i])
-            dfs1(i, adj);
-
-    vector<vector<int>> adj_rev(n);
-    for (int v = 0; v < n; ++v)
+vector<vector<int>> strongly_connected_components(int n, const vector<vector<int>>& edges) {
+    vector<vector<int>> adj(n), radj(n);
+    for (auto& e : edges) {
+        adj[e[0]].push_back(e[1]);
+        radj[e[1]].push_back(e[0]);
+    }
+    vector<bool> visited(n, false);
+    vector<int> order;
+    function<void(int)> dfs1 = [&](int v) {
+        visited[v] = true;
         for (int to : adj[v])
-            adj_rev[to].push_back(v);
+            if (!visited[to]) dfs1(to);
+        order.push_back(v);
+    };
+    for (int v = 0; v < n; ++v)
+        if (!visited[v]) dfs1(v);
 
     visited.assign(n, false);
-    vector<vector<int>> comps;
+    vector<vector<int>> components;
+    vector<int> comp;
+    function<void(int)> dfs2 = [&](int v) {
+        visited[v] = true;
+        comp.push_back(v);
+        for (int to : radj[v])
+            if (!visited[to]) dfs2(to);
+    };
     for (int i = n - 1; i >= 0; --i) {
         int v = order[i];
         if (!visited[v]) {
-            vector<int> comp;
-            dfs2(v, adj_rev, comp);
-            comps.push_back(comp);
+            comp.clear();
+            dfs2(v);
+            components.push_back(comp);
         }
     }
-    return comps;
+    return components;
+}
+
+int count_scc(int n, const vector<vector<int>>& edges) {
+    return strongly_connected_components(n, edges).size();
 }
 ```
 
-Time: $O(n+m)$ for two DFS passes plus building the transpose. Space: $O(n+m)$.
+Both passes visit every vertex and edge once, so the time is $O(n+m)$ and the space is $O(n+m)$ for the two adjacency lists.
 
-## 9.5 Minimum height trees
+## 9.6 Minimum height trees
 
-A **tree** is an undirected connected graph with no cycles. The height of a rooted tree is the maximum distance from the root to any leaf. The problem _Minimum Height Trees_ asks for all roots that give the smallest possible height. The answer is always the one or two middle vertices of any longest path (diameter). We can find them by repeatedly peeling off leaves: put all current leaves in a queue, remove them, and their neighbours may become new leaves. Repeat until at most two vertices remain. Those are the centres.
+A **tree** is a connected undirected graph without cycles. If we pick one vertex as the **root** and hang the tree from it, the **height** is the number of edges on the longest downward path. Different roots give different heights: in a path of five vertices, rooting at an end gives height 4, while rooting in the middle gives height 2. The question is which roots give the smallest height.
 
-Example: path 0-1-2-3-4. Leaves: 0 and 4. Remove them, left with 1-2-3. Leaves: 1 and 3. Remove them, left with 2. Centre: [2]. Path 0-1-2-3. Leaves: 0,3 → remove → 1,2 remain. Centres: [1,2].
+The best roots are the "middle" of the tree. A way to find the middle is to peel the tree like an onion: all the **leaves** (vertices with only one neighbour) are the furthest from the middle, so remove them all at once. This creates new leaves. Repeat, layer by layer, until at most two vertices remain. Those are the answers: one vertex when the longest path has an odd number of vertices, two when it has an even number.
+
+Take the tree with the edges 0-1, 1-2, 1-3, 3-4, 4-5 (six vertices). The leaves are 0, 2 and 5. Remove them, and 1 and 4 become leaves (3 vertices remain: 1, 3, 4). Remove those two as well, and 3 is the only vertex left. The answer is `[3]`; indeed the longest path 0-1-3-4-5 has 3 in the middle. This is exactly the problem _Minimum Height Trees_.
 
 ```python
 from collections import deque
 
-def find_min_height_trees(n, edges):
+def min_height_trees(n, edges):
     if n == 1:
         return [0]
     adj = [[] for _ in range(n)]
-    deg = [0] * n
-    for u, v in edges:
-        adj[u].append(v)
-        adj[v].append(u)
-        deg[u] += 1
-        deg[v] += 1
-    leaves = deque([i for i in range(n) if deg[i] == 1])
+    degree = [0] * n
+    for a, b in edges:
+        adj[a].append(b)
+        adj[b].append(a)
+        degree[a] += 1
+        degree[b] += 1
+    leaves = deque(v for v in range(n) if degree[v] == 1)
     remaining = n
     while remaining > 2:
-        sz = len(leaves)
-        remaining -= sz
-        for _ in range(sz):
+        layer = len(leaves)
+        remaining -= layer
+        for _ in range(layer):
             leaf = leaves.popleft()
-            for nei in adj[leaf]:
-                deg[nei] -= 1
-                if deg[nei] == 1:
-                    leaves.append(nei)
-    return list(leaves)
+            for nb in adj[leaf]:
+                degree[nb] -= 1
+                if degree[nb] == 1:
+                    leaves.append(nb)
+    return sorted(leaves)
 
-# test
-assert find_min_height_trees(5, [(0,1),(1,2),(2,3),(3,4)]) == [2]
-assert sorted(find_min_height_trees(4, [(0,1),(1,2),(2,3)])) == [1,2]
+assert min_height_trees(6, [[0, 1], [1, 2], [1, 3], [3, 4], [4, 5]]) == [3]
+assert min_height_trees(4, [[1, 0], [1, 2], [1, 3]]) == [1]
+assert min_height_trees(4, [[0, 1], [1, 2], [2, 3]]) == [1, 2]
+assert min_height_trees(1, []) == [0]
 ```
 
 ```cpp
-vector<int> findMinHeightTrees(int n, const vector<vector<int>>& edges) {
+vector<int> min_height_trees(int n, const vector<vector<int>>& edges) {
     if (n == 1) return {0};
     vector<vector<int>> adj(n);
-    vector<int> deg(n, 0);
+    vector<int> degree(n, 0);
     for (auto& e : edges) {
         adj[e[0]].push_back(e[1]);
         adj[e[1]].push_back(e[0]);
-        deg[e[0]]++; deg[e[1]]++;
+        degree[e[0]]++;
+        degree[e[1]]++;
     }
     queue<int> leaves;
-    for (int i = 0; i < n; ++i)
-        if (deg[i] == 1) leaves.push(i);
+    for (int v = 0; v < n; ++v)
+        if (degree[v] == 1) leaves.push(v);
     int remaining = n;
     while (remaining > 2) {
-        int sz = leaves.size();
-        remaining -= sz;
-        for (int i = 0; i < sz; ++i) {
-            int leaf = leaves.front(); leaves.pop();
-            for (int nei : adj[leaf]) {
-                if (--deg[nei] == 1)
-                    leaves.push(nei);
+        int layer = leaves.size();
+        remaining -= layer;
+        for (int i = 0; i < layer; ++i) {
+            int leaf = leaves.front();
+            leaves.pop();
+            for (int nb : adj[leaf]) {
+                if (--degree[nb] == 1) leaves.push(nb);
             }
         }
     }
-    vector<int> ans;
+    vector<int> result;
     while (!leaves.empty()) {
-        ans.push_back(leaves.front());
+        result.push_back(leaves.front());
         leaves.pop();
     }
-    return ans;
+    sort(result.begin(), result.end());
+    return result;
 }
 ```
 
-Time: $O(n)$. Space: $O(n)$.
+Every vertex is removed once, so the time is $O(n)$ and the space is $O(n)$. This is Kahn's idea from Chapter 5 again: peeling vertices of degree one instead of degree zero.
 
-## 9.6 Check yourself
+## 9.7 Check yourself
 
-1. In the bridge algorithm, why does `low[to] > tin[v]` mean the edge `(v,to)` is a bridge?
-2. Why is the root of the DFS tree a cut vertex only when it has more than one child?
-3. In Kosaraju's algorithm, why do we run the second DFS on the transpose graph in reverse order of exit times?
-4. For a tree that is a simple path of 6 vertices, how many centres does the leaf-peeling algorithm return, and which vertices are they?
+1. In the bridge test $low[c] > tin[v]$, what does it say about the subtree of the child `c`?
+2. Why is the root of the DFS tree a cut vertex only when it has at least two children?
+3. In Kosaraju's algorithm, why do we reverse the arrows in the second pass?
+4. A tree is a path of 6 vertices, 0-1-2-3-4-5. Which vertices does the leaf-peeling method return?
 
 # Chapter 10. DP on directed acyclic graphs
 
-In Section 1.5 we saw that every DP is secretly a DAG. In this chapter we meet the opposite situation: the DAG is given to us as a graph, and the DP runs over its vertices. This is the cleanest setting for graph DP, and everything later (trees, cycles) is a reduction to it.
+## 10.1 Answers that build on answers
 
-## 10.1 Longest path in a DAG
+**Dynamic programming** (DP) means solving a big question by first answering smaller versions of it and then combining those answers, never solving the same small question twice. On a directed graph with no cycles (a **DAG**, from Chapter 5), the small questions are very natural: the answer for a vertex is built from the answers of the vertices its arrows point to. Because there are no cycles, those vertices never depend back on the first one, so the recursion always ends.
 
-Let $G=(V,E)$ be a DAG. Find the length (number of edges) of the longest directed path starting at a given vertex $s$.
+Here is the classic example. For each vertex `v`, find the length (number of edges) of the longest path that **starts at `v`**. A longest path from `v` either stops right there (length 0) or takes one arrow `v→u` and continues with a longest path from `u`. So
 
-For a general graph this problem is NP-hard, because a cycle would let us walk forever or force us to avoid repeating vertices. The absence of cycles is what makes it easy. Let $\text{len}(v)$ be the length of the longest path that **starts at $v$**. Any such path either is just the vertex $v$ (length $0$), or begins with an edge $v\to u$ followed by a longest path from $u$:
+$$\text{len}(v) = \max\bigl(0,\ \max_{v \to u}(1 + \text{len}(u))\bigr).$$
 
-$$\text{len}(v)=\max\Bigl(0,\ \max_{(v,u)\in E}\bigl(1+\text{len}(u)\bigr)\Bigr).$$
+Take six vertices with the arrows 0→1, 0→2, 1→3, 2→3, 3→4 and 2→5. Vertices 4 and 5 have no arrows out, so their answer is 0. Vertex 3 has the single arrow to 4, so its answer is $1 + 0 = 1$. Vertex 1 goes to 3, giving $1 + 1 = 2$. Vertex 2 goes to 3 or 5, so it is $\max(1 + 1, 1 + 0) = 2$. Vertex 0 goes to 1 or 2, so it is $1 + 2 = 3$. The answers for vertices 0 to 5 are 3, 2, 2, 1, 0, 0.
 
-Because $G$ has no cycles, the recursion never returns to a vertex it is currently computing, so memoized DFS is well defined:
+To avoid recomputing, we remember each answer after computing it. This trick is called **memoisation**. Each vertex is computed once and each arrow is looked at once, so the time is $O(n+m)$.
 
 ```python
-# Global variables (set N to the number of vertices in the DAG)
-N = 0
-adj = [[] for _ in range(N)]
-len_ = [0] * N
-seen = [False] * N
+def longest_from(n, edges):
+    adj = [[] for _ in range(n)]
+    for u, v in edges:
+        adj[u].append(v)
+    best = [-1] * n  # -1 means "not computed yet"
 
-def go(v):
-    """Return the length of the longest directed path starting at vertex v."""
-    if seen[v]:
-        return len_[v]
-    seen[v] = True
-    best = 0
-    for u in adj[v]:
-        best = max(best, 1 + go(u))
-    len_[v] = best
-    return best
+    def go(v):
+        if best[v] == -1:
+            best[v] = 0
+            for u in adj[v]:
+                best[v] = max(best[v], 1 + go(u))
+        return best[v]
+
+    return [go(v) for v in range(n)]
+
+edges = [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [2, 5]]
+assert longest_from(6, edges) == [3, 2, 2, 1, 0, 0]
 ```
 
 ```cpp
-vector<int> adj[N];
-int len[N]; bool seen[N];
-
-int go(int v) {
-    if (seen[v]) return len[v];
-    seen[v] = true;
-    int best = 0;
-    for (int u : adj[v]) best = max(best, 1 + go(u));
-    return len[v] = best;
+vector<int> longest_from(int n, const vector<vector<int>>& edges) {
+    vector<vector<int>> adj(n);
+    for (auto& e : edges) adj[e[0]].push_back(e[1]);
+    vector<int> best(n, -1);  // -1 means "not computed yet"
+    function<int(int)> go = [&](int v) {
+        if (best[v] == -1) {
+            best[v] = 0;
+            for (int u : adj[v]) best[v] = max(best[v], 1 + go(u));
+        }
+        return best[v];
+    };
+    vector<int> result(n);
+    for (int v = 0; v < n; ++v) result[v] = go(v);
+    return result;
 }
 ```
 
-Each vertex is evaluated once, and each edge is looked at once while doing so. The total time is $O(|V|+|E|)$.
+The guarantee that the recursion ends depends entirely on the absence of cycles. On a graph with a cycle, `go` could call itself forever. Chapter 11 shows how to deal with that.
 
-The definition of the state matters. We said "starts at $v$" rather than "ends at $v$". Both work, as the graph can be traversed in either direction, but starting-at is natural for the memoized DFS because it explores forward edges. With ending-at we would loop over incoming edges and use a bottom-up order.
+## 10.2 Bottom-up with a topological order
 
-## 10.2 Topological order and bottom-up DP
-
-The recursion above relies on the call stack. To process a graph with millions of vertices, or to fill the table in a loop, we use an explicit **topological order**: a listing of the vertices such that every edge goes from an earlier vertex to a later one. A DAG always has one, and Kahn's algorithm finds it in $O(|V|+|E|)$ by repeatedly removing a vertex of in-degree zero:
+The recursive version can run out of stack on a long chain, and sometimes we simply prefer a loop. A **topological order** (Chapter 5) lists the vertices so that every arrow points forward. If we walk through that list **backwards**, then by the time we reach a vertex, all vertices it points to have already been finished. So the DP becomes a plain loop with no recursion.
 
 ```python
 from collections import deque
 
-def topo_order(n, adj):
+def topological_order(n, adj):
     indeg = [0] * n
-    order = []
     for v in range(n):
         for u in adj[v]:
             indeg[u] += 1
-    q = deque()
-    for v in range(n):
-        if indeg[v] == 0:
-            q.append(v)
-    while q:
-        v = q.popleft()
+    queue = deque(v for v in range(n) if indeg[v] == 0)
+    order = []
+    while queue:
+        v = queue.popleft()
         order.append(v)
         for u in adj[v]:
             indeg[u] -= 1
             if indeg[u] == 0:
-                q.append(u)
-    return order  # len(order) < n  <=>  the graph has a cycle
+                queue.append(u)
+    return order
+
+def longest_path_lengths(n, edges):
+    adj = [[] for _ in range(n)]
+    for u, v in edges:
+        adj[u].append(v)
+    best = [0] * n
+    for v in reversed(topological_order(n, adj)):
+        for u in adj[v]:
+            best[v] = max(best[v], 1 + best[u])
+    return best
+
+edges = [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [2, 5]]
+assert longest_path_lengths(6, edges) == [3, 2, 2, 1, 0, 0]
+assert max(longest_path_lengths(6, edges)) == 3
 ```
 
 ```cpp
-vector<int> topo_order(int n, vector<vector<int>>& adj) {
+vector<int> topological_order(int n, const vector<vector<int>>& adj) {
     vector<int> indeg(n, 0), order;
-    for (int v = 0; v < n; v++) for (int u : adj[v]) indeg[u]++;
+    for (int v = 0; v < n; ++v)
+        for (int u : adj[v]) indeg[u]++;
     queue<int> q;
-    for (int v = 0; v < n; v++) if (!indeg[v]) q.push(v);
+    for (int v = 0; v < n; ++v)
+        if (indeg[v] == 0) q.push(v);
     while (!q.empty()) {
-        int v = q.front(); q.pop(); order.push_back(v);
-        for (int u : adj[v]) if (--indeg[u] == 0) q.push(u);
+        int v = q.front();
+        q.pop();
+        order.push_back(v);
+        for (int u : adj[v])
+            if (--indeg[u] == 0) q.push(u);
     }
-    return order;     // order.size() < n  <=>  the graph has a cycle
+    return order;
+}
+
+vector<int> longest_path_lengths(int n, const vector<vector<int>>& edges) {
+    vector<vector<int>> adj(n);
+    for (auto& e : edges) adj[e[0]].push_back(e[1]);
+    vector<int> best(n, 0);
+    vector<int> order = topological_order(n, adj);
+    for (int i = (int)order.size() - 1; i >= 0; --i) {
+        int v = order[i];
+        for (int u : adj[v]) best[v] = max(best[v], 1 + best[u]);
+    }
+    return best;
 }
 ```
 
-With this order, the longest-path DP is a loop that visits the vertices in **reverse** topological order (so that all successors of $v$ are already finished when we reach $v$):
+The answer to "what is the longest path anywhere in the DAG?" is the largest entry. The time is $O(n+m)$ and the space is $O(n+m)$. If the topological order has fewer than $n$ vertices, the graph has a cycle and this DP does not apply.
+
+## 10.3 Counting paths
+
+The same skeleton works for any way of combining the answers of the successors. To **count** the paths from `v` to a target `t`, there is one path of length zero if `v` is the target, and otherwise every path starts with some arrow `v→u` followed by a path from `u` to `t`. So we add up the counts of the successors:
+
+$$\text{ways}(v) = \begin{cases} 1 & v = t, \\ \sum_{v \to u} \text{ways}(u) & \text{otherwise.} \end{cases}$$
+
+Take the arrows 0→1, 0→2, 1→2, 1→3 and 2→3, and count the paths from 0 to 3. Going backwards: `ways(3) = 1`; `ways(2) = ways(3) = 1`; `ways(1) = ways(2) + ways(3) = 2`; `ways(0) = ways(1) + ways(2) = 3`. The three paths are 0-1-3, 0-1-2-3 and 0-2-3. Counts grow fast, so problems usually ask for the answer modulo a big number such as $10^9 + 7$.
 
 ```python
-for i in range(n - 1, -1, -1):
-    v = order[i]
-    len[v] = 0
-    for u in adj[v]:
-        len[v] = max(len[v], 1 + len[u])
+def count_paths(n, edges, s, t):
+    MOD = 10**9 + 7
+    adj = [[] for _ in range(n)]
+    for u, v in edges:
+        adj[u].append(v)
+    ways = [0] * n
+    ways[t] = 1
+    for v in reversed(topological_order(n, adj)):
+        if v != t:
+            for u in adj[v]:
+                ways[v] = (ways[v] + ways[u]) % MOD
+    return ways[s]
+
+assert count_paths(4, [[0, 1], [0, 2], [1, 2], [1, 3], [2, 3]], 0, 3) == 3
+assert count_paths(3, [[0, 1]], 0, 2) == 0
 ```
 
 ```cpp
-for (int i = n - 1; i >= 0; i--) {
-    int v = order[i];
-    len[v] = 0;
-    for (int u : adj[v]) len[v] = max(len[v], 1 + len[u]);
+int count_paths(int n, const vector<vector<int>>& edges, int s, int t) {
+    const int MOD = 1'000'000'007;
+    vector<vector<int>> adj(n);
+    for (auto& e : edges) adj[e[0]].push_back(e[1]);
+    vector<int> ways(n, 0);
+    ways[t] = 1;
+    vector<int> order = topological_order(n, adj);
+    for (int i = (int)order.size() - 1; i >= 0; --i) {
+        int v = order[i];
+        if (v == t) continue;
+        for (int u : adj[v]) ways[v] = (ways[v] + ways[u]) % MOD;
+    }
+    return ways[s];
 }
 ```
 
-A useful by-product: if the algorithm cannot output all $n$ vertices, the graph has a cycle. This is the standard cycle test for directed graphs.
+Replace the sum by a minimum of (edge cost plus the successor's answer) and you get the cheapest path; replace it by "or" and you learn whether some path exists. If the path must satisfy an extra rule, such as "pass through exactly two special vertices", add that fact to the state, so that the state is the pair (vertex, special vertices passed so far). We will use this idea of a richer state in Chapter 11. And to print the best path rather than only its value, remember for each vertex which successor gave the best value and follow those choices.
 
-## 10.3 Counting paths and other aggregations
+## 10.4 Shortest paths on a DAG
 
-The structure "combine the answers of all successors" works with any combining operation. If we want the number of different paths from $v$ to a target $t$, we sum:
+On a DAG, shortest paths need no priority queue and no repeated scans. If we handle the vertices in topological order, then when we reach a vertex its distance is already final, because every arrow into it comes from an earlier vertex that has already been processed. So a single pass in which each vertex relaxes its outgoing arrows (Chapter 6) is enough. This works even with **negative** costs, since nothing can ever come back to improve a finished vertex.
 
-$$\text{ways}(v)=\begin{cases}1 & v=t,\\ \sum_{(v,u)\in E}\text{ways}(u)&\text{otherwise,}\end{cases}$$
-
-usually modulo a prime. If we want the cheapest path with edge costs, we take a minimum of $c(v,u)+\text{best}(u)$. If we want to know whether some path of a certain kind exists, we take a logical OR. The skeleton is always the same: _state = vertex, transition = fold over outgoing edges, order = reverse topological_.
-
-Two practical remarks. First, the DP needs states to be "complete": if the problem has additional requirements (for example "the path must pass through exactly three special vertices"), you add that information to the state, so the state becomes $(v,\text{number of special vertices passed})$. This is the first appearance of an idea that dominates later chapters: **enrich the state until the future depends only on the state**. Second, to print the path rather than just its length, store for each vertex the successor that attained the optimum and follow these pointers.
-
-## 10.4 Shortest paths as dynamic programming
-
-Several famous shortest-path algorithms are dynamic programs in disguise, and recognizing this helps you modify them.
-
-**Bellman-Ford.** Let $d_k(v)$ be the length of the shortest walk from the source $s$ to $v$ that uses **at most $k$ edges**. A walk with at most $k$ edges to $v$ either has at most $k-1$ edges, or ends with some edge $(u,v)$ preceded by a walk of at most $k-1$ edges to $u$:
-
-$$d_k(v)=\min\Bigl(d_{k-1}(v),\ \min_{(u,v)\in E}\bigl(d_{k-1}(u)+w(u,v)\bigr)\Bigr),\qquad d_0(s)=0,\ d_0(v)=\infty\ (v\ne s).$$
-
-The state is the pair $(k,v)$, which forms a DAG (layer $k$ depends on layer $k-1$). If there is no negative cycle, a shortest path never repeats a vertex and so has at most $|V|-1$ edges; therefore $d_{|V|-1}$ holds the final answers. The time is $O(|V|\cdot|E|)$. If layer $|V|$ still improves some value, a negative cycle is reachable from $s$. The familiar implementation keeps a single array, which is valid because updating in place can only make values smaller or equal, and never smaller than the true shortest distance:
+Take the arrows 0→1 (cost 4), 0→2 (cost 5), 2→1 (cost $-3$) and 1→3 (cost 2), from vertex 0. A topological order is 0, 2, 1, 3. Vertex 0 sets `dist[1] = 4` and `dist[2] = 5`. Vertex 2 improves `dist[1]` to $5 - 3 = 2$. Vertex 1 sets `dist[3] = 4`. The distances are 0, 2, 5, 4.
 
 ```python
-def bellman_ford(n, s, edges):
-    INF = float('inf')
-    d = [INF] * n
-    d[s] = 0
-    for _ in range(1, n):
-        for u, v, w in edges:
-            if d[u] < INF:
-                d[v] = min(d[v], d[u] + w)
-    return d
+def dag_shortest(n, edges, source):
+    adj = [[] for _ in range(n)]
+    for a, b, w in edges:
+        adj[a].append((b, w))
+    INF = 10**18
+    dist = [INF] * n
+    dist[source] = 0
+    plain = [[b for b, w in row] for row in adj]
+    for v in topological_order(n, plain):
+        if dist[v] == INF:
+            continue
+        for u, w in adj[v]:
+            dist[u] = min(dist[u], dist[v] + w)
+    return [None if d == INF else d for d in dist]
+
+edges = [[0, 1, 4], [0, 2, 5], [2, 1, -3], [1, 3, 2]]
+assert dag_shortest(4, edges, 0) == [0, 2, 5, 4]
+assert dag_shortest(3, [[1, 2, 7]], 0) == [0, None, None]
 ```
 
 ```cpp
-vector<ll> d(n, INF); d[s] = 0;
-for (int k = 1; k < n; k++)
-    for (auto [u, v, w] : edges)
-        if (d[u] < INF) d[v] = min(d[v], d[u] + w);
-```
-
-The layered view also gives you something the single-array code does not: the answer to "shortest walk using **exactly** $k$ edges", or "at most $k$ edges" (needed, for example, when the number of flights is limited), by simply stopping at layer $k$ and keeping the layers separate.
-
-**Floyd–Warshall.** Number the vertices $1,\dots,n$ and let $D_k(i,j)$ be the length of the shortest path from $i$ to $j$ whose **intermediate vertices all belong to $\{1,\dots,k\}$**. For $k=0$ only direct edges are allowed. A shortest path with intermediates in $\{1,\dots,k\}$ either does not use vertex $k$ at all, or passes through $k$ exactly once (assuming no negative cycles), splitting into an $i\to k$ part and a $k\to j$ part whose intermediates are in $\{1,\dots,k-1\}$:
-
-$$D_k(i,j)=\min\bigl(D_{k-1}(i,j),\ D_{k-1}(i,k)+D_{k-1}(k,j)\bigr).$$
-
-The state is the triple $(k,i,j)$, so $O(n^3)$ states with $O(1)$ work each. The in-place version works because row $k$ and column $k$ do not change during iteration $k$ (since $D_k(k,k)=0$ without negative cycles), so reading the "new" values is harmless:
-
-```python
-for k in range(n):
-    for i in range(n):
-        for j in range(n):
-            d[i][j] = min(d[i][j], d[i][k] + d[k][j])
-```
-
-```cpp
-for (int k = 0; k < n; k++)
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
-```
-
-A very common bug is to put $k$ in the innermost loop. It must be the outermost, because it is the "layer" index of the DP.
-
-**Dijkstra.** The DP formulation is $d(v)=\min_{(u,v)\in E}(d(u)+w(u,v))$, which on a graph with cycles has circular dependencies. Dijkstra's algorithm resolves the difficulty by _discovering_ a valid order on the fly. When all weights are non-negative, the unfinished vertex with the smallest tentative distance already has its final distance (no other path can sneak in with a smaller one), so we can finalize it, and then every state it feeds gets updated. The priority queue is simply the device that picks the next state in a valid order. The same observation, that Dijkstra produces an order in which DP may be run, is used in Chapter 7.
-
-## 10.5 The shortest-path DAG
-
-Take a graph with **positive** weights and compute the distances $d(\cdot)$ from the source. Keep only those edges $(u,v)$ with $d(u)+w(u,v)=d(v)$, the edges that can lie on some shortest path. The resulting graph is a DAG, even if the original had cycles, because along every kept edge $d$ strictly increases (since $w>0$), and a cycle would force it to come back to its starting value.
-
-Many questions about shortest paths now become DP on this DAG: counting the shortest paths, finding the shortest path with the fewest edges among all shortest ones, determining which vertices lie on at least one shortest path, and so on. For example, the number of shortest paths $\text{cnt}(v)$ is $\sum\text{cnt}(u)$ over kept edges $(u,v)$ with $\text{cnt}(s)=1$, evaluated in increasing order of $d$.
-
-## 10.6 Exercises for this chapter
-
-AtCoder Educational DP Contest problem G (Longest Path); CSES _Longest Flight Route_ and _Game Routes_; CSES _Shortest Routes I_ and _II_; CSES _High Score_ (longest path, with the twist of detecting positive cycles reachable on a route to the target).
-
----
-
-# Chapter 11. Graphs with cycles
-
-Everything so far required the state graph to be acyclic. Real graphs often contain cycles, and then the recurrences become circular: the value at $A$ depends on $B$, which depends on $A$. There are four standard ways out, and a strong graph-DP solver knows them all.
-
-## 11.1 Strategy one: collapse every cycle (strongly connected components)
-
-A **strongly connected component (SCC)** is a maximal set of vertices in which every vertex can reach every other. Two vertices lie in the same SCC exactly when they lie on a common directed cycle. If we **contract** every SCC into a single super-vertex, the resulting graph (the **condensation**) has no cycles. Indeed, a cycle among super-vertices would have merged them into one component. So the condensation is a DAG, and everything from Chapter 3 applies to it.
-
-This is the right tool whenever the question is insensitive to what happens inside a cycle. A classical example: each room has some coins, you walk along one-way corridors, and you may revisit rooms (but collect the coins in a room only once). Inside an SCC you can reach every room, so you can collect all coins there. The value of a component is therefore the sum of its coins, and the problem becomes "find the most valuable path in the DAG of components".
-
-**Finding SCCs with Kosaraju's algorithm.** Run a DFS on the graph and record the vertices in the order in which their DFS calls **finish**. Then process the vertices in **decreasing** finishing time, running DFS on the _reversed_ graph; each tree found by these searches is one SCC.
-
-Why does this work? Consider two components $A$ and $B$ with an edge from $A$ to $B$ in the original graph. The last vertex to finish in $A\cup B$ always belongs to $A$: if the first DFS enters $A$ first, it will still be running in $A$ when it discovers and fully explores $B$, so $A$'s first vertex finishes later than everything in $B$; if it enters $B$ first, it finishes all of $B$ without ever reaching $A$ (there is no edge back), and $A$ finishes later. So decreasing finish order lists components in a topological order of the condensation: the first vertex is in a source component. In the reversed graph, the edges leaving that component now point _into_ it, so a DFS from its vertex cannot escape to any other unvisited component, and it collects exactly one SCC. Repeating this peels the components off one at a time.
-
-```python
-g = []
-rg = []
-order_ = []
-comp = []
-vis = []
-
-def dfs1(v):
-    vis[v] = True
-    for u in g[v]:
-        if not vis[u]:
-            dfs1(u)
-    order_.append(v)
-
-def dfs2(v, c):
-    comp[v] = c
-    for u in rg[v]:
-        if comp[u] == -1:
-            dfs2(u, c)
-
-def scc(n):                       # vertices 0..n-1, returns number of components
-    global comp, vis, order_
-    for v in range(n):
-        if not vis[v]:
-            dfs1(v)
-    comp = [-1] * n
-    c = 0
-    for i in range(n - 1, -1, -1):
-        if comp[order_[i]] == -1:
-            dfs2(order_[i], c)
-            c += 1
-    return c                          # component ids are in topological order of the condensation
-
-if __name__ == "__main__":
-    # Example usage:
-    # n = 5
-    # g = [[1], [2], [0, 3], [4], []]
-    # rg = [[2], [0], [1], [2], [3]]
-    # vis = [False] * n
-    # order_ = []
-    # comp = [-1] * n
-    # print(scc(n))
-    pass
-```
-
-```cpp
-vector<int> g[N], rg[N], order_;
-int comp[N]; bool vis[N];
-
-void dfs1(int v) { vis[v] = true; for (int u : g[v]) if (!vis[u]) dfs1(u); order_.push_back(v); }
-void dfs2(int v, int c) { comp[v] = c; for (int u : rg[v]) if (comp[u] == -1) dfs2(u, c); }
-
-int scc(int n) {                       // vertices 0..n-1, returns number of components
-    for (int v = 0; v < n; v++) if (!vis[v]) dfs1(v);
-    fill(comp, comp + n, -1);
-    int c = 0;
-    for (int i = n - 1; i >= 0; i--) if (comp[order_[i]] == -1) dfs2(order_[i], c++);
-    return c;                          // component ids are in topological order of the condensation
+vector<optional<long long>> dag_shortest(int n, const vector<vector<int>>& edges, int source) {
+    vector<vector<pair<int,int>>> adj(n);
+    vector<vector<int>> plain(n);
+    for (auto& e : edges) {
+        adj[e[0]].push_back({e[1], e[2]});
+        plain[e[0]].push_back(e[1]);
+    }
+    const long long INF = (long long)1e18;
+    vector<long long> dist(n, INF);
+    dist[source] = 0;
+    for (int v : topological_order(n, plain)) {
+        if (dist[v] == INF) continue;
+        for (auto [u, w] : adj[v]) dist[u] = min(dist[u], dist[v] + w);
+    }
+    vector<optional<long long>> result(n);
+    for (int v = 0; v < n; ++v)
+        if (dist[v] != INF) result[v] = dist[v];
+    return result;
 }
 ```
 
-Since the component ids come out in topological order, every edge of the condensation goes from a smaller id to a larger one, and the DP can be written as a plain loop over the ids from largest to smallest:
+The time is $O(n+m)$, faster than Dijkstra's $O((n+m)\log n)$, which is why recognising a DAG pays off.
 
-```python
-# weight[c] = total coins in component c; cadj[c] = list of components reachable by one edge
-for c in range(C - 1, -1, -1):
-    best[c] = 0
-    for d in cadj[c]:
-        best[c] = max(best[c], best[d])
-    best[c] += weight[c]
-```
+There is a second, less obvious DAG hiding in Chapter 6. In _Cheapest Flights Within K Stops_ the states are pairs (city, number of flights used). An arrow goes from (city $a$, $i$ flights) to (city $b$, $i+1$ flights) for every flight $a \to b$. Every arrow raises the second number, so there are no cycles: it is a DAG of layers, and the Bellman-Ford rounds of Section 6.7 are exactly the DP over its layers. Whenever you can add a counter that always grows, a graph with cycles becomes a DAG of states.
 
-```cpp
-// weight[c] = total coins in component c; cadj[c] = list of components reachable by one edge
-for (int c = C - 1; c >= 0; c--) {
-    best[c] = 0;
-    for (int d : cadj[c]) best[c] = max(best[c], best[d]);
-    best[c] += weight[c];
-}
-```
+## 10.5 The shortest-path graph
 
-The same method handles reachability questions ("can $a$ reach $b$"), counting how many vertices each vertex can reach (with bitsets on the condensation), and 2-SAT. Whenever someone says "directed graph with cycles" and a quantity that does not care about repetition, think of the condensation first.
+Compute the shortest distances $d$ from a source with Dijkstra, assuming every edge cost is **positive**. Now keep only the edges $(u, v, w)$ with $d(u) + w = d(v)$: exactly the edges that lie on some shortest path. Along every kept edge the distance strictly grows, so the kept graph has no cycles even if the original graph had. It is a DAG, and handling the vertices in order of increasing distance is a valid topological order of it.
 
-## 11.2 Strategy two: let Dijkstra supply the order
+On this DAG all the counting and best-of questions from Section 10.3 apply. Counting shortest paths is the sum over kept edges: $\text{ways}(v) = \sum \text{ways}(u)$ over the kept edges $u \to v$, with $\text{ways}(\text{source}) = 1$. This is the same answer as the single-pass Dijkstra trick of Section 6.5, but seen as two clean steps: first distances, then DP.
 
-Another source of cycles is shortest-path problems on cyclic graphs. Suppose we want not only the shortest distance but also the **number of shortest paths**. Let $cnt(v)$ be that number. A shortest path to $v$ must end with an edge $(u,v)$ where $d(u)+w(u,v)=d(v)$, and the part before it must be a shortest path to $u$. Hence
-
-$$cnt(v)=\sum_{(u,v):\ d(u)+w(u,v)=d(v)}cnt(u),\qquad cnt(s)=1.$$
-
-When all weights are strictly positive, the vertices in increasing order of $d$ form a valid evaluation order, because a contributing predecessor $u$ has $d(u)<d(v)$. Dijkstra visits vertices in exactly this order, so we simply update $cnt$ as we relax edges:
-
-```python
-# inside Dijkstra, when popping v and examining edge (v, u, w)
-if d[v] + w < d[u]:
-    d[u] = d[v] + w
-    cnt[u] = cnt[v]
-    heapq.heappush(pq, (d[u], u))
-elif d[v] + w == d[u]:
-    cnt[u] = (cnt[u] + cnt[v]) % MOD
-```
-
-```cpp
-// inside Dijkstra, when popping v and examining edge (v, u, w)
-if (d[v] + w < d[u])       { d[u] = d[v] + w; cnt[u] = cnt[v]; pq.push({d[u], u}); }
-else if (d[v] + w == d[u]) { cnt[u] = (cnt[u] + cnt[v]) % MOD; }
-```
-
-The same technique tracks the minimum and maximum number of edges among shortest paths, which are other DP values on the shortest-path DAG of Section 3.5. The requirement of positive weights is essential: with zero-weight edges, two vertices at equal distance can depend on each other, the DAG argument breaks, and one must first contract the zero-weight cycles or order the vertices by a secondary key.
-
-## 11.3 Strategy three: unroll the cycle into the state
-
-The third and most flexible idea is to make the state richer so that the combined state graph is acyclic or Dijkstra-friendly. A cycle in the graph only matters if the state does not change when we traverse it; if the state records, say, "number of steps taken" or "which special ability has been used", the state graph is different from the original graph.
-
-As an example, you travel from city $1$ to city $n$ along weighted roads, and you may use a coupon that halves the cost of **one** road. Find the cheapest trip. Let the state be $(v,b)$ where $b\in\{0,1\}$ tells whether the coupon has been used. From $(v,0)$ along edge $(v,u,w)$ we can go to $(u,0)$ with cost $w$, or to $(u,1)$ with cost $\lfloor w/2\rfloor$ (using the coupon here). From $(v,1)$ we can only go to $(u,1)$ with cost $w$. The graph has $2|V|$ vertices and non-negative weights, so we run Dijkstra on it and read off the distance to $(n,1)$:
+Take the roads 0-1, 0-2, 1-3, 2-3, 3-4 (each of time 1) and one long road 0-4 of time 10. The distances from 0 are 0, 1, 1, 2, 3. The kept edges are all of them except the road 0-4 (since $0 + 10 \ne 3$). Going in increasing distance: `ways(0) = 1`, `ways(1) = ways(2) = 1`, `ways(3) = ways(1) + ways(2) = 2`, `ways(4) = ways(3) = 2`.
 
 ```python
 import heapq
 
-# dist[v][b]; priority queue of (distance, v, b), smallest first
-dist = [[float('inf')] * 2 for _ in range(n + 1)]
-dist[1][0] = 0
-pq = [(0, 1, 0)]
-while pq:
-    d, v, b = heapq.heappop(pq)
-    if d > dist[v][b]:
-        continue
-    for u, w in g[v]:
-        if d + w < dist[u][b]:
-            dist[u][b] = d + w
-            heapq.heappush(pq, (dist[u][b], u, b))
-        if not b and d + w // 2 < dist[u][1]:
-            dist[u][1] = d + w // 2
-            heapq.heappush(pq, (dist[u][1], u, 1))
+def dijkstra(n, adj, source):
+    INF = 10**18
+    dist = [INF] * n
+    dist[source] = 0
+    heap = [(0, source)]
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d != dist[u]:
+            continue
+        for v, w in adj[u]:
+            if d + w < dist[v]:
+                dist[v] = d + w
+                heapq.heappush(heap, (dist[v], v))
+    return dist
+
+def count_shortest_by_dp(n, roads, source, target):
+    MOD = 10**9 + 7
+    adj = [[] for _ in range(n)]
+    for a, b, w in roads:
+        adj[a].append((b, w))
+        adj[b].append((a, w))
+    dist = dijkstra(n, adj, source)
+    ways = [0] * n
+    ways[source] = 1
+    for v in sorted(range(n), key=lambda x: dist[x]):
+        for u, w in adj[v]:
+            if dist[v] + w == dist[u]:
+                ways[u] = (ways[u] + ways[v]) % MOD
+    return ways[target]
+
+roads = [[0, 1, 1], [0, 2, 1], [1, 3, 1], [2, 3, 1], [3, 4, 1], [0, 4, 10]]
+assert count_shortest_by_dp(5, roads, 0, 4) == 2
+assert count_shortest_by_dp(5, roads, 0, 3) == 2
 ```
 
 ```cpp
-// dist[v][b]; priority queue of (distance, v, b), smallest first
-dist[1][0] = 0; pq.push({0, 1, 0});
-while (!pq.empty()) {
-    auto [d, v, b] = pq.top(); pq.pop();
-    if (d > dist[v][b]) continue;
-    for (auto [u, w] : g[v]) {
-        if (d + w < dist[u][b]) { dist[u][b] = d + w; pq.push({dist[u][b], u, b}); }
-        if (!b && d + w / 2 < dist[u][1]) { dist[u][1] = d + w / 2; pq.push({dist[u][1], u, 1}); }
+vector<long long> dijkstra(int n, const vector<vector<pair<int,int>>>& adj, int source) {
+    const long long INF = (long long)1e18;
+    vector<long long> dist(n, INF);
+    dist[source] = 0;
+    priority_queue<pair<long long,int>, vector<pair<long long,int>>, greater<>> heap;
+    heap.push({0, source});
+    while (!heap.empty()) {
+        auto [d, u] = heap.top();
+        heap.pop();
+        if (d != dist[u]) continue;
+        for (auto [v, w] : adj[u]) {
+            if (d + w < dist[v]) {
+                dist[v] = d + w;
+                heap.push({dist[v], v});
+            }
+        }
     }
+    return dist;
+}
+
+int count_shortest_by_dp(int n, const vector<vector<int>>& roads, int source, int target) {
+    const int MOD = 1'000'000'007;
+    vector<vector<pair<int,int>>> adj(n);
+    for (auto& r : roads) {
+        adj[r[0]].push_back({r[1], r[2]});
+        adj[r[1]].push_back({r[0], r[2]});
+    }
+    vector<long long> dist = dijkstra(n, adj, source);
+    vector<int> ways(n, 0);
+    ways[source] = 1;
+    vector<int> order(n);
+    iota(order.begin(), order.end(), 0);
+    sort(order.begin(), order.end(), [&](int a, int b) { return dist[a] < dist[b]; });
+    for (int v : order)
+        for (auto [u, w] : adj[v])
+            if (dist[v] + w == dist[u]) ways[u] = (ways[u] + ways[v]) % MOD;
+    return ways[target];
 }
 ```
 
-This pattern, called a **layered graph** or product graph, is enormously general. A state like (vertex, remaining fuel), (vertex, number of tickets), (vertex, parity of steps), (vertex, last color used), or (vertex, set of keys held) turns a problem on a graph with side constraints into an ordinary shortest-path or DP problem on a bigger graph. The price is the size of the state space, so the art is to choose the _smallest_ extra information that makes the future independent of the past.
+The time is $O((n+m)\log n)$ for Dijkstra plus the sort, and the space is $O(n+m)$. The positive costs are essential. With a zero-cost edge, two vertices at the same distance could point at each other, the kept graph would have a cycle, and sorting by distance would no longer be a valid order.
 
-## 11.4 Strategy four: matrix exponentiation for counting walks
+## 10.6 Check yourself
 
-Let $A$ be the adjacency matrix of a graph with $n$ vertices, where $A_{ij}$ is the number of edges from $i$ to $j$. The number of walks of length exactly $2$ from $i$ to $j$ is $\sum_kA_{ik}A_{kj}=(A^2)_{ij}$, and by induction the number of walks of length $k$ is $(A^k)_{ij}$.
+1. Why does the recursion `go(v)` of Section 10.1 always terminate on a DAG?
+2. In the bottom-up version, why do we walk the topological order backwards?
+3. In the path-counting example 0→1, 0→2, 1→2, 1→3, 2→3, why is `ways(0)` equal to `ways(1) + ways(2)`?
+4. Why are negative edge costs harmless for shortest paths on a DAG, but dangerous for Dijkstra?
 
-If $k$ is enormous (up to $10^{18}$) but $n$ is small, we compute $A^k$ by repeated squaring in $O(n^3\log k)$ time:
+# Chapter 11. DP on graphs with cycles
+
+## 11.1 When the arrows go round in circles
+
+The DP of Chapter 10 needs an order in which every vertex is handled after the vertices it depends on. If the graph has a cycle, say $A \to B \to C \to A$, then the answer for $A$ depends on $B$, which depends on $C$, which depends on $A$, and no such order exists. A naive recursive solution would call itself forever.
+
+There are three standard ways out, and this chapter teaches them in turn. The first is to **squeeze each cycle into a single point**, which is allowed when the question does not care what happens inside the cycle. The second is to **let Dijkstra supply the order**, since it finishes vertices in increasing order of distance. The third is to **add a counter or a flag to the state** so that the extended state graph no longer has cycles, or becomes a good fit for Dijkstra. At the end we look at two special tools for counting walks that repeat many times: matrix powers and binary lifting.
+
+## 11.2 Squeezing cycles into points
+
+Recall the strongly connected components (SCCs) of Chapter 9: groups of vertices in which every vertex can reach every other. If we squeeze every SCC into a single point and keep the arrows between different components, the result is called the **condensation**, and it never has a cycle (a cycle between components would have merged them). So we can run the DAG DP on the condensation.
+
+This is the right tool when revisiting vertices is allowed and useless. Here is a classic puzzle. Each room holds some coins. You walk through one-way corridors, you may pass through rooms again, and the coins in a room can be taken only once. Inside an SCC you can reach every room from every other, so you can pick up all the coins in it. The value of a component is therefore the sum of its coins, and the question becomes "which path through the condensation collects the most?", which is the longest-path DP of Chapter 10 with sums instead of lengths.
+
+Take four rooms with coins `[1, 1, 10, 3]` and the corridors 0→1, 1→0, 0→2 and 0→3. Rooms 0 and 1 form a loop, worth 2 coins together. From that component we may continue to room 2 (10 coins) or room 3 (3 coins). The best route collects $2 + 10 = 12$.
+
+The Kosaraju steps of Section 9.5 give component numbers if we number the components in the order we find them: the first component found is a source of the condensation, so every arrow between components goes from a smaller number to a larger one. Then the DP is a loop over the component numbers from the largest to the smallest.
 
 ```python
-MOD = 10**9+7  # modulo value, adjust as needed
+def scc_numbers(n, edges):
+    adj = [[] for _ in range(n)]
+    radj = [[] for _ in range(n)]
+    for a, b in edges:
+        adj[a].append(b)
+        radj[b].append(a)
+    visited = [False] * n
+    order = []
 
-def mul(A, B):
+    def dfs1(v):
+        visited[v] = True
+        for u in adj[v]:
+            if not visited[u]:
+                dfs1(u)
+        order.append(v)
+
+    for v in range(n):
+        if not visited[v]:
+            dfs1(v)
+    comp = [-1] * n
+    count = 0
+
+    def dfs2(v, c):
+        comp[v] = c
+        for u in radj[v]:
+            if comp[u] == -1:
+                dfs2(u, c)
+
+    for v in reversed(order):
+        if comp[v] == -1:
+            dfs2(v, count)
+            count += 1
+    return comp, count
+
+def max_coins(n, coins, edges):
+    comp, count = scc_numbers(n, edges)
+    value = [0] * count
+    for v in range(n):
+        value[comp[v]] += coins[v]
+    next_components = [set() for _ in range(count)]
+    for a, b in edges:
+        if comp[a] != comp[b]:
+            next_components[comp[a]].add(comp[b])
+    best = [0] * count
+    for c in range(count - 1, -1, -1):
+        best[c] = value[c] + max((best[d] for d in next_components[c]), default=0)
+    return max(best, default=0)
+
+assert max_coins(4, [1, 1, 10, 3], [[0, 1], [1, 0], [0, 2], [0, 3]]) == 12
+assert max_coins(5, [1, 2, 3, 4, 5], [[0, 1], [1, 2], [2, 0], [2, 3], [3, 4], [4, 3]]) == 15
+assert max_coins(0, [], []) == 0
+```
+
+```cpp
+pair<vector<int>, int> scc_numbers(int n, const vector<vector<int>>& edges) {
+    vector<vector<int>> adj(n), radj(n);
+    for (auto& e : edges) {
+        adj[e[0]].push_back(e[1]);
+        radj[e[1]].push_back(e[0]);
+    }
+    vector<bool> visited(n, false);
+    vector<int> order;
+    function<void(int)> dfs1 = [&](int v) {
+        visited[v] = true;
+        for (int u : adj[v])
+            if (!visited[u]) dfs1(u);
+        order.push_back(v);
+    };
+    for (int v = 0; v < n; ++v)
+        if (!visited[v]) dfs1(v);
+    vector<int> comp(n, -1);
+    int count = 0;
+    function<void(int,int)> dfs2 = [&](int v, int c) {
+        comp[v] = c;
+        for (int u : radj[v])
+            if (comp[u] == -1) dfs2(u, c);
+    };
+    for (int i = n - 1; i >= 0; --i) {
+        int v = order[i];
+        if (comp[v] == -1) dfs2(v, count++);
+    }
+    return {comp, count};
+}
+
+long long max_coins(int n, const vector<int>& coins, const vector<vector<int>>& edges) {
+    auto [comp, count] = scc_numbers(n, edges);
+    vector<long long> value(count, 0);
+    for (int v = 0; v < n; ++v) value[comp[v]] += coins[v];
+    vector<set<int>> next_components(count);
+    for (auto& e : edges)
+        if (comp[e[0]] != comp[e[1]]) next_components[comp[e[0]]].insert(comp[e[1]]);
+    vector<long long> best(count, 0);
+    long long answer = 0;
+    for (int c = count - 1; c >= 0; --c) {
+        long long follow = 0;
+        for (int d : next_components[c]) follow = max(follow, best[d]);
+        best[c] = value[c] + follow;
+        answer = max(answer, best[c]);
+    }
+    return answer;
+}
+```
+
+Both parts are linear: the time is $O(n+m)$ and the space is $O(n+m)$ (the sets add a logarithmic factor in the code above, which does not matter in practice). The same condensation trick answers "can $a$ reach $b$?" questions and is the first step of 2-SAT solvers.
+
+## 11.3 Dijkstra supplies the order
+
+In Chapter 6 we counted shortest paths while Dijkstra ran, and in Section 10.5 we saw why that is legitimate: Dijkstra finishes vertices in increasing order of distance, which on a graph with positive costs is a valid order for a DP. So we can attach **any extra DP value** to a shortest-path search, as long as it combines in a way that respects the order.
+
+A neat example is the pair "(cost, number of edges)". Among all the cheapest routes, which one uses the fewest edges? Python compares pairs lexicographically (first entries first), so we can treat the pair as a single cost: adding an edge of cost $w$ adds the pair $(w, 1)$. This keeps the property that Dijkstra needs, that extending a route never makes it smaller. Take the roads 0→1 (cost 1), 1→2 (cost 1), 2→3 (cost 2) and 0→3 (cost 4). Both routes to vertex 3 cost 4, one with three roads and one with a single road, and the pair comparison picks $(4, 1)$.
+
+```python
+import heapq
+
+def cheapest_then_fewest(n, edges, source):
+    adj = [[] for _ in range(n)]
+    for a, b, w in edges:
+        adj[a].append((b, w))
+    best = [None] * n
+    best[source] = (0, 0)
+    heap = [(0, 0, source)]
+    while heap:
+        cost, steps, u = heapq.heappop(heap)
+        if best[u] != (cost, steps):
+            continue
+        for v, w in adj[u]:
+            candidate = (cost + w, steps + 1)
+            if best[v] is None or candidate < best[v]:
+                best[v] = candidate
+                heapq.heappush(heap, (candidate[0], candidate[1], v))
+    return best
+
+edges = [[0, 1, 1], [1, 2, 1], [2, 3, 2], [0, 3, 4]]
+assert cheapest_then_fewest(4, edges, 0) == [(0, 0), (1, 1), (2, 2), (4, 1)]
+assert cheapest_then_fewest(3, [[0, 1, 5]], 0) == [(0, 0), (5, 1), None]
+```
+
+```cpp
+vector<optional<pair<long long,int>>> cheapest_then_fewest(int n, const vector<vector<int>>& edges, int source) {
+    vector<vector<pair<int,int>>> adj(n);
+    for (auto& e : edges) adj[e[0]].push_back({e[1], e[2]});
+    vector<optional<pair<long long,int>>> best(n);
+    best[source] = make_pair(0LL, 0);
+    using State = tuple<long long,int,int>;  // cost, steps, vertex
+    priority_queue<State, vector<State>, greater<>> heap;
+    heap.push({0, 0, source});
+    while (!heap.empty()) {
+        auto [cost, steps, u] = heap.top();
+        heap.pop();
+        if (!best[u] || *best[u] != make_pair(cost, steps)) continue;
+        for (auto [v, w] : adj[u]) {
+            pair<long long,int> candidate = {cost + w, steps + 1};
+            if (!best[v] || candidate < *best[v]) {
+                best[v] = candidate;
+                heap.push({candidate.first, candidate.second, v});
+            }
+        }
+    }
+    return best;
+}
+```
+
+The time is $O((n+m)\log n)$ as for ordinary Dijkstra. The same idea gives "cheapest route, and among those the one with the largest sum of a second quantity", or the lexicographically smallest route in a more complicated setting.
+
+## 11.4 Adding facts to the state
+
+The most flexible idea is to make the **state** richer, so that the position in the new, bigger graph carries everything the future needs. A vertex of the new graph is a pair like (city, coupon used?) or (city, flights taken). Arrows between such pairs follow the original roads and also update the extra fact. If the extra fact only ever increases (a counter) the new graph is a DAG, and when costs are non-negative, Dijkstra works on it directly. This is often called a **layered graph** or product graph.
+
+First example: you travel from a start city to a destination, and you have one coupon that halves the cost of a single road (rounding down). The state is (city, coupon used?). From (city $v$, not used) along a road of cost $w$ you may go to (city $u$, not used) paying $w$, or to (city $u$, used) paying $\lfloor w/2 \rfloor$. From (city $v$, used) you only go to (city $u$, used) paying $w$. The answer is the distance to (destination, used). With the roads 0→1 (10), 1→2 (10), 0→2 (30) the cheapest trip without a coupon is 20, and with the coupon on one of the first two roads it is $10 + 5 = 15$.
+
+```python
+import heapq
+
+def cheapest_with_coupon(n, edges, src, dst):
+    adj = [[] for _ in range(n)]
+    for a, b, w in edges:
+        adj[a].append((b, w))
+    INF = 10**18
+    dist = [[INF, INF] for _ in range(n)]  # dist[v][used]
+    dist[src][0] = 0
+    heap = [(0, src, 0)]
+    while heap:
+        d, v, used = heapq.heappop(heap)
+        if d != dist[v][used]:
+            continue
+        for u, w in adj[v]:
+            if d + w < dist[u][used]:
+                dist[u][used] = d + w
+                heapq.heappush(heap, (d + w, u, used))
+            if used == 0 and d + w // 2 < dist[u][1]:
+                dist[u][1] = d + w // 2
+                heapq.heappush(heap, (d + w // 2, u, 1))
+    return -1 if dist[dst][1] == INF else dist[dst][1]
+
+assert cheapest_with_coupon(3, [[0, 1, 10], [1, 2, 10], [0, 2, 30]], 0, 2) == 15
+assert cheapest_with_coupon(2, [[0, 1, 8]], 0, 1) == 4
+assert cheapest_with_coupon(2, [], 0, 1) == -1
+```
+
+```cpp
+long long cheapest_with_coupon(int n, const vector<vector<int>>& edges, int src, int dst) {
+    vector<vector<pair<int,int>>> adj(n);
+    for (auto& e : edges) adj[e[0]].push_back({e[1], e[2]});
+    const long long INF = (long long)1e18;
+    vector<array<long long,2>> dist(n, {INF, INF});  // dist[v][used]
+    dist[src][0] = 0;
+    using State = tuple<long long,int,int>;
+    priority_queue<State, vector<State>, greater<>> heap;
+    heap.push({0, src, 0});
+    while (!heap.empty()) {
+        auto [d, v, used] = heap.top();
+        heap.pop();
+        if (d != dist[v][used]) continue;
+        for (auto [u, w] : adj[v]) {
+            if (d + w < dist[u][used]) {
+                dist[u][used] = d + w;
+                heap.push({d + w, u, used});
+            }
+            if (used == 0 && d + w / 2 < dist[u][1]) {
+                dist[u][1] = d + w / 2;
+                heap.push({d + w / 2, u, 1});
+            }
+        }
+    }
+    return dist[dst][1] == INF ? -1 : dist[dst][1];
+}
+```
+
+The second example is the one from Section 6.7, _Cheapest Flights Within K Stops_, done the Dijkstra way. The state is (city, flights used so far), with at most $k+1$ flights allowed. A flight moves from (city $a$, $i$) to (city $b$, $i+1$) at its price, and we may not go beyond $k+1$ flights. Because prices are non-negative, the first time the destination is taken from the heap (in any layer) its cost is the answer.
+
+```python
+def cheapest_price_by_state(n, flights, src, dst, k):
+    adj = [[] for _ in range(n)]
+    for a, b, price in flights:
+        adj[a].append((b, price))
+    INF = 10**18
+    best = [[INF] * (k + 2) for _ in range(n)]  # best[city][flights used]
+    best[src][0] = 0
+    heap = [(0, src, 0)]
+    while heap:
+        cost, city, used = heapq.heappop(heap)
+        if cost != best[city][used]:
+            continue
+        if city == dst:
+            return cost
+        if used == k + 1:
+            continue
+        for nxt, price in adj[city]:
+            if cost + price < best[nxt][used + 1]:
+                best[nxt][used + 1] = cost + price
+                heapq.heappush(heap, (cost + price, nxt, used + 1))
+    return -1
+
+flights = [[0, 1, 10], [1, 2, 10], [2, 3, 10], [0, 3, 100]]
+assert cheapest_price_by_state(4, flights, 0, 3, 1) == 100
+assert cheapest_price_by_state(4, flights, 0, 3, 2) == 30
+assert cheapest_price_by_state(4, flights, 3, 0, 3) == -1
+```
+
+```cpp
+int cheapest_price_by_state(int n, const vector<vector<int>>& flights, int src, int dst, int k) {
+    vector<vector<pair<int,int>>> adj(n);
+    for (auto& f : flights) adj[f[0]].push_back({f[1], f[2]});
+    const long long INF = (long long)1e18;
+    vector<vector<long long>> best(n, vector<long long>(k + 2, INF));  // best[city][flights used]
+    best[src][0] = 0;
+    using State = tuple<long long,int,int>;
+    priority_queue<State, vector<State>, greater<>> heap;
+    heap.push({0, src, 0});
+    while (!heap.empty()) {
+        auto [cost, city, used] = heap.top();
+        heap.pop();
+        if (cost != best[city][used]) continue;
+        if (city == dst) return (int)cost;
+        if (used == k + 1) continue;
+        for (auto [nxt, price] : adj[city]) {
+            if (cost + price < best[nxt][used + 1]) {
+                best[nxt][used + 1] = cost + price;
+                heap.push({cost + price, nxt, used + 1});
+            }
+        }
+    }
+    return -1;
+}
+```
+
+There are $n(k+2)$ states and each flight is tried once per layer, so the time is $O(k \cdot m \log(k \cdot m))$ and the space is $O(nk + m)$, comparable to Bellman-Ford's $O(k \cdot m)$. Which to use is a matter of taste; the state view generalises better. The same recipe handles (city, fuel left), (city, tickets left), (cell, number of walls broken) and (position, parity of steps). The price is the size of the state space, so keep the extra information as small as possible.
+
+## 11.5 Counting walks with matrix powers
+
+A **walk** may repeat vertices and edges. Let $A$ be the adjacency matrix of a graph, where $A_{ij}$ is the number of edges from $i$ to $j$. The number of walks of length 2 from $i$ to $j$ is $\sum_k A_{ik}A_{kj}$, which is exactly the entry $(A^2)_{ij}$ of the matrix product, and by induction the number of walks of length $k$ is $(A^k)_{ij}$. When $k$ is huge, say $10^{18}$, but $n$ is small, we compute $A^k$ by **repeated squaring**: to get $A^{13}$, multiply $A^8 \cdot A^4 \cdot A^1$ (13 is 1101 in binary), using only about $\log_2 k$ squarings. Each product takes $O(n^3)$ time, so the total is $O(n^3 \log k)$. Answers are usually asked modulo $10^9+7$.
+
+For a triangle (three vertices, all joined), the walks of length 3 from vertex 0 back to itself are 0-1-2-0 and 0-2-1-0, so there are 2, and the matrix code agrees. A famous special case is the Fibonacci numbers: each step moves the pair $(F_{k+1}, F_k)$ to $(F_{k+1} + F_k, F_{k+1})$, which is multiplication by the matrix with rows $(1, 1)$ and $(1, 0)$, so $F_n$ is read off its $n$-th power.
+
+```python
+MOD = 10**9 + 7
+
+def mat_mul(A, B):
     n = len(A)
     C = [[0] * n for _ in range(n)]
     for i in range(n):
@@ -3627,52 +3665,119 @@ def mul(A, B):
                     C[i][j] = (C[i][j] + A[i][k] * B[k][j]) % MOD
     return C
 
-def mpow(A, k):
+def mat_pow(A, k):
     n = len(A)
-    R = [[0] * n for _ in range(n)]
-    for i in range(n):
-        R[i][i] = 1
+    result = [[1 if i == j else 0 for j in range(n)] for i in range(n)]
     while k:
         if k & 1:
-            R = mul(R, A)
-        A = mul(A, A)
+            result = mat_mul(result, A)
+        A = mat_mul(A, A)
         k >>= 1
-    return R
+    return result
+
+def count_walks(A, i, j, k):
+    return mat_pow(A, k)[i][j]
+
+def fib(n):
+    return mat_pow([[1, 1], [1, 0]], n)[0][1]
+
+triangle = [[0, 1, 1], [1, 0, 1], [1, 1, 0]]
+assert count_walks(triangle, 0, 0, 3) == 2
+assert count_walks(triangle, 0, 1, 1) == 1
+assert fib(10) == 55
+assert fib(0) == 0
 ```
 
 ```cpp
-using Mat = vector<vector<ll>>;
-Mat mul(const Mat& A, const Mat& B) {
+const long long MOD = 1'000'000'007;
+using Matrix = vector<vector<long long>>;
+
+Matrix mat_mul(const Matrix& A, const Matrix& B) {
     int n = A.size();
-    Mat C(n, vector<ll>(n, 0));
-    for (int i = 0; i < n; i++)
-        for (int k = 0; k < n; k++) if (A[i][k])
-            for (int j = 0; j < n; j++)
-                C[i][j] = (C[i][j] + A[i][k] * B[k][j]) % MOD;
+    Matrix C(n, vector<long long>(n, 0));
+    for (int i = 0; i < n; ++i)
+        for (int k = 0; k < n; ++k)
+            if (A[i][k])
+                for (int j = 0; j < n; ++j)
+                    C[i][j] = (C[i][j] + A[i][k] * B[k][j]) % MOD;
     return C;
 }
-Mat mpow(Mat A, ll k) {
+
+Matrix mat_pow(Matrix A, long long k) {
     int n = A.size();
-    Mat R(n, vector<ll>(n, 0));
-    for (int i = 0; i < n; i++) R[i][i] = 1;
-    while (k) { if (k & 1) R = mul(R, A); A = mul(A, A); k >>= 1; }
-    return R;
+    Matrix result(n, vector<long long>(n, 0));
+    for (int i = 0; i < n; ++i) result[i][i] = 1;
+    while (k > 0) {
+        if (k & 1) result = mat_mul(result, A);
+        A = mat_mul(A, A);
+        k >>= 1;
+    }
+    return result;
+}
+
+long long count_walks(const Matrix& A, int i, int j, long long k) {
+    return mat_pow(A, k)[i][j];
+}
+
+long long fib(long long n) {
+    return mat_pow({{1, 1}, {1, 0}}, n)[0][1];
 }
 ```
 
-The same machinery works in other **semirings**. Replacing $(+,\times)$ by $(\min,+)$ makes $A^k$ the matrix of shortest walks with exactly $k$ edges; replacing it by $(\text{OR},\text{AND})$ answers reachability in exactly $k$ steps. And any linear recurrence, for example $F(n)=F(n-1)+F(n-2)$, is a walk-counting problem in disguise: the transition matrix $\begin{pmatrix}1&1\\1&0\end{pmatrix}$ raised to the power $n$ gives $F(n)$ in $O(\log n)$ time. Whenever a DP has a transition that is the same linear map at every step and the number of steps is huge, think of matrix powers.
+Any recurrence in which each new value is a fixed linear combination of the last few values can be turned into a matrix power in the same way, which turns a slow loop over $10^{18}$ steps into about 60 squarings.
 
-## 11.5 Functional graphs
+## 11.6 Functional graphs and binary lifting
 
-A **functional graph** is a directed graph in which every vertex has exactly one outgoing edge, that is, it is the graph of a function $f:[n]\to[n]$. Each connected component consists of exactly one cycle with trees hanging into it. Typical questions: where do we end up after $k$ applications of $f$, how long before we enter a cycle, how long is the cycle.
+A **functional graph** is a graph in which every vertex has exactly one outgoing arrow, in other words the graph of a function $f$ that maps each vertex to the next. Following the arrows from any vertex, you eventually walk onto a cycle and stay on it forever. A common question is "where am I after $k$ steps?", with $k$ as large as $10^{18}$.
 
-For "where after $k$ steps" we use **binary lifting**: let $up[j][v]$ be the vertex reached from $v$ after $2^j$ steps. Then $up[0]=f$ and $up[j][v]=up[j-1][up[j-1][v]]$, and to take $k$ steps we combine the powers of two present in the binary representation of $k$, in $O(\log k)$ time per query after $O(n\log k)$ preprocessing. The memory can be reduced using the cycle structure but this is usually unnecessary. Many "tree with cycle" problems are handled by running ordinary tree DP on the trees hanging into the cycle and then dealing with the cycle separately with prefix sums.
+Stepping one at a time is far too slow, so we use **binary lifting**: precompute, for every power of two, where every vertex lands after that many steps. Let `up[j][v]` be the vertex reached from `v` after $2^j$ steps. Then `up[0]` is $f$ itself, and since $2^j$ steps are two batches of $2^{j-1}$ steps, `up[j][v] = up[j-1][ up[j-1][v] ]`. To take $k$ steps, look at the binary digits of $k$: for every digit that is 1 at position $j$, jump with `up[j]`. Take $f = [1, 2, 3, 1]$ (vertex 0 goes to 1, 1 to 2, 2 to 3, 3 back to 1). From 0 the walk is 0, 1, 2, 3, 1, 2, so after 5 steps we are at 2. The cycle 1, 2, 3 has length 3 and $10^{18}$ leaves remainder 1 when divided by 3, so after $10^{18}$ steps from vertex 1 we are at vertex 2.
 
-## 11.6 Exercises for this chapter
+```python
+def kth_after(f, start, k):
+    n = len(f)
+    levels = max(1, k.bit_length())
+    up = [f[:]]
+    for j in range(1, levels):
+        prev = up[-1]
+        up.append([prev[prev[v]] for v in range(n)])
+    v = start
+    for j in range(levels):
+        if (k >> j) & 1:
+            v = up[j][v]
+    return v
 
-CSES _Coin Collector_, _Planets and Kingdoms_, _Giant Pizza_ (SCC and 2-SAT); CSES _Investigation_ (counting shortest paths); CSES _Flight Discount_; CSES _Planets Cycles_ and _Planet Queries I_ (functional graphs); CSES _Graph Paths I_ (matrix power).
+f = [1, 2, 3, 1]
+assert kth_after(f, 0, 0) == 0
+assert kth_after(f, 0, 5) == 2
+assert kth_after(f, 1, 10**18) == 2
+```
 
----
+```cpp
+int kth_after(const vector<int>& f, int start, long long k) {
+    int n = f.size();
+    int levels = 1;
+    while ((1LL << levels) <= k) ++levels;
+    vector<vector<int>> up(levels, vector<int>(n));
+    up[0] = f;
+    for (int j = 1; j < levels; ++j)
+        for (int v = 0; v < n; ++v)
+            up[j][v] = up[j - 1][up[j - 1][v]];
+    int v = start;
+    for (int j = 0; j < levels; ++j)
+        if ((k >> j) & 1) v = up[j][v];
+    return v;
+}
+```
+
+The table has $n \log k$ entries, so preprocessing takes $O(n \log k)$ time and memory, and every query then takes $O(\log k)$. The same doubling table, applied to a tree with `f` equal to the parent, answers "the $k$-th ancestor of a vertex" and is the base of lowest-common-ancestor algorithms.
+
+## 11.7 Check yourself
+
+1. Why does squeezing every strongly connected component into one point remove all the cycles?
+2. In the coin puzzle, why is the value of a component the sum of all its coins?
+3. In the state (city, coupon used?), what happens to the number of states compared with the original graph, and why is Dijkstra still valid?
+4. After how many squarings do we obtain $A^{13}$ by repeated squaring, roughly?
+5. For $f = [1, 2, 0]$, where is vertex 0 after 100 steps?
 
 # Sources and credit
 

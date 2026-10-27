@@ -3,6 +3,7 @@ name: sheet-count-nice-subarrays
 title: 'Count Nice Subarrays'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: exactly-k-odd-numbers
 ---
 
 ## Statement

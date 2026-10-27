@@ -3,7 +3,7 @@ name: sheet-josephus
 title: 'The Josephus Problem'
 tags: [dsa-sheet, recursion, recursive-thinking]
 difficulty: Advanced
-theory: designing-a-recursive-solution
+theory: the-josephus-circle
 ---
 
 ## Statement

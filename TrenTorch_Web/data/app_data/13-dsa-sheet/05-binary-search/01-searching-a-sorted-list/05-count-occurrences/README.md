@@ -3,6 +3,7 @@ name: sheet-count-occurrences
 title: 'Count Occurrences'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Beginner
+theory: first-last-and-how-many
 ---
 
 ## Statement

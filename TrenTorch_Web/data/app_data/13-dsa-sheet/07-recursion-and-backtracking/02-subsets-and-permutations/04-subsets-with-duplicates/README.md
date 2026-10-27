@@ -3,7 +3,7 @@ name: sheet-subsets-with-duplicates
 title: 'Subsets With Repeated Values'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Intermediate
-theory: avoid-duplicate-combinations-when-values-repeat
+theory: repeated-values-in-subsets
 ---
 
 ## Statement

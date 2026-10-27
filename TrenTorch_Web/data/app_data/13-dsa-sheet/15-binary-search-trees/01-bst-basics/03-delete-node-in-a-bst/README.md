@@ -3,6 +3,7 @@ name: sheet-delete-node-in-a-bst
 title: 'Delete a Node from a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Advanced
+theory: deleting-a-node
 ---
 
 ## Statement

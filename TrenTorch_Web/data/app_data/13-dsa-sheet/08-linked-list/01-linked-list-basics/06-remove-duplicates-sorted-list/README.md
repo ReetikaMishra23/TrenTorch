@@ -3,6 +3,7 @@ name: sheet-remove-duplicates-sorted-list
 title: 'Remove Duplicates From a Sorted List'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Beginner
+theory: sorted-lists-and-duplicates
 ---
 
 ## Statement

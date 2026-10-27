@@ -3,7 +3,7 @@ name: sheet-number-of-shortest-paths
 title: 'Number of Shortest Paths'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Mastery
-theory: variations-minimum-effort-and-counting-paths
+theory: counting-shortest-paths
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-search-in-rotated-duplicates
 title: 'Search in a Rotated List With Repeats'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Advanced
+theory: rotated-lists-with-repeats
 ---
 
 ## Statement

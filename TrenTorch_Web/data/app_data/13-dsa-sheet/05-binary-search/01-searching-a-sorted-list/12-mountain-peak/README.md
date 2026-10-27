@@ -3,6 +3,7 @@ name: sheet-mountain-peak
 title: 'Peak of a Mountain List'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Intermediate
+theory: the-peak-of-a-mountain
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-longest-substring-with-at-least-k-repeating
 title: 'Longest Substring With Each Letter at Least K Times'
 tags: [dsa-sheet, advanced-strings, hashing-and-structure]
 difficulty: Advanced
+theory: divide-at-the-walls
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-longest-ones-after-flip
 title: 'Longest Run of Ones After One Flip'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Intermediate
+theory: the-longest-run-of-ones-after-one-flip
 ---
 
 ## Statement

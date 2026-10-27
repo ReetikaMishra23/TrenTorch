@@ -3,6 +3,7 @@ name: sheet-reverse-bits
 title: 'Reverse the Bits'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Intermediate
+theory: reversing-the-bits
 ---
 
 ## Statement

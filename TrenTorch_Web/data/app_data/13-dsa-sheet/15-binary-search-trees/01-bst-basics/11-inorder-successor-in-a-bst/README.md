@@ -3,6 +3,7 @@ name: sheet-inorder-successor-in-a-bst
 title: 'Inorder Successor'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: inorder-successor
 ---
 
 ## Statement

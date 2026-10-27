@@ -3,6 +3,7 @@ name: sheet-hand-of-straights
 title: 'Hand of Straights'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Intermediate
+theory: the-smallest-card-must-start-a-group
 ---
 
 ## Statement

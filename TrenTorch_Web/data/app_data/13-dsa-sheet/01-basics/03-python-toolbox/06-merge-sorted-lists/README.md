@@ -3,6 +3,7 @@ name: sheet-merge-sorted-lists
 title: 'Merge Sorted Lists'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Intermediate
+theory: heaps-and-merging
 ---
 
 ## Statement

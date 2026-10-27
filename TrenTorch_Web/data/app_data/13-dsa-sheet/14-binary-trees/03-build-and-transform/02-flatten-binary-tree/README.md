@@ -3,6 +3,7 @@ name: sheet-flatten-binary-tree
 title: 'Flatten a Binary Tree'
 tags: [dsa-sheet, binary-trees, build-and-transform]
 difficulty: Advanced
+theory: flattening-into-a-chain
 ---
 
 ## Statement

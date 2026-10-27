@@ -3,6 +3,7 @@ name: sheet-ugly-number-ii
 title: 'The Nth Ugly Number'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: growing-numbers-from-smaller-ones
 ---
 
 ## Statement

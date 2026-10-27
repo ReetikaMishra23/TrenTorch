@@ -3,6 +3,7 @@ name: sheet-k-closest-points
 title: 'K Closest Points to the Origin'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: top-k-by-a-custom-key
 ---
 
 ## Statement

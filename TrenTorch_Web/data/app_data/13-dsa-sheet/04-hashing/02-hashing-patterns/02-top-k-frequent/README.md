@@ -3,6 +3,7 @@ name: sheet-top-k-frequent
 title: 'Top K Frequent Values'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Intermediate
+theory: buckets-for-counts
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-find-the-duplicate-number
 title: 'Find the Duplicate Number'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Advanced
+theory: a-list-that-loops
 ---
 
 ## Statement

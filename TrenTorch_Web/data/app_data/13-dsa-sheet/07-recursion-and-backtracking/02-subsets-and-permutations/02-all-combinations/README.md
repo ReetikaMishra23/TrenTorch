@@ -3,7 +3,7 @@ name: sheet-all-combinations
 title: 'All Combinations of K Numbers'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Beginner
-theory: combinations-of-exactly-k-elements
+theory: combinations-and-cutting-dead-branches
 ---
 
 ## Statement

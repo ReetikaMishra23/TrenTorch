@@ -3,6 +3,7 @@ name: sheet-smallest-rotation
 title: 'Lexicographically Smallest Rotation'
 tags: [dsa-sheet, advanced-strings, hashing-and-structure]
 difficulty: Advanced
+theory: two-candidates-racing
 ---
 
 ## Statement

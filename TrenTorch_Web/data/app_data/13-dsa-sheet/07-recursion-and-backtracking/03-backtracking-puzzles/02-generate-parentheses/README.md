@@ -3,7 +3,7 @@ name: sheet-generate-parentheses
 title: 'Generate Parentheses'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Intermediate
-theory: a-systematic-way-to-design-backtracking
+theory: balanced-brackets
 ---
 
 ## Statement

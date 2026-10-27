@@ -3,6 +3,7 @@ name: sheet-aggressive-cows
 title: 'Place the Cows Far Apart'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Advanced
+theory: cows-in-stalls
 ---
 
 ## Statement

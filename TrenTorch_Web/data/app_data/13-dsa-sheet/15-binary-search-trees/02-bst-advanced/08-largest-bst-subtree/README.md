@@ -3,6 +3,7 @@ name: sheet-largest-bst-subtree
 title: 'Largest BST Inside a Tree'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Mastery
+theory: largest-bst-inside-a-tree
 ---
 
 ## Statement

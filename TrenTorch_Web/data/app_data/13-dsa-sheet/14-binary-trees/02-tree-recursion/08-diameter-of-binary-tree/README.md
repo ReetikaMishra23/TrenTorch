@@ -3,6 +3,7 @@ name: sheet-diameter-of-binary-tree
 title: 'Diameter of a Binary Tree'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Intermediate
+theory: diameter-of-a-tree
 ---
 
 ## Statement

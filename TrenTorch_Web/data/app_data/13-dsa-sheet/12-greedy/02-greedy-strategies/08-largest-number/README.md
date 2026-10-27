@@ -3,6 +3,7 @@ name: sheet-largest-number
 title: 'Largest Number'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Advanced
+theory: largest-number-from-a-list
 ---
 
 ## Statement

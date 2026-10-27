@@ -3,6 +3,7 @@ name: sheet-insertion-sort-shifts
 title: 'Insertion Sort Shifts'
 tags: [dsa-sheet, sorting, sorting-by-hand]
 difficulty: Beginner
+theory: counting-the-shifts
 ---
 
 ## Statement

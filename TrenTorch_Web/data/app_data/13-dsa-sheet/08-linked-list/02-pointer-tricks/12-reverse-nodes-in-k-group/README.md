@@ -3,6 +3,7 @@ name: sheet-reverse-nodes-in-k-group
 title: 'Reverse Nodes in K-Groups'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Mastery
+theory: leaving-a-short-group-alone
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-balance-a-bst
 title: 'Balance a BST'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Intermediate
+theory: rebalancing-a-bst
 ---
 
 ## Statement

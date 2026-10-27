@@ -3,6 +3,7 @@ name: sheet-convert-sorted-array-to-bst
 title: 'Sorted Array to a Balanced BST'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Intermediate
+theory: building-a-balanced-bst-from-a-sorted-list
 ---
 
 ## Statement

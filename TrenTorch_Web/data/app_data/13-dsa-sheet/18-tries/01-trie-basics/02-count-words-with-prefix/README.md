@@ -3,6 +3,7 @@ name: sheet-count-words-with-prefix
 title: 'Count Words With a Prefix'
 tags: [dsa-sheet, tries, trie-basics]
 difficulty: Beginner
+theory: answering-many-prefix-queries
 ---
 
 ## Statement

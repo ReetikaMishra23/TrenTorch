@@ -3,6 +3,7 @@ name: sheet-rotate-matrix
 title: 'Rotate a Matrix'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: rotating-by-combining-moves
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-minimum-refueling-stops
 title: 'Minimum Refueling Stops'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Advanced
+theory: regret-take-the-fuel-only-when-needed
 ---
 
 ## Statement

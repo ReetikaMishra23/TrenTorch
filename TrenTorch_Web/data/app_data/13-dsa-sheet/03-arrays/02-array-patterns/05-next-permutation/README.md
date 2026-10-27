@@ -3,6 +3,7 @@ name: sheet-next-permutation
 title: 'Next Permutation'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Advanced
+theory: the-next-arrangement
 ---
 
 ## Statement

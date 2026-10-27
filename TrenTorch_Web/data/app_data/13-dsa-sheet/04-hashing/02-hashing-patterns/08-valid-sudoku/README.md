@@ -3,6 +3,7 @@ name: sheet-valid-sudoku
 title: 'Valid Sudoku Board'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Intermediate
+theory: checking-rules-with-sets
 ---
 
 ## Statement

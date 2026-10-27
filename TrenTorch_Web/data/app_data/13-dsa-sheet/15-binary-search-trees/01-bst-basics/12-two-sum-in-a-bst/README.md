@@ -3,6 +3,7 @@ name: sheet-two-sum-in-a-bst
 title: 'Two Sum in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: two-sum-with-two-iterators
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-minimum-absolute-difference-in-a-bst
 title: 'Minimum Difference in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: smallest-gap-between-values
 ---
 
 ## Statement

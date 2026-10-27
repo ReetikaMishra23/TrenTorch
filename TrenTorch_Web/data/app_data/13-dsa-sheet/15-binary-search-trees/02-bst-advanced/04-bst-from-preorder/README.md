@@ -3,6 +3,7 @@ name: sheet-bst-from-preorder
 title: 'Build a BST from Preorder'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Advanced
+theory: building-from-a-preorder-list
 ---
 
 ## Statement

@@ -3,7 +3,7 @@ name: sheet-all-subset-sums
 title: 'All Subset Sums'
 tags: [dsa-sheet, recursion, recursive-thinking]
 difficulty: Beginner
-theory: first-complete-implementation-all-subsets
+theory: take-it-or-leave-it
 ---
 
 ## Statement

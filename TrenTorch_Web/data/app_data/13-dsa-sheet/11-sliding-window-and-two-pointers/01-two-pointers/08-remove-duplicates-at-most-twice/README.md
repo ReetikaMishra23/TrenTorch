@@ -3,6 +3,7 @@ name: sheet-remove-duplicates-at-most-twice
 title: 'Keep at Most Two of Each Value'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Intermediate
+theory: a-reader-and-a-writer
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-two-single-numbers
 title: 'Two Single Numbers'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Advanced
+theory: two-single-numbers
 ---
 
 ## Statement

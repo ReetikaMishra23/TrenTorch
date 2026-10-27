@@ -3,6 +3,7 @@ name: sheet-search-in-a-bst
 title: 'Search in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Beginner
+theory: searching-by-comparing
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-ship-within-days
 title: 'Ship Packages Within D Days'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Intermediate
+theory: cutting-a-row-into-days
 ---
 
 ## Statement

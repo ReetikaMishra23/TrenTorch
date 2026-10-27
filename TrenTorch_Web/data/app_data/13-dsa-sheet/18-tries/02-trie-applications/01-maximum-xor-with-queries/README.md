@@ -3,6 +3,7 @@ name: sheet-maximum-xor-with-queries
 title: 'Maximum XOR With Each Query'
 tags: [dsa-sheet, tries, trie-applications]
 difficulty: Advanced
+theory: greedy-from-the-top-bit
 ---
 
 ## Statement

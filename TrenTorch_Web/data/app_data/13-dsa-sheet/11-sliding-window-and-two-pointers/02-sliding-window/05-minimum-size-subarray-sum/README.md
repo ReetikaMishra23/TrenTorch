@@ -3,6 +3,7 @@ name: sheet-minimum-size-subarray-sum
 title: 'Smallest Subarray With a Large Sum'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: the-shortest-block-with-a-large-sum
 ---
 
 ## Statement

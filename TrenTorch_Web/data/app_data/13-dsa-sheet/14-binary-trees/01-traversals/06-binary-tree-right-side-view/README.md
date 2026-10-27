@@ -3,6 +3,7 @@ name: sheet-binary-tree-right-side-view
 title: 'Right Side View'
 tags: [dsa-sheet, binary-trees, traversals]
 difficulty: Intermediate
+theory: the-right-side-view
 ---
 
 ## Statement

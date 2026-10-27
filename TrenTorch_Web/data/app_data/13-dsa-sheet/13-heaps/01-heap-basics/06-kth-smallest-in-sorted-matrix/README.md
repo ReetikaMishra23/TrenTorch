@@ -3,6 +3,7 @@ name: sheet-kth-smallest-in-sorted-matrix
 title: 'Kth Smallest in a Sorted Matrix'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: the-k-th-smallest-across-sorted-lists
 ---
 
 ## Statement

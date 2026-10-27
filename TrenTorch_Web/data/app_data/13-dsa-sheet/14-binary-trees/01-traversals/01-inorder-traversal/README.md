@@ -3,6 +3,7 @@ name: sheet-inorder-traversal
 title: 'Inorder Traversal'
 tags: [dsa-sheet, binary-trees, traversals]
 difficulty: Beginner
+theory: iterative-inorder
 ---
 
 ## Statement

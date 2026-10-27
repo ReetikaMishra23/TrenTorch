@@ -3,6 +3,7 @@ name: sheet-add-and-search-words
 title: 'Add and Search Words With Wildcards'
 tags: [dsa-sheet, tries, trie-basics]
 difficulty: Intermediate
+theory: how-slow-can-it-get
 ---
 
 ## Statement

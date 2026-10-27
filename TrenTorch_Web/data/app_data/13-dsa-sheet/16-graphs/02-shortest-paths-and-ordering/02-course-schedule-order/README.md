@@ -3,7 +3,7 @@ name: sheet-course-schedule-order
 title: 'Course Order'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Advanced
-theory: course-schedule
+theory: the-smallest-order-first
 ---
 
 ## Statement

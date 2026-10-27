@@ -3,7 +3,7 @@ name: sheet-chinese-remainder-theorem
 title: 'Chinese Remainder Theorem'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Mastery
-theory: the-chinese-remainder-theorem
+theory: merging-two-conditions-at-a-time
 ---
 
 ## Statement

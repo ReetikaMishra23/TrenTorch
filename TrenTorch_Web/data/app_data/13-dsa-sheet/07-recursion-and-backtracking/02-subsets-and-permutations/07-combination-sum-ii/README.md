@@ -3,7 +3,7 @@ name: sheet-combination-sum-ii
 title: 'Combination Sum, Each Number Once'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Intermediate
-theory: canonical-order-prevents-duplicates
+theory: sums-where-each-item-is-used-once
 ---
 
 ## Statement

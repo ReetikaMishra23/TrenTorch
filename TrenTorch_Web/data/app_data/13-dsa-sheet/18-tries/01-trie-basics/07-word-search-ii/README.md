@@ -3,6 +3,7 @@ name: sheet-word-search-ii
 title: 'Word Search II'
 tags: [dsa-sheet, tries, trie-basics]
 difficulty: Mastery
+theory: why-the-search-stays-fast
 ---
 
 ## Statement

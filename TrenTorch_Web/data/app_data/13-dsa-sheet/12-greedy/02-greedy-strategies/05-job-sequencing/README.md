@@ -3,6 +3,7 @@ name: sheet-job-sequencing
 title: 'Job Sequencing With Deadlines'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Advanced
+theory: job-sequencing-with-deadlines
 ---
 
 ## Statement

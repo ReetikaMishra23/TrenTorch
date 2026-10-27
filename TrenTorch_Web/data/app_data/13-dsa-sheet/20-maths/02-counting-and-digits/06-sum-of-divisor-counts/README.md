@@ -3,7 +3,7 @@ name: sheet-sum-of-divisor-counts
 title: 'Sum of the Number of Divisors'
 tags: [dsa-sheet, maths, counting-and-digits]
 difficulty: Mastery
-theory: floor-sums-and-quotient-grouping
+theory: grouping-equal-quotients
 ---
 
 ## Statement

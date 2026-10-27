@@ -3,6 +3,7 @@ name: sheet-lfu-cache
 title: 'LFU Cache'
 tags: [dsa-sheet, design, caches]
 difficulty: Mastery
+theory: one-bucket-per-count
 ---
 
 ## Statement

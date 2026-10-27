@@ -3,6 +3,7 @@ name: sheet-car-fleet
 title: 'Car Fleet'
 tags: [dsa-sheet, stack-and-queue, monotonic-stack]
 difficulty: Advanced
+theory: cars-that-cannot-overtake
 ---
 
 ## Statement

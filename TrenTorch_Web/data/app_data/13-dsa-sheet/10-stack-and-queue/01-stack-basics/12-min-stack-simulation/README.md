@@ -3,6 +3,7 @@ name: sheet-min-stack-simulation
 title: 'Stack With Minimum'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: a-stack-with-a-minimum
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-sliding-window-maximum
 title: 'Sliding Window Maximum'
 tags: [dsa-sheet, stack-and-queue, queues-and-deques]
 difficulty: Advanced
+theory: sliding-window-maximum
 ---
 
 ## Statement

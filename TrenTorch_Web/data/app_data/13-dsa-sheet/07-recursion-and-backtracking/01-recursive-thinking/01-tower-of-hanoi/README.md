@@ -3,7 +3,7 @@ name: sheet-tower-of-hanoi
 title: 'Tower of Hanoi'
 tags: [dsa-sheet, recursion, recursive-thinking]
 difficulty: Intermediate
-theory: designing-a-recursive-solution
+theory: moving-a-tower-of-disks
 ---
 
 ## Statement

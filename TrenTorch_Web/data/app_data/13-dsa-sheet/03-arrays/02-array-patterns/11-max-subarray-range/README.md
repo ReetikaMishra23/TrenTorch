@@ -3,6 +3,7 @@ name: sheet-max-subarray-range
 title: 'Maximum Subarray With Its Range'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: kadane-the-best-run
 ---
 
 ## Statement

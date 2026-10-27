@@ -3,7 +3,7 @@ name: sheet-letter-combinations
 title: 'Phone Keypad Letters'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Beginner
-theory: the-three-steps
+theory: a-menu-for-every-position
 ---
 
 ## Statement

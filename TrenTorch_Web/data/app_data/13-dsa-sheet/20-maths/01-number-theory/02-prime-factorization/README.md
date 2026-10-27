@@ -3,7 +3,7 @@ name: sheet-prime-factorization
 title: 'Prime Factorization'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Intermediate
-theory: prime-factorization
+theory: writing-a-number-as-a-product-of-primes
 ---
 
 ## Statement

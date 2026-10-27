@@ -3,6 +3,7 @@ name: sheet-count-square-loop
 title: 'Square Root Loop'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Beginner
+theory: loops-that-stop-at-the-square-root
 ---
 
 ## Statement

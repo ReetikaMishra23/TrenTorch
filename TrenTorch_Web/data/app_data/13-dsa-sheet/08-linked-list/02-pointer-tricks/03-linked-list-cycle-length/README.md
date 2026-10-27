@@ -3,6 +3,7 @@ name: sheet-linked-list-cycle-length
 title: 'Length of the Cycle'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Intermediate
+theory: how-long-is-the-loop
 ---
 
 ## Statement

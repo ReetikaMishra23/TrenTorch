@@ -3,6 +3,7 @@ name: sheet-happy-number
 title: 'Happy Number'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Beginner
+theory: detecting-a-loop
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-min-days-bouquets
 title: 'Days to Make Bouquets'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Intermediate
+theory: same-pattern-new-stories
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-union-find-operations
 title: 'Union-Find Operations'
 tags: [dsa-sheet, design, classic-designs]
 difficulty: Intermediate
+theory: union-by-size-and-path-compression
 ---
 
 ## Statement

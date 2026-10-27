@@ -3,6 +3,7 @@ name: sheet-longest-subarray-sum-k-any
 title: 'Longest Subarray With Sum K, Any Values'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: the-longest-run-with-any-signs
 ---
 
 ## Statement

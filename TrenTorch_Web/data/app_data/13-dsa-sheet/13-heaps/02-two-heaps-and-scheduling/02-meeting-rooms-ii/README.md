@@ -3,6 +3,7 @@ name: sheet-meeting-rooms-ii
 title: 'Meeting Rooms'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Intermediate
+theory: which-room-is-free-first
 ---
 
 ## Statement

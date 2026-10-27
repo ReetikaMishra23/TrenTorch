@@ -3,6 +3,7 @@ name: sheet-top-characters
 title: 'Most Frequent Characters'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: counting-with-counter
 ---
 
 ## Statement

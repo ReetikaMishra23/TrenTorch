@@ -3,6 +3,7 @@ name: sheet-lemonade-change
 title: 'Lemonade Stand Change'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Beginner
+theory: greedy-with-a-small-memory
 ---
 
 ## Statement

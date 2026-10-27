@@ -2,146 +2,81 @@
 
 # Introduction (Number theory)
 
-This course builds number theory for competitive programming from the ground up. It assumes you can write simple loops and functions in C++17, but it does **not** assume that you already know number theory.
+This page teaches the number tricks that keep showing up in coding interviews: primes, divisors, remainders, powers, and counting with huge numbers. It assumes only that you can write a loop and a simple function. You do not need to know any advanced mathematics.
 
-The course is organized like a staircase. **Chapter 1 starts with everyday ideas and small numbers.** We then learn how to count primes and factor numbers, how to use divisors, and only after those ideas feel familiar do we move to modular arithmetic, inverses, and the Chinese Remainder Theorem. The middle chapters build standard contest skills; the later chapters deliberately continue into advanced and Grandmaster-oriented techniques such as deterministic Miller–Rabin, Pollard rho, discrete logarithms, multiplicative functions, floor-division grouping, and NTT. Chapter 1 stays gentle, but the course as a whole does not stop at beginner or intermediate level. Read in order; each chapter explains the words it needs.
+The page is a staircase. **Chapter 1 is deliberately gentle**: what a factor is, what a prime is and what a remainder is, with small examples. Each later chapter adds one new tool, and the mathematics gets a little heavier. By the last chapters you will be able to test whether a huge number is prime and combine remainders from different moduli. If a later chapter looks hard, do not worry; every chapter only uses what came before.
 
-Code examples use C++17. Unless a problem says otherwise, assume the input integers are non-negative and watch for overflow when numbers become large.
+Every code example is shown in Python and in C++, so pick whichever language you like.
 
----
-
-# Chapter 1. Getting comfortable with numbers
-
-Number theory is the part of mathematics that studies whole numbers and the patterns they follow. In programming contests, it often means answering questions such as: Is this number prime? How many numbers divide it? What is the remainder after a very large calculation? Can we solve several remainder conditions at once?
-
-We will begin with the building blocks: factors, multiples, prime numbers, and remainders. You do not need to memorize every formula on the first read.
+# Chapter 1. Numbers, factors and primes
 
 ## 1.1 Factors and multiples
 
-A positive integer $d$ is a **factor** (or divisor) of $n$ if dividing $n$ by $d$ leaves no remainder. We write this as
+A **factor** (or **divisor**) of a number is a whole number that divides it with nothing left over. The factors of 12 are 1, 2, 3, 4, 6 and 12, because $12 = 1 \cdot 12 = 2 \cdot 6 = 3 \cdot 4$. A **multiple** of a number is what you get when you multiply it by 1, 2, 3 and so on, so the multiples of 4 are 4, 8, 12, 16, and so on.
 
-$$d \mid n.$$
+To check whether $d$ is a factor of $n$ we look at the **remainder** of the division. In Python and C++ the remainder is written `n % d`. For example `12 % 5` is 2, because 5 goes into 12 twice and 2 is left. A number $d$ divides $n$ exactly when `n % d == 0`.
 
-For example, the factors of $12$ are $1,2,3,4,6,12$. Since $12=3\times4$, both $3$ and $4$ are factors of $12$. A **multiple** of $d$ is a number we get by multiplying $d$ by a whole number: the multiples of $4$ include $4,8,12,16,\ldots$.
-
-In code, `%` gives the remainder after division. Therefore `n % d == 0` checks whether `d` is a factor of `n`.
+Listing all factors of $n$ the slow way means trying every number from 1 to $n$. That works for small numbers, but there is a neat shortcut. Factors come in pairs: if $d$ is a factor, then so is $n/d$. In the pair $(3, 4)$ for 12, one of the two is always at most $\sqrt{n}$, so we only need to try numbers up to $\sqrt{n}$ and record both members of each pair.
 
 ```python
-def isDivisible(n, d):
-    return n % d == 0
+def divisors(n):
+    small, large = [], []
+    d = 1
+    while d * d <= n:
+        if n % d == 0:
+            small.append(d)
+            if d != n // d:
+                large.append(n // d)
+        d += 1
+    return small + large[::-1]
+
+assert divisors(12) == [1, 2, 3, 4, 6, 12]
+assert divisors(36) == [1, 2, 3, 4, 6, 9, 12, 18, 36]
+assert divisors(1) == [1]
 ```
 
 ```cpp
-bool isDivisible(int n, int d) {
-    return n % d == 0;
+vector<long long> divisors(long long n) {
+    vector<long long> small, large;
+    for (long long d = 1; d * d <= n; d++) {
+        if (n % d == 0) {
+            small.push_back(d);
+            if (d != n / d) large.push_back(n / d);
+        }
+    }
+    reverse(large.begin(), large.end());
+    small.insert(small.end(), large.begin(), large.end());
+    return small;
 }
 ```
 
-For positive `d`, this is the basic test behind many number theory algorithms.
+The loop runs about $\sqrt{n}$ times, so the cost is $O(\sqrt{n})$. For $n = 10^{12}$ that is about a million steps, which is fast. The check `d != n // d` handles perfect squares such as 36, where the pair $(6, 6)$ must be counted only once.
 
 ## 1.2 Prime numbers
 
-A **prime number** is an integer greater than $1$ whose only positive factors are $1$ and itself. The first few primes are
+A **prime number** is a number greater than 1 whose only factors are 1 and itself. The first primes are 2, 3, 5, 7, 11, 13. A number greater than 1 that is not prime is called **composite**; it can be split into smaller factors, like $12 = 3 \cdot 4$. The number 1 is neither prime nor composite.
 
-$$2,3,5,7,11,13,17,19,\ldots$$
+Primes are the building blocks of all numbers. This is the **fundamental theorem of arithmetic**: every whole number greater than 1 can be written as a product of primes in exactly one way, apart from the order. For instance $360 = 2^3 \cdot 3^2 \cdot 5$. We will use this fact again and again.
 
-The number $1$ is not prime. The number $2$ is the only even prime: any larger even number is divisible by $2$. A number greater than $1$ that is not prime is called **composite**. For example, $12$ is composite because $12=3\times4$.
-
-To test a small number, we can try dividing it by every integer from $2$ up to $n-1$. If any one divides it evenly, the number is composite. This is easy to understand, but we can do better in Chapter 2.
+To test whether $n$ is prime, we can use the same square-root shortcut. If $n$ had a factor larger than $\sqrt{n}$, it would also have a matching factor smaller than $\sqrt{n}$. So if no number from 2 up to $\sqrt{n}$ divides $n$, then $n$ is prime.
 
 ```python
-def isPrimeSlow(n):
+def is_prime_slow(n):
     if n < 2:
         return False
-    for d in range(2, n):
+    d = 2
+    while d * d <= n:
         if n % d == 0:
             return False
+        d += 1
     return True
+
+assert [p for p in range(20) if is_prime_slow(p)] == [2, 3, 5, 7, 11, 13, 17, 19]
+assert is_prime_slow(1_000_000_007)
 ```
 
 ```cpp
-bool isPrimeSlow(int n) {
-    if (n < 2) return false;
-    for (int d = 2; d < n; d++)
-        if (n % d == 0) return false;
-    return true;
-}
-```
-
-This beginner version is useful for learning the idea; it is not the version to use for large inputs.
-
-## 1.3 Remainders: what `mod` means
-
-When we divide $17$ by $5$, we get $3$ groups of $5$ and $2$ left over. That leftover is the remainder:
-
-$$17 = 3\times5+2,\qquad 17\bmod5=2.$$
-
-The expression $a\bmod m$ means the remainder after dividing $a$ by $m$ (for positive $m$). The remainder is between $0$ and $m-1$ when $a$ is non-negative.
-
-Remainders are useful for clocks. On a 12-hour clock, moving forward 5 hours from 10 gives 3, because $10+5=15$ and $15\bmod12=3$. We can think of the clock as wrapping around after 12.
-
-Two numbers have the same remainder modulo $m$ when their difference is divisible by $m$. For example, $17$ and $2$ have the same remainder modulo $5$. We write
-
-$$17\equiv2\pmod5.$$
-
-Read this as “17 is congruent to 2 modulo 5.” For now, just think “they leave the same remainder.”
-
-## 1.4 Common factors and the GCD
-
-The **greatest common divisor**, shortened to GCD, is the largest positive number that divides two numbers. For instance, the common factors of $18$ and $24$ include $1,2,3,6$, so
-
-$$\gcd(18,24)=6.$$
-
-If the GCD of two positive integers is $1$, they are called **coprime**. For example, $8$ and $15$ are coprime. They do not have to be prime themselves; they only need to share no factor larger than $1$.
-
-The GCD will become especially important when we learn modular inverses. In Chapter 2, we will learn a fast way to calculate it.
-
-## 1.5 A first look at powers and factorials
-
-A power such as $2^5$ means multiplying five copies of $2$:
-
-$$2^5=2\times2\times2\times2\times2=32.$$
-
-A factorial is a product of all positive integers up to a number. It is written with an exclamation mark:
-
-$$5!=1\times2\times3\times4\times5=120.$$
-
-Factorials grow very quickly. Later we will use this observation to answer questions about trailing zeros and how often a prime appears inside a factorial.
-
-## 1.6 Check your understanding
-
-1. List all positive factors of $18$.
-2. Is $1$ prime? Explain in one sentence.
-3. What is $29\bmod6$?
-4. Are $9$ and $20$ coprime?
-5. Work out $4!$ by multiplying the numbers in order.
-
-**Answers:** (1) $1,2,3,6,9,18$. (2) No; a prime must be greater than $1$. (3) $5$. (4) Yes, their GCD is $1$. (5) $24$.
-
----
-
-# Chapter 2. Prime numbers and their factors
-
-Chapter 1 introduced the basic words. Now we turn them into algorithms. The first improvement comes from noticing that factors usually arrive in pairs.
-
-## 2.1 Why checking up to the square root is enough
-
-Suppose $n$ is composite, so $n=a\times b$ for integers $a,b$ greater than $1$. If both $a$ and $b$ were larger than $\sqrt n$, their product would be larger than $n$, which is impossible. So every composite number has a factor no larger than $\sqrt n$.
-
-This means that to test whether $n$ is prime, we only need to try divisors from $2$ through $\sqrt n$.
-
-```python
-def isPrime(n):
-    if n < 2:
-        return False
-    for d in range(2, int(n**0.5) + 1):
-        if n % d == 0:
-            return False
-    return True
-```
-
-```cpp
-bool isPrime(long long n) {
+bool is_prime_slow(long long n) {
     if (n < 2) return false;
     for (long long d = 2; d * d <= n; d++)
         if (n % d == 0) return false;
@@ -149,1087 +84,1086 @@ bool isPrime(long long n) {
 }
 ```
 
-The loop condition `d * d <= n` avoids calculating a floating-point square root. For extremely large values, even `d * d` can overflow, so use `d <= n / d` instead.
+This costs $O(\sqrt{n})$ time and constant space. It is perfect when $n$ is up to about $10^{12}$ and you test only a few numbers. Later chapters show faster ways for many numbers or for enormous ones.
 
-The running time is $O(\sqrt n)$: roughly, the number of trial divisors grows like the square root of the input.
+## 1.3 What the remainder tells us
 
-## 2.2 Count primes in a range: the Sieve of Eratosthenes
+The remainder operation is more powerful than it looks. If you look at a clock, after 12 comes 1 again; the hour is the remainder of the total hours when divided by 12. This idea of "wrapping around" is called **modular arithmetic**. We write $a \bmod m$ for the remainder of $a$ divided by $m$, and it is always between 0 and $m-1$.
 
-Testing every number independently repeats work. If we need all primes up to $N$, it is faster to mark composite numbers in groups. This is called the **Sieve of Eratosthenes**.
+Two numbers $a$ and $b$ are called **congruent modulo $m$** if they have the same remainder, which we write $a \equiv b \pmod m$. For example $17 \equiv 5 \pmod{12}$, because both leave remainder 5.
 
-Start by treating every number from $2$ to $N$ as possibly prime. The first unmarked number is $2$, so mark its multiples $4,6,8,\ldots$ as composite. The next unmarked number is $3$, so mark $6,9,12,\ldots$. Continue. Any number still unmarked is prime.
+The most useful property is that adding, subtracting and multiplying can be done on the remainders. If you want the last digit of $4237 \cdot 8951$, you only need $7 \cdot 1 = 7$. Formally:
+
+$$(a + b) \bmod m = \big((a \bmod m) + (b \bmod m)\big) \bmod m,$$
+
+$$(a \cdot b) \bmod m = \big((a \bmod m) \cdot (b \bmod m)\big) \bmod m.$$
+
+This lets us keep numbers small while computing with huge ones, which is the heart of the later chapters. One warning: in Python the result of `%` with a positive modulus is never negative, but in C++ `(-7) % 5` is $-2$. When subtracting in C++, write `((a - b) % m + m) % m`.
 
 ```python
-def sieve(n):
-    prime = [True] * (n + 1)
-    if n >= 0:
-        prime[0] = False
-    if n >= 1:
-        prime[1] = False
+def add_mod(a, b, m):
+    return (a % m + b % m) % m
 
-    for p in range(2, n + 1):
-        if p * p > n:
-            break
-        if not prime[p]:
-            continue
-        for x in range(p * p, n + 1, p):
-            prime[x] = False
-    return prime
+def sub_mod(a, b, m):
+    return ((a - b) % m + m) % m
+
+def mul_mod(a, b, m):
+    return (a % m) * (b % m) % m
+
+assert add_mod(10, 5, 12) == 3
+assert sub_mod(3, 10, 12) == 5
+assert mul_mod(4237, 8951, 10) == 7
 ```
 
 ```cpp
-vector<bool> sieve(int n) {
-    vector<bool> prime(n + 1, true);
-    if (n >= 0) prime[0] = false;
-    if (n >= 1) prime[1] = false;
+long long add_mod(long long a, long long b, long long m) {
+    return (a % m + b % m) % m;
+}
 
-    for (int p = 2; 1LL * p * p <= n; p++) {
-        if (!prime[p]) continue;
-        for (long long x = 1LL * p * p; x <= n; x += p)
-            prime[(int)x] = false;
-    }
-    return prime;
+long long sub_mod(long long a, long long b, long long m) {
+    return ((a - b) % m + m) % m;
+}
+
+long long mul_mod(long long a, long long b, long long m) {
+    return (a % m) * (b % m) % m;
 }
 ```
 
-Why start marking from $p^2$? Smaller multiples such as $2p$ or $3p$ have already been marked by smaller prime factors. The sieve runs in $O(N\log\log N)$ time and uses $O(N)$ memory, making it practical for large ranges.
+## 1.4 Check yourself
 
-## 2.3 Prime factorization
+1. Why is it enough to test divisors up to $\sqrt{n}$ when listing the factors of $n$?
+2. Is 1 a prime number? Is 91 a prime number? Give a reason in one sentence each.
+3. What is $(23 \cdot 47) \bmod 10$, computed using only the last digits?
+4. Why does `(-7) % 5` need care in C++ but not in Python?
 
-A **prime factorization** writes an integer as a product of primes. For example,
+# Chapter 2. Sieve, factorisation and counting divisors
 
-$$60=2\times2\times3\times5=2^2\cdot3\cdot5.$$
+## 2.1 Counting primes with the sieve
 
-The exponents tell us how many times each prime appears. Every integer greater than $1$ has exactly one prime factorization, apart from the order of factors. This is why prime factorization is such a useful summary of a number.
+Testing every number below $n$ with trial division would be slow. A much faster idea was found by the Greek mathematician Eratosthenes more than two thousand years ago. Write down all the numbers from 2 to $n-1$. Take the first number that is not crossed out, 2, and cross out all of its multiples (4, 6, 8, and so on). The next number not crossed out, 3, must be prime; cross out its multiples. Repeat. Every number that is never crossed out is prime. This is called the **sieve of Eratosthenes**, and it is exactly the idea of the problem _Count Primes_.
 
-The beginner method is trial division: try small divisors, divide them out as many times as possible, then continue. If the remaining number is greater than $1$, it is itself prime.
+Here is the sieve for numbers below 30. After crossing out the multiples of 2, 3 and 5, only the primes remain: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29. We can stop crossing out once the prime $p$ satisfies $p \cdot p \ge n$, because any composite number below $n$ already has a factor at most $\sqrt{n}$. And for a prime $p$ we may begin crossing out at $p \cdot p$, since smaller multiples such as $2p$ and $3p$ were removed earlier.
 
 ```python
-def factorize(n):
-    factors = []
+def count_primes(n):
+    if n < 3:
+        return 0
+    is_prime = [True] * n
+    is_prime[0] = is_prime[1] = False
     p = 2
-    while p <= n // p:
-        if n % p != 0:
-            p += 1
-            continue
-        count = 0
-        while n % p == 0:
-            n //= p
-            count += 1
-        factors.append((p, count))
+    while p * p < n:
+        if is_prime[p]:
+            for multiple in range(p * p, n, p):
+                is_prime[multiple] = False
         p += 1
-    if n > 1:
-        factors.append((n, 1))
-    return factors
+    return sum(is_prime)
+
+assert count_primes(30) == 10
+assert count_primes(10) == 4
+assert count_primes(2) == 0
+assert count_primes(100) == 25
 ```
 
 ```cpp
-vector<pair<long long, int>> factorize(long long n) {
-    vector<pair<long long, int>> factors;
-    for (long long p = 2; p <= n / p; p++) {
-        if (n % p != 0) continue;
-        int count = 0;
-        while (n % p == 0) {
-            n /= p;
-            count++;
+int count_primes(int n) {
+    if (n < 3) return 0;
+    vector<bool> is_prime(n, true);
+    is_prime[0] = is_prime[1] = false;
+    for (long long p = 2; p * p < n; p++) {
+        if (is_prime[p]) {
+            for (long long m = p * p; m < n; m += p) is_prime[m] = false;
         }
-        factors.push_back({p, count});
     }
-    if (n > 1) factors.push_back({n, 1});
-    return factors;
+    return count(is_prime.begin(), is_prime.end(), true);
 }
 ```
 
-For example, the output for $60$ is $(2,2),(3,1),(5,1)$, meaning $2^2\cdot3^1\cdot5^1$. This method is good for moderate inputs. Factoring a huge integer is a different, much harder task; advanced options are introduced in Chapter 8.
+The sieve takes about $O(n \log \log n)$ time, which is almost linear, and $O(n)$ memory. For $n = 10^7$ it runs in well under a second in C++.
 
-## 2.4 Count the divisors
+## 2.2 Writing a number as a product of primes
 
-Prime factorization gives a neat way to count all positive divisors without listing them. If
+By the fundamental theorem of arithmetic, every $n > 1$ equals a product of primes in exactly one way. We write it as $n = p_1^{e_1} p_2^{e_2} \cdots p_k^{e_k}$, where each $p_i$ is a prime and each $e_i$ says how many times it appears. For example $360 = 2^3 \cdot 3^2 \cdot 5^1$. This is the problem _Prime Factorization_.
 
-$$n=p_1^{a_1}p_2^{a_2}\cdots p_k^{a_k},$$
-
-then a divisor may use each prime $p_i$ between $0$ and $a_i$ times. Therefore the number of positive divisors is
-
-$$\tau(n)=(a_1+1)(a_2+1)\cdots(a_k+1).$$
-
-For example, $60=2^2\cdot3^1\cdot5^1$, so it has
-
-$$(2+1)(1+1)(1+1)=12$$
-
-positive divisors. This is much faster and less error-prone than checking each integer when factorization is already available.
-
-## 2.5 Sum the divisors
-
-Using the same factorization, the sum of all positive divisors is
-
-$$\sigma(n)=(1+p_1+\cdots+p_1^{a_1})\cdots(1+p_k+\cdots+p_k^{a_k}).$$
-
-For $12=2^2\cdot3$, this becomes
-
-$$(1+2+4)(1+3)=7\times4=28,$$
-
-which matches $1+2+3+4+6+12=28$. The reason for multiplying the sums is that every divisor is built by independently choosing a power for each prime.
-
-## 2.6 Practice
-
-1. Use trial division to decide whether $97$ is prime.
-2. Find the prime factorization of $84$.
-3. How many positive divisors does $72=2^3\cdot3^2$ have?
-4. Find the sum of positive divisors of $12$.
-
-**Answers:** (1) Prime. (2) $2^2\cdot3\cdot7$. (3) $(3+1)(2+1)=12$. (4) $28$.
-
----
-
-# Chapter 3. The GCD and how to compute it quickly
-
-## 3.1 The Euclidean algorithm
-
-Trying every possible common factor is slow for large numbers. The **Euclidean algorithm** uses one simple observation: the common divisors of $a$ and $b$ are exactly the common divisors of $b$ and the remainder when $a$ is divided by $b$.
-
-If $a=qb+r$, then any number that divides both $a$ and $b$ also divides $r=a-qb$. The reverse is also true. Thus
-
-$$\gcd(a,b)=\gcd(b,a\bmod b).$$
-
-Repeat this step until the second number becomes zero. The first number is the GCD.
+To find the factors we do trial division, but with a trick: divide out each factor completely as soon as we find it. We start with $d = 2$. While $d$ divides $n$, we divide and count. Then we move on to $d = 3$, and so on. Because we divide out the small primes first, whenever $d$ divides the current $n$, $d$ is guaranteed to be prime. We can stop when $d \cdot d > n$, because what is left over is either 1 or a single prime.
 
 ```python
-def gcd(a, b):
-    while b != 0:
-        r = a % b
-        a = b
-        b = r
-    return a
+def prime_factors(n):
+    result = []
+    d = 2
+    while d * d <= n:
+        if n % d == 0:
+            exponent = 0
+            while n % d == 0:
+                n //= d
+                exponent += 1
+            result.append([d, exponent])
+        d += 1
+    if n > 1:
+        result.append([n, 1])
+    return result
+
+assert prime_factors(360) == [[2, 3], [3, 2], [5, 1]]
+assert prime_factors(97) == [[97, 1]]
+assert prime_factors(1) == []
+assert prime_factors(1001) == [[7, 1], [11, 1], [13, 1]]
 ```
 
 ```cpp
-long long gcd(long long a, long long b) {
-    while (b != 0) {
-        long long r = a % b;
-        a = b;
-        b = r;
+vector<pair<long long, int>> prime_factors(long long n) {
+    vector<pair<long long, int>> result;
+    for (long long d = 2; d * d <= n; d++) {
+        if (n % d == 0) {
+            int exponent = 0;
+            while (n % d == 0) {
+                n /= d;
+                exponent++;
+            }
+            result.push_back({d, exponent});
+        }
     }
-    return a;
+    if (n > 1) result.push_back({n, 1});
+    return result;
 }
 ```
 
-For example, to compute $\gcd(48,18)$:
+The time is $O(\sqrt{n})$, because $d$ never needs to go above $\sqrt{n}$. After the loop, if $n > 1$, the remaining value is a prime larger than every $d$ we tried, so we add it with exponent 1.
 
-$$48=2\cdot18+12,\quad 18=1\cdot12+6,\quad 12=2\cdot6+0.$$
+## 2.3 Counting the divisors from the factors
 
-So $\gcd(48,18)=6$. The algorithm is extremely fast: its running time is $O(\log\min(a,b))$.
+Once we know $n = p_1^{e_1} \cdots p_k^{e_k}$, counting the divisors is easy. A divisor picks, for each prime $p_i$, how many copies to use: anywhere from 0 up to $e_i$, which is $e_i + 1$ choices. Choices for different primes are independent, so we multiply:
 
-## 3.2 The least common multiple
+$$d(n) = (e_1 + 1)(e_2 + 1) \cdots (e_k + 1).$$
 
-The **least common multiple** (LCM) is the smallest positive integer divisible by both inputs. For example, the multiples of $6$ and $8$ first meet at $24$, so $\operatorname{lcm}(6,8)=24$.
+For $360 = 2^3 \cdot 3^2 \cdot 5$ we get $(3+1)(2+1)(1+1) = 24$ divisors. This is the problem _Count Divisors_. Likewise the sum of all divisors is $\prod \frac{p_i^{e_i+1} - 1}{p_i - 1}$, because each prime contributes $1 + p + p^2 + \cdots + p^{e}$.
 
-For positive integers,
+```python
+def count_divisors(n):
+    total = 1
+    for _, exponent in prime_factors(n):
+        total *= exponent + 1
+    return total
 
-$$\gcd(a,b)\cdot\operatorname{lcm}(a,b)=a\cdot b.$$
+def sum_divisors(n):
+    total = 1
+    for p, exponent in prime_factors(n):
+        total *= (p ** (exponent + 1) - 1) // (p - 1)
+    return total
 
-Thus we can calculate the LCM using the GCD. Divide first to reduce the risk of overflow:
+assert count_divisors(360) == 24
+assert count_divisors(1) == 1
+assert count_divisors(97) == 2
+assert sum_divisors(12) == 28
+```
+
+```cpp
+long long count_divisors(long long n) {
+    long long total = 1;
+    for (auto [p, exponent] : prime_factors(n)) total *= exponent + 1;
+    return total;
+}
+
+long long sum_divisors(long long n) {
+    long long total = 1;
+    for (auto [p, exponent] : prime_factors(n)) {
+        long long term = 1, power = 1;
+        for (int i = 0; i < exponent; i++) {
+            power *= p;
+            term += power;
+        }
+        total *= term;
+    }
+    return total;
+}
+```
+
+## 2.4 Check yourself
+
+1. In the sieve, why can the inner loop start at $p \cdot p$ instead of $2p$?
+2. What are the prime factors of 1001, and how many divisors does it have?
+3. After the factorisation loop finishes with $n > 1$, why is the leftover $n$ a prime?
+4. How many divisors does $2^{10}$ have, and how many does $2^5 \cdot 3^5$ have?
+
+# Chapter 3. The GCD and the Euclidean algorithm
+
+## 3.1 Greatest common divisor
+
+The **greatest common divisor** of two numbers, written $\gcd(a, b)$, is the largest number that divides both. For 12 and 18 the common divisors are 1, 2, 3 and 6, so $\gcd(12, 18) = 6$. Two numbers whose gcd is 1 are called **coprime**: they share no prime factor. For instance 8 and 15 are coprime.
+
+We could find the gcd by comparing the prime factorisations, but there is a far faster method, found by Euclid. It rests on one observation: any number that divides both $a$ and $b$ also divides $a - b$, and also divides the remainder of $a$ divided by $b$. So $\gcd(a, b) = \gcd(b, a \bmod b)$. We repeat this until the second number becomes 0, and then the answer is the first number, because $\gcd(a, 0) = a$.
+
+Let us trace $\gcd(252, 105)$. We have $252 = 2 \cdot 105 + 42$, so we continue with $(105, 42)$. Then $105 = 2 \cdot 42 + 21$, so we continue with $(42, 21)$. Then $42 = 2 \cdot 21 + 0$, so we continue with $(21, 0)$, and the answer is 21.
 
 ```python
 def gcd(a, b):
     while b != 0:
-        r = a % b
-        a = b
-        b = r
+        a, b = b, a % b
     return a
 
 def lcm(a, b):
     return a // gcd(a, b) * b
+
+assert gcd(252, 105) == 21
+assert gcd(8, 15) == 1
+assert gcd(0, 7) == 7
+assert lcm(4, 6) == 12
 ```
 
 ```cpp
-long long lcm(long long a, long long b) {
-    return a / gcd(a, b) * b;
+long long gcd_euclid(long long a, long long b) {
+    while (b != 0) {
+        long long t = a % b;
+        a = b;
+        b = t;
+    }
+    return a;
+}
+
+long long lcm_euclid(long long a, long long b) {
+    return a / gcd_euclid(a, b) * b;
 }
 ```
 
-This assumes the result fits in `long long` and the inputs are positive. If the result can be too large, the program needs an overflow check or a wider integer type.
+Each step makes the numbers much smaller (the remainder is less than half of the larger number after two steps), so the loop runs only $O(\log \min(a, b))$ times. The **least common multiple** of $a$ and $b$ is the smallest number that both divide, and it satisfies $\gcd(a, b) \cdot \operatorname{lcm}(a, b) = a \cdot b$. We divide before multiplying in `lcm` to keep the numbers small.
 
-## 3.3 Extended Euclid: finding useful coefficients
+## 3.2 Extended Euclid: finding the coefficients
 
-The extended Euclidean algorithm finds more than the GCD. It also finds integers $x$ and $y$ satisfying
+There is a beautiful fact called **Bézout's identity**: for any two numbers $a$ and $b$ there are whole numbers $x$ and $y$ (they may be negative) such that
 
-$$ax+by=\gcd(a,b).$$
+$$a x + b y = \gcd(a, b).$$
 
-For example, $6=2\cdot18-1\cdot30$, so $x=-1,y=2$ is one valid pair for $a=30,b=18$. These numbers may be negative; that is completely fine.
-
-Why do we care? This identity lets us solve certain equations and find modular inverses. We will use it in Chapter 5, after modular arithmetic is familiar.
+For example, with $a = 252$ and $b = 105$ the gcd is 21, and $252 \cdot (-2) + 105 \cdot 5 = -504 + 525 = 21$. The **extended Euclidean algorithm** finds $x$ and $y$ together with the gcd by remembering the steps of Euclid's algorithm. The idea is recursive. Suppose we already know $x'$ and $y'$ with $b x' + (a \bmod b) y' = g$. Since $a \bmod b = a - \lfloor a / b \rfloor b$, we can rewrite this as $a y' + b (x' - \lfloor a/b \rfloor y') = g$. So $x = y'$ and $y = x' - \lfloor a/b \rfloor y'$.
 
 ```python
-def extended_gcd(a, b, x, y):
+def ext_gcd(a, b):
     if b == 0:
-        x[0] = 1
-        y[0] = 0
-        return a
-    x1 = [0]
-    y1 = [0]
-    g = extended_gcd(b, a % b, x1, y1)
-    x[0] = y1[0]
-    y[0] = x1[0] - (a // b) * y1[0]
-    return g
+        return a, 1, 0
+    g, x1, y1 = ext_gcd(b, a % b)
+    return g, y1, x1 - (a // b) * y1
+
+g, x, y = ext_gcd(252, 105)
+assert g == 21 and 252 * x + 105 * y == 21
+g, x, y = ext_gcd(3, 7)
+assert g == 1 and 3 * x + 7 * y == 1
 ```
 
 ```cpp
-long long extended_gcd(long long a, long long b,
-                       long long &x, long long &y) {
+long long ext_gcd(long long a, long long b, long long& x, long long& y) {
     if (b == 0) {
         x = 1;
         y = 0;
         return a;
     }
     long long x1, y1;
-    long long g = extended_gcd(b, a % b, x1, y1);
+    long long g = ext_gcd(b, a % b, x1, y1);
     x = y1;
     y = x1 - (a / b) * y1;
     return g;
 }
 ```
 
-The recursive step follows the same remainders as ordinary Euclid, then rewrites the previous answer in terms of the original $a$ and $b$. You can treat this code as a tool at first; the important idea is what equation it guarantees.
+The extended algorithm has the same $O(\log \min(a, b))$ cost. We need it in Chapter 5 to compute modular inverses and in Chapter 7 to combine remainder conditions.
 
-## 3.4 When does an integer equation have a solution?
+## 3.3 Check yourself
 
-Consider
+1. Why is $\gcd(a, b) = \gcd(b, a \bmod b)$?
+2. Compute $\gcd(84, 36)$ and $\operatorname{lcm}(84, 36)$ by hand.
+3. If $\gcd(a, b) = 1$, what does Bézout's identity say about $x$ and $y$?
+4. Why does `lcm` divide by the gcd first and then multiply?
 
-$$ax+by=c,$$
+# Chapter 4. Powers with remainders
 
-where $x$ and $y$ must be integers. A solution exists exactly when $\gcd(a,b)$ divides $c$.
+## 4.1 Why we need fast powers
 
-For example, $6x+10y=14$ has a solution because $\gcd(6,10)=2$ divides $14$. But $6x+10y=15$ has no integer solution, because every sum $6x+10y$ is even.
+Suppose we want $3^{1000000} \bmod 1000$. The number $3^{1000000}$ has almost half a million digits, so we cannot write it down. We could multiply by 3 one million times and take the remainder each time (we may, by the rule from Chapter 1), but a million steps is wasteful, and for exponents like $10^{18}$ it is impossible.
 
-This is the central result for linear Diophantine equations. In later problems, it helps us decide whether a target can be made from repeated steps of two different sizes.
+The trick is **fast exponentiation**, also called **binary exponentiation** or **square and multiply**. The idea is that squaring doubles the exponent in one step. We know $a^{2k} = (a^k)^2$ and $a^{2k+1} = a \cdot (a^k)^2$. So to compute $a^n$ we compute $a^{\lfloor n/2 \rfloor}$ once, square it, and multiply by one extra $a$ if $n$ is odd. The exponent halves each time, so we need only about $\log_2 n$ steps.
 
----
-
-# Chapter 4. Modular arithmetic and fast powers
-
-## 4.1 Working with remainders safely
-
-For positive modulus $m$, modular arithmetic keeps only the remainder after division by $m$. The following rules hold:
-
-$$ (a+b)\bmod m = ((a\bmod m)+(b\bmod m))\bmod m,$$
-
-$$ (ab)\bmod m = ((a\bmod m)(b\bmod m))\bmod m.$$
-
-In plain language, we can reduce the numbers before adding or multiplying, and then reduce the result again. This is useful when the true answer is too large to store.
-
-For example, to find $123\times456\bmod7$, first reduce: $123\bmod7=4$ and $456\bmod7=1$. So the final remainder is $4\times1\bmod7=4$.
-
-A practical caution: in C++, multiplying two `long long` values may overflow **before** `% m` is applied. Use a type wide enough for the product or a safe modular multiplication method when the values are very large.
-
-## 4.2 Fast exponentiation
-
-Suppose we want to calculate $3^{1000}\bmod 1{,}000{,}000{,}007$. Multiplying by $3$ a thousand times works, but the **binary exponentiation** method needs only $O(\log n)$ multiplications.
-
-The key observation is that squares quickly build large powers: $a^2$, $a^4$, $a^8$, and so on. Write the exponent in binary and multiply only the powers corresponding to its set bits. For instance,
-
-$$a^{13}=a^8\cdot a^4\cdot a.$$
+Let us trace $3^{13}$. Since $13 = 1101$ in binary, we have $3^{13} = 3^8 \cdot 3^4 \cdot 3^1$. We compute the squares $3^1 = 3$, $3^2 = 9$, $3^4 = 81$, $3^8 = 6561$ and multiply together those whose bit in 13 is 1: $6561 \cdot 81 \cdot 3 = 1594323$.
 
 ```python
-def modPow(a, e, mod):
-    result = 1 % mod
-    a %= mod
-    while e > 0:
-        if e & 1:
-            result = result * a % mod
-        a = a * a % mod
-        e >>= 1
+def power_mod(a, n, m):
+    result = 1 % m
+    a %= m
+    while n > 0:
+        if n & 1:
+            result = result * a % m
+        a = a * a % m
+        n >>= 1
     return result
+
+assert power_mod(3, 13, 10**9) == 1594323
+assert power_mod(2, 10, 1000) == 24
+assert power_mod(5, 0, 7) == 1
+assert power_mod(3, 10**18, 1000) == pow(3, 10**18, 1000)
 ```
 
 ```cpp
-long long modPow(long long a, long long e, long long mod) {
-    long long result = 1 % mod;
-    a %= mod;
-    while (e > 0) {
-        if (e & 1) result = result * a % mod;
-        a = a * a % mod;
-        e >>= 1;
+long long power_mod(long long a, long long n, long long m) {
+    long long result = 1 % m;
+    a %= m;
+    while (n > 0) {
+        if (n & 1) result = result * a % m;
+        a = a * a % m;
+        n >>= 1;
     }
     return result;
 }
 ```
 
-This version assumes each product fits in `long long`; for a modulus near $10^9+7$, signed 64-bit multiplication is enough. For larger moduli, use a safe multiplication routine. The loop is fast because the exponent is halved at each iteration.
+The loop runs $O(\log n)$ times. In C++, the products stay below $m^2$, so they fit in a 64-bit integer when $m$ is below about $3 \cdot 10^9$. In Python there is also the built-in `pow(a, n, m)`, which does the same thing.
 
-## 4.3 What does congruence really allow us to do?
+## 4.2 Powers with a huge exponent given as digits
 
-Writing $a\equiv b\pmod m$ means $m$ divides $a-b$. If $a\equiv b\pmod m$ and $c\equiv d\pmod m$, then
+Sometimes the exponent itself is too large to store, and we get it as a list of its decimal digits. This is the problem _Super Pow_: compute $a^b \bmod 1337$, where $b$ is given as a list of digits, such as `[1, 0]` for 10.
 
-$$a+c\equiv b+d\pmod m,\qquad ac\equiv bd\pmod m.$$
+We can use the rule $a^{10 x + d} = (a^x)^{10} \cdot a^d$. So we process the digits from left to right, keeping the value of $a^{\text{(digits read so far)}} \bmod m$. When a new digit $d$ arrives, the old exponent $x$ becomes $10x + d$, so the new answer is $(\text{old})^{10} \cdot a^d$. Each of these small powers is computed with `power_mod`, so no huge number ever appears.
 
-So we may add, subtract, and multiply congruences. Division is different: it is **not always allowed**. For example, $2\cdot1\equiv2\cdot3\pmod4$ because both sides have remainder $2$, but cancelling the $2$ would claim $1\equiv3\pmod4$, which is false. Chapter 5 explains when division has a valid replacement.
+```python
+def super_pow(a, digits, m=1337):
+    result = 1
+    for d in digits:
+        result = power_mod(result, 10, m) * power_mod(a, d, m) % m
+    return result
 
----
+assert super_pow(2, [1, 0]) == pow(2, 10, 1337)
+assert super_pow(2, [3]) == 8
+assert super_pow(2147483647, [2, 0, 0]) == pow(2147483647, 200, 1337)
+```
+
+```cpp
+long long super_pow(long long a, const vector<int>& digits, long long m = 1337) {
+    long long result = 1;
+    for (int d : digits)
+        result = power_mod(result, 10, m) * power_mod(a, d, m) % m;
+    return result;
+}
+```
+
+For a list of $L$ digits this takes $O(L)$ steps, each costing a constant number of small fast powers.
+
+## 4.3 Check yourself
+
+1. How many multiplications does fast exponentiation need for $a^{1000}$, roughly?
+2. Why do we write `result = 1 % m` and not just `1`?
+3. Why can we keep taking remainders in the middle of the computation?
+4. In Super Pow, why is the old answer raised to the power 10 when a new digit arrives?
 
 # Chapter 5. Modular inverses and Euler's totient function
 
-## 5.1 What is a modular inverse?
+## 5.1 Dividing in a world of remainders
 
-In ordinary arithmetic, dividing by $a$ is the same as multiplying by $1/a$. Modular arithmetic needs a similar number. A **modular inverse** of $a$ modulo $m$ is a number $x$ for which
+We can add, subtract and multiply remainders freely, but division is trickier. If we know $a \bmod m$, we cannot just divide by $b$ and take the remainder, because the result of a division is usually not a whole number. Instead of dividing by $b$, we **multiply by the modular inverse** of $b$.
 
-$$ax\equiv1\pmod m.$$
+The **modular inverse** of $a$ modulo $m$ is a number $x$ with $0 \le x < m$ such that $a \cdot x \equiv 1 \pmod m$. For example, modulo 7 the inverse of 3 is 5, because $3 \cdot 5 = 15 = 2 \cdot 7 + 1$. Multiplying by 5 modulo 7 acts exactly like dividing by 3. This is the problem _Modular Inverse_.
 
-For example, the inverse of $3$ modulo $7$ is $5$, since $3\cdot5=15\equiv1\pmod7$. Therefore division by $3$ modulo $7$ can be performed by multiplying by $5$.
-
-An inverse exists exactly when $\gcd(a,m)=1$. If $a$ and $m$ share a factor larger than $1$, no multiple of $a$ can leave remainder $1$ modulo $m$.
-
-## 5.2 Find an inverse with Extended Euclid
-
-Extended Euclid gives us $ax+my=\gcd(a,m)$. If $a$ and $m$ are coprime, the right side is $1$, so
-
-$$ax+my=1\quad\Longrightarrow\quad ax\equiv1\pmod m.$$
-
-That means $x$ is an inverse. Since answers are commonly stored from $0$ to $m-1$, normalize it with `((x % m) + m) % m`.
+An inverse exists exactly when $\gcd(a, m) = 1$. If $a$ and $m$ share a factor, every multiple of $a$ shares that factor with $m$ and can never leave remainder 1. When the gcd is 1, Bézout's identity from Chapter 3 gives numbers $x$ and $y$ with $a x + m y = 1$. Looking at this equation modulo $m$, the term $m y$ disappears, so $a x \equiv 1$, and $x$ is the inverse. We only need to bring $x$ into the range 0 to $m-1$.
 
 ```python
-def extended_gcd(a, b):
+def mod_inverse(a, m):
+    g, x, _ = ext_gcd(a % m, m)
+    if g != 1:
+        return -1
+    return x % m
+
+def ext_gcd(a, b):
     if b == 0:
         return a, 1, 0
-    g, x1, y1 = extended_gcd(b, a % b)
-    x = y1
-    y = x1 - (a // b) * y1
-    return g, x, y
+    g, x1, y1 = ext_gcd(b, a % b)
+    return g, y1, x1 - (a // b) * y1
 
-def modInverse(a, m):
-    g, x, y = extended_gcd(a, m)
-    if g != 1:
-        return -1  # no inverse
-    return (x % m + m) % m
+assert mod_inverse(3, 7) == 5
+assert mod_inverse(2, 4) == -1
+assert mod_inverse(10, 17) * 10 % 17 == 1
+assert mod_inverse(5, 1) == 0
 ```
 
 ```cpp
-long long modInverse(long long a, long long m) {
+long long mod_inverse(long long a, long long m) {
     long long x, y;
-    long long g = extended_gcd(a, m, x, y);
-    if (g != 1) return -1; // no inverse
-    return (x % m + m) % m;
+    long long g = ext_gcd(((a % m) + m) % m, m, x, y);
+    if (g != 1) return -1;
+    return ((x % m) + m) % m;
 }
 ```
 
-Here `-1` is used to report that no inverse exists. Do not use it as if it were a real inverse.
+(The helper `ext_gcd` is the one from Chapter 3. The Python version above defines it again so that this block runs on its own.) The cost is $O(\log m)$. For $m = 1$ every number is congruent to 0, and the answer is 0, which the code handles because $x \bmod 1 = 0$.
 
-## 5.3 Euler's totient function
+## 5.2 Euler's totient function
 
-Euler's totient function, written $\phi(n)$, counts the integers from $1$ to $n$ that are coprime to $n$. For example, the numbers from $1$ to $8$ that are coprime to $8$ are $1,3,5,7$, so $\phi(8)=4$.
+How many numbers between 1 and $n$ are coprime to $n$? The count is called **Euler's totient function** and is written $\varphi(n)$. For $n = 12$ the numbers coprime to 12 are 1, 5, 7, 11, so $\varphi(12) = 4$. This is the problem _Euler Totient_.
 
-If $p$ is prime, all numbers from $1$ to $p-1$ are coprime to it, and $\phi(p)=p-1$. More generally, using the distinct prime factors of $n$,
+We could test every number with gcd, but there is a formula that uses only the prime factors of $n$. Take the numbers from 1 to $n$ and remove those that share a prime factor $p$ with $n$: a fraction $1/p$ of all numbers are multiples of $p$, so a fraction $(1 - 1/p)$ survives. Doing this for every distinct prime factor gives
 
-$$\phi(n)=n\prod_{p\mid n}\left(1-\frac1p\right).$$
+$$\varphi(n) = n \prod_{p \mid n} \left(1 - \frac{1}{p}\right).$$
 
-For $n=12$, its distinct prime factors are $2$ and $3$, so
-
-$$\phi(12)=12\left(1-\frac12\right)\left(1-\frac13\right)=4.$$
-
-This formula comes from removing the numbers divisible by each prime factor. It can be calculated from prime factorization in time about $O(\sqrt n)$ using trial division.
-
-## 5.4 Fermat's little theorem and inverses modulo a prime
-
-A useful theorem says that if $p$ is prime and $a$ is not divisible by $p$, then
-
-$$a^{p-1}\equiv1\pmod p.$$
-
-Multiplying both sides by the inverse of $a$, or equivalently rearranging the power, gives
-
-$$a^{-1}\equiv a^{p-2}\pmod p.$$
-
-This gives a fast inverse when the modulus is prime: compute `modPow(a, p - 2, p)`. Remember the conditions: the modulus must be prime, and $a$ must not be divisible by it. For a non-prime modulus, use Extended Euclid or prove that another method applies.
-
-## 5.5 Factorials and binomial coefficients modulo a prime
-
-Many counting problems use the binomial coefficient
-
-$$\binom nk=\frac{n!}{k!(n-k)!},$$
-
-which counts ways to choose $k$ objects from $n$. Under a prime modulus $p$, if $n<p$, we can precompute factorials and inverse factorials. Then
-
-$$\binom nk\equiv n!\,(k!)^{-1}\,((n-k)!)^{-1}\pmod p.$$
-
-The denominator cannot be divided by directly; we multiply by its modular inverse. This method is common when many binomial coefficient queries share the same prime modulus.
-
----
-
-# Chapter 6. The Chinese Remainder Theorem
-
-## 6.1 Combining two remainder conditions
-
-Imagine being told that a number leaves remainder $2$ when divided by $3$, and remainder $3$ when divided by $5$. Which number could it be? The numbers that leave remainder $2$ modulo $3$ are $2,5,8,11,14,17,\ldots$. Among them, $8$ leaves remainder $3$ modulo $5$, so one solution is $8$.
-
-We write the conditions as
-
-$$x\equiv2\pmod3,\qquad x\equiv3\pmod5.$$
-
-Because $3$ and $5$ are coprime, the Chinese Remainder Theorem (CRT) says there is exactly one solution modulo $15=3\cdot5$. Here the solutions are $8,23,38,\ldots$, all equivalent modulo $15$.
-
-## 6.2 The main idea behind CRT
-
-When the moduli are pairwise coprime, a system of remainder conditions has one solution modulo the product of all the moduli. “Pairwise coprime” means every pair of moduli has GCD $1$.
-
-For two conditions
-
-$$x\equiv a\pmod m,\qquad x\equiv b\pmod n,$$
-
-with $\gcd(m,n)=1$, write $x=a+mt$. Then
-
-$$mt\equiv b-a\pmod n.$$
-
-Because $m$ has an inverse modulo $n$, we can solve for $t$, and then recover $x$. This connects CRT directly to modular inverses from Chapter 5.
-
-Here is a small, deliberately direct implementation for coprime moduli. It searches for the merge factor, so it is meant to make the idea visible rather than handle huge moduli efficiently:
+For $12 = 2^2 \cdot 3$ we get $12 \cdot \frac12 \cdot \frac23 = 4$. To avoid fractions, we compute it by starting with $n$ and, for each prime $p$ of $n$, replacing the value by `value - value // p`.
 
 ```python
-def crtSmall(a, m, b, n):
-    # Assumes gcd(m, n) == 1 and small m, n.
-    a = (a % m + m) % m
-    b = (b % n + n) % n
-    for t in range(n):
-        x = a + m * t
-        if x % n == b:
-            return x  # solution in [0, m*n)
-    return -1  # unreachable when the assumptions hold
+def euler_phi(n):
+    result = n
+    d = 2
+    while d * d <= n:
+        if n % d == 0:
+            while n % d == 0:
+                n //= d
+            result -= result // d
+        d += 1
+    if n > 1:
+        result -= result // n
+    return result
+
+assert euler_phi(12) == 4
+assert euler_phi(1) == 1
+assert euler_phi(13) == 12
+assert euler_phi(36) == 12
 ```
 
 ```cpp
-long long crtSmall(long long a, long long m,
-                   long long b, long long n) {
-    // Assumes gcd(m, n) == 1 and small m, n.
-    a = (a % m + m) % m;
-    b = (b % n + n) % n;
-    for (long long t = 0; t < n; ++t) {
-        long long x = a + m * t;
-        if (x % n == b) return x; // solution in [0, m*n)
+long long euler_phi(long long n) {
+    long long result = n;
+    for (long long d = 2; d * d <= n; d++) {
+        if (n % d == 0) {
+            while (n % d == 0) n /= d;
+            result -= result / d;
+        }
     }
-    return -1; // unreachable when the assumptions hold
+    if (n > 1) result -= result / n;
+    return result;
 }
 ```
 
-For production contest code, replace the loop with an extended-Euclid-based merge and check overflow in $mn$.
+This is the same loop as prime factorisation, so it costs $O(\sqrt{n})$.
 
-## 6.3 What if the moduli are not coprime?
+## 5.3 Fermat's little theorem: a shortcut for prime moduli
 
-Coprimality is an easy condition that guarantees a solution, but it is not required for every system. For example, $x\equiv1\pmod4$ and $x\equiv3\pmod6$ do have a solution ($x=9$). But $x\equiv1\pmod4$ and $x\equiv2\pmod6$ do not: the first condition makes $x$ odd, while the second makes it even.
+If $p$ is a prime and $a$ is not a multiple of $p$, then
 
-For two possibly non-coprime moduli, a solution exists exactly when
+$$a^{p-1} \equiv 1 \pmod p.$$
 
-$$a\equiv b\pmod{\gcd(m,n)}.$$
+This is **Fermat's little theorem**. For example $2^6 = 64 = 9 \cdot 7 + 1$, so $2^6 \equiv 1 \pmod 7$. Multiplying both sides by $a^{-1}$ gives $a^{p-2} \equiv a^{-1}$. So when the modulus is prime, the inverse of $a$ is simply $a^{p-2} \bmod p$, which we can compute with fast exponentiation. This is the usual way to divide modulo $10^9 + 7$, which is a prime.
 
-The full implementation has to handle this case carefully, as well as possible overflow in the combined modulus. Start with coprime moduli until the basic idea is comfortable.
-
----
-
-# Chapter 7. Large numbers and stronger techniques
-
-The algorithms so far work well for many contest constraints. Some tasks, however, contain numbers too large for trial division or ask us to compute powers with huge exponents. This chapter introduces the main ideas used for those cases. The purpose here is to explain when each tool is needed; the deeper primality-testing implementation appears in Chapter 10, while Pollard rho and baby-step giant-step are best studied with a dedicated implementation exercise.
-
-## 7.1 Is a large number prime?
-
-Trial division up to $\sqrt n$ is excellent for moderate $n$, but becomes too slow when $n$ has many digits. A common next step is **Miller–Rabin primality testing**. It uses modular exponentiation and number-theory facts to quickly identify composite numbers. A single test can occasionally label a composite number as “probably prime,” but repeating the test with carefully chosen bases makes the error extremely small; for the full 64-bit integer range, a known set of deterministic bases can make it exact.
-
-The important learning order is: first understand primes and square-root testing, then fast modular powers, and only then Miller–Rabin. The latter is not magic—it reuses tools already learned.
-
-## 7.2 Finding prime factors of very large integers
-
-Trial division may take too long when a number is very large and its prime factors are not small. **Pollard's rho** is a randomized factor-finding method that can often find a non-trivial factor much faster. In practice, it is usually combined with a primality test: first check whether the number is prime, then try to split it into smaller factors.
-
-These methods are more sensitive to implementation details than the earlier chapters. Treat them as advanced tools to learn after modular multiplication and primality testing are understood.
-
-## 7.3 Modular multiplication when products overflow
-
-Even if `a` and `b` each fit in 64 bits, their product may not. Yet modular exponentiation needs the result of $ab\bmod m$. Possible approaches include a wider integer type such as `__int128` where supported, or a carefully implemented repeated-doubling method. The correct choice depends on the language and the maximum values in the problem.
-
-Never assume `(a * b) % mod` is safe merely because the final remainder is small. The multiplication happens before the remainder operation.
-
-## 7.4 Discrete logarithm: reversing a power
-
-You know how to find $a^x\bmod m$ for a given exponent $x$. The **discrete logarithm** problem asks the reverse question: given $a$, $b$, and $m$, find an exponent $x$ such that
-
-$$a^x\equiv b\pmod m.$$
-
-A standard technique is **baby-step giant-step**, which trades memory for time and can solve many instances in about $O(\sqrt m)$ steps. This is an advanced topic because it requires careful handling of modular inverses and cases where no solution exists. A full implementation should validate any candidate and separately handle cases where $a$ and $m$ are not coprime. The central implementation structure is to store the small powers in a hash table, then look them up while generating giant steps.
-
----
-
-# Chapter 8. Counting with factorials and powers
-
-## 8.1 Trailing zeros of a factorial
-
-A trailing zero is a zero at the end of a written number, such as the one in $120$. Every trailing zero comes from a factor of $10=2\cdot5$. In a factorial, factors of $2$ are much more common than factors of $5$, so the number of trailing zeros is determined by how many factors of $5$ appear in the product.
-
-For example, $10!=1\cdot2\cdots10$ contains two multiples of $5$ (namely $5$ and $10$), and therefore has two trailing zeros.
-
-For any $n$,
-
-$$Z(n!)=\left\lfloor\frac n5\right\rfloor+\left\lfloor\frac n{25}\right\rfloor+\left\lfloor\frac n{125}\right\rfloor+\cdots,$$
-
-stopping when the denominator is greater than $n$. The extra terms matter because numbers such as $25$ contain two factors of $5$, and $125$ contains three.
+Euler generalised the theorem to any modulus: if $\gcd(a, m) = 1$ then $a^{\varphi(m)} \equiv 1 \pmod m$.
 
 ```python
-def trailingZeros(n):
-    answer = 0
-    while n > 0:
-        n //= 5
-        answer += n
-    return answer
+def inverse_prime(a, p):
+    return pow(a, p - 2, p)
+
+P = 10**9 + 7
+assert inverse_prime(3, 7) == 5
+assert 12345 * inverse_prime(12345, P) % P == 1
+assert inverse_prime(2, P) == (P + 1) // 2
 ```
 
 ```cpp
-long long trailingZeros(long long n) {
-    long long answer = 0;
-    while (n > 0) {
-        n /= 5;
-        answer += n;
-    }
-    return answer;
+long long inverse_prime(long long a, long long p) {
+    return power_mod(a, p - 2, p);
 }
 ```
 
-The same idea counts the power of any prime $p$ in $n!$ by adding $\lfloor n/p\rfloor+\lfloor n/p^2\rfloor+\cdots$.
+## 5.4 Check yourself
 
-## 8.2 Huge Fibonacci numbers
+1. For which $a$ does $a$ have an inverse modulo 12?
+2. What is $\varphi(30)$? What is $\varphi(p)$ for a prime $p$?
+3. Why does Fermat's theorem give the inverse $a^{p-2}$?
+4. Why can we not use Fermat's trick when the modulus is 12?
 
-Fibonacci numbers are defined by
+# Chapter 6. Counting under a modulus
 
-$$F_0=0,\quad F_1=1,\quad F_n=F_{n-1}+F_{n-2}.$$
+## 6.1 Factorials and binomial coefficients
 
-Their values become huge quickly, so problems often ask for $F_n\bmod m$. A loop can calculate them in $O(n)$ time using only two previous values. If $n$ itself is enormous, **fast doubling** computes them in $O(\log n)$ time by using identities that relate $F_{2k}$ and $F_{2k+1}$ to $F_k$ and $F_{k+1}$.
+Counting problems often ask for a huge number "modulo $10^9 + 7$". A very common one is the **binomial coefficient** $\binom{n}{k}$, the number of ways to choose $k$ items out of $n$. It equals
 
-The fast-doubling identities are
+$$\binom{n}{k} = \frac{n!}{k!\,(n-k)!}.$$
 
-$$F_{2k}=F_k(2F_{k+1}-F_k),\qquad F_{2k+1}=F_k^2+F_{k+1}^2.$$
+The division is the problem: $n!$ is gigantic, and we only keep remainders. Because $10^9 + 7$ is prime, we can divide by multiplying with the modular inverse from Chapter 5. We precompute all factorials $0!, 1!, \dots, n!$ modulo $p$, then the inverse of each factorial, and every $\binom{n}{k}$ becomes three multiplications. This is the problem _Binomial Coefficient Modulo_.
 
-When working modulo $m$, reduce the results modulo $m$ at each step and normalize negative intermediate values if needed. This technique is a useful example of how familiar recurrence relations can be accelerated using algebra.
-
-## 8.3 Binomial coefficients and factorial prime powers
-
-If a problem asks for the largest $x$ such that $p^x$ divides $n!$, count the number of factors of $p$ in the factorial:
-
-$$v_p(n!)=\left\lfloor\frac np\right\rfloor+\left\lfloor\frac n{p^2}\right\rfloor+\cdots.$$
-
-Here $v_p(n!)$ simply means “how many copies of the prime $p$ are contained in the product $n!$.” If $k$ is composite, factor it into primes and compare the available powers for each factor to determine the largest $x$ such that $k^x\mid n!$.
-
-This is a direct extension of the trailing-zero idea: instead of only counting groups of $10$, we count the prime factors required by a more general number.
-
----
-
-# Chapter 9. Putting the ideas together
-
-This chapter is a revision guide rather than a new algorithm chapter, so it deliberately focuses on recognition, common mistakes, and practice order instead of adding more code.
-
-## 9.1 How to choose the right tool
-
-When a number theory problem appears, begin with the shape of the question. If it asks whether a number is prime and the number is moderate, use square-root trial division. If it asks for every prime up to a limit, use the sieve. If it asks for factors or divisor counts, factorize the number. If it involves repeated powers modulo a number, use binary exponentiation.
-
-If the problem asks for division modulo $m$, first ask whether the divisor has an inverse—that is, whether its GCD with $m$ is $1$. If several remainder conditions must hold together, look at CRT. If the input numbers are extremely large, consider Miller–Rabin, Pollard's rho, or a safe modular multiplication routine, but only after the simpler building blocks are understood.
-
-## 9.2 Common mistakes
-
-- Treating $1$ as prime. Prime numbers must be greater than $1$.
-- Checking every possible divisor when checking only through $\sqrt n$ is enough.
-- Trying to divide by a number modulo $m$ without checking that a modular inverse exists.
-- Using Fermat's inverse formula when the modulus is not prime, or when the number is divisible by the prime modulus.
-- Assuming `(a * b) % mod` cannot overflow because the remainder is small.
-- Forgetting that factorials contain extra copies of primes such as $5$ in $25$, $125$, and higher powers.
-- Using CRT's simple product-modulus form without checking that the moduli are pairwise coprime.
-
-## 9.3 A gradual practice roadmap
-
-Work through the subjects in this order: prime checking and simple factors; sieve and factorization; GCD and LCM; divisor count and divisor sum; modular arithmetic and binary exponentiation; extended Euclid and modular inverse; Euler's totient and Fermat's little theorem; CRT; trailing zeros and factorial prime powers; then Miller–Rabin, Pollard's rho, and discrete logarithms.
-
-For each topic, start with a tiny example you can solve by hand. Then implement the simplest algorithm, test edge cases such as $0$, $1$, or a prime input, and only then move to the faster version. The goal is not to memorize a page of formulas: it is to understand what each formula counts, why the algorithm stops, and what conditions must be true for it to work.
-
----
-
-# Chapter 10. Fast primality testing and integer factorization
-
-The earlier chapters work well when numbers are small or when every integer up to a limit can be preprocessed. Harder contest problems may give a single integer close to the 64-bit limit. At that size, checking every divisor or building a sieve up to the number is impossible. We need algorithms whose running time depends on the number of digits rather than on the number itself.
-
-## 10.1 The Miller–Rabin idea
-
-Fermat's little theorem says that if $p$ is prime and $a$ is not divisible by $p$, then
-
-$$a^{p-1}\equiv 1\pmod p.$$
-
-A composite number can sometimes pass this test, so Fermat's test alone is not a reliable primality test. Miller–Rabin strengthens it by writing
-
-$$n-1=d\cdot 2^s,\qquad d\text{ odd},$$
-
-and checking a sequence of modular powers. For a prime $n$, each tested base must satisfy either $a^d\equiv1\pmod n$ or one of the repeated squares must become $-1\pmod n$. If a base fails, $n$ is definitely composite. If many bases pass, $n$ is a probable prime; for 64-bit integers, a known set of bases makes the test deterministic.
-
-The important implementation detail is safe modular multiplication. The product $a\cdot b$ can overflow a signed 64-bit integer even when both inputs are below $n$. Use `__int128` when the compiler supports it, or a carefully implemented overflow-safe multiplication routine.
+A neat way to get all inverse factorials cheaply is to compute only the last one, $(n!)^{-1}$, with Fermat's trick, and then walk backwards using $(k-1)!^{-1} = k! ^{-1} \cdot k$.
 
 ```python
-def mul_mod(a, b, mod):
-    return (a * b) % mod
+MOD = 10**9 + 7
 
-def pow_mod(a, e, mod):
-    r = 1
-    while e:
-        if e & 1:
-            r = mul_mod(r, a, mod)
-        a = mul_mod(a, a, mod)
-        e >>= 1
+def make_factorials(n):
+    fact = [1] * (n + 1)
+    for i in range(1, n + 1):
+        fact[i] = fact[i - 1] * i % MOD
+    inv = [1] * (n + 1)
+    inv[n] = pow(fact[n], MOD - 2, MOD)
+    for i in range(n, 0, -1):
+        inv[i - 1] = inv[i] * i % MOD
+    return fact, inv
+
+def binomial_mod(n, k, fact, inv):
+    if k < 0 or k > n:
+        return 0
+    return fact[n] * inv[k] % MOD * inv[n - k] % MOD
+
+fact, inv = make_factorials(1000)
+assert binomial_mod(5, 2, fact, inv) == 10
+assert binomial_mod(10, 0, fact, inv) == 1
+assert binomial_mod(5, 7, fact, inv) == 0
+assert binomial_mod(1000, 500, fact, inv) == 159835829
+```
+
+```cpp
+const long long MOD = 1000000007;
+
+pair<vector<long long>, vector<long long>> make_factorials(int n) {
+    vector<long long> fact(n + 1, 1), inv(n + 1, 1);
+    for (int i = 1; i <= n; i++) fact[i] = fact[i - 1] * i % MOD;
+    inv[n] = power_mod(fact[n], MOD - 2, MOD);
+    for (int i = n; i > 0; i--) inv[i - 1] = inv[i] * i % MOD;
+    return {fact, inv};
+}
+
+long long binomial_mod(int n, int k, const vector<long long>& fact, const vector<long long>& inv) {
+    if (k < 0 || k > n) return 0;
+    return fact[n] * inv[k] % MOD * inv[n - k] % MOD;
+}
+```
+
+Precomputing costs $O(n + \log p)$, and each query then costs $O(1)$. If you need only one value for a huge $n$ and a small $k$, you can use the product $\frac{n (n-1) \cdots (n-k+1)}{k!}$ with a single inverse.
+
+## 6.2 Zeros at the end of a factorial
+
+How many zeros does $n!$ end with? A zero at the end comes from a factor of 10, and $10 = 2 \cdot 5$. In $n!$ the number 2 appears far more often than 5, so the number of trailing zeros equals the number of times 5 divides $n!$. This is the problem _Trailing Zeros of Factorial_.
+
+Counting how many times 5 divides $n!$ works like this. Among the numbers $1, \dots, n$ there are $\lfloor n/5 \rfloor$ multiples of 5, and each contributes one factor 5. But multiples of 25 contribute a second one, and there are $\lfloor n/25 \rfloor$ of them. Multiples of 125 contribute a third, and so on:
+
+$$\text{zeros}(n) = \left\lfloor \frac{n}{5} \right\rfloor + \left\lfloor \frac{n}{25} \right\rfloor + \left\lfloor \frac{n}{125} \right\rfloor + \cdots$$
+
+For $n = 100$ this is $20 + 4 = 24$ zeros. The same idea, called **Legendre's formula**, counts how often any prime $p$ divides $n!$.
+
+```python
+def trailing_zeros(n):
+    count = 0
+    power = 5
+    while power <= n:
+        count += n // power
+        power *= 5
+    return count
+
+assert trailing_zeros(5) == 1
+assert trailing_zeros(100) == 24
+assert trailing_zeros(0) == 0
+assert trailing_zeros(25) == 6
+```
+
+```cpp
+long long trailing_zeros(long long n) {
+    long long count = 0;
+    for (long long power = 5; power <= n; power *= 5) count += n / power;
+    return count;
+}
+```
+
+The loop runs $\log_5 n$ times, so it is $O(\log n)$.
+
+## 6.3 Huge Fibonacci numbers
+
+The Fibonacci numbers are $F_0 = 0$, $F_1 = 1$ and $F_k = F_{k-1} + F_{k-2}$. For $n$ up to $10^{18}$ we cannot loop $n$ times. This is the problem _Fibonacci Modulo_. Here is a fast method called **fast doubling**. From the Fibonacci recurrence one can show
+
+$$F_{2k} = F_k \bigl(2F_{k+1} - F_k\bigr), \qquad F_{2k+1} = F_k^2 + F_{k+1}^2.$$
+
+These formulas let us jump from $(F_k, F_{k+1})$ to $(F_{2k}, F_{2k+1})$ in one step, and then move to $2k+1$ by adding one more step if needed. As with fast exponentiation, the index halves each time, so we need only $O(\log n)$ steps. For example, $F_5 = F_2^2 + F_3^2 = 1 + 4 = 5$ and $F_6 = F_3(2F_4 - F_3) = 2 \cdot (6 - 2) = 8$.
+
+```python
+MOD = 10**9 + 7
+
+def fib_pair(n):
+    if n == 0:
+        return 0, 1
+    a, b = fib_pair(n // 2)
+    c = a * ((2 * b - a) % MOD) % MOD
+    d = (a * a + b * b) % MOD
+    if n % 2 == 0:
+        return c, d
+    return d, (c + d) % MOD
+
+def fib_mod(n):
+    return fib_pair(n)[0]
+
+assert [fib_mod(i) for i in range(10)] == [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+assert fib_mod(50) == 12586269025 % MOD
+assert fib_mod(10**18) == 209783453
+```
+
+```cpp
+pair<long long, long long> fib_pair(long long n) {
+    if (n == 0) return {0, 1};
+    auto [a, b] = fib_pair(n / 2);
+    long long c = a * ((2 * b - a + MOD) % MOD) % MOD;
+    long long d = (a * a + b * b) % MOD;
+    if (n % 2 == 0) return {c, d};
+    return {d, (c + d) % MOD};
+}
+
+long long fib_mod(long long n) {
+    return fib_pair(n).first;
+}
+```
+
+The recursion goes about $\log_2 n$ levels deep, and each level does a few multiplications, so the cost is $O(\log n)$.
+
+## 6.4 Check yourself
+
+1. Why must the modulus be prime for the inverse-factorial method to work?
+2. How many zeros does $200!$ end with?
+3. Why do trailing zeros of $n!$ depend only on the factor 5, not on 2?
+4. Use fast doubling to find $F_{10}$ from $F_5$ and $F_6$.
+
+# Chapter 7. Combining remainder conditions
+
+## 7.1 The Chinese remainder idea
+
+Here is an old puzzle. A number leaves remainder 2 when divided by 3, and remainder 3 when divided by 5. What could it be? We are looking for $x$ with $x \equiv 2 \pmod 3$ and $x \equiv 3 \pmod 5$. Listing numbers that leave remainder 2 modulo 3 gives 2, 5, 8, 11, 14, 17, and so on; the first one that leaves remainder 3 modulo 5 is 8. The next solution is $8 + 15 = 23$, because adding $3 \cdot 5 = 15$ changes neither remainder. So the solutions are $8, 23, 38, \dots$, all congruent to 8 modulo 15.
+
+This is the **Chinese remainder theorem**, or **CRT**: when the moduli are coprime, a system of remainder conditions always has a solution, and it is unique modulo the product of the moduli. The problem _Chinese Remainder Theorem_ asks for the smallest non-negative solution, and it allows moduli that are **not** coprime, in which case there may be no solution at all. For example $x \equiv 1 \pmod 4$ and $x \equiv 2 \pmod 6$ is impossible: the first says $x$ is odd and the second says $x$ is even.
+
+## 7.2 Merging two conditions at a time
+
+The easiest way to solve a whole list of conditions is to merge them two at a time. Suppose we already know $x \equiv r_1 \pmod{m_1}$ and we add $x \equiv r_2 \pmod{m_2}$. Every solution of the first condition has the form $x = r_1 + m_1 t$ for some whole number $t$. Putting this into the second condition gives
+
+$$m_1 t \equiv r_2 - r_1 \pmod{m_2}.$$
+
+Let $g = \gcd(m_1, m_2)$. This equation has a solution only if $g$ divides $r_2 - r_1$; otherwise the conditions contradict each other, like the odd and even example above. If it does divide, we can divide the whole equation by $g$ to get $\frac{m_1}{g} t \equiv \frac{r_2 - r_1}{g} \pmod{\frac{m_2}{g}}$. Now $\frac{m_1}{g}$ and $\frac{m_2}{g}$ are coprime, so $\frac{m_1}{g}$ has an inverse modulo $\frac{m_2}{g}$ (Chapter 5), and we can solve for $t$. The merged condition is $x \equiv r_1 + m_1 t$ modulo $\operatorname{lcm}(m_1, m_2) = \frac{m_1 m_2}{g}$.
+
+Starting from the empty condition $x \equiv 0 \pmod 1$ and merging every condition in turn, we get the final answer. The result, in the range 0 to the final modulus minus 1, is the smallest non-negative $x$.
+
+```python
+def ext_gcd(a, b):
+    if b == 0:
+        return a, 1, 0
+    g, x1, y1 = ext_gcd(b, a % b)
+    return g, y1, x1 - (a // b) * y1
+
+def solve_congruences(remainders, moduli):
+    r, m = 0, 1
+    for r2, m2 in zip(remainders, moduli):
+        r2 %= m2
+        g, p, _ = ext_gcd(m, m2)
+        if (r2 - r) % g != 0:
+            return -1
+        step = m2 // g
+        t = ((r2 - r) // g) * p % step
+        r = r + m * t
+        m = m // g * m2
+        r %= m
     return r
+
+assert solve_congruences([2, 3], [3, 5]) == 8
+assert solve_congruences([1, 2], [4, 6]) == -1
+assert solve_congruences([2, 3, 2], [3, 5, 7]) == 23
+assert solve_congruences([], []) == 0
+assert solve_congruences([1, 3], [4, 6]) == 9
 ```
 
 ```cpp
-using u64 = unsigned long long;
-using u128 = __uint128_t;
-
-u64 mul_mod(u64 a, u64 b, u64 mod) {
-    return (u128)a * b % mod;
+long long ext_gcd(long long a, long long b, long long& x, long long& y) {
+    if (b == 0) {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    long long x1, y1;
+    long long g = ext_gcd(b, a % b, x1, y1);
+    x = y1;
+    y = x1 - (a / b) * y1;
+    return g;
 }
 
-u64 pow_mod(u64 a, u64 e, u64 mod) {
-    u64 r = 1;
-    while (e) {
-        if (e & 1) r = mul_mod(r, a, mod);
-        a = mul_mod(a, a, mod);
-        e >>= 1;
+long long solve_congruences(const vector<long long>& remainders, const vector<long long>& moduli) {
+    long long r = 0, m = 1;
+    for (size_t i = 0; i < remainders.size(); i++) {
+        long long m2 = moduli[i];
+        long long r2 = ((remainders[i] % m2) + m2) % m2;
+        long long p, q;
+        long long g = ext_gcd(m, m2, p, q);
+        if ((r2 - r) % g != 0) return -1;
+        long long step = m2 / g;
+        long long t = (((r2 - r) / g) % step * (p % step)) % step;
+        if (t < 0) t += step;
+        r = r + m * t;
+        m = m / g * m2;
+        r %= m;
     }
     return r;
 }
 ```
 
-This is the multiplication and exponentiation foundation, not a complete primality test by itself. When implementing Miller–Rabin, handle $n<2$, small primes, even values, and the special case where a tested base is divisible by $n$.
+Each merge costs $O(\log m)$, so a list of $k$ conditions costs $O(k \log m)$. A warning for C++: the numbers $m$ can grow up to the lcm of all moduli, so the products must fit in 64 bits; the contest versions of this problem promise that they do. In Python, integers never overflow.
 
-## 10.2 Pollard's rho: finding a factor without checking all factors
+## 7.3 Check yourself
 
-Miller–Rabin tells us whether a number is prime, but a composite number still needs to be split. Pollard's rho generates a sequence such as
+1. Find the smallest $x$ with $x \equiv 1 \pmod 3$ and $x \equiv 2 \pmod 4$.
+2. Why do $x \equiv 1 \pmod 4$ and $x \equiv 2 \pmod 6$ have no solution?
+3. After merging two conditions, what is the new modulus?
+4. What happens in the merging step if the moduli are coprime?
 
-$$x_{i+1}=(x_i^2+c)\bmod n$$
+# Chapter 8. Testing huge numbers for primality
 
-and compares two positions in the sequence. If the sequence behaves differently modulo a hidden factor of $n$ than modulo $n$ itself, a GCD may reveal a non-trivial factor. The method is randomized, so one attempt can fail; restart with a new seed or constant when it does.
+## 8.1 Why trial division is not enough
 
-A practical factorization pipeline is: remove small prime factors, test whether the remaining number is prime with Miller–Rabin, and otherwise split it with Pollard's rho, then recursively factor both pieces. Sort the resulting prime factors and combine equal ones into powers.
+Trial division needs about $\sqrt{n}$ steps. For a 18-digit number that is a billion steps, which is far too slow if we have many numbers to test. We need a test that takes time proportional to the number of digits, not to the number itself. The tool is the **Miller–Rabin test**, and it is the topic of the problem _Miller Rabin Primality_.
 
-Pollard's rho is not a magic constant-time algorithm. Its expected performance depends on the size of the smallest prime factor, and implementations need careful handling of overflow, random seeds, and failed attempts. For competitive programming, practice it together with GCD, modular multiplication, and primality testing rather than as a standalone trick.
+The starting point is Fermat's little theorem from Chapter 5: if $n$ is prime and $a$ is not a multiple of $n$, then $a^{n-1} \equiv 1 \pmod n$. We can run this as a test: pick $a$, compute $a^{n-1} \bmod n$ with fast exponentiation, and if the answer is not 1, then $n$ is certainly composite. Unfortunately some composite numbers, such as 561, pass the test for every $a$ (they are called Carmichael numbers). Miller and Rabin strengthened the test to remove this weakness.
 
-## 10.3 Segmented sieve
+## 8.2 The stronger test
 
-If the task asks for primes in an interval $[L,R]$ where $R$ is large but $R-L$ is manageable, a full sieve up to $R$ may use too much memory. First generate all primes up to $\sqrt R$. Then create a boolean array for the interval and mark multiples of each base prime, beginning at
+Write $n - 1 = d \cdot 2^s$ with $d$ odd, by pulling out all factors of 2. For a prime $n$, consider the sequence
 
-$$\max\left(p^2,\left\lceil\frac Lp\right\rceil p\right).$$
+$$a^d,\; a^{2d},\; a^{4d},\; \dots,\; a^{2^s d} = a^{n-1} \pmod n.$$
 
-The $p^2$ term prevents us from marking the prime $p$ itself when it lies in the interval. This technique is useful when $R$ is very large but the interval width is perhaps a few million.
+Each term is the square of the previous one. The last term is 1 by Fermat. For a prime modulus, the only numbers whose square is 1 are 1 and $n - 1$ (the only square roots of 1). So going backwards, the sequence must either start with $a^d \equiv 1$, or contain $n - 1$ somewhere before it reaches 1. If neither happens, $n$ is composite, and $a$ is called a **witness** of its compositeness.
 
-## 10.4 When this chapter is useful
-
-Use a normal sieve when the maximum value is small enough to store. Use a segmented sieve for a narrow interval with a large endpoint. Use Miller–Rabin for primality of isolated large integers, and Pollard's rho when their prime factors are also needed. These methods form a standard advanced number theory toolkit.
-
----
-
-# Chapter 11. Multiplicative functions and Möbius inversion
-
-This chapter introduces functions defined on positive integers. The notation may look abstract at first, but the main examples are familiar: the number of divisors, the sum of divisors, and Euler's totient function.
-
-## 11.1 Multiplicative functions
-
-A function $f$ is **multiplicative** if $f(1)=1$ and
-
-$$f(ab)=f(a)f(b)\quad\text{whenever }\gcd(a,b)=1.$$
-
-The coprime condition matters. For example, the divisor-counting function $\tau(n)$ is multiplicative, but in general $\tau(ab)\ne\tau(a)\tau(b)$ when $a$ and $b$ share a prime factor.
-
-If the prime factorization is
-
-$$n=p_1^{e_1}p_2^{e_2}\cdots p_k^{e_k},$$
-
-then the divisor count is
-
-$$\tau(n)=\prod_{i=1}^{k}(e_i+1),$$
-
-and the divisor sum is
-
-$$\sigma(n)=\prod_{i=1}^{k}(1+p_i+p_i^2+\cdots+p_i^{e_i}).$$
-
-Euler's totient function is also multiplicative, with
-
-$$\phi(n)=n\prod_{p\mid n}\left(1-\frac1p\right).$$
-
-These formulas show why prime factorization is so useful: once the exponents are known, several different questions become easy.
-
-## 11.2 The Möbius function
-
-The Möbius function $\mu(n)$ is defined as follows. If a prime square divides $n$, then $\mu(n)=0$. Otherwise, if $n$ is a product of $k$ distinct primes, then $\mu(n)=(-1)^k$. Also, $\mu(1)=1$.
-
-For example, $\mu(6)=1$ because $6=2\cdot3$ has two distinct prime factors; $\mu(30)=-1$ because it has three; and $\mu(12)=0$ because $2^2\mid12$.
-
-A key identity is
-
-$$\sum_{d\mid n}\mu(d)=\begin{cases}1,&n=1,\\0,&n>1.\end{cases}$$
-
-This identity is a way to cancel out contributions from numbers with common factors. It leads to Möbius inversion.
-
-## 11.3 Möbius inversion, gently
-
-Suppose two functions satisfy
-
-$$F(n)=\sum_{d\mid n}f(d).$$
-
-Then we can recover the original function using
-
-$$f(n)=\sum_{d\mid n}\mu(d)F\left(\frac nd\right).$$
-
-Think of $F(n)$ as a total that combines contributions from all divisors. Möbius inversion undoes that accumulation. It is useful for counting coprime pairs, primitive objects, and objects whose repetition or common divisor must be removed.
-
-For example, the number of integers $1\le k\le n$ that are coprime to $n$ can be written as
-
-$$\phi(n)=\sum_{d\mid n}\mu(d)\frac nd.$$
-
-For implementation, a linear sieve can compute the smallest prime factor, $\mu(n)$, and $\phi(n)$ for all $n\le N$ in $O(N)$ time. The core skill is maintaining each number's smallest prime factor and distinguishing whether a new prime repeats a factor already present.
-
-This compact version computes the Möbius function and totient together. It is included as a template; the explanation of why each branch works is the important part.
+One witness is enough to prove a number composite. And a handful of fixed bases is enough to be certain for every number below $2^{64}$: it is known that testing the twelve bases $2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37$ gives the correct answer for all 64-bit numbers. So this version is not random at all; it is exact.
 
 ```python
-def linearSieveFunctions(n, phi, mu):
-    lp = [0] * (n + 1)
-    primes = []
-    phi[:] = [0] * (n + 1)
-    mu[:] = [0] * (n + 1)
-    if n >= 1:
-        phi[1] = 1
-        mu[1] = 1
-
-    for i in range(2, n + 1):
-        if lp[i] == 0:
-            lp[i] = i
-            primes.append(i)
-            phi[i] = i - 1
-            mu[i] = -1
-        for p in primes:
-            if p > lp[i] or p * i > n:
+def is_prime(n):
+    if n < 2:
+        return False
+    small = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]
+    for p in small:
+        if n % p == 0:
+            return n == p
+    d, s = n - 1, 0
+    while d % 2 == 0:
+        d //= 2
+        s += 1
+    for a in small:
+        x = pow(a, d, n)
+        if x == 1 or x == n - 1:
+            continue
+        for _ in range(s - 1):
+            x = x * x % n
+            if x == n - 1:
                 break
-            x = p * i
-            lp[x] = p
-            if p == lp[i]:
-                phi[x] = phi[i] * p
-                mu[x] = 0
-                break
-            phi[x] = phi[i] * (p - 1)
-            mu[x] = -mu[i]
-    return lp
-```
-
-```cpp
-vector<int> linearSieveFunctions(int n, vector<int>& phi,
-                                vector<int>& mu) {
-    vector<int> lp(n + 1), primes;
-    phi.assign(n + 1, 0);
-    mu.assign(n + 1, 0);
-    if (n >= 1) phi[1] = mu[1] = 1;
-
-    for (int i = 2; i <= n; ++i) {
-        if (lp[i] == 0) {
-            lp[i] = i;
-            primes.push_back(i);
-            phi[i] = i - 1;
-            mu[i] = -1;
-        }
-        for (int p : primes) {
-            if (p > lp[i] || 1LL * p * i > n) break;
-            int x = p * i;
-            lp[x] = p;
-            if (p == lp[i]) {
-                phi[x] = phi[i] * p;
-                mu[x] = 0;
-                break;
-            }
-            phi[x] = phi[i] * (p - 1);
-            mu[x] = -mu[i];
-        }
-    }
-    return lp;
-}
-```
-
-## 11.4 Dirichlet convolution
-
-For arithmetic functions $f$ and $g$, define their Dirichlet convolution by
-
-$$(f*g)(n)=\sum_{d\mid n}f(d)g\left(\frac nd\right).$$
-
-# Chapter 12. Primitive roots, discrete logarithms, and modular equations
-
-## 12.1 Powers modulo a number
-
-Look at the powers of $a$ modulo $m$:
-
-$$a^0,a^1,a^2,a^3,\ldots\pmod m.$$
-
-If $\gcd(a,m)=1$, these powers eventually repeat and cycle through the invertible residues. The smallest positive integer $k$ for which $a^k\equiv1\pmod m$ is called the **multiplicative order** of $a$ modulo $m$.
-
-For example, powers of $2$ modulo $7$ are $1,2,4,1,2,4,\ldots$, so the order of $2$ modulo $7$ is $3$. The order divides $\phi(m)$; this is a consequence of the group structure of invertible residues.
-
-## 12.2 Primitive roots
-
-A primitive root modulo $m$ is a number whose powers generate every residue that is coprime to $m$. In the prime modulus case, a number $g$ is a primitive root modulo prime $p$ when its order is $p-1$.
-
-Here is the simple order-checking loop for a prime modulus, assuming the distinct prime factors of $p-1$ are already known:
-
-```python
-def isPrimitiveRoot(g, p, primeFactorsOfPMinus1):
-    for q in primeFactorsOfPMinus1:
-        if pow(g, (p - 1) // q, p) == 1:
+        else:
             return False
     return True
+
+assert [p for p in range(30) if is_prime(p)] == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+assert not is_prime(561)
+assert not is_prime(3215031751)
+assert is_prime(1_000_000_007)
+assert is_prime(2**61 - 1)
+assert not is_prime(2**61 + 1)
 ```
 
 ```cpp
-bool isPrimitiveRoot(long long g, long long p,
-                     const vector<long long>& primeFactorsOfPMinus1) {
-    for (long long q : primeFactorsOfPMinus1) {
-        if (modPow(g, (p - 1) / q, p) == 1) return false;
+long long mul_mod_big(long long a, long long b, long long m) {
+    return (__int128)a * b % m;
+}
+
+long long power_mod_big(long long a, long long n, long long m) {
+    long long result = 1;
+    a %= m;
+    while (n > 0) {
+        if (n & 1) result = mul_mod_big(result, a, m);
+        a = mul_mod_big(a, a, m);
+        n >>= 1;
+    }
+    return result;
+}
+
+bool is_prime(long long n) {
+    if (n < 2) return false;
+    long long small[] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
+    for (long long p : small) {
+        if (n % p == 0) return n == p;
+    }
+    long long d = n - 1;
+    int s = 0;
+    while (d % 2 == 0) {
+        d /= 2;
+        s++;
+    }
+    for (long long a : small) {
+        long long x = power_mod_big(a, d, n);
+        if (x == 1 || x == n - 1) continue;
+        bool composite = true;
+        for (int i = 0; i < s - 1; i++) {
+            x = mul_mod_big(x, x, n);
+            if (x == n - 1) {
+                composite = false;
+                break;
+            }
+        }
+        if (composite) return false;
     }
     return true;
 }
 ```
 
-This uses the `modPow` function from Chapter 4. Each prime factor needs to be checked only once. The condition is that, for every distinct prime divisor $q$ of $p-1$,
+Each base costs $O(\log n)$ multiplications, and there are twelve bases, so one test takes $O(\log n)$ time, a few microseconds even for 18-digit numbers. In C++ the product of two 64-bit numbers can overflow, so we multiply in 128 bits (`__int128`) before taking the remainder.
 
-$$g^{(p-1)/q}\not\equiv1\pmod p.$$
+## 8.3 Check yourself
 
-If all checks pass, the order cannot be a proper divisor of $p-1$, so it must equal $p-1$. This method connects prime factorization with modular powers.
+1. Write $n - 1 = d \cdot 2^s$ for $n = 97$: what are $d$ and $s$?
+2. Why does one witness prove that a number is composite?
+3. Why is the number 561 a good example of why plain Fermat testing is not enough?
+4. Why do we use `__int128` in the C++ version?
 
-Primitive roots exist modulo $m$ exactly for $m=1,2,4,p^k,$ or $2p^k$, where $p$ is an odd prime. You do not need this classification in the first pass, but it becomes important when a problem asks whether all invertible residues can be represented as powers of one number.
+# Chapter 9. Counting with digits
 
-## 12.3 Discrete logarithm and baby-step giant-step
+## 9.1 Counting the digit one
 
-The **discrete logarithm problem** asks for an integer $x$ satisfying
+How many times does the digit 1 appear when we write all numbers from 1 to $n$? For $n = 13$ the numbers 1, 10, 11, 12, 13 contain six 1s (11 contains two). This is the problem _Count Digit One_. Writing out every number takes too long for $n$ up to $10^9$, so we count position by position instead.
 
-$$a^x\equiv b\pmod m.$$
+Take one position at a time, say the tens position, of the numbers from 1 to $n$. Split $n$ around that position into three parts: the digits above it (**high**), the digit at it (**cur**), and the digits below it (**low**). For $n = 314$ and the tens position, high is 3, cur is 1 and low is 4. The tens digit cycles through 0 to 9 in blocks of length 100. Every complete block (the high part counts how many there are) has exactly 10 numbers with tens digit 1. So complete blocks contribute $\text{high} \cdot 10$. In the last, incomplete block, the numbers with tens digit 1 are: none if cur is 0; all of them (that is, $\text{low} + 1$) if cur is 1; or a full ten if cur is above 1.
 
-Unlike ordinary logarithms, there is no general direct formula. A simple search tests every exponent, but that can take $O(m)$ time. Baby-step giant-step reduces this to about $O(\sqrt m)$ time and memory when the basic coprime setup applies.
+For a position with value $p$ (1, 10, 100, and so on), the count is
 
-Let $s=\lceil\sqrt m\rceil$. Write $x=qs+r$ with $0\le r<s$. Then
+$$\text{high} \cdot p + \begin{cases} 0 & \text{cur} = 0 \\ \text{low} + 1 & \text{cur} = 1 \\ p & \text{cur} > 1. \end{cases}$$
 
-$$a^{qs+r}\equiv b\pmod m\quad\Longrightarrow\quad a^r\equiv b(a^{-s})^q\pmod m.$$
-
-Store the values $a^r$ for all small $r$ in a hash table, then try the giant steps $b(a^{-s})^q$. A collision gives a candidate exponent, which should always be verified in the original equation. Non-coprime cases need additional reduction logic; do not apply this basic version blindly.
-
-## 12.4 General linear congruences
-
-Consider
-
-$$ax\equiv b\pmod m.$$
-
-Let $g=\gcd(a,m)$. A solution exists exactly when $g\mid b$. If this condition holds, divide the equation and modulus by $g$ to get
-
-$$\frac ag x\equiv\frac bg\pmod{\frac mg},$$
-
-where the new coefficient is coprime to the new modulus. Now a modular inverse can solve the reduced equation. There are generally $g$ solutions modulo the original $m$ when a solution exists. This is a useful bridge between GCD, inverses, and modular equations.
-
----
-
-# Chapter 13. Advanced CRT, factorials modulo a prime, and binomial coefficients
-
-## 13.1 CRT when moduli are not coprime
-
-The familiar CRT version assumes pairwise coprime moduli. For two congruences
-
-$$x\equiv a\pmod m,\qquad x\equiv b\pmod n,$$
-
-a solution exists exactly when
-
-$$a\equiv b\pmod{\gcd(m,n)}.$$
-
-When a solution exists, it is unique modulo $\operatorname{lcm}(m,n)$. This generalized version is useful when constraints overlap rather than being independent. Combine two equations at a time, use extended Euclid to solve for the merge, and be careful with overflow in the combined modulus.
-
-## 13.2 Factorials modulo a prime
-
-For a prime $p$, ordinary factorial values become zero modulo $p$ once $n\ge p$, because the product contains a factor of $p$. Yet binomial coefficients can still be nonzero because prime factors may cancel between numerator and denominator before reducing modulo $p$.
-
-For $n<p$, the standard formula is
-
-$$\binom nk\equiv n!\,(k!)^{-1}\,((n-k)!)^{-1}\pmod p.$$
-
-This works because each factorial in the denominator is nonzero modulo $p$ and therefore has an inverse. Precompute factorials and inverse factorials to answer many queries in constant time after linear preprocessing.
-
-## 13.3 Lucas's theorem
-
-When $n$ or $k$ is at least $p$, factorial-and-inverse-factorial tables up to $p-1$ are not enough. Write $n$ and $k$ in base $p$:
-
-$$n=n_0+n_1p+n_2p^2+\cdots,\qquad k=k_0+k_1p+k_2p^2+\cdots.$$
-
-Lucas's theorem states
-
-$$\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p.$$
-
-Each digit-level binomial coefficient has digits smaller than $p$, so the previous factorial tables can compute it. If any $k_i>n_i$, that factor is zero and the whole answer is zero. This is an important pattern: a huge combinatorial input becomes several small independent calculations in base $p$.
-
-## 13.4 Prime-power moduli
-
-When the modulus is $p^e$ rather than a prime, modular inverses alone are not enough to evaluate factorial ratios, because some factors are divisible by $p$. Separate each integer into its power of $p$ and its part coprime to $p$. Count the total exponent of $p$ with Legendre's formula,
-
-$$v_p(n!)=\sum_{i\ge1}\left\lfloor\frac{n}{p^i}\right\rfloor,$$
-
-then compute the remaining coprime product modulo $p^e$. The exact implementation depends on whether $n$ is smaller or larger than the modulus and whether many queries share the same prime power. Treat this as an advanced topic: first be fully comfortable with ordinary factorials modulo a prime. An implementation checklist is: (1) compute the exponent of $p$ in each factorial; (2) multiply only the factors not divisible by $p$ modulo $p^e$; (3) use inverses only for products coprime to $p^e$; (4) combine the exponent and unit part at the end. Do not use the simple prime-modulus factorial formula here.
-
----
-
-# Chapter 14. Floor sums and quotient grouping
-
-A common advanced pattern is a sum involving integer division, for example
-
-$$S(n)=\sum_{i=1}^{n}\left\lfloor\frac ni\right\rfloor.$$
-
-Computing every term takes $O(n)$ time. But the quotient $\lfloor n/i\rfloor$ stays constant over long ranges. If its value at $i$ is $q$, the last index with that same quotient is
-
-$$r=\left\lfloor\frac nq\right\rfloor.$$
-
-So the entire interval $[i,r]$ contributes $(r-i+1)q$. Jump directly to $r+1$ instead of moving one index at a time:
+Adding this up over all positions gives the answer, in $O(\log n)$ time.
 
 ```python
-def sumFloor(n):
-    ans = 0
-    l = 1
-    while l <= n:
-        q = n // l
-        r = n // q
-        ans += q * (r - l + 1)
-        l = r + 1
-    return ans
+def count_digit_one(n):
+    total = 0
+    p = 1
+    while p <= n:
+        high = n // (p * 10)
+        cur = (n // p) % 10
+        low = n % p
+        total += high * p
+        if cur > 1:
+            total += p
+        elif cur == 1:
+            total += low + 1
+        p *= 10
+    return total
+
+assert count_digit_one(13) == 6
+assert count_digit_one(0) == 0
+assert count_digit_one(100) == 21
+assert count_digit_one(314) == sum(str(i).count("1") for i in range(1, 315))
 ```
 
 ```cpp
-long long sumFloor(long long n) {
-    long long ans = 0;
-    for (long long l = 1, r; l <= n; l = r + 1) {
-        long long q = n / l;
-        r = n / q;
-        ans += q * (r - l + 1);
+long long count_digit_one(long long n) {
+    long long total = 0;
+    for (long long p = 1; p <= n; p *= 10) {
+        long long high = n / (p * 10);
+        long long cur = (n / p) % 10;
+        long long low = n % p;
+        total += high * p;
+        if (cur > 1) total += p;
+        else if (cur == 1) total += low + 1;
     }
-    return ans;
+    return total;
 }
 ```
 
-There are only $O(\sqrt n)$ distinct quotient ranges: for small indices there are few indices, and for large indices the quotient is small. The same idea appears in divisor summatory problems, counting lattice points, and sums of arithmetic functions. Before using the code, verify the exact range and whether products such as $q(r-l+1)$ can overflow.
+## 9.2 The nth digit of an endless string
 
-A more difficult family asks for
+Write all positive numbers one after another: 123456789101112... We want the $n$-th digit. This is the problem _Nth Digit_. We first find which number the digit belongs to, then which digit of that number.
 
-$$\sum_{i=1}^{n} f\left(i,\left\lfloor\frac ni\right\rfloor\right)$$
+The 1-digit numbers 1 to 9 give 9 digits. The 2-digit numbers 10 to 99 give $90 \cdot 2 = 180$ digits, the 3-digit numbers give $900 \cdot 3$, and in general the $L$-digit numbers give $9 \cdot 10^{L-1} \cdot L$ digits. We subtract these block sizes from $n$ until the remaining $n$ falls inside a block. Then, inside the block of length-$L$ numbers, the number we want is $10^{L-1} + (n-1) \,//\, L$, and the digit we want is the $((n-1) \bmod L)$-th digit of it, counting from 0 on the left.
 
-or nested floor sums. The key first step is still to group intervals on which the quotient is unchanged. More advanced solutions combine quotient grouping with memoization, recurrences, or a sieve for arithmetic functions.
-
----
-
-# Chapter 15. Diophantine equations and continued fractions
-
-## 15.1 Integer solutions to a linear equation
-
-A linear Diophantine equation asks for integer solutions of
-
-$$ax+by=c.$$
-
-Let $g=\gcd(a,b)$. An integer solution exists exactly when $g\mid c$. Extended Euclid finds one solution to $ax+by=g$; multiplying both coefficients by $c/g$ gives a solution for $c$.
-
-If $(x_0,y_0)$ is one solution and $g>0$, every integer solution is
-
-$$x=x_0+\frac bg t,\qquad y=y_0-\frac ag t,\qquad t\in\mathbb Z.$$
-
-If the problem requires $x,y\ge0$ or bounds on the variables, convert those conditions into an interval for $t$. Many contest tasks that sound like “buy exactly this amount using two package sizes” are this equation plus bounds.
-
-## 15.2 Continued fractions
-
-A continued fraction represents a number through repeated integer parts and reciprocals:
-
-$$[a_0;a_1,a_2,\ldots]=a_0+\frac1{a_1+\frac1{a_2+\cdots}}.$$
-
-For rational numbers, the Euclidean algorithm produces a finite continued fraction. Its convergents are rational approximations that are unusually good for their denominator size. In contests, continued fractions can appear in rational approximation, fraction comparison, and problems involving the best approximation under a bound. The Euclidean algorithm directly gives the terms; this function records them for $a\ge0$ and $b>0$:
+For $n = 11$: subtract 9 to get 2, so we are in the 2-digit block. The number is $10 + (2-1) // 2 = 10$ and the digit index is $(2-1) \bmod 2 = 1$, the second digit of 10, which is 0.
 
 ```python
-def continuedFraction(a, b):
-    terms = []
-    while b != 0:
-        terms.append(a // b)
-        r = a % b
-        a = b
-        b = r
-    return terms
+def nth_digit(n):
+    length, count, start = 1, 9, 1
+    while n > length * count:
+        n -= length * count
+        length += 1
+        count *= 10
+        start *= 10
+    number = start + (n - 1) // length
+    return int(str(number)[(n - 1) % length])
+
+assert nth_digit(11) == 0
+assert nth_digit(3) == 3
+assert nth_digit(10) == 1
+assert nth_digit(190) == 1
+assert nth_digit(1000) == int("".join(str(i) for i in range(1, 400))[999])
 ```
 
 ```cpp
-vector<long long> continuedFraction(long long a, long long b) {
-    vector<long long> terms;
-    while (b != 0) {
-        terms.push_back(a / b);
-        long long r = a % b;
-        a = b;
-        b = r;
+int nth_digit(long long n) {
+    long long length = 1, count = 9, start = 1;
+    while (n > length * count) {
+        n -= length * count;
+        length++;
+        count *= 10;
+        start *= 10;
     }
-    return terms;
+    long long number = start + (n - 1) / length;
+    string s = to_string(number);
+    return s[(n - 1) % length] - '0';
 }
 ```
 
-For example, `continuedFraction(13, 5)` returns `{2, 1, 1, 2}`, representing $13/5=[2;1,1,2]$.
+The loop runs once per digit length, so it is $O(\log n)$.
 
-You do not need to master the full theory immediately. First understand that the Euclidean algorithm repeatedly separates quotient and remainder; continued fractions record those quotients. Then learn how to generate convergents using
+## 9.3 Check yourself
 
-$$p_i=a_i p_{i-1}+p_{i-2},\qquad q_i=a_i q_{i-1}+q_{i-2}.$$
+1. In the digit-one count, what are high, cur and low for $n = 5207$ and the hundreds position?
+2. How many 1s appear in the numbers from 1 to 99?
+3. How many digits do all the numbers from 1 to 999 have in total?
+4. Which number holds the 15th digit of 123456789101112...?
 
-Handle signs and zero carefully when implementing the Euclidean algorithm for rational inputs.
+# Chapter 10. Sums over divisors
 
----
+## 10.1 Counting pairs instead of divisors
 
-# Chapter 16. Polynomial multiplication: FFT and NTT
+Let $d(k)$ be the number of divisors of $k$. The problem _Sum of Divisor Counts_ asks for $d(1) + d(2) + \cdots + d(n)$. Computing $d(k)$ for every $k$ by factorisation would work for moderate $n$, but there is a much simpler view.
 
-Some number theory problems ask for the coefficients of a product of two polynomials. If
+The sum counts pairs $(k, j)$ where $j$ divides $k$ and $k \le n$. Instead of fixing $k$ and counting its divisors $j$, fix the divisor $j$ and count how many numbers up to $n$ it divides: those are $j, 2j, 3j, \dots$, and there are $\lfloor n/j \rfloor$ of them. So
 
-$$A(x)=\sum_{i=0}^{n-1}a_ix^i,\qquad B(x)=\sum_{j=0}^{m-1}b_jx^j,$$
+$$\sum_{k=1}^{n} d(k) = \sum_{j=1}^{n} \left\lfloor \frac{n}{j} \right\rfloor.$$
 
-then the coefficient of $x^k$ in $A(x)B(x)$ is
+For $n = 6$ the terms are $6, 3, 2, 1, 1, 1$, which add up to 14, and indeed $d(1..6) = 1, 2, 2, 3, 2, 4$ also adds up to 14.
 
-$$c_k=\sum_{i+j=k}a_i b_j.$$
+```python
+def sum_divisor_counts_slow(n):
+    return sum(n // j for j in range(1, n + 1))
 
-The direct method takes $O(nm)$ time. The Fast Fourier Transform (FFT) evaluates the polynomials at carefully chosen complex roots of unity, multiplies the values, then transforms back. This reduces the time to $O(N\log N)$ for a padded size $N$.
+assert sum_divisor_counts_slow(6) == 14
+assert sum_divisor_counts_slow(1) == 1
+```
 
-The Number Theoretic Transform (NTT) uses modular arithmetic instead of floating-point complex numbers. It requires a modulus with suitable roots of unity, commonly a prime of the form $p=c\cdot2^k+1$, and a primitive root. For transform length $N$, we need an element of order $N$ modulo $p$. After pointwise multiplication, the inverse transform uses the inverse root and the modular inverse of $N$.
+```cpp
+long long sum_divisor_counts_slow(long long n) {
+    long long total = 0;
+    for (long long j = 1; j <= n; j++) total += n / j;
+    return total;
+}
+```
 
-**NTT implementation stages:** choose a power-of-two length $N$ at least $n+m-1$; verify $N\mid(p-1)$; derive a root of order $N$; bit-reverse the indices; run iterative butterfly stages; multiply transformed coefficients pointwise; run the inverse stages using the inverse root; then multiply each coefficient by $N^{-1}\pmod p$. This is intentionally a stage-by-stage guide rather than a universal copy-paste implementation, since the modulus, root and supported length must agree.
+This costs $O(n)$, which is fine for $n$ up to about $10^7$ but too slow for $n = 10^{12}$.
 
-A full NTT implementation is lengthy and depends on the chosen modulus and supported transform length, so this course gives the algorithm's essential stages rather than a copy-paste universal function: pad both coefficient arrays to a suitable power of two, transform both arrays, multiply corresponding entries modulo $p$, apply the inverse transform, and scale by $N^{-1}\pmod p$. Before coding, verify that $N\mid(p-1)$ and that the selected root has order exactly $N$.
+## 10.2 Grouping equal quotients
 
-A full NTT listing is modulus-specific, so this section explains the stages rather than pretending one short snippet is safe for every modulus and length. FFT implementations must manage floating-point rounding errors; NTT implementations must verify the modulus supports the required length and must prevent overflow during multiplication. For exact integer convolution, coefficient bounds may require multiple moduli and the Chinese Remainder Theorem to reconstruct the true coefficients.
+Look at the values of $\lfloor n/j \rfloor$ for $n = 100$: for $j = 1, 2, 3, \dots$ they are 100, 50, 33, 25, 20, 16, 14, 12, 11, 10, and for large $j$ the same value repeats many times (all $j$ from 51 to 100 give 1). The number of **different** values of $\lfloor n/j \rfloor$ is only about $2\sqrt{n}$: for $j \le \sqrt{n}$ there are at most $\sqrt{n}$ different values, and for $j > \sqrt{n}$ the quotient is below $\sqrt{n}$, so it takes at most $\sqrt{n}$ different values.
 
-This chapter connects several earlier topics: primitive roots supply transform roots, modular inverses build the inverse transform, and CRT can combine results from multiple moduli. It is advanced algebraic machinery, but each part rests on concepts already introduced.
+So we can jump over whole runs of equal quotients. If the current $j$ has quotient $q = \lfloor n/j \rfloor$, the run of equal quotients ends at $j' = \lfloor n/q \rfloor$. We add $q \cdot (j' - j + 1)$ and continue from $j' + 1$. This **quotient grouping** cuts the work to $O(\sqrt{n})$.
 
----
+```python
+def sum_divisor_counts(n):
+    total = 0
+    j = 1
+    while j <= n:
+        q = n // j
+        last = n // q
+        total += q * (last - j + 1)
+        j = last + 1
+    return total
 
-# Chapter 17. GM-level problem-solving workflow
+assert sum_divisor_counts(6) == 14
+assert sum_divisor_counts(100) == sum_divisor_counts_slow(100)
+assert sum_divisor_counts(10**5) == sum_divisor_counts_slow(10**5)
+assert sum_divisor_counts(1) == 1
+```
 
-Grandmaster-level work is not a single algorithm. It is the ability to identify which mathematical structure a problem is hiding, prove the key observation, and implement it safely under constraints. For number theory, practice the following progression.
+```cpp
+long long sum_divisor_counts(long long n) {
+    long long total = 0;
+    for (long long j = 1; j <= n;) {
+        long long q = n / j;
+        long long last = n / q;
+        total += q * (last - j + 1);
+        j = last + 1;
+    }
+    return total;
+}
+```
 
-First, learn to recognize the object being counted: prime factors, divisors, coprime pairs, residues, orders of powers, or solutions to an equation. Next, derive a small formula by hand and test it on small values. Then estimate the limits: $O(n)$ may be too slow for a huge endpoint, while $O(\sqrt n)$, $O(\log n)$, or expected sublinear factorization may be suitable. Finally, prove the edge cases and check integer overflow before coding.
+Quotient grouping is a handy trick whenever a formula contains $\lfloor n / j \rfloor$, for example in sums of divisors and in counting coprime pairs.
 
-A useful advanced checklist is:
+## 10.3 Check yourself
 
-- **Large integer?** Consider deterministic Miller–Rabin, Pollard rho, and safe multiplication.
-- **A sum over divisors?** Look for multiplicativity, Möbius inversion, or a linear sieve.
-- **A huge exponent?** Consider binary exponentiation, multiplicative order, or discrete logarithms.
-- **Several modular conditions?** Use CRT, including compatibility checks for non-coprime moduli.
-- **A binomial coefficient with a large index?** Check Lucas's theorem or prime-power factorial methods.
-- **A sum containing $\lfloor n/i\rfloor$?** Look for quotient grouping.
-- **Polynomial coefficients?** Consider FFT/NTT and whether exact reconstruction is needed.
+1. Why does $\sum d(k)$ equal $\sum \lfloor n/j \rfloor$?
+2. For $n = 10$, list the runs of equal $\lfloor 10/j \rfloor$ and the jumps the grouping loop makes.
+3. Why are there only about $2\sqrt{n}$ different quotient values?
+4. How would you count the pairs $(a, b)$ with $a b \le n$?
 
-## 17.1 Suggested ladder of practice
+# Chapter 11. Counting with geometry and the gcd
 
-1. **Foundation:** prime test, GCD/LCM, sieve, factorization, divisor count, and trailing zeros.
-2. **Intermediate:** binary exponentiation, extended Euclid, modular inverse, Euler's totient, and CRT.
-3. **Advanced:** linear sieve, Möbius function, multiplicative functions, linear congruences, primitive roots, and factorials modulo a prime.
-4. **Expert:** Miller–Rabin, Pollard rho, generalized CRT, Lucas theorem, quotient grouping, and Diophantine equations with constraints.
-5. **Grandmaster-oriented:** discrete logarithm, prime-power binomial methods, continued fractions, summatory arithmetic functions, FFT/NTT, and problems combining several of these ideas.
+## 11.1 Points on one line
 
-For each level, solve problems that require applying the technique in a new setting, not only implementing the standard template. Keep a notebook of the main idea, conditions under which it works, complexity, and the bug you encountered. That habit is more valuable than memorizing code.
+Given points on a plane, find the largest number of points that lie on one straight line. This is the problem _Max Points on a Line_. A direct approach checks every triple of points, costing $O(n^3)$. A better idea is to fix one point $P$ and look at the **direction** from $P$ to every other point. All points on one line through $P$ have the same direction (the same slope), so we count how many other points share each direction and take the biggest group, plus $P$ itself. Doing this for every choice of $P$ costs $O(n^2)$.
 
-## 17.2 A note on the meaning of GM level
+The trap is how to compare slopes. The slope $dy / dx$ as a decimal number can be wrong because of rounding. Instead we keep it as a pair of whole numbers $(dy, dx)$ and **reduce it with the gcd** so that, for example, $(2, 4)$ and $(1, 2)$ become the same pair. We also fix the sign (so that $(-1, 2)$ and $(1, -2)$ are equal) and handle vertical lines, where $dx = 0$, by the pair $(1, 0)$.
 
-No document alone guarantees a Codeforces Grandmaster rating; that level requires substantial contest practice across many topics, not just number theory. This course now extends to GM-oriented number theory techniques, but it should be used alongside difficult problems, editorials, and timed contests. Some topics—especially Pollard rho, prime-power factorials, summatory functions, and NTT—deserve separate deep study after this overview.
+```python
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
 
----
+def max_points(points):
+    n = len(points)
+    best = min(n, 2)
+    for i in range(n):
+        counts = {}
+        for j in range(i + 1, n):
+            dx = points[j][0] - points[i][0]
+            dy = points[j][1] - points[i][1]
+            g = gcd(abs(dx), abs(dy))
+            dx, dy = dx // g, dy // g
+            if dx < 0 or (dx == 0 and dy < 0):
+                dx, dy = -dx, -dy
+            counts[(dx, dy)] = counts.get((dx, dy), 0) + 1
+            best = max(best, counts[(dx, dy)] + 1)
+    return best
 
-# Extended reference map
+assert max_points([[1, 1], [2, 2], [3, 3]]) == 3
+assert max_points([[1, 1], [3, 2], [5, 3], [4, 1], [2, 3], [1, 4]]) == 4
+assert max_points([[0, 0]]) == 1
+assert max_points([[0, 0], [0, 5], [0, 9]]) == 3
+```
 
-The [CP-Algorithms algebra index](https://github.com/cp-algorithms/cp-algorithms/tree/main/src/algebra) contains further articles that can be studied alongside the chapters above: [primality tests](https://cp-algorithms.com/algebra/primality_tests.html), [linear sieve](https://cp-algorithms.com/algebra/prime-sieve-linear.html), [Möbius function and related divisor techniques](https://cp-algorithms.com/algebra/divisors.html), [discrete logarithm](https://cp-algorithms.com/algebra/discrete-log.html), [primitive roots](https://cp-algorithms.com/algebra/primitive-root.html), [continued fractions](https://cp-algorithms.com/algebra/continued-fractions.html), and [FFT](https://cp-algorithms.com/algebra/fft.html). Use these for deeper proofs and implementation variants after learning the core idea here.
+```cpp
+int max_points(const vector<vector<int>>& points) {
+    int n = points.size();
+    int best = min(n, 2);
+    for (int i = 0; i < n; i++) {
+        map<pair<int, int>, int> counts;
+        for (int j = i + 1; j < n; j++) {
+            int dx = points[j][0] - points[i][0];
+            int dy = points[j][1] - points[i][1];
+            int g = __gcd(abs(dx), abs(dy));
+            dx /= g;
+            dy /= g;
+            if (dx < 0 || (dx == 0 && dy < 0)) {
+                dx = -dx;
+                dy = -dy;
+            }
+            best = max(best, ++counts[{dx, dy}] + 1);
+        }
+    }
+    return best;
+}
+```
+
+The points in the problem are all different, so the gcd is never 0 (if both $dx$ and $dy$ were 0, the points would coincide). The cost is $O(n^2)$ pairs, each doing one gcd and one dictionary update.
+
+## 11.2 Check yourself
+
+1. Why is comparing slopes as decimal numbers risky?
+2. After reducing by the gcd, why do we also fix the sign of the pair?
+3. Why do we add 1 to the biggest group count?
+4. What is the cost of the method for 1000 points?
+
+# Chapter 12. Putting the tools together
+
+## 12.1 Choosing the right tool
+
+When a number problem appears, ask what it is really about. If you must test or list primes below a limit that you can store, use the sieve. If you must factor or analyse a single number up to about $10^{12}$, use trial division up to $\sqrt{n}$. If the number is enormous, up to $10^{18}$, use Miller–Rabin. If an answer is asked "modulo $10^9 + 7$" and involves division, multiply by a modular inverse. If an exponent is huge, use fast exponentiation, and if an index is huge, think of fast doubling. If remainders from different moduli must be combined, merge them with CRT. And if a sum contains $\lfloor n/j \rfloor$, group equal quotients.
+
+## 12.2 Common mistakes
+
+The usual slips are all small. Forgetting to take the remainder after each multiplication makes numbers overflow in C++. Subtracting in C++ without adding the modulus gives negative remainders. Using the inverse trick with a modulus that is not prime breaks it; use extended Euclid instead. Looping up to $n$ where $\sqrt{n}$ is enough turns a fast solution into a timeout. Writing `d * d <= n` with `int` overflows for large $n$, so use `long long`. And when a problem says "return $-1$ if impossible", remember to check the gcd condition before dividing.
+
+## 12.3 Check yourself
+
+1. Which tool counts the primes below $10^7$, and which tests a single 18-digit number?
+2. When can you use Fermat's trick for an inverse, and what do you use otherwise?
+3. What do you do when an answer needs $\binom{n}{k}$ modulo $10^9 + 7$ for many queries?
+4. Name two places where $\sqrt{n}$ (and not $n$) is the right loop limit.
+
+# Sources and credit
+
+Several chapters adapt ideas from articles on [cp-algorithms.com](https://cp-algorithms.com), including the sieve of Eratosthenes, the Euclidean algorithm, binary exponentiation, the modular inverse, Euler's totient function, the Chinese remainder theorem, primality tests, binomial coefficients, Fibonacci numbers and factorials modulo a prime. The text here is rewritten for beginners. Like the original, it is shared under the Creative Commons Attribution-ShareAlike 4.0 licence.

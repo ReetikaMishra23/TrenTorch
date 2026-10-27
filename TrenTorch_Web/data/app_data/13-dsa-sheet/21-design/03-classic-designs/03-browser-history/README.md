@@ -3,6 +3,7 @@ name: sheet-browser-history
 title: 'Browser History'
 tags: [dsa-sheet, design, classic-designs]
 difficulty: Intermediate
+theory: a-list-and-a-pointer
 ---
 
 ## Statement

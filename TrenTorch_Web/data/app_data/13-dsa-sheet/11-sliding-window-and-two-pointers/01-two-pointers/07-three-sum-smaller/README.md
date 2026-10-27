@@ -3,6 +3,7 @@ name: sheet-three-sum-smaller
 title: 'Count Triplets With a Smaller Sum'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Intermediate
+theory: counting-many-answers-at-once
 ---
 
 ## Statement

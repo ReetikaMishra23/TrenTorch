@@ -3,6 +3,7 @@ name: sheet-prefix-function
 title: 'The Prefix Function'
 tags: [dsa-sheet, advanced-strings, pattern-matching]
 difficulty: Intermediate
+theory: computing-it-in-one-pass
 ---
 
 ## Statement

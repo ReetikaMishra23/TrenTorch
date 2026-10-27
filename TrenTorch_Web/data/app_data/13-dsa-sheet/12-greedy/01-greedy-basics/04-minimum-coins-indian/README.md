@@ -3,6 +3,7 @@ name: sheet-minimum-coins-indian
 title: 'Fewest Coins and Notes'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Beginner
+theory: fewest-coins-and-notes
 ---
 
 ## Statement

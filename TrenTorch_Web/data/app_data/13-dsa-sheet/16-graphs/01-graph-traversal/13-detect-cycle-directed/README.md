@@ -3,7 +3,7 @@ name: sheet-detect-cycle-directed
 title: 'Cycle in a Directed Graph'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Advanced
-theory: cycles-in-a-directed-graph-three-colours
+theory: cycles-in-a-directed-graph
 ---
 
 ## Statement

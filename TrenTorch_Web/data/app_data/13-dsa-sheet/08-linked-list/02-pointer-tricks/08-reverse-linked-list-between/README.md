@@ -3,6 +3,7 @@ name: sheet-reverse-linked-list-between
 title: 'Reverse Part of a Linked List'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Intermediate
+theory: reversing-only-a-piece
 ---
 
 ## Statement

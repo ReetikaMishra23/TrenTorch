@@ -3,6 +3,7 @@ name: sheet-check-sorted-rotated
 title: 'Sorted, Maybe Rotated'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: counting-the-drops
 ---
 
 ## Statement

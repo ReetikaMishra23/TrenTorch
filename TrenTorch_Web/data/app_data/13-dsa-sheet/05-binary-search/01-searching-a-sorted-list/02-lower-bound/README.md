@@ -3,6 +3,7 @@ name: sheet-lower-bound
 title: 'Lower Bound'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Beginner
+theory: lower-bound-first-value-not-smaller
 ---
 
 ## Statement

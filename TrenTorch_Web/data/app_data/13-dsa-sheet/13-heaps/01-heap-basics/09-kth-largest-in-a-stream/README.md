@@ -3,6 +3,7 @@ name: sheet-kth-largest-in-a-stream
 title: 'Kth Largest in a Stream'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: the-k-th-value-so-far
 ---
 
 ## Statement

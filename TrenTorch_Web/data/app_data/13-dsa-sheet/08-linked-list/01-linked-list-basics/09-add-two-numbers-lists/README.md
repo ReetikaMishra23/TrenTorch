@@ -3,6 +3,7 @@ name: sheet-add-two-numbers-lists
 title: 'Add Two Numbers'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Intermediate
+theory: adding-numbers-digit-by-digit
 ---
 
 ## Statement

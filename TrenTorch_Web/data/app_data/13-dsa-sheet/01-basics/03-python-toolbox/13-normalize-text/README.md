@@ -3,6 +3,7 @@ name: sheet-normalize-text
 title: 'Normalize Text'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: cleaning-up-text
 ---
 
 ## Statement

@@ -3,7 +3,7 @@ name: sheet-binary-strings-no-adjacent-ones
 title: 'Binary Strings Without Two Ones in a Row'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Beginner
-theory: pruning-stop-exploring-impossible-branches
+theory: a-rule-on-the-next-choice
 ---
 
 ## Statement

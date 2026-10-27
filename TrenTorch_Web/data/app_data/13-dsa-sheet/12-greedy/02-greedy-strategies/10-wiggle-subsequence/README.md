@@ -3,6 +3,7 @@ name: sheet-wiggle-subsequence
 title: 'Longest Wiggle Subsequence'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Advanced
+theory: longest-wiggle
 ---
 
 ## Statement

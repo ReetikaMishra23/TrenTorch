@@ -3,6 +3,7 @@ name: sheet-binary-tree-maximum-path-sum
 title: 'Maximum Path Sum'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Mastery
+theory: maximum-path-sum
 ---
 
 ## Statement

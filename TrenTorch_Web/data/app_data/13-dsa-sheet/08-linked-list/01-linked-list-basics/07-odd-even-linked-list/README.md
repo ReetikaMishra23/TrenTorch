@@ -3,6 +3,7 @@ name: sheet-odd-even-linked-list
 title: 'Odd Even Linked List'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Intermediate
+theory: two-chains-odd-and-even-places
 ---
 
 ## Statement

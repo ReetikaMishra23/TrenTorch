@@ -3,6 +3,7 @@ name: sheet-merge-two-sorted-lists
 title: 'Merge Two Sorted Lists'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Beginner
+theory: merging-two-sorted-lists
 ---
 
 ## Statement

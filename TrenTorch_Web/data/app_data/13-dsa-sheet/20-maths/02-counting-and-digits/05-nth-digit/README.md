@@ -3,6 +3,7 @@ name: sheet-nth-digit
 title: 'The Nth Digit'
 tags: [dsa-sheet, maths, counting-and-digits]
 difficulty: Advanced
+theory: the-nth-digit-of-an-endless-string
 ---
 
 ## Statement

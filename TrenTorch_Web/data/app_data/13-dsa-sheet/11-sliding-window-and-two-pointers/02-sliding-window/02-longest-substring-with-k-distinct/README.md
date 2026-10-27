@@ -3,6 +3,7 @@ name: sheet-longest-substring-with-k-distinct
 title: 'Longest Substring With K Distinct Characters'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: at-most-k-different-letters
 ---
 
 ## Statement

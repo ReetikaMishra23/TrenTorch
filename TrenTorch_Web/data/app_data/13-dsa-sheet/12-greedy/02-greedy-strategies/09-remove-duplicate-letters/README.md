@@ -3,6 +3,7 @@ name: sheet-remove-duplicate-letters
 title: 'Smallest String With Each Letter Once'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Mastery
+theory: smallest-string-with-each-letter-once
 ---
 
 ## Statement

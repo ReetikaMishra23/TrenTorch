@@ -3,7 +3,7 @@ name: sheet-modular-inverse
 title: 'Modular Inverse'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Advanced
-theory: what-is-a-modular-inverse
+theory: dividing-in-a-world-of-remainders
 ---
 
 ## Statement

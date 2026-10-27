@@ -3,6 +3,7 @@ name: sheet-jump-game-ii
 title: 'Fewest Jumps to the End'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Intermediate
+theory: fewest-jumps
 ---
 
 ## Statement

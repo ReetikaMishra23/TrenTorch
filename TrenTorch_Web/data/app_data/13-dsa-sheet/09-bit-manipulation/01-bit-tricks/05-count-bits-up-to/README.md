@@ -3,6 +3,7 @@ name: sheet-count-bits-up-to
 title: 'Count Bits for Every Number'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Intermediate
+theory: counting-bits-for-every-number
 ---
 
 ## Statement

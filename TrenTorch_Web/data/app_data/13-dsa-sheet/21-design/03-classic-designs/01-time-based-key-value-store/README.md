@@ -3,6 +3,7 @@ name: sheet-time-based-key-value-store
 title: 'Time-Based Key-Value Store'
 tags: [dsa-sheet, design, classic-designs]
 difficulty: Intermediate
+theory: a-store-with-timestamps
 ---
 
 ## Statement

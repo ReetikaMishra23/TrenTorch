@@ -3,6 +3,7 @@ name: sheet-contains-nearby-duplicate
 title: 'Nearby Duplicate'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Intermediate
+theory: remembering-the-last-place-we-saw-it
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-rotated-minimum
 title: 'Minimum of a Rotated List'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Intermediate
+theory: finding-the-smallest-value
 ---
 
 ## Statement

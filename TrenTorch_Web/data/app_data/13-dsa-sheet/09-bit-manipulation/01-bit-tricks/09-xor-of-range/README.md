@@ -3,6 +3,7 @@ name: sheet-xor-of-range
 title: 'XOR of a Range'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Advanced
+theory: xor-of-a-whole-range
 ---
 
 ## Statement

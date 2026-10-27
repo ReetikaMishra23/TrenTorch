@@ -3,6 +3,7 @@ name: sheet-evaluate-rpn
 title: 'Evaluate Reverse Polish Notation'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: operators-after-their-numbers
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-k-smallest
 title: 'K Smallest Numbers'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: heaps-and-merging
 ---
 
 ## Statement

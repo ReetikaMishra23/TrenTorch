@@ -3,6 +3,7 @@ name: sheet-kth-smallest-in-a-bst
 title: 'Kth Smallest in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: kth-smallest-by-early-stop
 ---
 
 ## Statement

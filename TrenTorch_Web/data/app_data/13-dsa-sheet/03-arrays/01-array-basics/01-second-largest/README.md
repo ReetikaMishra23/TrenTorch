@@ -3,6 +3,7 @@ name: sheet-second-largest
 title: 'Second Largest Value'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: keeping-two-notes-at-once
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-max-subarray-sum
 title: 'Maximum Subarray Sum'
 tags: [dsa-sheet, basics, make-it-fast]
 difficulty: Intermediate
+theory: best-sum-ending-here
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-backspace-string-compare
 title: 'Backspace String Compare'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Beginner
+theory: typing-with-a-backspace-key
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-repeated-substring-pattern
 title: 'Repeated Substring Pattern'
 tags: [dsa-sheet, advanced-strings, pattern-matching]
 difficulty: Intermediate
+theory: repeated-substring-pattern
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-longest-happy-prefix
 title: 'Longest Happy Prefix'
 tags: [dsa-sheet, advanced-strings, pattern-matching]
 difficulty: Intermediate
+theory: the-longest-happy-prefix
 ---
 
 ## Statement

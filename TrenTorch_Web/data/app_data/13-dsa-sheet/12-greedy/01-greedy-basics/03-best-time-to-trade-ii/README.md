@@ -3,6 +3,7 @@ name: sheet-best-time-to-trade-ii
 title: 'Buy and Sell Stock, Many Trades'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Beginner
+theory: take-every-rise
 ---
 
 ## Statement

@@ -3,7 +3,7 @@ name: sheet-restore-ip-addresses
 title: 'Restore IP Addresses'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Intermediate
-theory: pruning-stop-exploring-impossible-branches
+theory: cutting-a-string-into-valid-pieces
 ---
 
 ## Statement

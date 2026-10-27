@@ -3,6 +3,7 @@ name: sheet-koko-eating-bananas
 title: 'Eating Speed'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Intermediate
+theory: the-slowest-speed-that-works
 ---
 
 ## Statement

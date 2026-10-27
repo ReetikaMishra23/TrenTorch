@@ -3,6 +3,7 @@ name: sheet-shortest-palindrome
 title: 'Shortest Palindrome'
 tags: [dsa-sheet, advanced-strings, pattern-matching]
 difficulty: Advanced
+theory: the-shortest-palindrome
 ---
 
 ## Statement

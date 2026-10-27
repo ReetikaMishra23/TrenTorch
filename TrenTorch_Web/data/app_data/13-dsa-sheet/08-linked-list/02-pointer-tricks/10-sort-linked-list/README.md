@@ -3,6 +3,7 @@ name: sheet-sort-linked-list
 title: 'Sort a Linked List'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Advanced
+theory: merge-sort-on-a-list
 ---
 
 ## Statement

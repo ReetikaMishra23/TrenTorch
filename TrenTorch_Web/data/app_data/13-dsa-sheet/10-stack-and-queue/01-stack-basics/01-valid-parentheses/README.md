@@ -3,6 +3,7 @@ name: sheet-valid-parentheses
 title: 'Valid Brackets'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Beginner
+theory: brackets-that-must-match
 ---
 
 ## Statement

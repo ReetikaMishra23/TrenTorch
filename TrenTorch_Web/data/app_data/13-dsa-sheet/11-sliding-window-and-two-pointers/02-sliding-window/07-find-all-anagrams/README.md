@@ -3,6 +3,7 @@ name: sheet-find-all-anagrams
 title: 'Find All Anagrams in a String'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: windows-of-letter-counts
 ---
 
 ## Statement

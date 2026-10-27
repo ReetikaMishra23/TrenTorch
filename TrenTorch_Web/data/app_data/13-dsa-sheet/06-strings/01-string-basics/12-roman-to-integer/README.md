@@ -3,6 +3,7 @@ name: sheet-roman-to-integer
 title: 'Roman Numeral to Integer'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: roman-numerals-to-numbers
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-short-encoding-of-words
 title: 'Short Encoding of Words'
 tags: [dsa-sheet, tries, trie-applications]
 difficulty: Advanced
+theory: a-word-hiding-at-the-end-of-another
 ---
 
 ## Statement

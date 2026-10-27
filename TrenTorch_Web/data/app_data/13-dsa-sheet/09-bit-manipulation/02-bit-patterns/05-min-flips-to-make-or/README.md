@@ -3,6 +3,7 @@ name: sheet-min-flips-to-make-or
 title: 'Minimum Flips to Make a OR b Equal c'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Intermediate
+theory: flips-needed-so-a-or-b-equals-c
 ---
 
 ## Statement

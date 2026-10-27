@@ -3,6 +3,7 @@ name: sheet-lowest-common-ancestor-of-a-bst
 title: 'Lowest Common Ancestor in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: lowest-common-ancestor-in-a-bst
 ---
 
 ## Statement

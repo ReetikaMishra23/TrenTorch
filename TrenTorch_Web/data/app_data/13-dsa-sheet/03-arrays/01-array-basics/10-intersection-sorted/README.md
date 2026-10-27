@@ -3,6 +3,7 @@ name: sheet-intersection-sorted
 title: 'Common Values of Two Sorted Lists'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: finding-what-two-lists-share
 ---
 
 ## Statement

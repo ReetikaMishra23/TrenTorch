@@ -3,6 +3,7 @@ name: sheet-bit-flips-to-convert
 title: 'Bit Flips to Convert'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Beginner
+theory: how-many-bits-differ
 ---
 
 ## Statement

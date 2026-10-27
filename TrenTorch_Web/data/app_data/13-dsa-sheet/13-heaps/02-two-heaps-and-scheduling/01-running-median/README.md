@@ -3,6 +3,7 @@ name: sheet-running-median
 title: 'Median After Each Number'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Advanced
+theory: adding-a-number
 ---
 
 ## Statement

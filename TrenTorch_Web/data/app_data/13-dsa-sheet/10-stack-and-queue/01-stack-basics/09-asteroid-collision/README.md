@@ -3,6 +3,7 @@ name: sheet-asteroid-collision
 title: 'Asteroid Collision'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: collisions-along-a-line
 ---
 
 ## Statement

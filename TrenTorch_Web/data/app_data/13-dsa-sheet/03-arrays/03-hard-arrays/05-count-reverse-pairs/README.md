@@ -3,6 +3,7 @@ name: sheet-count-reverse-pairs
 title: 'Count Reverse Pairs'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: a-different-pair-condition
 ---
 
 ## Statement

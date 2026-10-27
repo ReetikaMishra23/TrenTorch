@@ -3,6 +3,7 @@ name: sheet-longest-subarray-sum-k
 title: 'Longest Subarray With Sum K'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Intermediate
+theory: a-window-that-grows-and-shrinks
 ---
 
 ## Statement

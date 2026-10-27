@@ -3,6 +3,7 @@ name: sheet-nth-root
 title: 'Integer Root'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Intermediate
+theory: integer-roots
 ---
 
 ## Statement

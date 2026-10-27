@@ -3,6 +3,7 @@ name: sheet-missing-number
 title: 'Find the Missing Number'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: using-a-formula-for-the-total
 ---
 
 ## Statement

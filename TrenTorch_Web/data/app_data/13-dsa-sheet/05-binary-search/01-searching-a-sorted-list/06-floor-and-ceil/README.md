@@ -3,6 +3,7 @@ name: sheet-floor-and-ceil
 title: 'Floor and Ceil'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Intermediate
+theory: floor-and-ceil
 ---
 
 ## Statement

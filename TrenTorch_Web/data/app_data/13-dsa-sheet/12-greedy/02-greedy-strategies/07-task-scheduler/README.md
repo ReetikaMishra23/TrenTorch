@@ -3,6 +3,7 @@ name: sheet-task-scheduler
 title: 'Task Scheduler'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Advanced
+theory: task-scheduler
 ---
 
 ## Statement

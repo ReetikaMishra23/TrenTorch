@@ -3,6 +3,7 @@ name: sheet-count-pairs
 title: 'Count the Pairs'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Beginner
+theory: pairs-and-the-staircase
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-jump-game
 title: 'Jump Game'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Intermediate
+theory: jump-game
 ---
 
 ## Statement

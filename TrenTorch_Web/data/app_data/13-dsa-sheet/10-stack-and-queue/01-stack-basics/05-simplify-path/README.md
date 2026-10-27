@@ -3,6 +3,7 @@ name: sheet-simplify-path
 title: 'Simplify a File Path'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: walking-through-folders
 ---
 
 ## Statement

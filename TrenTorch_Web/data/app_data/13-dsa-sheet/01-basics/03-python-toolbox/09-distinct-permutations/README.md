@@ -3,6 +3,7 @@ name: sheet-distinct-permutations
 title: 'Distinct Permutations'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Intermediate
+theory: combinations-permutations-and-meeting-in-the-middle
 ---
 
 ## Statement

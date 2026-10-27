@@ -3,6 +3,7 @@ name: sheet-max-consecutive-ones
 title: 'Longest Run of Ones'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: counting-a-streak
 ---
 
 ## Statement

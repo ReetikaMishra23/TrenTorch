@@ -3,6 +3,7 @@ name: sheet-three-sum
 title: 'Three Sum'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: fix-one-squeeze-the-rest
 ---
 
 ## Statement

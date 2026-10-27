@@ -3,6 +3,7 @@ name: sheet-middle-of-linked-list
 title: 'Middle of a Linked List'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Beginner
+theory: two-runners
 ---
 
 ## Statement

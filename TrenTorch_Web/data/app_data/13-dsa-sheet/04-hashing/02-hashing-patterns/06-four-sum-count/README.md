@@ -3,6 +3,7 @@ name: sheet-four-sum-count
 title: 'Four Lists Sum to Zero'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Advanced
+theory: four-lists-become-two-pairs
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-remove-outer-parentheses
 title: 'Remove Outer Parentheses'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: using-the-counter-to-decide-what-to-keep
 ---
 
 ## Statement

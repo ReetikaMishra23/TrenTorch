@@ -3,6 +3,7 @@ name: sheet-non-overlapping-intervals
 title: 'Remove Overlapping Intervals'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Intermediate
+theory: removing-the-fewest-intervals
 ---
 
 ## Statement

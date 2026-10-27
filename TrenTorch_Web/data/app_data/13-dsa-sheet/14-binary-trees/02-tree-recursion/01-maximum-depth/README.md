@@ -3,6 +3,7 @@ name: sheet-maximum-depth
 title: 'Maximum Depth'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Beginner
+theory: maximum-depth
 ---
 
 ## Statement

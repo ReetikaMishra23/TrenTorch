@@ -3,7 +3,7 @@ name: sheet-sudoku-solver
 title: 'Sudoku Solver'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Mastery
-theory: sudoku-as-a-constraint-problem
+theory: sudoku
 ---
 
 ## Statement

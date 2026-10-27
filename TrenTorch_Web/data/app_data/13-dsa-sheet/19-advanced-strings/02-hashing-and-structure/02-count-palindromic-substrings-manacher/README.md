@@ -3,6 +3,7 @@ name: sheet-count-palindromic-substrings-manacher
 title: 'Count Palindromic Substrings, Fast'
 tags: [dsa-sheet, advanced-strings, hashing-and-structure]
 difficulty: Mastery
+theory: counting-palindromic-substrings-fast
 ---
 
 ## Statement

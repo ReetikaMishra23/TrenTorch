@@ -3,6 +3,7 @@ name: sheet-power-of-two
 title: 'Is It a Power of Two?'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Beginner
+theory: is-it-a-power-of-two
 ---
 
 ## Statement

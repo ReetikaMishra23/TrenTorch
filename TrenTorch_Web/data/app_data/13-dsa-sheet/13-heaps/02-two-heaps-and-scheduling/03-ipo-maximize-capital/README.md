@@ -3,6 +3,7 @@ name: sheet-ipo-maximize-capital
 title: 'IPO: Maximize Capital'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Advanced
+theory: unlock-then-pick-the-best
 ---
 
 ## Statement

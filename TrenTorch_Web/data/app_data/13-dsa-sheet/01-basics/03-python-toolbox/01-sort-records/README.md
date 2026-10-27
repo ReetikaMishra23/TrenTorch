@@ -3,6 +3,7 @@ name: sheet-sort-records
 title: 'Leaderboard Order'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: sorting-with-a-key
 ---
 
 ## Statement

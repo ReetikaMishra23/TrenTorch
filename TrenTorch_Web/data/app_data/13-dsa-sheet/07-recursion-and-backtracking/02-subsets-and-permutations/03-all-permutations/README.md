@@ -3,7 +3,7 @@ name: sheet-all-permutations
 title: 'All Permutations'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Intermediate
-theory: backtracking-with-a-used-array
+theory: all-orderings
 ---
 
 ## Statement

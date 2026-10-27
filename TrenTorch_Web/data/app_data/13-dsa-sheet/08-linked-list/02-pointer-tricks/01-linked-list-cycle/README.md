@@ -3,6 +3,7 @@ name: sheet-linked-list-cycle
 title: 'Does the List Have a Cycle?'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Intermediate
+theory: the-tortoise-and-the-hare
 ---
 
 ## Statement

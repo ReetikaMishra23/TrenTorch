@@ -3,6 +3,7 @@ name: sheet-time-to-burn-a-tree
 title: 'Time to Burn a Tree'
 tags: [dsa-sheet, binary-trees, build-and-transform]
 difficulty: Advanced
+theory: time-to-burn-a-tree
 ---
 
 ## Statement

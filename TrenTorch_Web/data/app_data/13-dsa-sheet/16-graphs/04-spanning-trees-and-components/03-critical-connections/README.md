@@ -3,7 +3,7 @@ name: sheet-critical-connections
 title: 'Critical Connections (Bridges)'
 tags: [dsa-sheet, graphs, spanning-trees-and-components]
 difficulty: Mastery
-theory: critical-connections-and-articulation-points
+theory: critical-connections
 ---
 
 ## Statement

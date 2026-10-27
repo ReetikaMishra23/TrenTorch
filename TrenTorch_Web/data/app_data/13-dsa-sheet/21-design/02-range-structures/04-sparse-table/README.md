@@ -3,6 +3,7 @@ name: sheet-sparse-table
 title: 'Sparse Table (Static Range Minimum)'
 tags: [dsa-sheet, design, range-structures]
 difficulty: Advanced
+theory: two-overlapping-blocks
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-reverse-words
 title: 'Reverse the Words'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: words-and-the-reverse-words-problem
 ---
 
 ## Statement

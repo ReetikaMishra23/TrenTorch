@@ -3,6 +3,7 @@ name: sheet-trim-a-bst
 title: 'Trim a BST'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Intermediate
+theory: trimming-to-a-range
 ---
 
 ## Statement

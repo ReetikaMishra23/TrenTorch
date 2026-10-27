@@ -3,6 +3,7 @@ name: sheet-fruit-into-baskets
 title: 'Fruit Into Baskets'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: at-most-k-different-letters
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-balanced-binary-tree
 title: 'Balanced Binary Tree'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Intermediate
+theory: balanced-tree-check
 ---
 
 ## Statement

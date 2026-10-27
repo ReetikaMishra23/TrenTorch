@@ -3,6 +3,7 @@ name: sheet-partition-linked-list
 title: 'Partition a Linked List'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Intermediate
+theory: two-dummy-lists-partition
 ---
 
 ## Statement

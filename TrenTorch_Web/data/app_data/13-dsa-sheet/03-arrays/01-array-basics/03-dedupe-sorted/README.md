@@ -3,6 +3,7 @@ name: sheet-dedupe-sorted
 title: 'Remove Duplicates From Sorted'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: using-the-sorted-order
 ---
 
 ## Statement

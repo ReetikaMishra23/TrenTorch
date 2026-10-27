@@ -3,6 +3,7 @@ name: sheet-search-rows-and-columns
 title: 'Search a Row- and Column-Sorted Matrix'
 tags: [dsa-sheet, binary-search, searching-grids]
 difficulty: Advanced
+theory: cutting-a-long-thin-grid
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-integer-to-roman
 title: 'Integer to Roman Numeral'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Intermediate
+theory: numbers-to-roman-numerals
 ---
 
 ## Statement

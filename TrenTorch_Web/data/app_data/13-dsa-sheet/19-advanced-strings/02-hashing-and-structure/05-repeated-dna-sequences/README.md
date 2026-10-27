@@ -3,6 +3,7 @@ name: sheet-repeated-dna-sequences
 title: 'Repeated DNA Sequences'
 tags: [dsa-sheet, advanced-strings, hashing-and-structure]
 difficulty: Intermediate
+theory: fixed-size-windows-repeated-dna-sequences
 ---
 
 ## Statement

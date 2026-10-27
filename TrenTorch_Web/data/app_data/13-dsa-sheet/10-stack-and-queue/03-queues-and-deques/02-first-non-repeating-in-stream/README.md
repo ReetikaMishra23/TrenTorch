@@ -3,6 +3,7 @@ name: sheet-first-non-repeating-in-stream
 title: 'First Non-Repeating Character in a Stream'
 tags: [dsa-sheet, stack-and-queue, queues-and-deques]
 difficulty: Intermediate
+theory: candidates-in-a-stream
 ---
 
 ## Statement

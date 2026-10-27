@@ -3,6 +3,7 @@ name: sheet-candy
 title: 'Distribute Candy'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Advanced
+theory: candy-two-passes
 ---
 
 ## Statement

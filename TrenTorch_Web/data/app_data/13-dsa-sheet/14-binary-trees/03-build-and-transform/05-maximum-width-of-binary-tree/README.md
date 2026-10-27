@@ -3,6 +3,7 @@ name: sheet-maximum-width-of-binary-tree
 title: 'Maximum Width of a Binary Tree'
 tags: [dsa-sheet, binary-trees, build-and-transform]
 difficulty: Advanced
+theory: maximum-width-by-numbering-positions
 ---
 
 ## Statement

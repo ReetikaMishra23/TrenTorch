@@ -3,6 +3,7 @@ name: sheet-largest-odd-number
 title: 'Largest Odd Number in a String'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: scanning-from-the-end
 ---
 
 ## Statement

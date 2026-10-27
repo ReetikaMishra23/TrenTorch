@@ -3,6 +3,7 @@ name: sheet-count-in-range
 title: 'Count in Range'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Intermediate
+theory: binary-search-with-bisect
 ---
 
 ## Statement

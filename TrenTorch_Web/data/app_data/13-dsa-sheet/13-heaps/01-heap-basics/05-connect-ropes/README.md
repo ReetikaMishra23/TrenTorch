@@ -3,6 +3,7 @@ name: sheet-connect-ropes
 title: 'Connect Ropes With Minimum Cost'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: join-the-cheapest-pair
 ---
 
 ## Statement

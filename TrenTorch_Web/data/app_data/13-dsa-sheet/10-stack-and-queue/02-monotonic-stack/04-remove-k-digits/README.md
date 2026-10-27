@@ -3,6 +3,7 @@ name: sheet-remove-k-digits
 title: 'Remove K Digits'
 tags: [dsa-sheet, stack-and-queue, monotonic-stack]
 difficulty: Advanced
+theory: removing-digits-to-get-a-smaller-number
 ---
 
 ## Statement

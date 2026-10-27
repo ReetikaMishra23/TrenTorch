@@ -3,6 +3,7 @@ name: sheet-hit-counter
 title: 'Hit Counter'
 tags: [dsa-sheet, design, classic-designs]
 difficulty: Intermediate
+theory: counting-hits-in-a-sliding-window
 ---
 
 ## Statement

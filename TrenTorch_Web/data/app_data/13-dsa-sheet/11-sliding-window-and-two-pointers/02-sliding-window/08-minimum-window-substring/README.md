@@ -3,6 +3,7 @@ name: sheet-minimum-window-substring
 title: 'Minimum Window Substring'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Mastery
+theory: tracking-what-is-still-missing
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-intersection-of-two-lists
 title: 'Intersection of Two Lists'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Intermediate
+theory: two-lists-that-join
 ---
 
 ## Statement

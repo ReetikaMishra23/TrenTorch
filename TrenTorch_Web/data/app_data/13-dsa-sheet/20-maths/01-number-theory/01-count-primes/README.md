@@ -3,7 +3,7 @@ name: sheet-count-primes
 title: 'Count Primes'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Intermediate
-theory: count-primes-in-a-range-the-sieve-of-eratosthenes
+theory: counting-primes-with-the-sieve
 ---
 
 ## Statement

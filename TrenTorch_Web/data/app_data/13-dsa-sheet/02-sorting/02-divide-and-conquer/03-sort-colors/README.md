@@ -3,6 +3,7 @@ name: sheet-sort-colors
 title: 'Sort Zeros, Ones and Twos'
 tags: [dsa-sheet, sorting, divide-and-conquer]
 difficulty: Intermediate
+theory: the-one-pass-code
 ---
 
 ## Statement

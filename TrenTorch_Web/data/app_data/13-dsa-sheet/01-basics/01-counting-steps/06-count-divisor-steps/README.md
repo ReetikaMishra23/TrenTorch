@@ -3,6 +3,7 @@ name: sheet-count-divisor-steps
 title: 'Divisor Loop'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Advanced
+theory: grouping-equal-quotients
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-valid-parenthesis-string
 title: 'Valid Parenthesis String With Wildcards'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Advanced
+theory: parentheses-with-wildcards
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-recover-binary-search-tree
 title: 'Recover a BST'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Advanced
+theory: two-values-swapped-by-mistake
 ---
 
 ## Statement

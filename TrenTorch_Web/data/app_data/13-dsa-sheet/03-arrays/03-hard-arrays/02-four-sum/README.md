@@ -3,6 +3,7 @@ name: sheet-four-sum
 title: 'Four Sum'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: any-number-of-values
 ---
 
 ## Statement

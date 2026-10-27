@@ -3,6 +3,7 @@ name: sheet-count-pairs-with-sum
 title: 'Count Pairs With Sum'
 tags: [dsa-sheet, basics, make-it-fast]
 difficulty: Intermediate
+theory: looking-for-a-complement
 ---
 
 ## Statement

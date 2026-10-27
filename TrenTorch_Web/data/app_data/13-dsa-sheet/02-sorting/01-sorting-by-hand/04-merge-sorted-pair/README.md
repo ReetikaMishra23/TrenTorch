@@ -3,6 +3,7 @@ name: sheet-merge-sorted-pair
 title: 'Merge Two Sorted Lists'
 tags: [dsa-sheet, sorting, sorting-by-hand]
 difficulty: Beginner
+theory: merging-with-a-comparison-count
 ---
 
 ## Statement

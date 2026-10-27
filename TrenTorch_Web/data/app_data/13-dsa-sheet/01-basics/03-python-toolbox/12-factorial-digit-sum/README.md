@@ -3,6 +3,7 @@ name: sheet-factorial-digit-sum
 title: 'Digit Sum of a Factorial'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Intermediate
+theory: maths-helpers-and-big-numbers
 ---
 
 ## Statement

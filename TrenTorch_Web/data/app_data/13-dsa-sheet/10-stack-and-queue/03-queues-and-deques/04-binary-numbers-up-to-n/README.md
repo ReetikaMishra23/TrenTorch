@@ -3,6 +3,7 @@ name: sheet-binary-numbers-up-to-n
 title: 'Binary Numbers From 1 to N'
 tags: [dsa-sheet, stack-and-queue, queues-and-deques]
 difficulty: Beginner
+theory: counting-in-order
 ---
 
 ## Statement

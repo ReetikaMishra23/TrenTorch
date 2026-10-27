@@ -3,6 +3,7 @@ name: sheet-validate-binary-search-tree
 title: 'Validate a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: validating-with-ranges
 ---
 
 ## Statement

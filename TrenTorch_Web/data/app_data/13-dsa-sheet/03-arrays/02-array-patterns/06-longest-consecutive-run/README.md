@@ -3,6 +3,7 @@ name: sheet-longest-consecutive-run
 title: 'Longest Consecutive Sequence'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: a-set-for-neighbours-in-value
 ---
 
 ## Statement

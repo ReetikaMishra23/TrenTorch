@@ -3,6 +3,7 @@ name: sheet-search-sorted-matrix
 title: 'Search a Sorted Matrix'
 tags: [dsa-sheet, binary-search, searching-grids]
 difficulty: Intermediate
+theory: a-grid-as-one-long-list
 ---
 
 ## Statement

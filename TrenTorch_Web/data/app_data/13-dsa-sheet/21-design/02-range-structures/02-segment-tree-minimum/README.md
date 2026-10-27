@@ -3,6 +3,7 @@ name: sheet-segment-tree-minimum
 title: 'Segment Tree (Range Minimum With Updates)'
 tags: [dsa-sheet, design, range-structures]
 difficulty: Advanced
+theory: the-array-layout
 ---
 
 ## Statement

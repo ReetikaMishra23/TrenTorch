@@ -3,6 +3,7 @@ name: sheet-replace-words
 title: 'Replace Words With Their Roots'
 tags: [dsa-sheet, tries, trie-basics]
 difficulty: Intermediate
+theory: the-shortest-stored-prefix
 ---
 
 ## Statement

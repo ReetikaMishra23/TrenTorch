@@ -3,6 +3,7 @@ name: sheet-longest-unique-substring
 title: 'Longest Substring Without Repeats'
 tags: [dsa-sheet, basics, make-it-fast]
 difficulty: Intermediate
+theory: a-window-that-grows-and-shrinks
 ---
 
 ## Statement

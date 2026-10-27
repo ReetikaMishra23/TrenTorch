@@ -3,6 +3,7 @@ name: sheet-union-sorted
 title: 'Union of Two Sorted Lists'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: merging-two-sorted-lists
 ---
 
 ## Statement

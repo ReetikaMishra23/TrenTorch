@@ -3,7 +3,7 @@ name: sheet-kth-permutation
 title: 'The Kth Permutation'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Advanced
-theory: permutations
+theory: jumping-straight-to-the-kth-permutation
 ---
 
 ## Statement

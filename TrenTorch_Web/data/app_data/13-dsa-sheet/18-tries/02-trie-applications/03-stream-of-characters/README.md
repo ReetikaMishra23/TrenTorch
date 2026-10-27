@@ -3,6 +3,7 @@ name: sheet-stream-of-characters
 title: 'Stream of Characters'
 tags: [dsa-sheet, tries, trie-applications]
 difficulty: Advanced
+theory: matching-the-end-of-a-stream
 ---
 
 ## Statement

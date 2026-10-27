@@ -3,6 +3,7 @@ name: sheet-basic-calculator-brackets
 title: 'Calculator With Brackets'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Advanced
+theory: brackets-and-minus-signs
 ---
 
 ## Statement

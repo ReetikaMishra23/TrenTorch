@@ -3,6 +3,7 @@ name: sheet-upper-bound
 title: 'Upper Bound'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Beginner
+theory: upper-bound-first-value-larger
 ---
 
 ## Statement

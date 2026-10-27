@@ -3,6 +3,7 @@ name: sheet-assign-cookies
 title: 'Assign Cookies'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Beginner
+theory: sort-first-then-be-greedy
 ---
 
 ## Statement

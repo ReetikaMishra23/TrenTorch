@@ -3,6 +3,7 @@ name: sheet-isomorphic-strings
 title: 'Isomorphic Strings'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Intermediate
+theory: checking-both-directions
 ---
 
 ## Statement

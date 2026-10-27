@@ -3,6 +3,7 @@ name: sheet-subarrays-with-k-different-integers
 title: 'Subarrays With K Different Values'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Mastery
+theory: exactly-k-different-values
 ---
 
 ## Statement

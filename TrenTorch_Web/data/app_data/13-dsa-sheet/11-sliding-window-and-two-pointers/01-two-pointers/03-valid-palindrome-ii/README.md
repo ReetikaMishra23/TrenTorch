@@ -3,6 +3,7 @@ name: sheet-valid-palindrome-ii
 title: 'Palindrome After Deleting One Character'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Intermediate
+theory: palindrome-with-one-deletion
 ---
 
 ## Statement

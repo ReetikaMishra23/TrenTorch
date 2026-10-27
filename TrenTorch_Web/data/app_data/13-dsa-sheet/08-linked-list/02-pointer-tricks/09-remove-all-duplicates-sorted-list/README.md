@@ -3,6 +3,7 @@ name: sheet-remove-all-duplicates-sorted-list
 title: 'Remove Every Repeated Value'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Intermediate
+theory: removing-every-repeated-value
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-palindrome-pairs
 title: 'Palindrome Pairs'
 tags: [dsa-sheet, tries, trie-applications]
 difficulty: Mastery
+theory: putting-the-pairs-together
 ---
 
 ## Statement

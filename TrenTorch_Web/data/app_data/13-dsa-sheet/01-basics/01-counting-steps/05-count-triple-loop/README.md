@@ -3,6 +3,7 @@ name: sheet-count-triple-loop
 title: 'Three Nested Loops'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Intermediate
+theory: three-nested-loops
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-has-duplicate
 title: 'Has Duplicate'
 tags: [dsa-sheet, basics, make-it-fast]
 difficulty: Beginner
+theory: a-set-that-answers-seen-it-instantly
 ---
 
 ## Statement

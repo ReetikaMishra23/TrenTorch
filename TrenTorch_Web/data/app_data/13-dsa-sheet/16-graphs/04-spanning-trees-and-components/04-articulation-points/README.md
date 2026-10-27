@@ -3,7 +3,7 @@ name: sheet-articulation-points
 title: 'Articulation Points'
 tags: [dsa-sheet, graphs, spanning-trees-and-components]
 difficulty: Mastery
-theory: critical-connections-and-articulation-points
+theory: articulation-points
 ---
 
 ## Statement

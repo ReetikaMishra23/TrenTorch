@@ -3,6 +3,7 @@ name: sheet-count-digit-one
 title: 'Count the Digit One'
 tags: [dsa-sheet, maths, counting-and-digits]
 difficulty: Mastery
+theory: counting-the-digit-one
 ---
 
 ## Statement

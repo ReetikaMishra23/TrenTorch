@@ -3,6 +3,7 @@ name: sheet-allocate-books
 title: 'Allocate Books'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Advanced
+theory: splitting-books-fairly
 ---
 
 ## Statement

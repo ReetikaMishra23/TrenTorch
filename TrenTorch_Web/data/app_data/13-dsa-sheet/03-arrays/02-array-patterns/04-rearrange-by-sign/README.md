@@ -3,6 +3,7 @@ name: sheet-rearrange-by-sign
 title: 'Rearrange by Sign'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: filling-slots-in-turn
 ---
 
 ## Statement

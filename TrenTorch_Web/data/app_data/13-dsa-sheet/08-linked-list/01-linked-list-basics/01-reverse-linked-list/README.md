@@ -3,6 +3,7 @@ name: sheet-reverse-linked-list
 title: 'Reverse a Linked List'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Beginner
+theory: reversing-in-place
 ---
 
 ## Statement

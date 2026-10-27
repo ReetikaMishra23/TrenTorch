@@ -3,6 +3,7 @@ name: sheet-smallest-range-covering-k-lists
 title: 'Smallest Range Covering K Lists'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Mastery
+theory: moving-the-smallest-forward
 ---
 
 ## Statement

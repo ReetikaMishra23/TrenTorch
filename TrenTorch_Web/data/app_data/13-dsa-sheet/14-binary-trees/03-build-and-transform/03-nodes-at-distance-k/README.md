@@ -3,6 +3,7 @@ name: sheet-nodes-at-distance-k
 title: 'Nodes at Distance K'
 tags: [dsa-sheet, binary-trees, build-and-transform]
 difficulty: Advanced
+theory: nodes-at-distance-k
 ---
 
 ## Statement

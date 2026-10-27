@@ -3,6 +3,7 @@ name: sheet-transpose-matrix
 title: 'Transpose a Matrix'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: slicing-and-zip
 ---
 
 ## Statement

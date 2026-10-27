@@ -3,6 +3,7 @@ name: sheet-is-anagram
 title: 'Anagram Check'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: counting-with-counter
 ---
 
 ## Statement

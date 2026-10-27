@@ -3,6 +3,7 @@ name: sheet-maximum-xor-of-two-numbers
 title: 'Maximum XOR of Two Numbers'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Mastery
+theory: the-same-idea-with-a-set-of-prefixes
 ---
 
 ## Statement

@@ -3,7 +3,7 @@ name: sheet-rat-in-a-maze
 title: 'Rat in a Maze'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Intermediate
-theory: find-a-path-through-a-maze
+theory: recording-the-moves-of-the-rat
 ---
 
 ## Statement

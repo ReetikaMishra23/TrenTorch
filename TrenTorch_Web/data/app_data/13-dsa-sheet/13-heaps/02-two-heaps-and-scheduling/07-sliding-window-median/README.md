@@ -3,6 +3,7 @@ name: sheet-sliding-window-median
 title: 'Sliding Window Median'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Mastery
+theory: a-median-that-slides
 ---
 
 ## Statement

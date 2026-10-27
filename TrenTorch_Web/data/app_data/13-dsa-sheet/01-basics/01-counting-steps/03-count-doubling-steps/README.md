@@ -3,6 +3,7 @@ name: sheet-count-doubling-steps
 title: 'Doubling Steps'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Beginner
+theory: doubling-is-halving-in-reverse
 ---
 
 ## Statement

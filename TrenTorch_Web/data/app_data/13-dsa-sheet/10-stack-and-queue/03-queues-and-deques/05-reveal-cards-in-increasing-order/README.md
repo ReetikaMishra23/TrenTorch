@@ -3,6 +3,7 @@ name: sheet-reveal-cards-in-increasing-order
 title: 'Reveal Cards in Increasing Order'
 tags: [dsa-sheet, stack-and-queue, queues-and-deques]
 difficulty: Advanced
+theory: simulating-a-deck-of-cards
 ---
 
 ## Statement

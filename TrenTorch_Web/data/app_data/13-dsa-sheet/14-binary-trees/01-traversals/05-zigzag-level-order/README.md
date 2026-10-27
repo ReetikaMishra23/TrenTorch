@@ -3,6 +3,7 @@ name: sheet-zigzag-level-order
 title: 'Zigzag Level Order'
 tags: [dsa-sheet, binary-trees, traversals]
 difficulty: Intermediate
+theory: zigzag-level-order
 ---
 
 ## Statement

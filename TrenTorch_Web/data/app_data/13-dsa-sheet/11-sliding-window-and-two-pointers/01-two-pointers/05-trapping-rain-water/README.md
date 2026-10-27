@@ -3,6 +3,7 @@ name: sheet-trapping-rain-water
 title: 'Trapping Rain Water'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Advanced
+theory: trapping-rain-water-with-two-pointers
 ---
 
 ## Statement

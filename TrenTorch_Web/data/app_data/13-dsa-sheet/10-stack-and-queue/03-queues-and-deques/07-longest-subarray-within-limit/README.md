@@ -3,6 +3,7 @@ name: sheet-longest-subarray-within-limit
 title: 'Longest Subarray Within a Limit'
 tags: [dsa-sheet, stack-and-queue, queues-and-deques]
 difficulty: Advanced
+theory: a-window-that-grows-and-shrinks
 ---
 
 ## Statement

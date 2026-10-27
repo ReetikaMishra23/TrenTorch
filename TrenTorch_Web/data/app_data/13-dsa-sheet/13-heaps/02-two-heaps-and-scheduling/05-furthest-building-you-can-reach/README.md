@@ -3,6 +3,7 @@ name: sheet-furthest-building-you-can-reach
 title: 'Furthest Building You Can Reach'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Advanced
+theory: regret-again-ladders-for-the-biggest-climbs
 ---
 
 ## Statement

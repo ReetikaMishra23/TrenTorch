@@ -3,6 +3,7 @@ name: sheet-count-frequencies
 title: 'Frequency Queries'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Beginner
+theory: counting-how-often-things-appear
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-closest-value-in-a-bst
 title: 'Closest Value in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: closest-value-to-a-target
 ---
 
 ## Statement

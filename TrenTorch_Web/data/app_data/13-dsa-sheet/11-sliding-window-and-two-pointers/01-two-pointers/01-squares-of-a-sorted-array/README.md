@@ -3,6 +3,7 @@ name: sheet-squares-of-a-sorted-array
 title: 'Squares of a Sorted Array'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Beginner
+theory: squares-of-a-sorted-list
 ---
 
 ## Statement

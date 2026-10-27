@@ -3,7 +3,7 @@ name: sheet-trailing-zeros-of-factorial
 title: 'Trailing Zeros of a Factorial'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Intermediate
-theory: trailing-zeros-of-a-factorial
+theory: zeros-at-the-end-of-a-factorial
 ---
 
 ## Statement

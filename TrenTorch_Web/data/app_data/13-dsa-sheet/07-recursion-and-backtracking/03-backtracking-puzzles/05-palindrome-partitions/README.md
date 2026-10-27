@@ -3,7 +3,7 @@ name: sheet-palindrome-partitions
 title: 'Palindrome Partitioning'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Intermediate
-theory: the-idea-build-a-solution-one-decision-at-a-time
+theory: cutting-into-palindromes
 ---
 
 ## Statement

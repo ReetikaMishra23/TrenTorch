@@ -3,6 +3,7 @@ name: sheet-level-order-traversal
 title: 'Level Order Traversal'
 tags: [dsa-sheet, binary-trees, traversals]
 difficulty: Intermediate
+theory: level-order-row-by-row
 ---
 
 ## Statement

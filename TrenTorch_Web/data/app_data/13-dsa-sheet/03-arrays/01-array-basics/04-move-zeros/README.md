@@ -3,6 +3,7 @@ name: sheet-move-zeros
 title: 'Move Zeros to the End'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: a-read-finger-and-a-write-finger
 ---
 
 ## Statement
