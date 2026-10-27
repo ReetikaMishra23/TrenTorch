@@ -3,7 +3,7 @@ name: sheet-longest-increasing-subsequence
 title: 'Longest Increasing Subsequence'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Advanced
-theory: longest-increasing-subsequence-lis
+theory: the-faster-tails-idea
 ---
 
 ## Statement

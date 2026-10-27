@@ -3,7 +3,7 @@ name: sheet-minimum-path-sum
 title: 'Minimum Path Sum'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Beginner
-theory: paths-in-a-grid
+theory: blocked-cells-and-cheapest-paths
 ---
 
 ## Statement

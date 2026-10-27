@@ -3,7 +3,7 @@ name: sheet-unbounded-knapsack
 title: 'Unbounded Knapsack'
 tags: [dsa-sheet, dynamic-programming, knapsack]
 difficulty: Intermediate
-theory: a-summary-of-patterns
+theory: the-unbounded-knapsack
 ---
 
 ## Statement

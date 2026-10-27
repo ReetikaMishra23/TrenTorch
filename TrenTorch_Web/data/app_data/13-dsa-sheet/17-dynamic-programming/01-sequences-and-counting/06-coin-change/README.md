@@ -3,7 +3,7 @@ name: sheet-coin-change
 title: 'Coin Change'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
-theory: a-summary-of-patterns
+theory: coin-change
 ---
 
 ## Statement

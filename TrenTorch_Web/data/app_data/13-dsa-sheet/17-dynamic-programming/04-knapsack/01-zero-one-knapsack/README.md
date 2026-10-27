@@ -3,7 +3,7 @@ name: sheet-zero-one-knapsack
 title: '0/1 Knapsack'
 tags: [dsa-sheet, dynamic-programming, knapsack]
 difficulty: Intermediate
-theory: the-0-1-knapsack-problem
+theory: the-0-1-knapsack
 ---
 
 ## Statement

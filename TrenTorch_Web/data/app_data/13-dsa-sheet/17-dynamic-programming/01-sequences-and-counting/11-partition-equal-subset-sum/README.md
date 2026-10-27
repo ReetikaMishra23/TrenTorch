@@ -3,7 +3,7 @@ name: sheet-partition-equal-subset-sum
 title: 'Partition Equal Subset Sum'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
-theory: the-0-1-knapsack-problem
+theory: subset-sum-and-its-cousins
 ---
 
 ## Statement

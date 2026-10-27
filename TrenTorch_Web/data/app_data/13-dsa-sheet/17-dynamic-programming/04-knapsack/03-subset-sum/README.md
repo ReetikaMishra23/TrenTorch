@@ -3,7 +3,7 @@ name: sheet-subset-sum
 title: 'Subset Sum'
 tags: [dsa-sheet, dynamic-programming, knapsack]
 difficulty: Intermediate
-theory: the-0-1-knapsack-problem
+theory: subset-sum-and-its-cousins
 ---
 
 ## Statement

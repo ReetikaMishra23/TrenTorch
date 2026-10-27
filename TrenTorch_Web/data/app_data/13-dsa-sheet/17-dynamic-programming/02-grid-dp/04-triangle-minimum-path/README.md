@@ -3,7 +3,7 @@ name: sheet-triangle-minimum-path
 title: 'Triangle Minimum Path'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Intermediate
-theory: paths-in-a-grid
+theory: triangles-and-falling-paths
 ---
 
 ## Statement

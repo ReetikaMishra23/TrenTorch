@@ -3,6 +3,7 @@ name: sheet-stock-with-cooldown
 title: 'Stock Trading With Cooldown'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Advanced
+theory: state-machines-stock-problems
 ---
 
 ## Statement

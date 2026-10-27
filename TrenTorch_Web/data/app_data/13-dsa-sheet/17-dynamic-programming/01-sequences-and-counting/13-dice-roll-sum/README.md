@@ -3,7 +3,7 @@ name: sheet-dice-roll-sum
 title: 'Dice Roll Sum'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
-theory: counting-ordered-versus-unordered-ways
+theory: dice-roll-sum
 ---
 
 ## Statement

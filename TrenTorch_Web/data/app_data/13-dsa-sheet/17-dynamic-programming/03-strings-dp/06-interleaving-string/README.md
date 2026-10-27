@@ -3,7 +3,7 @@ name: sheet-interleaving-string
 title: 'Interleaving String'
 tags: [dsa-sheet, dynamic-programming, strings-dp]
 difficulty: Advanced
-theory: two-strings-lcs-and-edit-distance
+theory: counting-subsequences
 ---
 
 ## Statement

@@ -3,7 +3,7 @@ name: sheet-decode-ways
 title: 'Decode Ways'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
-theory: three-questions-to-ask-about-every-dp
+theory: decode-ways
 ---
 
 ## Statement

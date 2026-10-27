@@ -3,7 +3,7 @@ name: sheet-target-sum
 title: 'Target Sum'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
-theory: the-0-1-knapsack-problem
+theory: counting-versions-and-two-budgets
 ---
 
 ## Statement

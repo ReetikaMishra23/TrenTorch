@@ -3,6 +3,7 @@ name: sheet-longest-valid-parentheses
 title: 'Longest Valid Parentheses'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Advanced
+theory: longest-valid-parentheses
 ---
 
 ## Statement

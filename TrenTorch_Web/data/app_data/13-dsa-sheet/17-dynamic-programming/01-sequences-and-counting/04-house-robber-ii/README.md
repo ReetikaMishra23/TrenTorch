@@ -3,7 +3,7 @@ name: sheet-house-robber-ii
 title: 'House Robber on a Circle'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
-theory: three-questions-to-ask-about-every-dp
+theory: house-robber-on-a-circle
 ---
 
 ## Statement

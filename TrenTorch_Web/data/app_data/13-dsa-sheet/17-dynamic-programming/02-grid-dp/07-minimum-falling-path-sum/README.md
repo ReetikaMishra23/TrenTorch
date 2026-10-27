@@ -3,7 +3,7 @@ name: sheet-minimum-falling-path-sum
 title: 'Minimum Falling Path Sum'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Intermediate
-theory: paths-in-a-grid
+theory: triangles-and-falling-paths
 ---
 
 ## Statement

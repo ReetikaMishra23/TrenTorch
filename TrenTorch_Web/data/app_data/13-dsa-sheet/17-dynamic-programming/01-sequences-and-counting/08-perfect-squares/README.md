@@ -3,7 +3,7 @@ name: sheet-perfect-squares
 title: 'Perfect Squares'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
-theory: a-summary-of-patterns
+theory: perfect-squares-and-word-break
 ---
 
 ## Statement

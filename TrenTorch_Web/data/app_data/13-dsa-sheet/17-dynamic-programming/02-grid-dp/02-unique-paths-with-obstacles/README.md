@@ -3,7 +3,7 @@ name: sheet-unique-paths-with-obstacles
 title: 'Unique Paths With Obstacles'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Intermediate
-theory: paths-in-a-grid
+theory: blocked-cells-and-cheapest-paths
 ---
 
 ## Statement

@@ -3,7 +3,7 @@ name: sheet-climbing-stairs
 title: 'Climbing Stairs'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Beginner
-theory: your-first-real-problems
+theory: climbing-stairs
 ---
 
 ## Statement

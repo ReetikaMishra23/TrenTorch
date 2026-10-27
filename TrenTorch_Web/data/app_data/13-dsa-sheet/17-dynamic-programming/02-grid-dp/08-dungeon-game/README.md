@@ -3,7 +3,7 @@ name: sheet-dungeon-game
 title: 'Dungeon Game'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Advanced
-theory: paths-in-a-grid
+theory: filling-the-table-backwards-dungeon-game
 ---
 
 ## Statement

@@ -3,6 +3,7 @@ name: sheet-burst-balloons
 title: 'Burst Balloons'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Mastery
+theory: burst-balloons-and-cutting-a-stick
 ---
 
 ## Statement

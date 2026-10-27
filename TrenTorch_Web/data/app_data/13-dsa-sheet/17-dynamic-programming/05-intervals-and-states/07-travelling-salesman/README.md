@@ -3,7 +3,7 @@ name: sheet-travelling-salesman
 title: 'Travelling Salesman (Small)'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Mastery
-theory: hamiltonian-paths-and-the-travelling-salesman-problem
+theory: the-travelling-salesman
 ---
 
 ## Statement

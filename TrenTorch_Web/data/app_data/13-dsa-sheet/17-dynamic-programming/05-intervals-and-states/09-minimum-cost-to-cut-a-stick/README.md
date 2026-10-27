@@ -3,6 +3,7 @@ name: sheet-minimum-cost-to-cut-a-stick
 title: 'Minimum Cost to Cut a Stick'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Mastery
+theory: burst-balloons-and-cutting-a-stick
 ---
 
 ## Statement

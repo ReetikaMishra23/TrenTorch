@@ -2,1571 +2,3100 @@
 
 # Introduction (Dynamic programming)
 
-This document teaches dynamic programming from the very first idea to the techniques used in the hardest contests. It assumes only that you can write a loop and a recursive function in C++. Nothing else is needed.
+This course teaches dynamic programming, often shortened to DP, from the very first idea to some of the tricks used in contests. It assumes only that you can write a loop and a simple function. Nothing else is needed.
 
-The course is built like a staircase. **Chapter 1 is deliberately gentle**: no heavy math, just the core idea explained with small examples. Chapter 2 adds the classical problems. From Chapter 3 on we move to graphs (DAGs, trees, subsets, cycles), and the mathematics becomes gradually heavier, with proofs and complexity arguments. The last chapters cover expert tools. If you are new, read in order and do not worry when later chapters look harder: every chapter only uses what came before.
+The course is a staircase. **Chapter 1 is deliberately gentle**: one small problem, one simple idea, no heavy math. Each chapter after it adds one new family of problems, and the math grows slowly. By the last chapters you will know how to speed up a slow DP and how to test your own solutions. If a later chapter looks hard, do not worry. Every chapter only uses what came before.
 
-All code is C++17 and uses `using ll = long long;`.
+Every code example is shown in Python and in C++, so pick whichever language you like.
 
----
-
-# Chapter 1. The core idea of dynamic programming
+# Chapter 1. What dynamic programming is
 
 ## 1.1 A recursion that is far too slow
 
-Start with the Fibonacci numbers. Each number is the sum of the two before it: 0, 1, 1, 2, 3, 5, 8, 13, 21, ... Written as a function, the rule is $F(n)=F(n-1)+F(n-2)$ with $F(0)=0$ and $F(1)=1$.
+Let's start with a simple sequence: Fibonacci numbers. The rule is easy: the first two numbers are 0 and 1, and every number after that is the sum of the two before it. So 0, 1, 1, 2, 3, 5, 8, 13, and so on. In math notation:
 
-The rule is already a recursive program, so the most natural thing is to type it in directly:
+$$f(0) = 0,\quad f(1) = 1,\quad f(n) = f(n-1) + f(n-2)\text{ for }n \ge 2$$
+
+If we write this directly as a recursive function — a function that calls itself — it looks clean and short.
 
 ```python
-def F(n):
-    if n <= 1:
-        return n
-    return F(n - 1) + F(n - 2)
+def fib_recursive(n: int) -> int:
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib_recursive(n - 1) + fib_recursive(n - 2)
+
+
+assert fib_recursive(0) == 0
+assert fib_recursive(1) == 1
+assert fib_recursive(6) == 8
 ```
 
 ```cpp
-ll F(int n) {
-    if (n <= 1) return n;
-    return F(n - 1) + F(n - 2);
+int fib_recursive(int n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    return fib_recursive(n - 1) + fib_recursive(n - 2);
 }
 ```
 
-It is correct, and it is terribly slow. Try it on $n=50$ and it will run for minutes or hours. To see why, look at what happens when we ask for $F(5)$. Every call asks two smaller questions, so the calls form a tree:
+But this clean code hides a problem. To compute `fib_recursive(5)`, the function calls itself for 4 and 3. The call for 4 then calls 3 and 2. The call for 3 calls 2 and 1. Notice that `fib_recursive(3)` and `fib_recursive(2)` are computed multiple times. As `n` grows, the same subproblems — a **subproblem** is a smaller instance of the same question — are solved again and again. The call tree doubles in size roughly every step, so the running time is about $O(2^n)$. For `n = 29` the program makes over one million calls. For `n = 50` it would take hours.
 
-```
-                          F(5)
-                  /                  \
-              F(4)                    F(3)
-            /      \                 /     \
-         F(3)      F(2)           F(2)     F(1)
-        /    \     /   \          /   \
-     F(2)  F(1)  F(1) F(0)     F(1)  F(0)
-     /  \
-  F(1) F(0)
-```
+## 1.2 Memoization (top-down)
 
-Look closely: $F(3)$ appears twice, $F(2)$ appears three times, and $F(1)$ five times. The program keeps solving the same small questions again and again, and every extra level of the tree doubles the amount of repetition. The number of calls grows like this:
-
-| n | number of calls |
-|---|---|
-| 10 | 177 |
-| 20 | 21,891 |
-| 30 | about 2.7 million |
-| 40 | about 331 million |
-
-The work roughly multiplies by 1.6 each time $n$ grows by one. This is called **exponential** growth, and it is the enemy of all fast programs.
-
-But notice something. To compute $F(50)$ we only ever need the answers to 51 different questions: $F(0), F(1), \dots, F(50)$. The program is slow not because the problem is hard, but because it forgets what it already knows.
-
-## 1.2 The fix: write the answer down
-
-Here is the whole idea of dynamic programming in one sentence:
-
-> **If you have already solved a subproblem, do not solve it again. Write the answer down and look it up next time.**
-
-We add a notebook (an array) to the function. Before computing, check the notebook. After computing, write the result in it.
+The fix is simple: remember every answer the first time we compute it. This technique is called **memoization** — like writing notes on a memo pad so you don't redo work. We keep a table (an array or dictionary) where `memo[k]` stores `f(k)` once it is known. When the function is called, it checks the table first. If the value is there, it returns immediately. Otherwise it computes, saves, and returns.
 
 ```python
-memo = [0] * 100
-done = [False] * 100
-
-def F(n):
-    if n <= 1:
-        return n
-    if done[n]:
-        return memo[n]      # already solved: just read it
-    done[n] = True
-    memo[n] = F(n - 1) + F(n - 2)
+def fib_memo(n: int, memo: dict[int, int] | None = None) -> int:
+    if memo is None:
+        memo = {}
+    if n in memo:
+        return memo[n]
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    memo[n] = fib_memo(n - 1, memo) + fib_memo(n - 2, memo)
     return memo[n]
+
+
+assert fib_memo(0) == 0
+assert fib_memo(1) == 1
+assert fib_memo(6) == 8
+assert fib_memo(10) == 55
 ```
 
 ```cpp
-ll memo[100];
-bool done[100];
-
-ll F(int n) {
-    if (n <= 1) return n;
-    if (done[n]) return memo[n];      // already solved: just read it
-    done[n] = true;
-    return memo[n] = F(n - 1) + F(n - 2);
+int fib_memo(int n, unordered_map<int, int>& memo) {
+    if (memo.count(n)) return memo[n];
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    return memo[n] = fib_memo(n - 1, memo) + fib_memo(n - 2, memo);
 }
 ```
 
-Now each $F(k)$ is really computed only once. The first time a value is needed, we do a tiny amount of work. Every later request is answered immediately from the notebook. For $F(50)$ the number of calls drops from tens of billions to around a hundred, and the program finishes instantly.
+Now each value from 0 up to `n` is computed exactly once. The work per subproblem is $O(1)$, and there are $n+1$ subproblems, so total time is $O(n)$. Space is also $O(n)$ for the table plus the recursion call stack. This style — starting from the target and recursing down to base cases — is called **top-down dynamic programming**.
 
-This trick is called **memoization**. (The word is *memoization*, as in writing a memo, not "memorization".) A recursive solution that uses memoization is called **top-down dynamic programming**: we start from the big question and let the recursion break it into smaller ones.
+## 1.3 Tables (bottom-up)
 
-## 1.3 Three questions to ask about every DP
-
-All dynamic programming solutions, from the simplest to the hardest, are built from the same three ingredients. When you see a new problem, learn to answer these questions before writing any code.
-
-**What is the state?** A *state* is a small description of one subproblem, enough to know exactly which question we are asking. For Fibonacci the state is just the number $n$. Later, states will be things like "position $i$ and money left $m$", or "tree vertex $v$", or "set of cities already visited and the city I am in".
-
-**What is the transition?** The *transition* says how to get the answer of a state from the answers of smaller states. For Fibonacci: the answer for $n$ is the answer for $n-1$ plus the answer for $n-2$.
-
-**In which order, and where does it stop?** Smaller states must be answered before bigger ones that need them, and there must be simple *base cases* that need no further help (for Fibonacci, $n=0$ and $n=1$). The dependencies must never go in a circle: if state $A$ needs $B$, then $B$ must not need $A$.
-
-Once you have these three, the running time is easy to estimate:
-
-> **time ≈ (number of states) × (work done per state)**
-
-For Fibonacci that is about $n$ states with a tiny amount of work each, so the time is proportional to $n$. Whenever you wonder "is my DP fast enough?", compute this product first.
-
-## 1.4 Bottom-up: the same thing with a loop
-
-Instead of recursion, we can fill the notebook ourselves, starting from the smallest states and moving up. This is called **bottom-up dynamic programming**:
+We can also fill the table in the opposite direction: start from the base cases and build up step by step to the answer we want. This is **bottom-up dynamic programming**. For Fibonacci we only need the two previous numbers, so we can even throw away older values and keep just two variables.
 
 ```python
-dp = [0] * 100
-dp[0] = 0
-dp[1] = 1
-for i in range(2, n + 1):
-    dp[i] = dp[i - 1] + dp[i - 2]
-```
-
-```cpp
-ll dp[100];
-dp[0] = 0; dp[1] = 1;
-for (int i = 2; i <= n; i++) dp[i] = dp[i - 1] + dp[i - 2];
-```
-
-Both styles do the same work. Top-down is usually easier to write, because the recursion automatically finds a good order. Bottom-up is a little faster, avoids deep recursion, and makes it easy to save memory. For Fibonacci only the last two values are ever needed, so the whole table can be replaced by two variables:
-
-```python
-def fib(n):
-    a, b = 0, 1                      # F(0), F(1)
-    for i in range(2, n + 1):
-        c = a + b
-        a = b
-        b = c
-    # b is now F(n)
+def fib_bottom_up(n: int) -> int:
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
     return b
+
+
+assert fib_bottom_up(0) == 0
+assert fib_bottom_up(1) == 1
+assert fib_bottom_up(6) == 8
+assert fib_bottom_up(10) == 55
 ```
 
 ```cpp
-ll a = 0, b = 1;                      // F(0), F(1)
-for (int i = 2; i <= n; i++) { ll c = a + b; a = b; b = c; }
-// b is now F(n)
+int fib_bottom_up(int n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    int a = 0, b = 1;
+    for (int i = 2; i <= n; ++i) {
+        int c = a + b;
+        a = b;
+        b = c;
+    }
+    return b;
+}
 ```
 
-A good habit: think top-down first (it matches how you think about the problem), and convert to bottom-up if you need more speed.
+Time is still $O(n)$, but space drops to $O(1)$ because we only store the last two numbers. Both top-down and bottom-up are dynamic programming; they just fill the table in different orders.
 
-## 1.5 A picture to remember: the map of states
+## 1.4 Three questions for every DP
 
-Imagine drawing a dot for every state, and an arrow from state $B$ to state $A$ whenever computing $A$ needs the answer of $B$. You get a map of dots and arrows. The rule "no circular dependencies" simply means this map has no loop that comes back to where it started. A map of this kind is called a **DAG** (directed acyclic graph).
+When you see a new problem, ask these three questions to find the dynamic programming structure:
 
-So a DP is really a walk over a map of states in a sensible order. In this course we will meet many problems where this map is given to us as part of the input, for example a graph or a tree. Then DP on that graph is exactly the idea you have just learned. You do not need to remember more than this for now.
+1. **What is the state?** A state is a compact description of a subproblem. For Fibonacci the state is just the integer `n`. For a problem on a string it might be an index `i`; for a grid it might be a cell `(i, j)`. The set of all states must be finite and each state must correspond to a well-defined answer.
+2. **What is the transition?** The transition tells how to compute the answer for one state using answers of smaller states. For Fibonacci the transition is `f(n) = f(n-1) + f(n-2)`. A transition is simply a formula or rule that connects states.
+3. **Where do we start?** These are the base cases — states whose answers are known without recursion. For Fibonacci the base cases are `f(0) = 0` and `f(1) = 1`.
 
-## 1.6 Your first real problems
+If you can answer these three questions clearly, you have a dynamic programming solution. The rest is just filling the table (bottom-up) or writing the memoized recursion (top-down).
 
-### Climbing stairs
+## 1.5 Climbing stairs
 
-You are climbing a staircase with $n$ steps. Each move goes up one step or two steps. In how many different ways can you reach the top?
+This is exactly the problem **Climbing Stairs**. You stand at step 0 and want to reach step `n`. Each move you may climb 1 or 2 steps. How many distinct ways can you reach the top? Let `ways[i]` be the number of ways to reach step `i`. From step `i-1` you can take a single step; from step `i-2` you can take a double step. So `ways[i] = ways[i-1] + ways[i-2]`. The base cases: `ways[0] = 1` (one way to stay at the ground), `ways[1] = 1` (only a single step). This is the Fibonacci recurrence shifted by one.
 
-Think about the last move. You arrived at step $n$ either from step $n-1$ (a one-step move) or from step $n-2$ (a two-step move). So the number of ways to reach step $n$ is the sum of the ways to reach those two steps. That is exactly the Fibonacci rule again:
+Let's trace `n = 4` by hand:
+- `ways[0] = 1`
+- `ways[1] = 1`
+- `ways[2] = 1 + 1 = 2`
+- `ways[3] = 2 + 1 = 3`
+- `ways[4] = 3 + 2 = 5`
 
-- **State:** $ways[i]$ = number of ways to reach step $i$.
-- **Transition:** $ways[i] = ways[i-1] + ways[i-2]$.
-- **Order and base:** go from small $i$ to large; $ways[0]=1$ (we are at the start), $ways[1]=1$.
+The five sequences for `n=4` are: (1,1,1,1), (1,1,2), (1,2,1), (2,1,1), (2,2).
 
 ```python
-def climb_stairs(n):
-    ways = [0] * (n + 1)
-    ways[0] = 1
-    ways[1] = 1
-    for i in range(2, n + 1):
-        ways[i] = ways[i - 1] + ways[i - 2]
-    return ways[n]
+def climb_stairs(n: int) -> int:
+    if n <= 1:
+        return 1
+    a, b = 1, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
 
-if __name__ == "__main__":
-    n = int(input())
-    print(climb_stairs(n))
+
+assert climb_stairs(1) == 1
+assert climb_stairs(2) == 2
+assert climb_stairs(4) == 5
 ```
 
 ```cpp
-vector<ll> ways(n + 1);
-ways[0] = 1; ways[1] = 1;
-for (int i = 2; i <= n; i++) ways[i] = ways[i - 1] + ways[i - 2];
+int climb_stairs(int n) {
+    if (n <= 1) return 1;
+    int a = 1, b = 1;
+    for (int i = 2; i <= n; ++i) {
+        int c = a + b;
+        a = b;
+        b = c;
+    }
+    return b;
+}
 ```
 
-Notice how the problem was solved by looking at the *last* move. This is the most common way of finding a transition: ask what the final step could have been.
+Time $O(n)$, space $O(1)$.
+
+Now a twist: **Min Cost Climbing Stairs**. Each step `i` has a non-negative cost `cost[i]`. You start at step 0 or step 1 (your choice) and want to reach the floor just past the last step (step `n`). When you land on a step you pay its cost. Find the minimum total cost. Let `dp[i]` be the minimum cost to reach step `i`. The transition: to stand on step `i` you must have come from `i-1` or `i-2`, so `dp[i] = cost[i] + min(dp[i-1], dp[i-2])`. Base cases: `dp[0] = cost[0]`, `dp[1] = cost[1]`. The answer is `min(dp[n-1], dp[n-2])` because you can finish from either of the last two steps.
+
+Example: `cost = [10, 15, 20]`.
+- `dp[0] = 10`
+- `dp[1] = 15`
+- `dp[2] = 20 + min(15, 10) = 30`
+Answer `min(15, 30) = 15` (start at step 1, jump two steps to the floor).
+
+```python
+def min_cost_climbing_stairs(cost: list[int]) -> int:
+    n = len(cost)
+    if n == 2:
+        return min(cost[0], cost[1])
+    dp0, dp1 = cost[0], cost[1]
+    for i in range(2, n):
+        dp0, dp1 = dp1, cost[i] + min(dp0, dp1)
+    return min(dp0, dp1)
+
+
+assert min_cost_climbing_stairs([10, 15, 20]) == 15
+assert min_cost_climbing_stairs([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]) == 6
+```
+
+```cpp
+int min_cost_climbing_stairs(vector<int>& cost) {
+    int n = cost.size();
+    if (n == 2) return min(cost[0], cost[1]);
+    int dp0 = cost[0], dp1 = cost[1];
+    for (int i = 2; i < n; ++i) {
+        int dpi = cost[i] + min(dp0, dp1);
+        dp0 = dp1;
+        dp1 = dpi;
+    }
+    return min(dp0, dp1);
+}
+```
+
+Time $O(n)$, space $O(1)$. Notice how the same three questions guided us: state is the step index, transition picks the cheaper previous step, base cases are the first two steps.
+
+## 1.6 Check yourself
+
+1. Why does the plain recursive Fibonacci function repeat work, and roughly how many calls does it make for input `n`?
+2. What is the difference between top-down and bottom-up dynamic programming in terms of the order subproblems are solved?
+3. For the climbing stairs problem, what are the state, the transition, and the base cases?
+4. In min cost climbing stairs, why is the final answer `min(dp[n-1], dp[n-2])` instead of `dp[n]`?
+
+# Chapter 2. Counting and choosing along a line
+
+## 2.1 House robber
+
+Imagine a row of houses, each with some cash inside. You want to take as much money as possible, but you cannot rob two houses that sit next to each other — the alarm would go off. This is exactly the problem *House Robber*.
+
+Let's think about the last house in the row. You have two choices: rob it, or skip it. If you rob it, you cannot rob the previous house, so the best you can do is the money in this house plus the best amount from all houses before the previous one. If you skip it, the best amount is simply whatever you could get from all houses before this one.
+
+We can write this idea as a recurrence. Let `best[i]` be the maximum money you can collect from the first `i` houses (using 1-based indexing for the houses, so house 1 is the first). Then:
+
+$$
+\text{best}[i] = \max(\text{best}[i-1],\; \text{money}[i] + \text{best}[i-2])
+$$
+
+The base cases are `best[0] = 0` (no houses, no money) and `best[1] = money[1]` (only the first house). We fill the table from left to right. This bottom-up approach visits each house once, so the time cost is $O(n)$ and the space cost is $O(n)$, where $n$ is the number of houses. We can even reduce space to $O(1)$ by keeping only the last two values.
+
+Let's trace a tiny example by hand: `money = [3, 2, 7, 10]`.
+
+- `best[0] = 0`
+- `best[1] = 3`
+- `best[2] = max(best[1], money[2] + best[0]) = max(3, 2 + 0) = 3`
+- `best[3] = max(best[2], money[3] + best[1]) = max(3, 7 + 3) = 10`
+- `best[4] = max(best[3], money[4] + best[2]) = max(10, 10 + 3) = 13`
+
+The answer is 13 (rob houses 1 and 4).
+
+```python
+def house_robber(money: list[int]) -> int:
+    """Return the maximum amount that can be robbed without adjacent houses."""
+    n = len(money)
+    if n == 0:
+        return 0
+    if n == 1:
+        return money[0]
+    # dp[i] = best for first i houses (1-based)
+    dp = [0] * (n + 1)
+    dp[1] = money[0]
+    for i in range(2, n + 1):
+        dp[i] = max(dp[i - 1], money[i - 1] + dp[i - 2])
+    return dp[n]
+
+# Quick checks
+assert house_robber([3, 2, 7, 10]) == 13
+assert house_robber([3, 2, 5, 10, 7]) == 15  # 3 + 5 + 7
+assert house_robber([]) == 0
+assert house_robber([5]) == 5
+```
+
+```cpp
+int houseRobber(const vector<int>& money) {
+    int n = money.size();
+    if (n == 0) return 0;
+    if (n == 1) return money[0];
+    vector<int> dp(n + 1);
+    dp[1] = money[0];
+    for (int i = 2; i <= n; ++i) {
+        dp[i] = max(dp[i - 1], money[i - 1] + dp[i - 2]);
+    }
+    return dp[n];
+}
+```
+
+## 2.2 House robber on a circle
+
+Now suppose the houses form a circle — the first and last houses are also neighbors. This is exactly the problem *House Robber II*. You cannot simply run the same linear algorithm because the first and last houses are now adjacent.
+
+The trick is to break the circle into two linear cases: either you rob the first house (and therefore cannot rob the last), or you skip the first house (and the last house is free to choose). Compute the best for each case using the linear algorithm from before, then take the larger of the two.
+
+If there is only one house, the answer is just that house's money. For two houses, the answer is the maximum of the two. For three or more, we run the linear solver on `money[0..n-2]` (exclude last) and on `money[1..n-1]` (exclude first). The time cost is still $O(n)$ and space is $O(n)$ (or $O(1)$ with the optimized version).
+
+Example: `money = [2, 3, 2]`. Case A (rob first, exclude last): houses `[2, 3]` → best is 3. Case B (exclude first): houses `[3, 2]` → best is 3. Answer is 3.
+
+```python
+def house_robber_linear(money: list[int]) -> int:
+    """Helper for the linear version (same as before)."""
+    n = len(money)
+    if n == 0:
+        return 0
+    if n == 1:
+        return money[0]
+    dp = [0] * (n + 1)
+    dp[1] = money[0]
+    for i in range(2, n + 1):
+        dp[i] = max(dp[i - 1], money[i - 1] + dp[i - 2])
+    return dp[n]
+
+def house_robber_ii(money: list[int]) -> int:
+    """Circular version: first and last are adjacent."""
+    n = len(money)
+    if n == 0:
+        return 0
+    if n == 1:
+        return money[0]
+    if n == 2:
+        return max(money[0], money[1])
+    # Case 1: rob first, skip last
+    case1 = house_robber_linear(money[:-1])
+    # Case 2: skip first, last is available
+    case2 = house_robber_linear(money[1:])
+    return max(case1, case2)
+
+assert house_robber_ii([2, 3, 2]) == 3
+assert house_robber_ii([1, 2, 3, 1]) == 4  # 1 + 3
+assert house_robber_ii([1, 2, 3]) == 3
+assert house_robber_ii([5]) == 5
+```
+
+```cpp
+int houseRobberLinear(const vector<int>& money) {
+    int n = money.size();
+    if (n == 0) return 0;
+    if (n == 1) return money[0];
+    vector<int> dp(n + 1);
+    dp[1] = money[0];
+    for (int i = 2; i <= n; ++i) {
+        dp[i] = max(dp[i - 1], money[i - 1] + dp[i - 2]);
+    }
+    return dp[n];
+}
+
+int houseRobberII(const vector<int>& money) {
+    int n = money.size();
+    if (n == 0) return 0;
+    if (n == 1) return money[0];
+    if (n == 2) return max(money[0], money[1]);
+    vector<int> first(money.begin(), money.end() - 1);
+    vector<int> second(money.begin() + 1, money.end());
+    return max(houseRobberLinear(first), houseRobberLinear(second));
+}
+```
+
+## 2.3 Decode ways
+
+A message containing digits can be decoded into letters where `'1' -> 'A'`, `'2' -> 'B'`, ..., `'26' -> 'Z'`. Given a string of digits, count how many ways it can be decoded. This is exactly the problem *Decode Ways*.
+
+Let `ways[i]` be the number of decodings for the prefix of length `i` (first `i` characters). Look at the last one or two digits of that prefix. If the last digit is not `'0'`, it can stand alone as a letter, so we add `ways[i-1]`. If the last two digits form a number between 10 and 26 inclusive, they can be decoded together as one letter, so we add `ways[i-2]`. Base case: `ways[0] = 1` (empty string has one decoding — do nothing).
+
+Example: `s = "12"`. `ways[0] = 1`. `ways[1]`: last digit `'2'` is valid → `ways[0] = 1`. `ways[2]`: last digit `'2'` valid → add `ways[1] = 1`; last two digits `"12"` valid → add `ways[0] = 1`. Total `ways[2] = 2` (decodings: "AB" and "L").
+
+Time cost is $O(n)$, space is $O(n)$ (reducible to $O(1)$).
+
+```python
+def num_decodings(s: str) -> int:
+    """Return the number of ways to decode the digit string s."""
+    n = len(s)
+    if n == 0:
+        return 0
+    dp = [0] * (n + 1)
+    dp[0] = 1
+    # first character
+    dp[1] = 0 if s[0] == '0' else 1
+    for i in range(2, n + 1):
+        # single digit
+        if s[i - 1] != '0':
+            dp[i] += dp[i - 1]
+        # two digits
+        two = int(s[i - 2:i])
+        if 10 <= two <= 26:
+            dp[i] += dp[i - 2]
+    return dp[n]
+
+assert num_decodings("12") == 2
+assert num_decodings("226") == 3  # BBF, BZ, VF
+assert num_decodings("06") == 0
+assert num_decodings("10") == 1
+assert num_decodings("") == 0
+```
+
+```cpp
+int numDecodings(const string& s) {
+    int n = s.size();
+    if (n == 0) return 0;
+    vector<int> dp(n + 1);
+    dp[0] = 1;
+    dp[1] = (s[0] == '0') ? 0 : 1;
+    for (int i = 2; i <= n; ++i) {
+        if (s[i - 1] != '0') dp[i] += dp[i - 1];
+        int two = (s[i - 2] - '0') * 10 + (s[i - 1] - '0');
+        if (10 <= two && two <= 26) dp[i] += dp[i - 2];
+    }
+    return dp[n];
+}
+```
+
+## 2.4 Coin change
+
+You have coins of different denominations and want to make a target amount. Two classic questions: what is the *fewest* coins needed (problem *Coin Change*), and how many *different combinations* of coins make the amount (problem *Coin Change II*). The loop order in the inner loop changes the meaning of the answer.
 
 ### Fewest coins
 
-You have coins of certain values and a target amount. What is the smallest number of coins that add up exactly to the target? (You may use each coin type as often as you like.)
+Let `dp[x]` be the minimum coins to make amount `x`. Initialize `dp[0] = 0` and all others to a large number (infinity). For each coin `c`, we try to improve every amount `x` from `c` up to `target`: `dp[x] = min(dp[x], dp[x - c] + 1)`. The outer loop goes over coins, the inner loop goes over amounts **increasing**. This allows using the same coin many times. At the end, if `dp[target]` is still infinity, the amount cannot be made.
 
-First, a warning about a tempting wrong idea: always taking the biggest coin that fits is called the *greedy* method, and it can fail. With coins 1, 3, 4 and target 6, greedy takes 4+1+1 (three coins), but 3+3 needs only two.
+Example: `coins = [1, 3, 4]`, `target = 6`. Table after all coins:
+- `dp[0]=0`
+- `dp[1]=1` (1)
+- `dp[2]=2` (1+1)
+- `dp[3]=1` (3)
+- `dp[4]=1` (4)
+- `dp[5]=2` (4+1)
+- `dp[6]=2` (3+3)
 
-Use DP instead. Again ask: what was the last coin? If the last coin has value $c$, then before it we had the amount $x-c$, made with as few coins as possible.
+Time cost is $O(n \cdot \text{target})$, space is $O(\text{target})$.
 
-- **State:** $f[x]$ = fewest coins to make amount $x$.
-- **Transition:** $f[x] = 1 + \min$ of $f[x-c]$ over all coins $c$ with $c \le x$.
-- **Order and base:** $x$ from 1 upward; $f[0]=0$.
+### Number of combinations (order of coins does not matter)
+
+Now let `ways[x]` be the number of combinations to make amount `x`. Initialize `ways[0] = 1`. For each coin `c`, for `x` from `c` to `target`: `ways[x] += ways[x - c]`. The outer loop over coins and inner loop **increasing** over amounts ensures each combination is counted once regardless of coin order. If we swapped the loops (amounts outer, coins inner), we would count permutations instead of combinations.
+
+Example: `coins = [1, 2]`, `target = 3`. Combinations: `1+1+1`, `1+2` → 2 ways. With loops swapped we would get `1+1+1`, `1+2`, `2+1` → 3 ways.
 
 ```python
-def fewest_coins(coins, target):
-    INF = 10**9
-    f = [INF] * (target + 1)
-    f[0] = 0
-    for x in range(1, target + 1):
-        for c in coins:
-            if c <= x and f[x - c] != INF:
-                f[x] = min(f[x], f[x - c] + 1)
-    return f[target]
+def coin_change_min(coins: list[int], target: int) -> int:
+    """Fewest coins to make target, or -1 if impossible."""
+    INF = target + 1
+    dp = [INF] * (target + 1)
+    dp[0] = 0
+    for c in coins:
+        for x in range(c, target + 1):
+            dp[x] = min(dp[x], dp[x - c] + 1)
+    return -1 if dp[target] == INF else dp[target]
+
+def coin_change_ways(coins: list[int], target: int) -> int:
+    """Number of combinations to make target (order of coins ignored)."""
+    dp = [0] * (target + 1)
+    dp[0] = 1
+    for c in coins:
+        for x in range(c, target + 1):
+            dp[x] += dp[x - c]
+    return dp[target]
+
+assert coin_change_min([1, 3, 4], 6) == 2
+assert coin_change_min([2], 3) == -1
+assert coin_change_ways([1, 2], 3) == 2
+assert coin_change_ways([2, 5], 3) == 0
 ```
 
 ```cpp
-const int INF = 1e9;
-vector<int> f(target + 1, INF);       // INF means "impossible"
-f[0] = 0;
-for (int x = 1; x <= target; x++)
-    for (int c : coins)
-        if (c <= x && f[x - c] != INF)
-            f[x] = min(f[x], f[x - c] + 1);
+int coinChangeMin(const vector<int>& coins, int target) {
+    const int INF = target + 1;
+    vector<int> dp(target + 1, INF);
+    dp[0] = 0;
+    for (int c : coins) {
+        for (int x = c; x <= target; ++x) {
+            dp[x] = min(dp[x], dp[x - c] + 1);
+        }
+    }
+    return dp[target] == INF ? -1 : dp[target];
+}
+
+int coinChangeWays(const vector<int>& coins, int target) {
+    vector<int> dp(target + 1);
+    dp[0] = 1;
+    for (int c : coins) {
+        for (int x = c; x <= target; ++x) {
+            dp[x] += dp[x - c];
+        }
+    }
+    return dp[target];
+}
 ```
 
-There are `target` states and one step per coin for each, so the work is about `target × (number of coins)`.
+## 2.5 Perfect squares and word break
 
-**Which coins were used?** The table only holds the best count. To print the coins, also remember the choice that won: `choice[x] = c`. Then start at `target`, print `choice[target]`, move to `target - choice[target]`, and repeat until you reach 0. Almost every DP can recover its answer this way.
+Some problems ask whether a thing can be split into valid pieces, or what is the minimum number of pieces. The idea is the same: try every possible last piece.
 
-## 1.7 How to find a DP in a new problem
+### Perfect squares
 
-When you meet a new problem, follow this simple recipe.
+Given an integer `n`, find the least number of perfect square numbers (1, 4, 9, 16, ...) that sum to `n`. This is exactly the problem *Perfect Squares*. Let `dp[x]` be the minimum squares for `x`. For each `x` from 1 to `n`, try every square `s = k*k <= x` and take `dp[x] = min(dp[x], dp[x - s] + 1)`. Base `dp[0] = 0`.
 
-First, write the slow recursive solution that tries everything, even if it is hopelessly slow. Second, look at what information each call really needs to continue: this is your state, and anything the future does not depend on should be thrown away. Third, check whether the same states are reached again and again; if yes, DP will help. Fourth, count the states and the work per state to estimate the speed. Fifth, make sure the dependencies never go around in a circle.
+Example: `n = 12`. Squares ≤ 12: 1, 4, 9.
+- `dp[1]=1`, `dp[2]=2`, `dp[3]=3`, `dp[4]=1`, `dp[5]=2`, `dp[6]=3`, `dp[7]=4`, `dp[8]=2` (4+4), `dp[9]=1`, `dp[10]=2` (9+1), `dp[11]=3`, `dp[12]=3` (4+4+4).
 
-The hardest part is choosing the state. If the state forgets something important, you get wrong answers; if it remembers too much, the program is slow. The rest of this course is a collection of good states for many different kinds of problems.
+Time cost is $O(n \sqrt{n})$, space is $O(n)$.
 
----
+### Word break
 
-# Chapter 2. The classical problems
+Given a string `s` and a list of words `dict`, decide if `s` can be segmented into a sequence of dictionary words. This is exactly the problem *Word Break*. Let `can[i]` be true if the prefix of length `i` can be segmented. `can[0] = true`. For each `i` from 1 to `n`, check every `j < i`: if `can[j]` is true and `s[j:i]` is in the dictionary, set `can[i] = true`.
 
-The problems in this chapter appear (in disguise) inside a large fraction of all DP problems. It is worth understanding each deeply, not just memorizing the code.
+Example: `s = "leetcode"`, `dict = ["leet", "code"]`.
+- `can[0]=true`
+- `i=4`: `j=0`, `can[0]=true`, `s[0:4]="leet"` in dict → `can[4]=true`
+- `i=8`: `j=4`, `can[4]=true`, `s[4:8]="code"` in dict → `can[8]=true`
 
-## 2.1 Paths in a grid
-
-A robot stands in the top-left corner of an $n\times m$ grid and may only move right or down. Some cells are blocked. In how many ways can it reach the bottom-right corner?
-
-The state is a cell $(i,j)$. The robot can arrive at $(i,j)$ only from above or from the left, so
-
-$$\text{ways}(i,j)=\begin{cases}0 & \text{if }(i,j)\text{ is blocked},\\ \text{ways}(i-1,j)+\text{ways}(i,j-1) & \text{otherwise,}\end{cases}$$
-
-with $\text{ways}(0,0)=1$ and out-of-range cells counting as $0$. Filling the table row by row is a valid order because every cell depends only on cells above it or to its left. The time is $O(nm)$.
-
-The same pattern gives the minimum-cost path (replace the sum with $\min$ of the two predecessor costs plus the cost of the cell) or the maximum-gain path, and with a third dimension it handles variations such as "at most $k$ turns".
-
-## 2.2 The 0/1 knapsack problem
-
-You have $n$ items; item $i$ has weight $w_i$ and value $v_i$. A bag can carry total weight at most $W$. Choose a subset of items of maximum total value.
-
-Greedy again fails (taking the item with the best value-per-weight first can leave unusable space). A brute force tries all $2^n$ subsets. The DP idea is to decide items one at a time. After looking at the first $i$ items, all that matters about the choices made so far is how much weight they used. So define
-
-$$dp[i][w]=\text{maximum value using only the first }i\text{ items with total weight at most }w.$$
-
-For item $i$ there are two options: skip it, which leaves $dp[i-1][w]$, or take it (if $w_i\le w$), which gives $v_i+dp[i-1][w-w_i]$. Therefore
-
-$$dp[i][w]=\max\bigl(dp[i-1][w],\ dp[i-1][w-w_i]+v_i\bigr),\qquad dp[0][w]=0.$$
-
-There are $(n+1)(W+1)$ states and $O(1)$ work per state, so the time is $O(nW)$. This is called **pseudo-polynomial**: it is polynomial in the *number* $W$, not in the number of bits needed to write $W$. If $W$ is $10^{9}$ the table is far too large, but see the remark below.
-
-**Squeezing the memory.** Row $i$ depends only on row $i-1$, so one array suffices, provided we update it in the correct direction:
+Time cost is $O(n^2)$ for the nested loops (substring lookup is $O(1)$ with a hash set), space is $O(n)$.
 
 ```python
-dp = [0] * (W + 1)
-for i in range(n):
-    for w in range(W, wt[i] - 1, -1):  # note: DOWNWARD
-        dp[w] = max(dp[w], dp[w - wt[i]] + val[i])
+def num_squares(n: int) -> int:
+    """Least number of perfect squares that sum to n."""
+    dp = [n] * (n + 1)  # worst case: n = 1+1+...
+    dp[0] = 0
+    for x in range(1, n + 1):
+        k = 1
+        while k * k <= x:
+            s = k * k
+            dp[x] = min(dp[x], dp[x - s] + 1)
+            k += 1
+    return dp[n]
+
+def word_break(s: str, word_dict: list[str]) -> bool:
+    """Return True if s can be segmented into words from word_dict."""
+    word_set = set(word_dict)
+    n = len(s)
+    can = [False] * (n + 1)
+    can[0] = True
+    for i in range(1, n + 1):
+        for j in range(i):
+            if can[j] and s[j:i] in word_set:
+                can[i] = True
+                break
+    return can[n]
+
+assert num_squares(12) == 3
+assert num_squares(13) == 2  # 9 + 4
+assert word_break("leetcode", ["leet", "code"]) == True
+assert word_break("applepenapple", ["apple", "pen"]) == True
+assert word_break("catsandog", ["cats", "dog", "sand", "and", "cat"]) == False
 ```
 
 ```cpp
-vector<ll> dp(W + 1, 0);
-for (int i = 0; i < n; i++)
-    for (int w = W; w >= wt[i]; w--)          // note: DOWNWARD
-        dp[w] = max(dp[w], dp[w - wt[i]] + val[i]);
+int numSquares(int n) {
+    vector<int> dp(n + 1, n);
+    dp[0] = 0;
+    for (int x = 1; x <= n; ++x) {
+        for (int k = 1; k * k <= x; ++k) {
+            dp[x] = min(dp[x], dp[x - k * k] + 1);
+        }
+    }
+    return dp[n];
+}
+
+bool wordBreak(const string& s, const vector<string>& wordDict) {
+    unordered_set<string> dict(wordDict.begin(), wordDict.end());
+    int n = s.size();
+    vector<bool> can(n + 1);
+    can[0] = true;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (can[j] && dict.count(s.substr(j, i - j))) {
+                can[i] = true;
+                break;
+            }
+        }
+    }
+    return can[n];
+}
 ```
 
-Why downward? When we compute `dp[w]` we read `dp[w - wt[i]]`, and this must still hold the old value from row $i-1$, because item $i$ may be used at most once. Going from large $w$ to small $w$ guarantees that the smaller index has not been overwritten yet. If we went upward, `dp[w - wt[i]]` would already contain row $i$, which means item $i$ could be used twice or more. That is in fact exactly the **unbounded knapsack** (each item available unlimited times), which is solved by the same code with the inner loop going upward. The whole difference between the two problems is the direction of one loop, and now you understand why.
+## 2.6 Dice roll sum
 
-**When $W$ is huge but values are small.** If the values are small instead (say $\sum v_i\le V$), swap the roles: let $dp[i][v]$ be the *minimum weight* needed to obtain value exactly $v$ using the first $i$ items. The time becomes $O(nV)$. Choosing which quantity becomes an index of the table, and which becomes the stored value, is a trick you will use often.
+You have `d` dice, each with `f` faces numbered 1 to `f`. How many ways can the dice sum to a target `t`? This is exactly the problem *Dice Roll Sum*.
 
-**Subset sum with bitsets.** If we only ask whether a sum is reachable, the table contains booleans, and the transition `dp[w] |= dp[w - wt]` for all $w$ simultaneously is a shift-and-or of a whole bit array. With `std::bitset<N>`:
+Let `dp[i][s]` be the number of ways to get sum `s` using the first `i` dice. Base: `dp[0][0] = 1`. For each die `i` from 1 to `d`, for each possible sum `s` from `i` to `i*f`, we add the ways from the previous die with each face value: `dp[i][s] = sum(dp[i-1][s - face] for face in 1..f if s - face >= 0)`.
+
+We can compress this to a 1D array by iterating sums **backwards** (from high to low) for each die, or we can keep a 2D table for clarity. The 2D version uses $O(d \cdot t)$ time and space. The 1D version uses $O(t)$ space.
+
+Example: `d = 2`, `f = 6`, `t = 7`. Ways: (1,6), (2,5), (3,4), (4,3), (5,2), (6,1) → 6 ways.
 
 ```python
-# Simulate std::bitset<N> with an integer (unbounded, but can be masked if N is known)
-reach = 1  # reach[0] = True
-for w in wt:
-    reach |= reach << w
-# If a fixed size N is required, mask with: reach &= (1 << N) - 1
+def dice_roll_sum(d: int, f: int, target: int) -> int:
+    """Number of ways to roll d f-faced dice to get sum target."""
+    dp = [0] * (target + 1)
+    dp[0] = 1
+    for _ in range(d):
+        new_dp = [0] * (target + 1)
+        for s in range(1, target + 1):
+            for face in range(1, f + 1):
+                if s - face >= 0:
+                    new_dp[s] += dp[s - face]
+        dp = new_dp
+    return dp[target]
+
+assert dice_roll_sum(2, 6, 7) == 6
+assert dice_roll_sum(1, 6, 3) == 1
+assert dice_roll_sum(2, 6, 12) == 1  # 6+6
+assert dice_roll_sum(3, 6, 7) == 15
 ```
 
 ```cpp
-bitset<N> reach; reach[0] = 1;
-for (int i = 0; i < n; i++) reach |= reach << wt[i];
+int diceRollSum(int d, int f, int target) {
+    vector<int> dp(target + 1);
+    dp[0] = 1;
+    for (int i = 0; i < d; ++i) {
+        vector<int> ndp(target + 1);
+        for (int s = 1; s <= target; ++s) {
+            for (int face = 1; face <= f; ++face) {
+                if (s - face >= 0) ndp[s] += dp[s - face];
+            }
+        }
+        dp.swap(ndp);
+    }
+    return dp[target];
+}
 ```
 
-The running time is $O(nW/64)$, which is a large practical improvement.
+## 2.7 Check yourself
 
-## 2.3 Longest increasing subsequence (LIS)
+1. In the house robber recurrence, why do we use `best[i-2]` when we choose to rob house `i`?
+2. For coin change (fewest coins), what happens if the inner loop goes over amounts in decreasing order instead of increasing?
+3. In word break, why do we check `can[j]` before looking up `s[j:i]` in the dictionary?
+4. For dice roll sum with 2 dice and 6 faces, how many ways are there to get a sum of 2, and how many for a sum of 7?
 
-Given a sequence $a_0,\dots,a_{n-1}$, find the length of the longest subsequence (elements need not be adjacent, but must keep their order) that is strictly increasing.
+# Chapter 3. Dynamic programming on grids
 
-The first DP has state $i$ meaning "the best subsequence that **ends exactly at** element $i$". It is crucial to include "ends exactly at $i$" in the definition; otherwise we would not know whether $a_i$ can be appended. We obtain
+## 3.1 Counting paths in a grid
 
-$$L[i]=1+\max\{L[j]: j<i,\ a_j<a_i\}\quad(\text{or }1\text{ if the set is empty}),$$
+Imagine a robot sitting in the top-left corner of a rectangular board. The robot can only move right or down, one cell at a time. We want to know how many different ways the robot can reach the bottom-right corner. This is exactly the problem *Unique Paths*.
 
-and the answer is $\max_i L[i]$. There are $n$ states and $O(n)$ transitions, hence $O(n^2)$.
+Let the board have $m$ rows and $n$ columns. Number the rows $0$ to $m-1$ from top to bottom, and columns $0$ to $n-1$ from left to right. The robot starts at $(0,0)$ and must finish at $(m-1,n-1)$.
 
-For $n$ up to $10^5$ or $10^6$ we need something better. The key is to change what the table stores. Instead of indexing by the element, index by the **length** and store the best possible tail:
+If we write the number of ways to reach each cell in a table, a simple pattern appears. The first row and the first column can only be reached in one way: by moving straight right or straight down. For any other cell $(i,j)$, the robot must have come from the cell above $(i-1,j)$ or from the cell to the left $(i,j-1)$. So the number of ways to reach $(i,j)$ is the sum of the ways to reach those two neighbours.
 
-$$d[\ell]=\text{the smallest value that can be the last element of an increasing subsequence of length }\ell.$$
+Let us work through a $3 \times 3$ board by hand. The table of ways looks like this:
 
-(Smaller is better, because it is easier to extend later.) The array $d$ is strictly increasing. To see this, take any increasing subsequence of length $\ell+1$ ending at value $x$; removing its last element gives a subsequence of length $\ell$ ending at a value smaller than $x$. Hence $d[\ell]<d[\ell+1]$.
+|   | 0 | 1 | 2 |
+|---|---|---|---|
+| 0 | 1 | 1 | 1 |
+| 1 | 1 | 2 | 3 |
+| 2 | 1 | 3 | 6 |
 
-Now we process elements from left to right and maintain $d$. When element $x=a_i$ arrives, find the first position $\ell$ with $d[\ell]\ge x$. Then $x$ can extend any subsequence of length $\ell-1$ (whose tail $d[\ell-1]<x$) to one of length $\ell$ with a tail $x\le d[\ell]$, so we set $d[\ell]:=x$. If no such $\ell$ exists, $x$ is larger than every tail and we append it, increasing the LIS length by one. Since $d$ is sorted we find $\ell$ by binary search:
+The answer is $6$. Notice how we filled the table row by row, left to right. We always used values that were already computed. This order works because every cell depends only on its top and left neighbours, which live in earlier rows or earlier columns.
+
+The algorithm runs in $O(mn)$ time and uses $O(mn)$ space if we keep the whole table. We can reduce space to $O(n)$ by keeping only the current row, because each new cell only needs the value to its left (already in the current row) and the value above (stored in the same column from the previous row).
+
+```python
+def unique_paths(m: int, n: int) -> int:
+    dp = [1] * n
+    for _ in range(1, m):
+        for j in range(1, n):
+            dp[j] += dp[j - 1]
+    return dp[-1]
+
+assert unique_paths(3, 3) == 6
+assert unique_paths(2, 2) == 2
+```
+
+```cpp
+int uniquePaths(int m, int n) {
+    vector<int> dp(n, 1);
+    for (int i = 1; i < m; ++i) {
+        for (int j = 1; j < n; ++j) {
+            dp[j] += dp[j - 1];
+        }
+    }
+    return dp[n - 1];
+}
+```
+
+## 3.2 Blocked cells and cheapest paths
+
+Now suppose some cells are blocked and the robot cannot step on them. This is the problem *Unique Paths with Obstacles*. We use the same table idea, but a blocked cell gets a value of $0$ ways. The start cell is $1$ if it is free, otherwise $0$. Every other free cell adds the ways from top and left, treating blocked neighbours as $0$.
+
+Next, imagine each cell has a cost (a non-negative number) and we want the cheapest total cost from start to finish. This is *Minimum Path Sum*. The recurrence changes from counting to minimizing: the cheapest cost to reach $(i,j)$ is the cell's own cost plus the smaller of the cheapest costs to reach $(i-1,j)$ and $(i,j-1)$. The first row and first column are just cumulative sums because there is only one way to reach them.
+
+Let us trace a tiny $2 \times 3$ grid with costs:
+
+```
+1 2 3
+4 5 6
+```
+
+The table of minimum costs:
+
+|   | 0 | 1 | 2 |
+|---|---|---|---|
+| 0 | 1 | 3 | 6 |
+| 1 | 5 | 8 | 12 |
+
+The answer is $12$. We fill the table in the same top-left to bottom-right order. Time $O(mn)$, space $O(n)$ with a rolling row.
+
+```python
+def min_path_sum(grid: list[list[int]]) -> int:
+    m, n = len(grid), len(grid[0])
+    dp = [float('inf')] * n
+    dp[0] = grid[0][0]
+    for j in range(1, n):
+        dp[j] = dp[j - 1] + grid[0][j]
+    for i in range(1, m):
+        dp[0] += grid[i][0]
+        for j in range(1, n):
+            dp[j] = grid[i][j] + min(dp[j], dp[j - 1])
+    return dp[-1]
+
+assert min_path_sum([[1,2,3],[4,5,6]]) == 12
+assert min_path_sum([[1]]) == 1
+```
+
+```cpp
+int minPathSum(vector<vector<int>>& grid) {
+    int m = grid.size(), n = grid[0].size();
+    vector<int> dp(n, INT_MAX);
+    dp[0] = grid[0][0];
+    for (int j = 1; j < n; ++j) dp[j] = dp[j - 1] + grid[0][j];
+    for (int i = 1; i < m; ++i) {
+        dp[0] += grid[i][0];
+        for (int j = 1; j < n; ++j) {
+            dp[j] = grid[i][j] + min(dp[j], dp[j - 1]);
+        }
+    }
+    return dp[n - 1];
+}
+```
+
+For *Unique Paths with Obstacles* we only need to zero out blocked cells:
+
+```python
+def unique_paths_with_obstacles(grid: list[list[int]]) -> int:
+    m, n = len(grid), len(grid[0])
+    dp = [0] * n
+    dp[0] = 1 if grid[0][0] == 0 else 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == 1:
+                dp[j] = 0
+            elif j > 0:
+                dp[j] += dp[j - 1]
+    return dp[-1]
+
+assert unique_paths_with_obstacles([[0,0,0],[0,1,0],[0,0,0]]) == 2
+assert unique_paths_with_obstacles([[1]]) == 0
+```
+
+```cpp
+int uniquePathsWithObstacles(vector<vector<int>>& grid) {
+    int m = grid.size(), n = grid[0].size();
+    vector<int> dp(n, 0);
+    dp[0] = grid[0][0] == 0 ? 1 : 0;
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (grid[i][j] == 1) dp[j] = 0;
+            else if (j > 0) dp[j] += dp[j - 1];
+        }
+    }
+    return dp[n - 1];
+}
+```
+
+## 3.3 Triangles and falling paths
+
+A triangle of numbers looks like this:
+
+```
+   2
+  3 4
+ 6 5 7
+4 1 8 3
+```
+
+We start at the top and move down to adjacent numbers on the next row. The goal is to find the path with the smallest sum. This is *Triangle Minimum Path*. The triangle has $n$ rows. Row $i$ has $i+1$ numbers, indexed $0$ to $i$. From position $(i,j)$ we can go to $(i+1,j)$ or $(i+1,j+1)$.
+
+It is natural to fill a DP table from the bottom up. The bottom row's best sums are just the numbers themselves. For each cell above, its best sum is its own value plus the smaller of the two cells directly below it. Working upward, the top cell finally holds the answer.
+
+Let us compute the example by hand. Bottom row: $4, 1, 8, 3$. Row above: $6+\min(4,1)=7$, $5+\min(1,8)=6$, $7+\min(8,3)=10$. Next: $3+\min(7,6)=9$, $4+\min(6,10)=10$. Top: $2+\min(9,10)=11$. The answer is $11$.
+
+We can do this in place on a copy of the last row, updating from left to right: the new value at position $j$ needs the old values at positions $j$ and $j+1$, and position $j+1$ has not been changed yet. Time $O(n^2)$, space $O(n)$.
+
+```python
+def minimum_total(triangle: list[list[int]]) -> int:
+    dp = triangle[-1][:]
+    for i in range(len(triangle) - 2, -1, -1):
+        for j in range(i + 1):
+            dp[j] = triangle[i][j] + min(dp[j], dp[j + 1])
+    return dp[0]
+
+assert minimum_total([[2],[3,4],[6,5,7],[4,1,8,3]]) == 11
+assert minimum_total([[-10]]) == -10
+```
+
+```cpp
+int minimumTotal(vector<vector<int>>& triangle) {
+    int n = triangle.size();
+    vector<int> dp = triangle.back();
+    for (int i = n - 2; i >= 0; --i) {
+        for (int j = 0; j <= i; ++j) {
+            dp[j] = triangle[i][j] + min(dp[j], dp[j + 1]);
+        }
+    }
+    return dp[0];
+}
+```
+
+A close cousin is *Minimum Falling Path Sum*. Here we have a square $n \times n$ matrix. We start at any cell in the top row and move down to the next row, choosing the same column or one step left or right. We want the smallest sum reaching the bottom row. The recurrence is similar: $dp[i][j] = grid[i][j] + \min(dp[i-1][j-1], dp[i-1][j], dp[i-1][j+1])$ with boundary checks. We fill top to bottom. Time $O(n^2)$, space $O(n)$ with two rows.
+
+```python
+def min_falling_path_sum(grid: list[list[int]]) -> int:
+    n = len(grid)
+    prev = grid[0][:]
+    for i in range(1, n):
+        cur = [0] * n
+        for j in range(n):
+            best = prev[j]
+            if j > 0: best = min(best, prev[j - 1])
+            if j + 1 < n: best = min(best, prev[j + 1])
+            cur[j] = grid[i][j] + best
+        prev = cur
+    return min(prev)
+
+assert min_falling_path_sum([[2,1,3],[6,5,4],[7,8,9]]) == 13
+assert min_falling_path_sum([[-19,57],[-40,-5]]) == -59
+```
+
+```cpp
+int minFallingPathSum(vector<vector<int>>& grid) {
+    int n = grid.size();
+    vector<int> prev = grid[0];
+    for (int i = 1; i < n; ++i) {
+        vector<int> cur(n);
+        for (int j = 0; j < n; ++j) {
+            int best = prev[j];
+            if (j > 0) best = min(best, prev[j - 1]);
+            if (j + 1 < n) best = min(best, prev[j + 1]);
+            cur[j] = grid[i][j] + best;
+        }
+        prev = move(cur);
+    }
+    return *min_element(prev.begin(), prev.end());
+}
+```
+
+## 3.4 Squares inside a grid
+
+Two problems ask about squares made of $1$s in a binary matrix. *Maximal Square* wants the area of the largest all-$1$ square. *Count Square Submatrices* wants the total number of square submatrices that are all $1$s.
+
+Let $dp[i][j]$ be the side length of the largest all-$1$ square whose bottom-right corner is at $(i,j)$. If $grid[i][j] = 0$, then $dp[i][j] = 0$. Otherwise, the square can extend only as far as the smallest of its three neighbours: top, left, and top-left. So $dp[i][j] = 1 + \min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])$.
+
+Why does this work? A square of side $k$ ending at $(i,j)$ needs a square of side $k-1$ ending at each of those three neighbours. The smallest neighbour limits how large we can go.
+
+For a $3 \times 3$ all-$1$ matrix, the $dp$ table becomes:
+
+|   | 0 | 1 | 2 |
+|---|---|---|---|
+| 0 | 1 | 1 | 1 |
+| 1 | 1 | 2 | 2 |
+| 2 | 1 | 2 | 3 |
+
+The maximal square has side $3$, area $9$. The sum of all entries is $1+1+1+1+2+2+1+2+3 = 14$, which is exactly the count of all square submatrices (each cell contributes the number of squares ending there).
+
+We can compute row by row with a single array of length $n$, keeping the previous row's values in a variable for the top-left neighbour. Time $O(mn)$, space $O(n)$.
+
+```python
+def maximal_square(grid: list[list[int]]) -> int:
+    m, n = len(grid), len(grid[0])
+    dp = [0] * (n + 1)
+    max_side = 0
+    prev = 0
+    for i in range(m):
+        for j in range(n):
+            temp = dp[j + 1]
+            if grid[i][j] == 1:
+                dp[j + 1] = 1 + min(dp[j], dp[j + 1], prev)
+                max_side = max(max_side, dp[j + 1])
+            else:
+                dp[j + 1] = 0
+            prev = temp
+        prev = 0
+    return max_side * max_side
+
+def count_squares(grid: list[list[int]]) -> int:
+    m, n = len(grid), len(grid[0])
+    dp = [0] * (n + 1)
+    total = 0
+    prev = 0
+    for i in range(m):
+        for j in range(n):
+            temp = dp[j + 1]
+            if grid[i][j] == 1:
+                dp[j + 1] = 1 + min(dp[j], dp[j + 1], prev)
+                total += dp[j + 1]
+            else:
+                dp[j + 1] = 0
+            prev = temp
+        prev = 0
+    return total
+
+assert maximal_square([[1,1,1],[1,1,1],[1,1,1]]) == 9
+assert count_squares([[1,1,1],[1,1,1],[1,1,1]]) == 14
+assert maximal_square([[0]]) == 0
+```
+
+```cpp
+int maximalSquare(vector<vector<int>>& grid) {
+    int m = grid.size(), n = grid[0].size();
+    vector<int> dp(n + 1, 0);
+    int maxSide = 0, prev = 0;
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            int temp = dp[j + 1];
+            if (grid[i][j] == 1) {
+                dp[j + 1] = 1 + min({dp[j], dp[j + 1], prev});
+                maxSide = max(maxSide, dp[j + 1]);
+            } else {
+                dp[j + 1] = 0;
+            }
+            prev = temp;
+        }
+        prev = 0;
+    }
+    return maxSide * maxSide;
+}
+
+int countSquares(vector<vector<int>>& grid) {
+    int m = grid.size(), n = grid[0].size();
+    vector<int> dp(n + 1, 0);
+    int total = 0, prev = 0;
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            int temp = dp[j + 1];
+            if (grid[i][j] == 1) {
+                dp[j + 1] = 1 + min({dp[j], dp[j + 1], prev});
+                total += dp[j + 1];
+            } else {
+                dp[j + 1] = 0;
+            }
+            prev = temp;
+        }
+        prev = 0;
+    }
+    return total;
+}
+```
+
+## 3.5 Filling the table backwards: dungeon game
+
+In *Dungeon Game* a knight starts at the top-left of a grid and must reach the bottom-right. Each cell changes the knight's health (positive heals, negative damages). The knight can only move right or down. We need the minimum initial health so the knight never drops to $0$ or below.
+
+If we try to go forward, we don't know how much health we will need later. The trick is to go backward from the destination. Let $dp[i][j]$ be the minimum health needed to *enter* cell $(i,j)$ and survive to the end. At the bottom-right, we need at least $1$ health after the cell's effect, so $dp[m-1][n-1] = \max(1, 1 - grid[m-1][n-1])$.
+
+For other cells, the knight will choose the easier of the two next steps (right or down). If we go right, we need $dp[i][j+1]$ health entering the next cell. So we need $dp[i][j+1] - grid[i][j]$ health entering the current cell. But health can never be less than $1$. So $dp[i][j] = \max(1, \min(dp[i+1][j], dp[i][j+1]) - grid[i][j])$.
+
+We fill the table from bottom-right to top-left. Time $O(mn)$, space $O(n)$ with a rolling row from right to left.
+
+Let us trace a tiny $2 \times 2$ grid:
+
+```
+-2  -3
+-5 -10
+```
+
+Destination $(1,1)$: need $\max(1, 1 - (-10)) = 11$.
+$(1,0)$: only right, need $\max(1, 11 - (-5)) = 16$.
+$(0,1)$: only down, need $\max(1, 11 - (-3)) = 14$.
+$(0,0)$: choose min of right ($14$) and down ($16$), so $\max(1, 14 - (-2)) = 16$.
+
+Answer is $16$.
+
+```python
+def calculate_minimum_hp(dungeon: list[list[int]]) -> int:
+    m, n = len(dungeon), len(dungeon[0])
+    dp = [float('inf')] * (n + 1)
+    dp[n - 1] = 1
+    for i in range(m - 1, -1, -1):
+        for j in range(n - 1, -1, -1):
+            need = min(dp[j], dp[j + 1]) - dungeon[i][j]
+            dp[j] = max(1, need)
+    return dp[0]
+
+assert calculate_minimum_hp([[-2,-3],[-5,-10]]) == 16
+assert calculate_minimum_hp([[0]]) == 1
+assert calculate_minimum_hp([[100]]) == 1
+```
+
+```cpp
+int calculateMinimumHP(vector<vector<int>>& dungeon) {
+    int m = dungeon.size(), n = dungeon[0].size();
+    vector<int> dp(n + 1, INT_MAX);
+    dp[n - 1] = 1;
+    for (int i = m - 1; i >= 0; --i) {
+        for (int j = n - 1; j >= 0; --j) {
+            int need = min(dp[j], dp[j + 1]) - dungeon[i][j];
+            dp[j] = max(1, need);
+        }
+    }
+    return dp[0];
+}
+```
+
+## 3.6 The largest all-zero rectangle
+
+Now we look for the largest rectangle containing only zeros in a binary matrix. This is sometimes called the *maximal rectangle of zeros*. We can solve it in $O(mn)$ time using a stack, similar to the largest rectangle in a histogram.
+
+First, for each cell we compute how many consecutive zeros are directly above it (including itself). Call this $height[i][j]$. If $grid[i][j] = 1$, then $height[i][j] = 0$. Otherwise $height[i][j] = 1 + height[i-1][j]$. This turns each row into a histogram where the bar heights are the number of continuous zeros upward.
+
+For a fixed row, we want the largest rectangle in this histogram. The classic stack algorithm finds it in $O(n)$: scan left to right, maintain a stack of column indices with increasing heights. When the current height is lower than the stack top, we pop and compute the area of the rectangle that uses the popped height as the limiting bar. The width extends from the new stack top (or left border) to the current column minus one.
+
+We do this for every row and keep the maximum area. Total time $O(mn)$, space $O(n)$.
+
+Let us trace a small example:
+
+```
+0 0 1
+0 0 0
+1 0 0
+```
+
+Heights row by row:
+Row 0: $1, 1, 0$
+Row 1: $2, 2, 1$
+Row 2: $0, 3, 2$
+
+For row 1 histogram $[2,2,1]$, the largest rectangle has area $4$ (columns $0$ and $1$, height $2$). For row 2 histogram $[0,3,2]$, the largest is $4$ (columns $1$ and $2$, height $2$). Overall answer $4$.
+
+```python
+def maximal_rectangle_of_zeros(grid: list[list[int]]) -> int:
+    if not grid: return 0
+    m, n = len(grid), len(grid[0])
+    height = [0] * n
+    best = 0
+    for i in range(m):
+        for j in range(n):
+            height[j] = height[j] + 1 if grid[i][j] == 0 else 0
+        stack = []
+        for j in range(n + 1):
+            cur_h = height[j] if j < n else 0
+            while stack and cur_h < height[stack[-1]]:
+                h = height[stack.pop()]
+                left = stack[-1] if stack else -1
+                area = h * (j - left - 1)
+                best = max(best, area)
+            stack.append(j)
+    return best
+
+assert maximal_rectangle_of_zeros([[0,0,1],[0,0,0],[1,0,0]]) == 4
+assert maximal_rectangle_of_zeros([[1,1],[1,1]]) == 0
+assert maximal_rectangle_of_zeros([[0]]) == 1
+```
+
+```cpp
+int maximalRectangleOfZeros(vector<vector<int>>& grid) {
+    if (grid.empty()) return 0;
+    int m = grid.size(), n = grid[0].size();
+    vector<int> height(n, 0);
+    int best = 0;
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            height[j] = grid[i][j] == 0 ? height[j] + 1 : 0;
+        }
+        vector<int> st;
+        for (int j = 0; j <= n; ++j) {
+            int cur = (j < n) ? height[j] : 0;
+            while (!st.empty() && cur < height[st.back()]) {
+                int h = height[st.back()];
+                st.pop_back();
+                int left = st.empty() ? -1 : st.back();
+                best = max(best, h * (j - left - 1));
+            }
+            st.push_back(j);
+        }
+    }
+    return best;
+}
+```
+
+## 3.7 Check yourself
+
+1. In the unique paths problem, why can we fill the DP table row by row from top-left to bottom-right?
+2. For minimum path sum, what changes in the recurrence compared to counting paths?
+3. When solving the triangle minimum path bottom-up, why do we update the DP array from left to right?
+4. In the maximal square problem, what does $dp[i][j]$ represent, and why do we take the minimum of three neighbours?
+5. For the dungeon game, why must we fill the DP table backwards from the destination?
+
+# Chapter 4. Sequences: longest increasing subsequence
+## 4.1 Subsequences and the LIS problem
+A subsequence keeps the order of elements but may skip some of them. From 2,4,1,3 the subsequence 2,1,3 is valid because the indices increase, while 3,1 is not because the order flips.
+
+The longest increasing subsequence problem asks for the longest subsequence whose values also increase. Formally we want indices
+$$i_1 < i_2 < \dots < i_k$$
+with
+$$a[i_1] < a[i_2] < \dots < a[i_k]$$
+and $k$ as large as possible. This is exactly the problem *Longest Increasing Subsequence* from the sheet.
+
+## 4.2 The quadratic DP
+Dynamic programming builds a solution from smaller answers. Let $d[i]$ be the length of the longest increasing subsequence that ends exactly at position $i$.
+Then $d[i]$ is 1 by itself, or it can be extended from an earlier $j<i$ with $a[j]<a[i]$.
+
+$$d[i]=\max\Bigl(1,\max_{\substack{j<i\\a[j]<a[i]}} d[j]+1\Bigr)$$
+
+The answer is $\max_i d[i]$.
+
+For $a = \{8,3,4,6,5,2,0,7,9,1\}$ we get
+$d = \{1,1,2,3,3,1,1,4,5,2\}$.
+The longest length is 5, e.g. 3,4,5,7,9. This method uses $O(n^2)$ time and $O(n)$ space.
+
+```python
+def lis_length(a):
+    n = len(a)
+    d = [1]*n
+    for i in range(n):
+        for j in range(i):
+            if a[j] < a[i]:
+                if d[j] + 1 > d[i]:
+                    d[i] = d[j] + 1
+    return max(d) if d else 0
+
+assert lis_length([8,3,4,6,5,2,0,7,9,1]) == 5
+assert lis_length([1,2,3,4]) == 4
+```
+```cpp
+int lis_length(vector<int> const& a){
+    int n = (int)a.size();
+    vector<int> d(n,1);
+    for(int i=0;i<n;i++){
+        for(int j=0;j<i;j++){
+            if(a[j] < a[i]) d[i] = max(d[i], d[j]+1);
+        }
+    }
+    int ans = 0;
+    for(int v:d) ans = max(ans,v);
+    return ans;
+}
+```
+
+## 4.3 The faster tails idea
+Binary search finds a position in a sorted list in logarithmic time.
+
+Keep `tails[l]` as the smallest possible last value of an increasing subsequence of length $l+1$ seen so far. The array stays sorted.
+
+Processing 8,3,4,6,5,2,0,7,9,1:
+```
+step   tails
+8      [8]
+3      [3]
+4      [3,4]
+6      [3,4,6]
+5      [3,4,5]
+2      [2,4,5]
+0      [0,4,5]
+7      [0,4,5,7]
+9      [0,4,5,7,9]
+1      [0,1,5,7,9]
+```
+For each $x$ we binary search the first $tails$ entry $\ge x$ and replace it, or append if $x$ is larger than all. The length of `tails` is the LIS length. This is $O(n\log n)$ time and $O(n)$ space.
 
 ```python
 import bisect
+def lis_len_nlogn(a):
+    d = []
+    for x in a:
+        i = bisect.bisect_left(d, x)
+        if i == len(d):
+            d.append(x)
+        else:
+            d[i] = x
+    return len(d)
 
-d = []                       # d[l] = smallest tail of length l+1
-for x in a:
-    i = bisect.bisect_left(d, x)   # use bisect_right for non-decreasing
-    if i == len(d):
-        d.append(x)
-    else:
-        d[i] = x
-lis = len(d)
+assert lis_len_nlogn([8,3,4,6,5,2,0,7,9,1]) == 5
+assert lis_len_nlogn([3,4,2,5,1]) == 3
 ```
-
 ```cpp
-vector<int> d;                       // d[l] = smallest tail of length l+1
-for (int x : a) {
-    auto it = lower_bound(d.begin(), d.end(), x);   // use upper_bound for non-decreasing
-    if (it == d.end()) d.push_back(x); else *it = x;
-}
-int lis = d.size();
-```
-
-The time is $O(n\log n)$. A word of caution: the array $d$ after the loop is *not* itself a valid subsequence; it only stores tails. To reconstruct an actual subsequence, remember for every element the index of the element that precedes it, namely the last element stored at position $\ell-1$ when $x$ was inserted at $\ell$.
-
-LIS is a good first example of an important phenomenon: the same DP can often be sped up by observing that a different *representation* of the table has a monotone structure we can exploit with binary search. In Chapter 9 we will see far more powerful versions of this idea.
-
-## 2.4 Two strings: LCS and edit distance
-
-When the input consists of two sequences, a natural state is a pair of prefixes. For the longest common subsequence of strings $s$ and $t$, let $dp[i][j]$ be the LCS length of the first $i$ characters of $s$ and the first $j$ characters of $t$. If the last characters are equal, we can match them; otherwise one of them is unused:
-
-$$dp[i][j]=\begin{cases}dp[i-1][j-1]+1 & s_i=t_j,\\ \max\bigl(dp[i-1][j],\ dp[i][j-1]\bigr) & \text{otherwise.}\end{cases}$$
-
-The edit distance (minimum number of insertions, deletions, and substitutions to turn $s$ into $t$) is similar:
-
-$$dp[i][j]=\min\bigl(dp[i-1][j]+1,\ dp[i][j-1]+1,\ dp[i-1][j-1]+[s_i\ne t_j]\bigr).$$
-
-Both run in $O(|s||t|)$. They show the standard pattern for two-sequence problems: the state is a pair of positions, and the transition looks at the last character of each prefix.
-
-## 2.5 Counting ordered versus unordered ways
-
-A frequent source of wrong answers is not the DP itself but *what is being counted*. Take the coin problem and ask: in how many ways can we form the amount $x$? There are two different questions hiding here. If $1+3$ and $3+1$ count as different (the order of coins matters), we count ordered sequences. If they count as the same (only which coins we use matters), we count combinations.
-
-For ordered sequences, the state is just the amount, and every coin may be the last one:
-
-```python
-g = [0] * (x + 1); g[0] = 1
-for s in range(1, x + 1):            # amount in the OUTER loop
-    for c in coins:
-        if c <= s:
-            g[s] += g[s - c]
-```
-
-```cpp
-vector<ll> g(x + 1, 0); g[0] = 1;
-for (int s = 1; s <= x; s++)            // amount in the OUTER loop
-    for (int c : coins)
-        if (c <= s) g[s] += g[s - c];
-```
-
-For combinations, swap the loops so that the coin type is outside:
-
-```python
-def count_ordered_ways(coins, x):
-    # ordered sequences: order of coins matters
-    g = [0] * (x + 1)
-    g[0] = 1
-    for s in range(1, x + 1):            # amount in the OUTER loop
-        for c in coins:
-            if c <= s:
-                g[s] += g[s - c]
-    return g[x]
-
-
-def count_combinations(coins, x):
-    # combinations: only which coins we use matters
-    g = [0] * (x + 1)
-    g[0] = 1
-    for c in coins:                     # coin type in the OUTER loop
-        for s in range(c, x + 1):
-            g[s] += g[s - c]
-    return g[x]
-
-
-if __name__ == "__main__":
-    coins = [1, 3, 4]
-    x = 6
-    print("Ordered ways:", count_ordered_ways(coins, x))
-    print("Combinations:", count_combinations(coins, x))
-```
-
-```cpp
-vector<ll> g(x + 1, 0); g[0] = 1;
-for (int c : coins)                     // coin type in the OUTER loop
-    for (int s = c; s <= x; s++)
-        g[s] += g[s - c];
-```
-
-Why does this work? When we process one coin type at a time, every combination is built in exactly one fixed order (all coins of the first type, then the second type, and so on), so it is counted once. When the amount is the outer loop, any order of the same coins is a separate path, so each ordering is counted. Remember this rule: **the outer loop decides what is counted as "different"**.
-
-## 2.6 A summary of patterns
-
-Looking back at the examples, notice how small the repertoire of states is. A single number (Fibonacci, coins) is "how far have I gone". A position plus a resource counter (knapsack) is "how far have I gone, and what do I have left". A pair of positions is used for two sequences. A "ends exactly here" state (LIS) is used when the next choice depends on the last chosen element. Keep these templates in mind: in the rest of the document, the states become more exotic (vertices of trees, subsets of a graph), but the thinking process stays the same.
-
-
----
-
-# Chapter 4. DP on trees
-
-A tree is a connected graph without cycles. Once we choose a **root**, every edge gets a natural direction (from parent to child), and the tree becomes a DAG in which each vertex has exactly one predecessor. This makes DP on trees the most pleasant kind: the structure is regular, the order is obvious (children before parents), and subproblems are exactly the **subtrees**.
-
-## 4.1 The template
-
-Root the tree at vertex $1$. For a vertex $v$, the subtree of $v$ consists of $v$ and all of its descendants. A tree DP computes some value $dp[v]$ describing the subtree of $v$, by combining the values of the children of $v$:
-
-```python
-g = []  # adjacency list, list of lists
-
-def dfs(v, parent):
-    # initialize dp[v] as if v were a leaf
-    for u in g[v]:
-        if u == parent:
-            continue
-        dfs(u, v)
-        # merge dp[u] into dp[v]
-    # finalize dp[v] if needed
-```
-
-```cpp
-vector<int> g[N];
-
-void dfs(int v, int parent) {
-    // initialize dp[v] as if v were a leaf
-    for (int u : g[v]) {
-        if (u == parent) continue;
-        dfs(u, v);
-        // merge dp[u] into dp[v]
+int lis_len_nlogn(vector<int> const& a){
+    vector<int> d;
+    for(int x:a){
+        auto it = lower_bound(d.begin(), d.end(), x);
+        if(it == d.end()) d.push_back(x);
+        else *it = x;
     }
-    // finalize dp[v] if needed
+    return (int)d.size();
 }
 ```
 
-The number of states is $n$, and every edge is traversed twice, so the total time is $O(n)$ plus whatever the merge costs.
-
-A technical remark for large inputs: a path graph with $10^6$ vertices makes this recursion go $10^6$ levels deep, which can overflow the stack. The robust alternative is to compute a BFS or DFS order once, store each vertex's parent, and process vertices in **reverse** order of discovery. Then every child is processed before its parent, and no recursion is used.
-
-## 4.2 The simplest example: subtree sizes and depths
-
-Let $sz[v]$ be the number of vertices in the subtree of $v$. A subtree consists of $v$ itself and the subtrees of its children, so
-
-$$sz[v]=1+\sum_{u\in\text{children}(v)}sz[u].$$
-
-The sizes are the basic tool in almost every later tree algorithm: they tell us how the tree splits, and they drive complexity arguments.
-
-## 4.3 Maximum independent set on a tree
-
-An **independent set** is a set of vertices no two of which are adjacent. Find the maximum size of an independent set in a tree. (On general graphs the problem is NP-hard. Trees make it easy.)
-
-The difficulty is that the decision at $v$ constrains its children, so the state must remember what $v$ did. We therefore use two values per vertex:
-
-$$\begin{aligned}in[v]&=\text{best in the subtree of }v\text{ if }v\text{ is chosen},\\ out[v]&=\text{best in the subtree of }v\text{ if }v\text{ is not chosen}.\end{aligned}$$
-
-If $v$ is chosen, none of its children may be, so each child contributes $out[u]$. If $v$ is not chosen, each child is free, and contributes the better of its two options:
-
-$$in[v]=1+\sum_{u}out[u],\qquad out[v]=\sum_{u}\max\bigl(in[u],\,out[u]\bigr).$$
+## 4.4 Getting the subsequence back
+With the tails idea we can also recover a subsequence. Store for each element the position $p[i]$ where it would be placed in `tails`. Then scan the array backwards, picking the last occurrence with position $L-1$, then $L-2$, etc. The picked values are increasing by construction.
 
 ```python
-g = []
-in_ = []
-out = []
+import bisect
+def lis_seq(a):
+    n = len(a)
+    d = []
+    p = [0]*n
+    for i,x in enumerate(a):
+        pos = bisect.bisect_left(d, x)
+        p[i] = pos
+        if pos == len(d):
+            d.append(x)
+        else:
+            d[pos] = x
+    l = len(d)-1
+    res = []
+    for i in range(n-1,-1,-1):
+        if p[i] == l:
+            res.append(a[i])
+            l -= 1
+            if l < 0:
+                break
+    res.reverse()
+    return res
 
-def dfs(v, p):
-    in_[v] = 1
-    out[v] = 0
-    for u in g[v]:
-        if u == p:
-            continue
-        dfs(u, v)
-        in_[v] += out[u]
-        out[v] += max(in_[u], out[u])
-# answer: max(in_[root], out[root])
+assert lis_seq([8,3,4,6,5,2,0,7,9,1]) == [3,4,5,7,9]
+assert len(lis_seq([1,2,3])) == 3
 ```
-
 ```cpp
-void dfs(int v, int p) {
-    in[v] = 1; out[v] = 0;
-    for (int u : g[v]) {
-        if (u == p) continue;
-        dfs(u, v);
-        in[v]  += out[u];
-        out[v] += max(in[u], out[u]);
+vector<int> lis_seq(vector<int> const& a){
+    int n = (int)a.size();
+    vector<int> d;
+    vector<int> p(n);
+    for(int i=0;i<n;i++){
+        auto it = lower_bound(d.begin(), d.end(), a[i]);
+        p[i] = int(it - d.begin());
+        if(it == d.end()) d.push_back(a[i]);
+        else *it = a[i];
     }
-}
-// answer: max(in[root], out[root])
-```
-
-The lesson is the one from Section 3.3 again: **add to the state whatever the parent needs to know about the child's decision**. The same two-state pattern solves minimum vertex cover, maximum matching on trees (the state records whether $v$ is already matched to a child), and counting the number of proper colorings of the tree with $k$ colors (state: the color of $v$, or just "same as parent or not").
-
-## 4.4 Longest path (diameter): answers that bend at the top
-
-The **diameter** of a tree is the length of its longest path. A path in a rooted tree has a unique highest vertex $v$ (the vertex closest to the root). From $v$ the path goes down along at most two different child branches. This suggests defining
-
-$$down[v]=\text{the length of the longest path that starts at }v\text{ and goes only downward},$$
-
-so that $down[v]=\max_u(1+down[u])$ over children $u$, with $down[v]=0$ for a leaf. The best path whose highest vertex is $v$ uses the two largest values among $\{1+down[u]\}$, and the answer is the maximum over all $v$ of that sum.
-
-```python
-diameter = 0
-
-def dfs(v, p):
-    global diameter
-    best1 = 0
-    best2 = 0  # two largest (1 + down[u])
-    for u in g[v]:
-        if u == p:
-            continue
-        dfs(u, v)
-        c = down[u] + 1
-        if c > best1:
-            best2 = best1
-            best1 = c
-        elif c > best2:
-            best2 = c
-    down[v] = best1
-    diameter = max(diameter, best1 + best2)
-```
-
-```cpp
-int diameter = 0;
-void dfs(int v, int p) {
-    int best1 = 0, best2 = 0;                 // two largest (1 + down[u])
-    for (int u : g[v]) {
-        if (u == p) continue;
-        dfs(u, v);
-        int c = down[u] + 1;
-        if (c > best1) { best2 = best1; best1 = c; }
-        else if (c > best2) best2 = c;
+    int l = (int)d.size()-1;
+    vector<int> subseq;
+    for(int i=n-1;i>=0 && l>=0;i--){
+        if(p[i]==l){
+            subseq.push_back(a[i]);
+            l--;
+        }
     }
-    down[v] = best1;
-    diameter = max(diameter, best1 + best2);
+    reverse(subseq.begin(), subseq.end());
+    return subseq;
 }
 ```
 
-This idea is general and extremely useful: when the object we seek is a **path**, the state describes a one-sided half-path (going down from $v$), while the final answer is formed at the top vertex by gluing two such halves. The state and the answer are not the same quantity. You will see this pattern in many hard problems (maximum weighted path, path with a constraint on the number of special vertices, and so on).
+## 4.5 Check yourself
+What is a subsequence of 5,1,4,2,3 that is increasing and has length three?
+Why does the tails array stay sorted after each update?
+What does `bisect_left` return for a value smaller than all elements in tails?
+If you run the reconstruction backwards from the last element, why must the chosen values be strictly increasing?
 
-## 4.5 Tree knapsack: merging two tables
+# Chapter 5. Two strings at a time
 
-Now a harder example. Each vertex $v$ has a value $a_v$. We want to choose exactly $j$ vertices that form a connected piece containing the root, maximizing the total value; and we need the answer for **every** $j\le K$.
+## 5.1 Longest common subsequence
 
-Define $dp[v][j]$ as the best total value of a connected set containing $v$, consisting of exactly $j$ vertices of the subtree of $v$. A child can contribute any number $t\ge0$ of vertices (with $t=0$ meaning we take nothing from it). Processing the children one by one, we merge the table of the child into the table of $v$. After the merge, the new table is obtained by trying all splits of $j$ into "what $v$'s current table has" and "what the child provides":
+A **subsequence** of a string is a sequence of characters that appears in the same order, but not necessarily consecutively. For example, "ace" is a subsequence of "abcde". A **common subsequence** of two strings is a subsequence of both. The **longest common subsequence** (LCS) problem asks for the length of the longest such sequence. This is exactly the problem *Longest Common Subsequence*.
 
-$$dp[v][j+t]\leftarrow\max\bigl(dp[v][j+t],\ dp[v][j]+dp[u][t]\bigr).$$
+We solve it with dynamic programming. Let the two strings be `A` of length `n` and `B` of length `m`. We build a table `dp` where `dp[i][j]` is the length of the LCS of the first `i` characters of `A` and the first `j` characters of `B`. The table has `(n+1)` rows and `(m+1)` columns, with row 0 and column 0 initialized to 0 because an empty string has no common subsequence with anything.
 
-This is exactly the 0/1 knapsack structure from Section 2.2, only with one "item group" per child, and again $j$ must be iterated downward (or the merge must write to a fresh array) so that the same child is not used twice.
+The recurrence is simple:
+- If `A[i-1] == B[j-1]`, the last characters match, so we can extend the LCS of the prefixes without these characters: `dp[i][j] = dp[i-1][j-1] + 1`.
+- Otherwise, we cannot use both last characters together, so we take the best of dropping one: `dp[i][j] = max(dp[i-1][j], dp[i][j-1])`.
 
-```python
-def dfs(v, p):
-    sz[v] = 1
-    dp[v][1] = a[v]                           # all other entries of dp[v] start at -INF
-    for u in g[v]:
-        if u == p:
-            continue
-        dfs(u, v)
-        for j in range(min(sz[v], K), 0, -1):
-            for t in range(1, min(sz[u], K - j) + 1):
-                dp[v][j + t] = max(dp[v][j + t], dp[v][j] + dp[u][t])
-        sz[v] += sz[u]
-```
+Let's work through a tiny example by hand. Let `A = "ABC"` and `B = "AC"`. We create a 4×3 table (rows 0..3, columns 0..2).
 
-```cpp
-void dfs(int v, int p) {
-    sz[v] = 1;
-    dp[v][1] = a[v];                           // all other entries of dp[v] start at -INF
-    for (int u : g[v]) {
-        if (u == p) continue;
-        dfs(u, v);
-        for (int j = min(sz[v], K); j >= 1; j--)
-            for (int t = 1; t <= min(sz[u], K - j); t++)
-                dp[v][j + t] = max(dp[v][j + t], dp[v][j] + dp[u][t]);
-        sz[v] += sz[u];
-    }
-}
-```
+|   |   | 0 | 1 | 2 |
+|---|---|---|---|---|
+|   |   |   | A | C |
+| 0 |   | 0 | 0 | 0 |
+| 1 | A | 0 | 1 | 1 |
+| 2 | B | 0 | 1 | 1 |
+| 3 | C | 0 | 1 | 2 |
 
-**Why is the total time only $O(nK)$ and not $O(nK^2)$?** The merge of a child of size $b$ into the partial table of size $a$ costs about $\min(a,K)\cdot\min(b,K)$. First suppose $K=n$ (no cap). Then the cost is $a\cdot b$, which is the number of pairs $(x,y)$ with $x$ in the already-merged part and $y$ in the child's subtree. Each pair of vertices of the tree is counted in exactly one merge, namely at their lowest common ancestor. Therefore the total cost is at most $\binom{n}{2}$, that is, $O(n^2)$. This is a remarkable fact: the naive-looking triple nesting is quadratic and not cubic.
+We fill row by row. Row 1, column 1: `A[0]=='A'` matches `B[0]=='A'`, so `dp[1][1] = dp[0][0]+1 = 1`. Row 1, column 2: `A[0]=='A'` vs `B[1]=='C'` no match, so `max(dp[0][2], dp[1][1]) = 1`. Row 2, column 1: `B` vs `A` no match, `max(dp[1][1], dp[2][0]) = 1`. Row 2, column 2: `B` vs `C` no match, `max(1,1)=1`. Row 3, column 1: `C` vs `A` no match, `max(1,0)=1`. Row 3, column 2: `C` matches `C`, so `dp[3][2] = dp[2][1]+1 = 2`. The answer is `dp[3][2] = 2`, and the LCS is "AC".
 
-With the cap $K$ we get $O(nK)$ by the following argument. Call a partial component *big* if its size is at least $K$, otherwise *small*. A merge of two small components costs at most $a\cdot b$ (pair counting), and the pairs are charged to the merged vertices; but once a component reaches size $K$ it is big, so a vertex participates in such "small–small" merges only until its component reaches $K$ vertices, and it is charged at most $K$ in total ($O(nK)$ in all). A merge of a small component of size $b<K$ into a big one costs $K\cdot b$, which charges $K$ to each vertex of the small component; after that merge the vertex is part of a big component and will never again be on the small side, so each vertex is charged at most $K$ once more. Finally, a merge of two big components costs $K^2$; since big components are disjoint and each contains at least $K$ vertices, and every such merge reduces their number by one, there are at most $n/K$ of them in total, costing $O(nK)$. Summing up, the whole procedure takes $O(nK)$.
+To recover the actual subsequence, we walk backwards from `dp[n][m]`. If the characters at the current position match, that character is part of the LCS and we move diagonally up-left. Otherwise we move towards the larger of the left or top cell (if equal, either works). This reconstruction takes $O(n+m)$ time.
 
-## 4.6 Counting with tree DP
-
-Tree DP combines naturally with counting. For instance, the number of ways to color the tree with $k$ colors so that adjacent vertices differ is $k(k-1)^{n-1}$ (choose the root's color, then each other vertex avoids its parent's color), and with additional constraints (some vertices forced to take certain colors) we use $dp[v][c]$ = number of valid colorings of the subtree of $v$ with $v$ colored $c$:
-
-$$dp[v][c]=\prod_{u\in\text{children}(v)}\ \sum_{c'\ne c}dp[u][c'].$$
-
-Products appear instead of sums because the children's subtrees are independent once the color of $v$ is fixed. This "independence of the children given the parent" is the fundamental property that makes tree DP work, and it is the reason why DP is easy on trees but hard on general graphs: in a general graph, two neighbors of $v$ may be connected to each other by another route, so their choices are no longer independent.
-
-## 4.7 Exercises for this chapter
-
-AtCoder Educational DP Contest problem P (Independent Set, counting colorings); CSES *Subordinates*, *Tree Diameter*, *Tree Matching*; Codeforces 161D (*Distance in Tree*, count pairs at distance exactly $K$, with $dp[v][d]$ = number of vertices at depth $d$ below $v$); Codeforces 815C (*Karen and Supermarket*, a tree knapsack). Verify the problem statements before assigning, since this list comes from memory.
-
-
----
-
-# Chapter 5. Rerooting: the answer for every root
-
-## 5.1 The problem
-
-A tree DP answers a question about the tree **as seen from one chosen root**. A surprisingly large family of problems asks the question for *every* vertex as the root. A typical example is the following: for each vertex $v$, compute
-
-$$S(v)=\sum_{u}\operatorname{dist}(v,u),$$
-
-the sum of distances from $v$ to all other vertices. Running the DP once per root takes $O(n)$ per root and $O(n^2)$ in total, which is too slow for $n=2\cdot10^5$. The technique of **rerooting** (also called "up and down DP" or "tree DP with all roots") solves it in $O(n)$.
-
-The idea is to compute the answer for the root $1$ by an ordinary DP, and then to *move the root* along each edge, updating the answer in constant time instead of recomputing it.
-
-## 5.2 The easy case: a quantity that can be updated by arithmetic
-
-First compute, with root $1$,
-
-$$sz[v]\ \text{(subtree size)},\qquad down[v]=\sum_{u\in\text{subtree}(v)}\operatorname{dist}(v,u).$$
-
-The recurrence for $down$ follows from the observation that every vertex in the subtree of a child $c$ is one step farther from $v$ than from $c$:
-
-$$down[v]=\sum_{c\in\text{children}(v)}\bigl(down[c]+sz[c]\bigr).$$
-
-Then $S(1)=down[1]$. Now suppose we know $S(v)$ for some vertex $v$, and let $c$ be a child of $v$. How does the sum change if we move the root from $v$ to $c$? The $sz[c]$ vertices inside the subtree of $c$ become one step closer, and the remaining $n-sz[c]$ vertices become one step farther away. Therefore
-
-$$S(c)=S(v)-sz[c]+\bigl(n-sz[c]\bigr)=S(v)+n-2\,sz[c].$$
-
-A second DFS carries this out from the top:
+The time complexity is $O(nm)$ and the space complexity is $O(nm)$ for the full table. If only the length is needed, we can reduce space to $O(\min(n,m))$ by keeping only two rows.
 
 ```python
-# Global variables (to be initialized before calling)
-g = []      # adjacency list, 1-indexed
-sz = []     # subtree sizes
-down = []   # down values
-S = []      # answer for each node
-n = 0       # number of nodes
-
-def dfs1(v, p):
-    sz[v] = 1
-    down[v] = 0
-    for c in g[v]:
-        if c != p:
-            dfs1(c, v)
-            sz[v] += sz[c]
-            down[v] += down[c] + sz[c]
-
-def dfs2(v, p):
-    for c in g[v]:
-        if c != p:
-            S[c] = S[v] + n - 2 * sz[c]
-            dfs2(c, v)
-
-# Example usage:
-# n = 5
-# g = [[] for _ in range(n + 1)]
-# g[1].extend([2, 3])
-# g[2].extend([1, 4, 5])
-# g[3].append(1)
-# g[4].append(2)
-# g[5].append(2)
-# sz = [0] * (n + 1)
-# down = [0] * (n + 1)
-# S = [0] * (n + 1)
-# dfs1(1, 0)
-# S[1] = down[1]
-# dfs2(1, 0)
-# print(S[1:])
-```
-
-```cpp
-void dfs1(int v, int p) {
-    sz[v] = 1; down[v] = 0;
-    for (int c : g[v]) if (c != p) {
-        dfs1(c, v);
-        sz[v] += sz[c];
-        down[v] += down[c] + sz[c];
-    }
-}
-void dfs2(int v, int p) {
-    for (int c : g[v]) if (c != p) {
-        S[c] = S[v] + n - 2 * sz[c];
-        dfs2(c, v);
-    }
-}
-// dfs1(1, 0); S[1] = down[1]; dfs2(1, 0);
-```
-
-This is the whole technique in miniature: a first pass moves information **up** the tree (children to parents), and a second pass moves information **down** (parents to children), and the answer at each vertex combines both.
-
-## 5.3 Thinking in terms of messages
-
-To handle harder cases, we need a cleaner mental model. Imagine that each edge of the tree carries two **messages**, one in each direction. The message from $c$ to its parent $v$, which we call $\text{up}(c)$, summarizes everything in the subtree of $c$, so it is exactly what the ordinary DP computes. The message from $v$ down to its child $c$, which we call $\text{down}(c)$, summarizes everything *outside* the subtree of $c$ as seen from $c$, that is, the whole rest of the tree hanging from $v$ (which includes $v$'s parent side and $v$'s other children).
-
-Now the answer for a vertex $v$ is the combination of the messages received from all of its neighbors: the children (their $\text{up}$ messages) and the parent (its $\text{down}$ message). If $\oplus$ is the combining operation (sum, max, product, and so on), then
-
-$$ans(v)=\bigoplus_{c\in\text{children}(v)}\text{msg}(c\to v)\ \oplus\ \text{msg}(\text{parent}(v)\to v).$$
-
-The message that $v$ sends to a child $c$ must contain *everything $v$ knows except what came from $c$*. So
-
-$$\text{msg}(v\to c)=\text{finish}\Bigl(\bigoplus_{c'\ne c}\text{msg}(c'\to v)\ \oplus\ \text{msg}(\text{parent}(v)\to v)\Bigr).$$
-
-Here finish is the small function that turns "everything $v$ knows" into a message (for the distance example, it adds one edge). If $\oplus$ is a sum, "everything except $c$" is simply the total minus the contribution of $c$: this is why the distance example allowed a subtraction. But if $\oplus$ is a maximum, we cannot subtract. We need another way to compute "the combination of all children except one".
-
-## 5.4 The general case: prefix and suffix combinations
-
-Suppose $v$ has children $c_1,c_2,\dots,c_k$ with messages $m_1,\dots,m_k$ and the message from the parent is $m_0$. We want, for every $i$, the combination of everything except $m_i$. The trick is to precompute **prefix** and **suffix** combinations:
-
-$$P_i=m_1\oplus\cdots\oplus m_i,\qquad Q_i=m_i\oplus\cdots\oplus m_k,$$
-
-and then use $P_{i-1}\oplus Q_{i+1}\oplus m_0$. This needs only associativity of $\oplus$ (and an identity element), not invertibility, and costs $O(k)$ time for a vertex with $k$ children, hence $O(n)$ in total.
-
-As an example, let us compute for every vertex $v$ the **eccentricity**, the distance to the farthest vertex. Let $down[v]$ be the longest path downward from $v$ (computed by ordinary DP) and let $up[v]$ be the length of the longest path that starts at $v$ and first goes to its parent. For a child $c$ of $v$, the longest path from $c$ going up first goes to $v$ and then either continues upward from $v$ ($up[v]$), or descends into another child $c'\ne c$ of $v$ ($1+down[c']$):
-
-$$up[c]=1+\max\Bigl(up[v],\ \max_{c'\ne c}\bigl(1+down[c']\bigr)\Bigr).$$
-
-The inner maximum over $c'\ne c$ is exactly the "all except one" quantity:
-
-```python
-def dfs1(v, p):
-    down[v] = 0
-    for c in g[v]:
-        if c != p:
-            dfs1(c, v)
-            down[v] = max(down[v], down[c] + 1)
-
-def dfs2(v, p):
-    ch = []
-    for c in g[v]:
-        if c != p:
-            ch.append(c)
-    k = len(ch)
-    pre = [0] * (k + 2)
-    suf = [0] * (k + 2)
-    for i in range(k):
-        pre[i + 1] = max(pre[i], 1 + down[ch[i]])
-    for i in range(k - 1, -1, -1):
-        suf[i] = max(suf[i + 1], 1 + down[ch[i]])
-    for i in range(k):
-        c = ch[i]
-        others = max(pre[i], suf[i + 1])
-        up[c] = 1 + max(up[v], others)
-        dfs2(c, v)
-
-# up[root] = 0;  ecc[v] = max(down[v], up[v])
-```
-
-```cpp
-void dfs1(int v, int p) {
-    down[v] = 0;
-    for (int c : g[v]) if (c != p) { dfs1(c, v); down[v] = max(down[v], down[c] + 1); }
-}
-
-void dfs2(int v, int p) {
-    vector<int> ch;
-    for (int c : g[v]) if (c != p) ch.push_back(c);
-    int k = ch.size();
-    vector<int> pre(k + 2, 0), suf(k + 2, 0);        // 0 is the identity for max (values >= 0)
-    for (int i = 0; i < k; i++)      pre[i + 1] = max(pre[i], 1 + down[ch[i]]);
-    for (int i = k - 1; i >= 0; i--) suf[i]     = max(suf[i + 1], 1 + down[ch[i]]);
-    for (int i = 0; i < k; i++) {
-        int c = ch[i];
-        int others = max(pre[i], suf[i + 1]);          // best among all siblings except c
-        up[c] = 1 + max(up[v], others);
-        dfs2(c, v);
-    }
-}
-// up[root] = 0;  ecc[v] = max(down[v], up[v])
-```
-
-In prefix notation `pre[i]` covers children $0..i-1$ and `suf[i+1]` covers children $i+1..k-1$, so together they cover everyone except child $i$.
-
-## 5.5 A recipe
-
-Whenever a problem says "for every vertex, compute $X$ assuming the tree is rooted there", follow these steps. First decide what a vertex has to tell its parent (this is the usual DP state, and it becomes the up-message). Second decide how a vertex combines messages from several neighbors and which operation is involved. Third write the down-message as "combine everything except the child's own message, plus the parent's message, then finish". Fourth, if the operation has no inverse, use prefix and suffix combinations. The whole thing is two DFS passes and $O(n)$ time provided combining takes constant time per message.
-
-A subtle point: the state in rerooting problems is sometimes richer than a single number. For example, when the DP stores the two largest child values (to compute the diameter at the top), the "all except one" version must keep the **top three** values at a vertex, because removing one of the top two leaves the third as a candidate. Always ask: *what is the smallest summary from which I can still delete one child's contribution?*
-
-## 5.6 Exercises for this chapter
-
-AtCoder Educational DP Contest problem V (*Subtree*, a modular product with a non-invertible operation, which forces prefix and suffix products); CSES *Tree Distances* (eccentricity), Codeforces 1092F (*Tree with Maximum Cost*), Codeforces 1187E (*Tree Painting*).
-
----
-
-# Chapter 6. Bitmask DP and subsets of vertices
-
-## 6.1 When the state is a set
-
-Some problems force us to remember *which* objects we have already used, for example which cities a salesman has visited. If the number of objects $n$ is small (typically $n\le 20$), we can store any subset of them as an integer whose binary representation says which objects belong to it. This is called a **bitmask**. There are $2^n$ subsets, so a DP over subsets has at least $2^n$ states, which is fine up to about $n=20$ or $22$.
-
-The operations you will use constantly are these:
-
-```python
-mask | (1 << i)          # add element i
-mask & ~(1 << i)         # remove element i
-(mask >> i) & 1          # test membership of i
-bin(mask).count('1')     # size of the set (popcount)
-mask & (mask - 1)        # clear the lowest set bit
-```
-
-```cpp
-mask | (1 << i)          // add element i
-mask & ~(1 << i)         // remove element i
-(mask >> i) & 1          // test membership of i
-__builtin_popcount(mask) // size of the set
-mask & (mask - 1)        // clear the lowest set bit
-```
-
-## 6.2 Hamiltonian paths and the travelling salesman problem
-
-A **Hamiltonian path** visits every vertex of a graph exactly once. Deciding whether one exists, or counting them, is NP-hard in general, and bitmask DP gives the best known exact algorithms in practice. The key is to notice that the only things the future depends on are *which vertices have been visited* and *where we currently are*. Define
-
-$$dp[S][v]=\text{number of paths that visit exactly the vertices of }S\text{ and end at }v\ (v\in S).$$
-
-Starting from the single-vertex path, $dp[\{s\}][s]=1$, a path ending at $v$ is extended by an edge $(v,u)$ to a vertex $u\notin S$:
-
-$$dp[S\cup\{u\}][u]\mathrel{+}=dp[S][v]\qquad\text{for every edge }(v,u),\ u\notin S.$$
-
-The number of Hamiltonian paths from $s$ to $t$ is $dp[V][t]$. For the **travelling salesman problem** (visit all cities once, and minimize total cost) we replace the count by a minimum and add the edge cost:
-
-$$dp[S\cup\{u\}][u]=\min\bigl(dp[S\cup\{u\}][u],\ dp[S][v]+w(v,u)\bigr).$$
-
-```python
-# count Hamiltonian paths from vertex 0 to vertex n-1
-dp = [[0] * n for _ in range(1 << n)]
-dp[1][0] = 1
-for S in range(1, 1 << n):
-    for v in range(n):
-        if not (S & (1 << v)) or not dp[S][v]:
-            continue
-        for u in range(n):
-            if not (S & (1 << u)) and adj[v][u]:
-                dp[S | (1 << u)][u] = (dp[S | (1 << u)][u] + dp[S][v]) % MOD
-# answer: dp[(1 << n) - 1][n - 1]
-```
-
-```cpp
-// count Hamiltonian paths from vertex 0 to vertex n-1
-vector<vector<ll>> dp(1 << n, vector<ll>(n, 0));
-dp[1][0] = 1;
-for (int S = 1; S < (1 << n); S++)
-    for (int v = 0; v < n; v++) {
-        if (!(S >> v & 1) || !dp[S][v]) continue;
-        for (int u = 0; u < n; u++)
-            if (!(S >> u & 1) && adj[v][u])
-                dp[S | 1 << u][u] = (dp[S | 1 << u][u] + dp[S][v]) % MOD;
-    }
-// answer: dp[(1 << n) - 1][n - 1]
-```
-
-There are $2^n\cdot n$ states and $n$ transitions per state, so the time is $O(2^n n^2)$ and the memory $O(2^n n)$. Compare this with the $n!$ of the brute force: for $n=20$ that is $2.4\cdot10^{18}$ versus about $4\cdot10^8$.
-
-Notice the order: every transition goes from a mask to a strictly larger mask (we add one bit). Therefore iterating over masks in increasing numeric order is automatically a valid topological order of the state graph. This is true for all subset DPs that only ever add elements.
-
-## 6.3 Assignment-type problems: using popcount as the row index
-
-Suppose $n$ people must be assigned to $n$ tasks, one each, and person $i$ doing task $j$ costs $c_{ij}$. Minimize the total. A direct state $(i,S)$ with $S$ the set of tasks already taken looks like $n\cdot2^n$ states, but notice that person $i$ is determined by the number of tasks already assigned: if people are processed in order, then $i=|S|$. So the state is just $S$:
-
-$$dp[S]=\min_{j\in S}\Bigl(dp[S\setminus\{j\}]+c_{|S|-1,\ j}\Bigr).$$
-
-The time is $O(2^n n)$. This kind of compression, where one part of the state is a function of another, appears constantly. (The problem is also solved in $O(n^3)$ by the Hungarian algorithm, but the bitmask approach is more flexible when there are extra constraints.)
-
-## 6.4 Iterating over submasks, and why it costs $3^n$
-
-Some problems split the set into two parts and need all possible splits, for example "partition the vertices into groups, each of which has some cost". The recurrence is
-
-$$dp[S]=\min_{\emptyset\ne T\subseteq S}\bigl(dp[S\setminus T]+cost[T]\bigr).$$
-
-There is a classic loop that enumerates all non-empty submasks $T$ of $S$ in decreasing order:
-
-```python
-for S in range(1 << n):
-    T = S
-    while T > 0:
-        dp[S] = min(dp[S], dp[S ^ T] + cost[T])
-        T = (T - 1) & S
-```
-
-```cpp
-for (int S = 0; S < (1 << n); S++)
-    for (int T = S; T > 0; T = (T - 1) & S)
-        dp[S] = min(dp[S], dp[S ^ T] + cost[T]);
-```
-
-Why does the trick `T = (T - 1) & S` work? Subtracting one from $T$ flips the lowest set bit and sets all lower bits; ANDing with $S$ removes any bits that are not in $S$. The result is the next smaller submask of $S$.
-
-The total number of pairs $(S,T)$ with $T\subseteq S$ equals $3^n$. To see this, note that each element has exactly three possible roles: it is not in $S$, it is in $S$ but not in $T$, or it is in both. Algebraically,
-
-$$\sum_{S}2^{|S|}=\sum_{k=0}^{n}\binom{n}{k}2^k=(1+2)^n=3^n.$$
-
-So this DP costs $O(3^n)$, practical up to $n\approx16$ to $18$.
-
-## 6.5 Sum over subsets (SOS DP)
-
-Sometimes we need, for every mask $S$, the aggregate of a function over all of its submasks:
-
-$$F[S]=\sum_{T\subseteq S}a[T].$$
-
-Doing this by enumerating submasks costs $3^n$. There is a beautiful $O(n2^n)$ method. Process the bits one at a time. After handling bits $0,\dots,i$, let $F_i[S]$ be the sum of $a[T]$ over all $T\subseteq S$ such that $T$ and $S$ agree in all bits above $i$ (so $T$ may differ from $S$ only by having some of the bits $0..i$ turned off). Clearly $F_{-1}[S]=a[S]$ and $F_{n-1}=F$. To go from $F_{i-1}$ to $F_i$ consider whether bit $i$ is set in $S$. If it is not, then $T$ also has it off, so nothing changes. If it is set, $T$ may have bit $i$ on (these are counted in $F_{i-1}[S]$) or off (these are counted in $F_{i-1}[S\setminus\{i\}]$). Hence
-
-$$F_i[S]=F_{i-1}[S]+\begin{cases}F_{i-1}[S\setminus\{i\}]&i\in S,\\0&i\notin S.\end{cases}$$
-
-```python
-for i in range(n):
-    for S in range(1 << n):
-        if (S >> i) & 1:
-            F[S] += F[S ^ (1 << i)]
-```
-
-```cpp
-for (int i = 0; i < n; i++)
-    for (int S = 0; S < (1 << n); S++)
-        if (S >> i & 1) F[S] += F[S ^ (1 << i)];
-```
-
-Running this in place is valid, because the update of $F[S]$ reads $F[S\setminus\{i\}]$, a mask without bit $i$, which is not modified in round $i$. The same method computes sums over supersets (flip the condition and the direction), and with subtraction instead of addition it can be inverted. It is the subset analogue of a prefix sum over each of $n$ binary dimensions.
-
-## 6.6 Broken profile DP
-
-Grid problems with a small width and a large length, for example counting the ways to tile an $n\times m$ board with dominoes where $m\le10$ and $n$ may be as large as $1000$, use another bitmask idea. We process the cells one by one in row-major order, and keep as the state a bitmask of width $m$ called the **profile**, which records which of the cells on the "frontier" are already covered.
-
-Concretely, when we are about to decide cell $(i,j)$, bit $k$ of the mask refers to cell $(i,k)$ for $k\ge j$ and to cell $(i+1,k)$ for $k<j$. In other words, the mask describes the $m$ cells that come next in the processing order. Each bit says whether that cell is already occupied by a domino placed earlier. At cell $(i,j)$ there are three possibilities:
-
-- If bit $j$ is set, the current cell is already covered. We simply clear the bit (the position will now refer to the cell below, $(i+1,j)$, which is free) and move on.
-- Otherwise we may place a **vertical** domino covering $(i,j)$ and $(i+1,j)$ (if $i+1<n$), which sets bit $j$ (it will refer to the cell below once we move on).
-- Otherwise we may place a **horizontal** domino covering $(i,j)$ and $(i,j+1)$, allowed if $j+1<m$ and bit $j+1$ is not set, which sets bit $j+1$.
-
-```python
-# number of domino tilings of an n x m board (m small)
-dp = [0] * (1 << m)
-dp[0] = 1
-for i in range(n):
-    for j in range(m):
-        nd = [0] * (1 << m)
-        for mask in range(1 << m):
-            if not dp[mask]:
-                continue
-            if (mask >> j) & 1:
-                nd[mask ^ (1 << j)] += dp[mask]
+def lcs_length(a: str, b: str) -> int:
+    n, m = len(a), len(b)
+    if n < m:
+        a, b = b, a
+        n, m = m, n
+    prev = [0] * (m + 1)
+    for i in range(1, n + 1):
+        cur = [0] * (m + 1)
+        for j in range(1, m + 1):
+            if a[i - 1] == b[j - 1]:
+                cur[j] = prev[j - 1] + 1
             else:
-                if i + 1 < n:
-                    nd[mask | (1 << j)] += dp[mask]
-                if j + 1 < m and not ((mask >> (j + 1)) & 1):
-                    nd[mask | (1 << (j + 1))] += dp[mask]
-        dp = nd
-# answer: dp[0]
+                cur[j] = max(prev[j], cur[j - 1])
+        prev = cur
+    return prev[m]
+
+def lcs_string(a: str, b: str) -> str:
+    n, m = len(a), len(b)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if a[i - 1] == b[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    # reconstruct
+    i, j = n, m
+    res = []
+    while i > 0 and j > 0:
+        if a[i - 1] == b[j - 1]:
+            res.append(a[i - 1])
+            i -= 1
+            j -= 1
+        elif dp[i - 1][j] >= dp[i][j - 1]:
+            i -= 1
+        else:
+            j -= 1
+    return ''.join(reversed(res))
+
+assert lcs_length("ABC", "AC") == 2
+assert lcs_string("ABC", "AC") == "AC"
+assert lcs_length("AGGTAB", "GXTXAYB") == 4
+assert lcs_string("AGGTAB", "GXTXAYB") == "GTAB"
 ```
 
 ```cpp
-// number of domino tilings of an n x m board (m small)
-vector<ll> dp(1 << m, 0), nd(1 << m);
-dp[0] = 1;
-for (int i = 0; i < n; i++)
-    for (int j = 0; j < m; j++) {
-        fill(nd.begin(), nd.end(), 0);
-        for (int mask = 0; mask < (1 << m); mask++) {
-            if (!dp[mask]) continue;
-            if (mask >> j & 1) {
-                nd[mask ^ (1 << j)] += dp[mask];
-            } else {
-                if (i + 1 < n) nd[mask | (1 << j)] += dp[mask];
-                if (j + 1 < m && !(mask >> (j + 1) & 1)) nd[mask | (1 << (j + 1))] += dp[mask];
+int lcs_length(const string& a, const string& b) {
+    int n = a.size(), m = b.size();
+    if (n < m) return lcs_length(b, a);
+    vector<int> prev(m + 1), cur(m + 1);
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            if (a[i - 1] == b[j - 1]) cur[j] = prev[j - 1] + 1;
+            else cur[j] = max(prev[j], cur[j - 1]);
+        }
+        swap(prev, cur);
+    }
+    return prev[m];
+}
+
+string lcs_string(const string& a, const string& b) {
+    int n = a.size(), m = b.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1));
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            if (a[i - 1] == b[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+            else dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    string res;
+    int i = n, j = m;
+    while (i > 0 && j > 0) {
+        if (a[i - 1] == b[j - 1]) {
+            res.push_back(a[i - 1]);
+            --i; --j;
+        } else if (dp[i - 1][j] >= dp[i][j - 1]) --i;
+        else --j;
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
+```
+
+## 5.2 Edit distance
+
+The **edit distance** (also called Levenshtein distance) between two strings is the minimum number of operations required to transform one string into the other. The allowed operations are:
+- Insert a character.
+- Delete a character.
+- Replace a character with another.
+
+This is exactly the problem *Edit Distance*.
+
+We again use a DP table `dp[i][j]` representing the minimum edit distance between the first `i` characters of string `A` and the first `j` characters of string `B`. The base cases: `dp[i][0] = i` (delete all `i` characters) and `dp[0][j] = j` (insert `j` characters).
+
+The recurrence for `i>0, j>0`:
+- If `A[i-1] == B[j-1]`, no operation is needed for the last character: `dp[i][j] = dp[i-1][j-1]`.
+- Otherwise, we consider three possibilities:
+  1. Replace `A[i-1]` with `B[j-1]`: cost `1 + dp[i-1][j-1]`.
+  2. Delete `A[i-1]`: cost `1 + dp[i-1][j]`.
+  3. Insert `B[j-1]` into `A`: cost `1 + dp[i][j-1]`.
+  We take the minimum of these three.
+
+Let's compute the edit distance between `"cat"` and `"cut"`. Table size 4×4.
+
+|   |   | 0 | 1 | 2 | 3 |
+|---|---|---|---|---|---|
+|   |   |   | c | u | t |
+| 0 |   | 0 | 1 | 2 | 3 |
+| 1 | c | 1 | 0 | 1 | 2 |
+| 2 | a | 2 | 1 | 1 | 2 |
+| 3 | t | 3 | 2 | 2 | 1 |
+
+Row 0 and column 0 are 0,1,2,3. Row 1, col 1: `c==c` -> `dp[0][0]=0`. Row 1, col 2: `c!=u` -> min(1+dp[0][1]=2, 1+dp[1][1]=1, 1+dp[0][2]=3) = 1. Row 1, col 3: `c!=t` -> min(1+dp[0][2]=3, 1+dp[1][2]=2, 1+dp[0][3]=4) = 2. Row 2, col 1: `a!=c` -> min(1+dp[1][0]=2, 1+dp[2][0]=3, 1+dp[1][1]=1) = 1. Row 2, col 2: `a!=u` -> min(1+dp[1][1]=1, 1+dp[2][1]=2, 1+dp[1][2]=2) = 1. Row 2, col 3: `a!=t` -> min(1+dp[1][2]=2, 1+dp[2][2]=2, 1+dp[1][3]=3) = 2. Row 3, col 1: `t!=c` -> min(1+dp[2][0]=3, 1+dp[3][0]=4, 1+dp[2][1]=2) = 2. Row 3, col 2: `t!=u` -> min(1+dp[2][1]=2, 1+dp[3][1]=3, 1+dp[2][2]=2) = 2. Row 3, col 3: `t==t` -> `dp[2][2]=1`. Final answer 1.
+
+Time complexity is $O(nm)$, space complexity is $O(nm)$ (or $O(\min(n,m))$ with two rows).
+
+```python
+def edit_distance(a: str, b: str) -> int:
+    n, m = len(a), len(b)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        dp[i][0] = i
+    for j in range(m + 1):
+        dp[0][j] = j
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if a[i - 1] == b[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                dp[i][j] = 1 + min(
+                    dp[i - 1][j - 1],  # replace
+                    dp[i - 1][j],      # delete
+                    dp[i][j - 1]       # insert
+                )
+    return dp[n][m]
+
+assert edit_distance("cat", "cut") == 1
+assert edit_distance("kitten", "sitting") == 3
+assert edit_distance("", "abc") == 3
+```
+
+```cpp
+int edit_distance(const string& a, const string& b) {
+    int n = a.size(), m = b.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1));
+    for (int i = 0; i <= n; ++i) dp[i][0] = i;
+    for (int j = 0; j <= m; ++j) dp[0][j] = j;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            if (a[i - 1] == b[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+            else dp[i][j] = 1 + min({dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]});
+        }
+    }
+    return dp[n][m];
+}
+```
+
+## 5.3 Palindromes inside strings
+
+A **palindrome** reads the same forward and backward. The **longest palindromic subsequence** (LPS) of a string is the longest subsequence that is a palindrome. This is exactly the problem *Longest Palindromic Subsequence*. A beautiful observation: the LPS of a string `S` is exactly the LCS of `S` and its reverse `S_rev`. Because a palindrome equals its reverse, any common subsequence of `S` and `S_rev` reads the same forward in `S` and backward in `S_rev`, hence it is a palindrome.
+
+The **minimum insertions to make a string a palindrome** is the number of characters we need to insert anywhere to turn the string into a palindrome. This is exactly the problem *Minimum Insertions for Palindrome*. The answer is `len(S) - LPS(S)`. Why? The LPS already forms a palindrome skeleton; we only need to insert the missing characters to pair up the rest.
+
+Let's test on `S = "bbbab"`. Its reverse is `"babbb"`, and the longest common subsequence of the two is `"bbbb"`, so the longest palindromic subsequence has length 4 and the minimum number of insertions is $5 - 4 = 1$. Concretely, the four `b` letters already pair up. Only the `a` is left without a partner, so we insert a second `a` right after the first `b` and get `"babbab"`, which reads the same forwards and backwards.
+
+For LPS directly: let `dp[i][j]` be the length of the longest palindromic subsequence in substring `S[i..j]` (inclusive). Base: `dp[i][i] = 1`. For `i < j`: if `S[i] == S[j]`, then `dp[i][j] = dp[i+1][j-1] + 2`; else `dp[i][j] = max(dp[i+1][j], dp[i][j-1])`. We fill by increasing length.
+
+Time complexity $O(n^2)$, space $O(n^2)$ (or $O(n)$ with clever ordering).
+
+```python
+def longest_palindromic_subsequence(s: str) -> int:
+    n = len(s)
+    dp = [[0] * n for _ in range(n)]
+    for i in range(n):
+        dp[i][i] = 1
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+            if s[i] == s[j]:
+                dp[i][j] = dp[i + 1][j - 1] + 2 if length > 2 else 2
+            else:
+                dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])
+    return dp[0][n - 1]
+
+def min_insertions_palindrome(s: str) -> int:
+    return len(s) - longest_palindromic_subsequence(s)
+
+assert longest_palindromic_subsequence("bbbab") == 4
+assert min_insertions_palindrome("bbbab") == 1
+assert longest_palindromic_subsequence("cbbd") == 2
+assert min_insertions_palindrome("cbbd") == 2
+```
+
+```cpp
+int longest_palindromic_subsequence(const string& s) {
+    int n = s.size();
+    vector<vector<int>> dp(n, vector<int>(n));
+    for (int i = 0; i < n; ++i) dp[i][i] = 1;
+    for (int len = 2; len <= n; ++len) {
+        for (int i = 0; i + len <= n; ++i) {
+            int j = i + len - 1;
+            if (s[i] == s[j]) dp[i][j] = (len > 2 ? dp[i + 1][j - 1] : 0) + 2;
+            else dp[i][j] = max(dp[i + 1][j], dp[i][j - 1]);
+        }
+    }
+    return dp[0][n - 1];
+}
+
+int min_insertions_palindrome(const string& s) {
+    return s.size() - longest_palindromic_subsequence(s);
+}
+```
+
+## 5.4 Counting subsequences
+
+Sometimes we need to count how many ways a string `T` appears as a subsequence of `S`. This is the **distinct subsequences** problem (exactly the problem *Distinct Subsequences*). We use DP where `dp[i][j]` is the number of ways the first `j` characters of `T` appear as a subsequence in the first `i` characters of `S`. Base: `dp[i][0] = 1` for all `i` (empty string is a subsequence exactly once). `dp[0][j] = 0` for `j>0`. Recurrence: if `S[i-1] == T[j-1]`, we can either use this match (`dp[i-1][j-1]`) or skip it (`dp[i-1][j]`), so `dp[i][j] = dp[i-1][j-1] + dp[i-1][j]`. Otherwise, we must skip: `dp[i][j] = dp[i-1][j]`.
+
+Example: `S = "rabbbit"`, `T = "rabbit"`. The answer is 3.
+
+Another problem is **interleaving string** (exactly the problem *Interleaving String*). Given strings `A`, `B`, `C`, we want to know if `C` is formed by interleaving `A` and `B` (keeping the order of characters within each). DP: `dp[i][j]` is true if `C[:i+j]` can be formed by interleaving `A[:i]` and `B[:j]`. Base: `dp[0][0] = true`. Transition: `dp[i][j] = (dp[i-1][j] and A[i-1]==C[i+j-1]) or (dp[i][j-1] and B[j-1]==C[i+j-1])`.
+
+Both run in $O(nm)$ time and space.
+
+```python
+def num_distinct_subsequences(s: str, t: str) -> int:
+    n, m = len(s), len(t)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        dp[i][0] = 1
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if s[i - 1] == t[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j]
+            else:
+                dp[i][j] = dp[i - 1][j]
+    return dp[n][m]
+
+def is_interleave(a: str, b: str, c: str) -> bool:
+    n, m = len(a), len(b)
+    if n + m != len(c):
+        return False
+    dp = [[False] * (m + 1) for _ in range(n + 1)]
+    dp[0][0] = True
+    for i in range(1, n + 1):
+        dp[i][0] = dp[i - 1][0] and a[i - 1] == c[i - 1]
+    for j in range(1, m + 1):
+        dp[0][j] = dp[0][j - 1] and b[j - 1] == c[j - 1]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            dp[i][j] = (dp[i - 1][j] and a[i - 1] == c[i + j - 1]) or \
+                       (dp[i][j - 1] and b[j - 1] == c[i + j - 1])
+    return dp[n][m]
+
+assert num_distinct_subsequences("rabbbit", "rabbit") == 3
+assert is_interleave("aab", "axy", "aaxaby") == True
+assert is_interleave("aab", "axy", "aaxbay") == False
+```
+
+```cpp
+int num_distinct_subsequences(const string& s, const string& t) {
+    int n = s.size(), m = t.size();
+    vector<vector<long long>> dp(n + 1, vector<long long>(m + 1));
+    for (int i = 0; i <= n; ++i) dp[i][0] = 1;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            if (s[i - 1] == t[j - 1]) dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+            else dp[i][j] = dp[i - 1][j];
+        }
+    }
+    return dp[n][m];
+}
+
+bool is_interleave(const string& a, const string& b, const string& c) {
+    int n = a.size(), m = b.size();
+    if (n + m != (int)c.size()) return false;
+    vector<vector<bool>> dp(n + 1, vector<bool>(m + 1));
+    dp[0][0] = true;
+    for (int i = 1; i <= n; ++i) dp[i][0] = dp[i - 1][0] && a[i - 1] == c[i - 1];
+    for (int j = 1; j <= m; ++j) dp[0][j] = dp[0][j - 1] && b[j - 1] == c[j - 1];
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            dp[i][j] = (dp[i - 1][j] && a[i - 1] == c[i + j - 1]) ||
+                       (dp[i][j - 1] && b[j - 1] == c[i + j - 1]);
+        }
+    }
+    return dp[n][m];
+}
+```
+
+## 5.5 Wildcard and regular expression matching
+
+**Wildcard matching** (problem *Wildcard Matching*) asks if a pattern containing `?` (matches any single character) and `*` (matches any sequence of characters, including empty) matches a given string. **Regular expression matching** (problem *Regular Expression Matching*) uses `.` (any single character) and `*` (zero or more of the preceding element). Both are solved with DP where `dp[i][j]` indicates whether the first `i` characters of the string match the first `j` characters of the pattern.
+
+For wildcard matching, the star `*` can match zero or more characters. The recurrence:
+- If pattern[j-1] is a letter or `?`, then `dp[i][j] = dp[i-1][j-1]` provided the character matches (or `?`).
+- If pattern[j-1] is `*`, then `dp[i][j] = dp[i][j-1]` (star matches empty) or `dp[i-1][j]` (star matches one more character).
+
+For regular expression matching, the star applies to the preceding character. We typically process the pattern and handle `*` by looking two steps back. Let `dp[i][j]` be match for string prefix `i` and pattern prefix `j`. If pattern[j-1] is not `*` (or it's the first character), we check direct match. If pattern[j-1] is `*`, we consider zero occurrences of the preceding element (`dp[i][j-2]`) or, if the preceding element matches the current string character, we can consume the string character (`dp[i-1][j]`).
+
+Both run in $O(nm)$ time and space.
+
+```python
+def is_match_wildcard(s: str, p: str) -> bool:
+    n, m = len(s), len(p)
+    dp = [[False] * (m + 1) for _ in range(n + 1)]
+    dp[0][0] = True
+    for j in range(1, m + 1):
+        if p[j - 1] == '*':
+            dp[0][j] = dp[0][j - 1]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if p[j - 1] == '*':
+                dp[i][j] = dp[i][j - 1] or dp[i - 1][j]
+            elif p[j - 1] == '?' or p[j - 1] == s[i - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+    return dp[n][m]
+
+def is_match_regex(s: str, p: str) -> bool:
+    n, m = len(s), len(p)
+    dp = [[False] * (m + 1) for _ in range(n + 1)]
+    dp[0][0] = True
+    for j in range(2, m + 1):
+        if p[j - 1] == '*':
+            dp[0][j] = dp[0][j - 2]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if p[j - 1] == '*':
+                dp[i][j] = dp[i][j - 2]  # zero occurrence
+                if p[j - 2] == '.' or p[j - 2] == s[i - 1]:
+                    dp[i][j] = dp[i][j] or dp[i - 1][j]  # one more occurrence
+            elif p[j - 1] == '.' or p[j - 1] == s[i - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+    return dp[n][m]
+
+assert is_match_wildcard("acb", "a*b") == True
+assert is_match_wildcard("acb", "a?b") == True
+assert is_match_wildcard("acb", "a*c") == False
+assert is_match_regex("aaab", "a*b") == True
+assert is_match_regex("ab", ".*") == True
+assert is_match_regex("aab", "c*a*b") == True
+```
+
+```cpp
+bool is_match_wildcard(const string& s, const string& p) {
+    int n = s.size(), m = p.size();
+    vector<vector<bool>> dp(n + 1, vector<bool>(m + 1));
+    dp[0][0] = true;
+    for (int j = 1; j <= m; ++j)
+        if (p[j - 1] == '*') dp[0][j] = dp[0][j - 1];
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            if (p[j - 1] == '*') dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+            else if (p[j - 1] == '?' || p[j - 1] == s[i - 1]) dp[i][j] = dp[i - 1][j - 1];
+        }
+    }
+    return dp[n][m];
+}
+
+bool is_match_regex(const string& s, const string& p) {
+    int n = s.size(), m = p.size();
+    vector<vector<bool>> dp(n + 1, vector<bool>(m + 1));
+    dp[0][0] = true;
+    for (int j = 2; j <= m; ++j)
+        if (p[j - 1] == '*') dp[0][j] = dp[0][j - 2];
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            if (p[j - 1] == '*') {
+                dp[i][j] = dp[i][j - 2];
+                if (p[j - 2] == '.' || p[j - 2] == s[i - 1])
+                    dp[i][j] = dp[i][j] || dp[i - 1][j];
+            } else if (p[j - 1] == '.' || p[j - 1] == s[i - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
             }
         }
-        swap(dp, nd);
     }
-// answer: dp[0]
+    return dp[n][m];
+}
 ```
 
-There are $nm$ steps, each touching $2^m$ masks with $O(1)$ work, so the time is $O(nm\,2^m)$. The older formulation "process a whole row at a time" enumerates compatible pairs of row masks and costs much more, so the cell-by-cell version is the one to learn. As a sanity check, a $2\times 2$ board has $2$ tilings and a $4\times4$ board has $36$.
+## 5.6 Longest common substring
 
-The idea generalizes: whenever the effect of a placed piece reaches only a bounded distance ahead of the current position in the processing order, a bitmask of the width of that "reach" is a complete state. This is used for tilings with other shapes, colorings with adjacency constraints, and many grid-based counting problems.
+A **substring** is a contiguous block of characters, unlike a subsequence which can skip characters. The **longest common substring** problem (exactly the problem *Longest Common Substring*) asks for the longest string that appears as a substring in both input strings.
 
-## 6.7 Exercises for this chapter
+The DP is similar to LCS but with a crucial difference: because the substring must be contiguous, if the current characters don't match, the length of the common suffix ending here is zero. Let `dp[i][j]` be the length of the longest common suffix of `A[:i]` and `B[:j]` (i.e., ending exactly at `A[i-1]` and `B[j-1]`). Then:
+- If `A[i-1] == B[j-1]`, `dp[i][j] = dp[i-1][j-1] + 1`.
+- Else `dp[i][j] = 0`.
 
-CSES *Elevator Rides*, *Hamiltonian Flights*, *Counting Tilings*; AtCoder Educational DP Contest problems O (*Matching*, assignment) and U (*Grouping*, the $3^n$ DP); Codeforces 165E (*Compatible Numbers*) for SOS DP.
+The answer is the maximum value in the whole table.
 
+Example: `A = "abcde"`, `B = "abfce"`. Table 6×6.
 
----
+|   |   | 0 | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|---|---|
+|   |   |   | a | b | f | c | e |
+| 0 |   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1 | a | 0 | 1 | 0 | 0 | 0 | 0 |
+| 2 | b | 0 | 0 | 2 | 0 | 0 | 0 |
+| 3 | c | 0 | 0 | 0 | 0 | 1 | 0 |
+| 4 | d | 0 | 0 | 0 | 0 | 0 | 0 |
+| 5 | e | 0 | 0 | 0 | 0 | 0 | 1 |
 
-# Chapter 8. Advanced techniques for large trees
+Maximum is 2, corresponding to "ab".
 
-In Chapter 4 each vertex combined tables from its children in a way that visited every vertex once. In harder problems the information to merge is large, for example "the set of colors in the subtree", and merging naively is quadratic. This chapter introduces three tools that bring such problems back to near-linear time.
-
-## 8.1 Small-to-large merging
-
-**Problem.** Every vertex has a color. For every vertex $v$, report the number of distinct colors in the subtree of $v$.
-
-The natural solution keeps a set of colors $S_v$ for each subtree and merges the children's sets into the parent's. If we copy every child's set into a fresh set, a path graph makes us copy $1,2,\dots,n$ elements, that is $O(n^2)$ work. The remedy is a simple rule: **always insert the smaller set into the larger one, and reuse the larger one's memory** (so that nothing needs to be copied for it).
+Time complexity $O(nm)$, space $O(nm)$ (or $O(\min(n,m))$ with two rows).
 
 ```python
-import sys
-sys.setrecursionlimit(1000000)
+def longest_common_substring(a: str, b: str) -> int:
+    n, m = len(a), len(b)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    best = 0
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if a[i - 1] == b[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+                if dp[i][j] > best:
+                    best = dp[i][j]
+            else:
+                dp[i][j] = 0
+    return best
 
-# Example graph and data
-N = 6
-g = [[] for _ in range(N)]
-edges = [(0, 1), (0, 2), (1, 3), (1, 4), (2, 5)]
-for a, b in edges:
-    g[a].append(b)
-    g[b].append(a)
-
-color = [1, 2, 1, 3, 2, 1]  # colors of vertices 0..5
-
-S = [None] * N
-ans = [0] * N
-
-def dfs(v, p):
-    S[v] = {color[v]}
-    for u in g[v]:
-        if u == p:
-            continue
-        dfs(u, v)
-        # Small-to-large merge: ensure S[v] is the larger set
-        if len(S[u]) > len(S[v]):
-            S[v], S[u] = S[u], S[v]
-        S[v].update(S[u])
-    ans[v] = len(S[v])
-
-if __name__ == "__main__":
-    dfs(0, -1)
-    print("Distinct colors in each subtree:")
-    for i in range(N):
-        print(f"Vertex {i}: {ans[i]}")
+assert longest_common_substring("abcde", "abfce") == 2
+assert longest_common_substring("abc", "def") == 0
+assert longest_common_substring("abab", "baba") == 3  # "aba" or "bab"
 ```
 
 ```cpp
-set<int>* S[N];
-int ans[N];
-
-void dfs(int v, int p) {
-    S[v] = new set<int>{color[v]};
-    for (int u : g[v]) {
-        if (u == p) continue;
-        dfs(u, v);
-        if (S[u]->size() > S[v]->size()) swap(S[u], S[v]);   // O(1) pointer swap
-        for (int x : *S[u]) S[v]->insert(x);                 // move the smaller one
-    }
-    ans[v] = S[v]->size();
-}
-```
-
-**Why is this fast?** Fix one element $x$ and watch how many times it is *moved*. It is moved only when the set containing it is the smaller of the two merged sets, and after the merge it lives in a set of at least twice the size. Sizes cannot exceed $n$, so a single element is moved at most $\log_2n$ times. With $n$ elements in total, the number of insertions is $O(n\log n)$; each insertion into a balanced tree costs $O(\log n)$, giving $O(n\log^2n)$ overall, or $O(n\log n)$ with hash sets.
-
-This "charge the cost to the elements of the smaller side" argument is one of the most important complexity arguments in the field. It appears in union–find with union by size, in merging data structures, and in the "DSU on tree" (also known as Sack) technique, which achieves the same result with arrays instead of sets: process the light children first and clear their data, then process the heavy child and keep its data, then re-add the light children's elements into it. A vertex belongs to at most $\log n$ light subtrees on its way to the root, which gives the $O(n\log n)$ bound.
-
-## 8.2 Centroid decomposition
-
-**Problem type.** Count or optimize over **all paths** in a tree: for example, count the pairs of vertices at distance exactly $K$.
-
-A path has no natural "top" except with respect to a root, and the tree DP of Chapter 4 handles distances only if $K$ is small. A different idea is to divide and conquer on the tree. A **centroid** of a tree with $n$ vertices is a vertex whose removal splits the tree into components of at most $n/2$ vertices each. Every tree has a centroid: start anywhere and repeatedly move to a neighbor whose side has more than $n/2$ vertices; this walk cannot go back and must end.
-
-The algorithm is the following. Find the centroid $c$ of the current component. Count all paths that **pass through $c$**: such a path consists of one half-path in one branch and another in a different branch (or ends at $c$). Then delete $c$ and recurse into each remaining component. Every path of the original tree is counted exactly once, namely at the first centroid that lies on it.
-
-The recursion depth is $O(\log n)$, since each component is at most half of its parent. At each level the components are disjoint, so the total work per level is linear in $n$ if counting paths through the centroid takes time linear in the size of the component. Overall: $O(n\log n)$.
-
-For counting pairs at distance exactly $K$ through $c$: let $cnt[d]$ be the number of vertices at depth $d$ (from $c$) in the branches processed so far, initialized with $cnt[0]=1$ for $c$ itself. For each new branch, first query: for every vertex at depth $d$ in this branch add $cnt[K-d]$ to the answer; only then add the branch's vertices to $cnt$. This ordering guarantees that the two endpoints lie in different branches.
-
-```python
-# Centroid decomposition for counting pairs at distance exactly K
-# Global variables (must be initialized before use):
-#   g: adjacency list, list of lists of ints
-#   sz: list of ints, size n
-#   removed_: list of bools, size n
-#   K: target distance (int)
-#   total: accumulator for answer (int)
-
-sz = []
-removed_ = []
-total = 0
-g = []
-K = 0
-
-def calc_size(v, p):
-    sz[v] = 1
-    for u in g[v]:
-        if u != p and not removed_[u]:
-            sz[v] += calc_size(u, v)
-    return sz[v]
-
-def find_centroid(v, p, tot):
-    for u in g[v]:
-        if u != p and not removed_[u] and sz[u] * 2 > tot:
-            return find_centroid(u, v, tot)
-    return v
-
-def collect(v, p, depth, out):
-    out.append(depth)
-    for u in g[v]:
-        if u != p and not removed_[u]:
-            collect(u, v, depth + 1, out)
-
-def solve(entry):
-    global total
-    tot = calc_size(entry, -1)
-    c = find_centroid(entry, -1, tot)
-    removed_[c] = True
-    cnt = [0] * (tot + 1)
-    cnt[0] = 1                 # vertices at depth d seen so far
-    maxd = 0
-    for u in g[c]:
-        if removed_[u]:
-            continue
-        depths = []
-        collect(u, c, 1, depths)
-        for d in depths:
-            if d <= K and K - d <= maxd:
-                total += cnt[K - d]
-        for d in depths:
-            cnt[d] += 1
-            if d > maxd:
-                maxd = d
-    for u in g[c]:
-        if not removed_[u]:
-            solve(u)
-```
-
-```cpp
-int sz[N]; bool removed_[N]; ll total = 0;
-vector<int> g[N];
-
-int calc_size(int v, int p) {
-    sz[v] = 1;
-    for (int u : g[v]) if (u != p && !removed_[u]) sz[v] += calc_size(u, v);
-    return sz[v];
-}
-int find_centroid(int v, int p, int tot) {
-    for (int u : g[v]) if (u != p && !removed_[u] && sz[u] * 2 > tot) return find_centroid(u, v, tot);
-    return v;
-}
-void collect(int v, int p, int depth, vector<int>& out) {
-    out.push_back(depth);
-    for (int u : g[v]) if (u != p && !removed_[u]) collect(u, v, depth + 1, out);
-}
-void solve(int entry) {
-    int tot = calc_size(entry, -1);
-    int c = find_centroid(entry, -1, tot);
-    removed_[c] = true;
-    vector<ll> cnt(tot + 1, 0); cnt[0] = 1;                 // vertices at depth d seen so far
-    int maxd = 0;
-    for (int u : g[c]) {
-        if (removed_[u]) continue;
-        vector<int> depths; collect(u, c, 1, depths);
-        for (int d : depths) if (d <= K && K - d <= maxd) total += cnt[K - d];
-        for (int d : depths) { cnt[d]++; maxd = max(maxd, d); }
-    }
-    for (int u : g[c]) if (!removed_[u]) solve(u);
-}
-```
-
-Beyond this counting problem, centroid decomposition solves "nearest marked vertex" queries with updates, path queries with constraints on length or weight (combined with sorting or a Fenwick tree to get $O(n\log^2n)$), and many problems of the form "count paths with some property that depends on the two halves". It is useful to think of it as a DP whose state is "a component and its centroid" and whose transitions cross the centroid.
-
-## 8.3 A few more tools worth knowing
-
-**Heavy–light decomposition (HLD).** Split the tree into vertical chains: every vertex picks its child with the largest subtree as the *heavy* child, and the edges to the others are *light*. Any root-to-vertex path crosses only $O(\log n)$ light edges (each light edge at least halves the subtree size), so a path is a union of $O(\log n)$ chain segments. Combined with a segment tree this answers path and subtree queries with updates in $O(\log^2n)$. A particularly neat consequence is **dynamic DP**: if the tree DP transition at each vertex is a fixed small matrix (for example in $(\max,+)$ algebra), the DP value of a chain is a product of matrices, a segment tree maintains these products, and a point update that changes one vertex's weight is processed in $O(\log^2n)$.
-
-**Virtual (auxiliary) tree.** If a query involves only $k$ marked vertices of a huge tree, one can build the compressed tree of the marked vertices and their pairwise lowest common ancestors (it has at most $2k-1$ vertices) in $O(k\log k)$, and run the tree DP on that small tree. This makes the total cost proportional to the sum of the $k$'s over all queries instead of $n$ per query.
-
-**Convex merging.** If $dp[v][\cdot]$ is a concave (or convex) function of the size index, merging two children is a Minkowski sum of two convex sequences, which can be done by merging their slope sequences in sorted order, i.e. in linear time (or with mergeable heaps in $O(\log n)$ amortized). This turns an $O(nK)$ tree knapsack into near-linear time for problems where concavity can be proved, and it is the tree analogue of the optimization theory of the next chapter.
-
-## 8.4 Exercises for this chapter
-
-Codeforces 600E (*Lomsat gelral*, small-to-large or DSU on tree); CSES *Fixed-Length Paths I* and *II* (centroid decomposition); CSES *Distinct Colors* (small-to-large). Verify problem details before assigning, since the list is from memory.
-
-
----
-
-# Chapter 9. Optimizing a DP
-
-Suppose you have found a correct DP, but it has too many transitions. This chapter explains four classical techniques that speed up certain recurrences by a whole factor of $n$. All four rely on **structure in the cost function**, and none of them works without it. The skill is to recognize the structure, to be able to prove (or at least test) that it holds, and then to apply the matching technique.
-
-Throughout, you should keep in mind that these optimizations apply to many problems that are not graph problems, for example splitting a sequence into groups. They matter for graph DP because a path or a chain in a tree is a sequence, and chains arise constantly as the "heavy paths" of Chapter 8 or as depth levels.
-
-## 9.1 The shape of the recurrences
-
-Let us fix two shapes.
-
-The first is the **layered partition DP**. You split a sequence of length $n$ into $m$ groups, and a group covering positions $k..j$ has cost $C(k,j)$:
-
-$$dp(i,j)=\min_{0\le k\le j}\Bigl(dp(i-1,k-1)+C(k,j)\Bigr).$$
-
-Here $dp(i,j)$ is the minimum total cost for the first $j+1$ elements split into $i$ groups. There are $m\cdot n$ states and up to $n$ transitions each, so $O(mn^2)$.
-
-The second is the **interval DP**. A segment $[i,j]$ is split at a point $k$ into two smaller segments, and combining has cost $C(i,j)$:
-
-$$dp[i][j]=\min_{i\le k<j}\bigl(dp[i][k]+dp[k+1][j]\bigr)+C(i,j),\qquad dp[i][i]=0.$$
-
-There are $O(n^2)$ states and $O(n)$ transitions, so $O(n^3)$.
-
-Both optimizations below look at the **optimal split point** $opt$, the value of $k$ that attains the minimum, and show that $opt$ moves monotonically as the state moves. If we know it moves monotonically, we do not have to look at all $k$.
-
-## 9.2 The quadrangle inequality
-
-The condition that guarantees monotonicity is expressed through the cost function. We say $C$ satisfies the **quadrangle inequality (QI)** if for all $a\le b\le c\le d$,
-
-$$C(a,c)+C(b,d)\ \le\ C(a,d)+C(b,c).$$
-
-An informal reading: *nested* intervals $[b,c]\subseteq[a,d]$ together cost at least as much as two *crossing* intervals $[a,c]$ and $[b,d]$. A cost like $C(k,j)=(S_j-S_{k-1})^2$, the square of a range sum with non-negative elements, satisfies QI. The cost $C(k,j)=\text{(sum of range)}$ satisfies it with equality. A cost like "the range maximum" often does not. In a contest, you generally either recognize a known family of costs, or prove it by expanding the four terms, or you write a brute force and test the monotonicity of $opt$ on random inputs.
-
-## 9.3 Divide and conquer optimization
-
-**Claim.** For the layered partition DP, if $C$ satisfies QI, then $opt(i,j)\le opt(i,j+1)$: moving the right end of the last group to the right never moves its left end to the left.
-
-*Proof sketch.* Write $f(k)=dp(i-1,k-1)$. Let $j<j'$, let $p=opt(i,j)$ and $q=opt(i,j')$, and resolve ties by taking the smallest minimizer. Suppose, for contradiction, that $q<p$. Then $q<p\le j<j'$. Since $p$ is the smallest minimizer for $j$ and $q<p$, we have strictly $f(p)+C(p,j)<f(q)+C(q,j)$. Since $q$ minimizes for $j'$, we have $f(q)+C(q,j')\le f(p)+C(p,j')$. Adding these two inequalities and cancelling $f(p)+f(q)$ gives
-
-$$C(p,j)+C(q,j')<C(q,j)+C(p,j').$$
-
-But QI applied to $a=q\le b=p\le c=j\le d=j'$ states $C(q,j)+C(p,j')\le C(q,j')+C(p,j)$, a contradiction. $\square$
-
-**The algorithm.** Within one layer $i$, compute $dp(i,j)$ for the middle index $j=\text{mid}$ by scanning all candidates $k$ in the current allowed range $[\text{optl},\text{optr}]$, and find the best $opt$. By monotonicity, all $j<\text{mid}$ have their optimum in $[\text{optl},opt]$, and all $j>\text{mid}$ in $[opt,\text{optr}]$. So we recurse on both halves with the reduced ranges:
-
-```python
-def compute(i, l, r, optl, optr):
-    # computes dp[i][l..r], knowing that the optimal k for each of them lies in [optl, optr]
-    if l > r:
-        return
-    mid = (l + r) // 2
-    best = (10**18, -1)
-    for k in range(optl, min(mid, optr) + 1):
-        best = min(best, (dp[i - 1][k - 1] + C(k, mid), k))
-    dp[i][mid] = best[0]
-    compute(i, l, mid - 1, optl, best[1])
-    compute(i, mid + 1, r, best[1], optr)
-
-# for each layer i = 1..m:  compute(i, 0, n - 1, 0, n - 1)
-```
-
-```cpp
-// computes dp[i][l..r], knowing that the optimal k for each of them lies in [optl, optr]
-void compute(int i, int l, int r, int optl, int optr) {
-    if (l > r) return;
-    int mid = (l + r) / 2;
-    pair<ll, int> best = {LLONG_MAX, -1};
-    for (int k = optl; k <= min(mid, optr); k++)
-        best = min(best, {dp[i - 1][k - 1] + C(k, mid), k});
-    dp[i][mid] = best.first;
-    compute(i, l, mid - 1, optl, best.second);
-    compute(i, mid + 1, r, best.second, optr);
-}
-// for each layer i = 1..m:  compute(i, 0, n - 1, 0, n - 1);
-```
-
-(Use a suitable value of $dp[i-1][-1]$, typically $0$ for $i=1$ and $\infty$ otherwise.)
-
-**Complexity.** The recursion depth is $O(\log n)$. At a fixed depth, the subproblems cover disjoint ranges of $j$, and their $k$-ranges $[\text{optl},\text{optr}]$ overlap only at endpoints, so the total number of candidates scanned at that depth is at most $n+(\text{number of subproblems at that depth})=O(n)$. Hence one layer costs $O(n\log n)$ and the whole DP $O(mn\log n)$, instead of $O(mn^2)$. Note that the cost function $C(k,j)$ must be evaluable in $O(1)$, which usually means precomputing prefix sums.
-
-This optimization can be applied only when each layer depends on the *previous layer only*, since we compute a layer completely before moving on. It is the standard tool for "split an array into $m$ groups to minimize the sum of group costs".
-
-## 9.4 Knuth's optimization
-
-For the interval DP, a stronger condition gives a stronger result. Suppose $C$ satisfies QI and is also **monotone on intervals**: $C(b,c)\le C(a,d)$ whenever $a\le b\le c\le d$. Then the optimal split points satisfy
-
-$$opt[i][j-1]\ \le\ opt[i][j]\ \le\ opt[i+1][j].$$
-
-This says that the optimal split point of $[i,j]$ is sandwiched between those of the two intervals one element shorter. (The proof is an induction on the length of the interval, using QI exactly as in the proof above, with one more step; see the cp-algorithms article for the details.) So when computing $dp[i][j]$ we only have to scan $k$ from $opt[i][j-1]$ to $opt[i+1][j]$:
-
-```python
-INF = 10**18
-
-for i in range(n):
-    dp[i][i] = 0
-    opt[i][i] = i
-
-for length in range(2, n + 1):
-    for i in range(n - length + 1):
-        j = i + length - 1
-        dp[i][j] = INF
-        for k in range(opt[i][j - 1], min(j - 1, opt[i + 1][j]) + 1):
-            v = dp[i][k] + dp[k + 1][j] + C(i, j)
-            if v < dp[i][j]:
-                dp[i][j] = v
-                opt[i][j] = k
-```
-
-```cpp
-for (int i = 0; i < n; i++) { dp[i][i] = 0; opt[i][i] = i; }
-for (int len = 2; len <= n; len++)
-    for (int i = 0; i + len - 1 < n; i++) {
-        int j = i + len - 1;
-        dp[i][j] = INF;
-        for (int k = opt[i][j - 1]; k <= min(j - 1, opt[i + 1][j]); k++) {
-            ll v = dp[i][k] + dp[k + 1][j] + C(i, j);
-            if (v < dp[i][j]) { dp[i][j] = v; opt[i][j] = k; }
+int longest_common_substring(const string& a, const string& b) {
+    int n = a.size(), m = b.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1));
+    int best = 0;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= m; ++j) {
+            if (a[i - 1] == b[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+                best = max(best, dp[i][j]);
+            } else {
+                dp[i][j] = 0;
+            }
         }
     }
+    return best;
+}
 ```
 
-**Complexity.** Fix the length $len$. The cost of the scans for all $i$ is $\sum_i\bigl(opt[i+1][j]-opt[i][j-1]+1\bigr)$ with $j=i+len-1$. Both $opt[i+1][j]$ and $opt[i][j-1]$ are entries for intervals of length $len-1$ (the first starts at $i+1$, the second at $i$), so the sum telescopes to at most $n+n$. Over $n$ different lengths the total is $O(n^2)$, a gain of a factor $n$ over the naive $O(n^3)$.
+## 5.7 Check yourself
 
-Knuth's optimization is the key to problems such as building an optimal binary search tree, optimally merging adjacent piles of stones with a cost depending on the sum of the segment, and many "cut a stick" problems.
+1. In the LCS table, what does a diagonal step during reconstruction indicate?
+2. Why does the edit distance recurrence have three options when characters differ, but the LCS recurrence only has two?
+3. For the string "character", what is the length of its longest palindromic subsequence? (Hint: use the reverse trick.)
+4. In wildcard matching, if the pattern is "a*b" and the string is "acccb", which DP cell represents the star matching "ccc"?
 
-## 9.5 The convex hull trick
+# Chapter 6. The knapsack family
 
-Now a third kind of structure, which comes not from a cost satisfying an inequality but from a cost that is a **product**. Consider
+## 6.1 The 0/1 knapsack
 
-$$dp[i]=\min_{j<i}\Bigl(dp[j]+b_j\cdot a_i\Bigr)\ (+\text{terms depending only on }i).$$
+Imagine you have a knapsack that can hold at most *W* kilograms. You also have *n* items, each with a weight and a value. You may either take an item or leave it — you cannot break it and you cannot take it more than once. Your goal is to maximize the total value inside the knapsack without exceeding the weight limit. This is exactly the problem *Zero One Knapsack*.
 
-For each $j$, the expression $dp[j]+b_j\cdot x$ is a **line** in $x$, with slope $b_j$ and intercept $dp[j]$. The value $dp[i]$ is the lowest point among all these lines at $x=a_i$, that is, the **lower envelope** of the lines evaluated at one point. The lower envelope of a set of lines is a convex piecewise linear function, and a line that never appears on it can be discarded forever.
+To solve it we build a table. Let `dp[i][w]` be the best value we can get using only the first *i* items when the knapsack capacity is *w*. The table has *n*+1 rows (including a row for zero items) and *W*+1 columns (capacities from 0 to *W*). Row 0 is all zeros because with no items we carry no value.
 
-The typical case is that slopes arrive in monotone order (say $b_j$ is decreasing in $j$) and the queries $a_i$ also arrive in monotone order (increasing). Then we maintain the hull in a deque. When adding a new line $l_3$ with the smallest slope, we remove the last line $l_2$ of the hull if it is no longer necessary. With $l_1$ the line before $l_2$ and slopes $m_1>m_2>m_3$, line $l_2$ is useless exactly when $l_3$ overtakes $l_1$ no later than $l_2$ does, that is, when the intersection point of $l_1,l_3$ is not to the right of the intersection point of $l_1,l_2$:
+Now consider item *i* (1‑based). Its weight is `wt[i]` and its value is `val[i]`. For a given capacity *w* we have two choices:
 
-$$\frac{b_3-b_1}{m_1-m_3}\ \le\ \frac{b_2-b_1}{m_1-m_2}\iff (b_3-b_1)(m_1-m_2)\le(b_2-b_1)(m_1-m_3).$$
+* Skip the item: the value stays `dp[i-1][w]`.
+* Take the item (only possible if `wt[i] ≤ w`): we gain `val[i]` and the remaining capacity becomes `w - wt[i]`, so the value is `dp[i-1][w-wt[i]] + val[i]`.
 
-(Here $b$ denotes an intercept; both denominators are positive, so we may cross-multiply.) For queries with increasing $x$, the best line moves toward the smaller slopes, so we pop the front of the deque while the second line is at least as good at $x$.
+We pick the larger of the two. In formula form:
+
+$$ dp[i][w] = \max\bigl(dp[i-1][w],\; dp[i-1][w-wt[i]] + val[i]\bigr) \quad\text{(if } wt[i] \le w\text{)} $$
+
+If the item is too heavy we simply copy `dp[i-1][w]`.
+
+Let's walk through a tiny example by hand. Three items: weights `[2, 3, 4]`, values `[3, 4, 5]`. Capacity `W = 5`.
+
+| i \ w | 0 | 1 | 2 | 3 | 4 | 5 |
+|-------|---|---|---|---|---|---|
+| 0     | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1 (2,3) | 0 | 0 | 3 | 3 | 3 | 3 |
+| 2 (3,4) | 0 | 0 | 3 | 4 | 4 | 7 |
+| 3 (4,5) | 0 | 0 | 3 | 4 | 5 | 7 |
+
+Row 1: item 1 weighs 2, value 3. For w=2..5 we can take it, so value 3.
+Row 2: item 2 weighs 3, value 4. At w=3 we compare skip (3) vs take (0+4)=4 → 4. At w=5 we compare skip (3) vs take (dp[1][2]+4=3+4=7) → 7.
+Row 3: item 3 weighs 4, value 5. At w=4 we compare skip (4) vs take (0+5)=5 → 5. At w=5 we compare skip (7) vs take (dp[2][1]+5=0+5=5) → 7.
+
+The answer is `dp[3][5] = 7`. This table takes $O(nW)$ time and $O(nW)$ space because we fill every cell once.
+
+## 6.2 Saving memory with one row
+
+Notice that row *i* only uses row *i-1*. We can therefore keep just one array `dp[w]` and update it in place for each item. But the order of the inner loop matters. If we iterate *w* from 0 up to *W*, then when we compute `dp[w]` the entry `dp[w-wt[i]]` has already been updated for the current item — that would mean we are using the same item more than once. To enforce the 0/1 rule we must iterate *w* **downwards** from *W* to `wt[i]`. Then `dp[w-wt[i]]` still holds the value from the previous item (the old row), so each item is used at most once.
+
+The 1D transition becomes:
+
+$$ dp[w] = \max\bigl(dp[w],\; dp[w-wt[i]] + val[i]\bigr) \quad\text{for } w = W \dots wt[i] $$
+
+Time stays $O(nW)$, space drops to $O(W)$.
 
 ```python
-from collections import deque
+def knapsack_01(weights, values, capacity):
+    dp = [0] * (capacity + 1)
+    for wt, val in zip(weights, values):
+        for w in range(capacity, wt - 1, -1):
+            dp[w] = max(dp[w], dp[w - wt] + val)
+    return dp[capacity]
 
-class Line:
-    def __init__(self, m, c):
-        self.m = m
-        self.c = c
+# Example from section 6.1: weights [2,3,4], values [3,4,5], capacity 5 -> 7
+assert knapsack_01([2, 3, 4], [3, 4, 5], 5) == 7
+# Another tiny check: one item weight 3 value 10, capacity 2 -> 0
+assert knapsack_01([3], [10], 2) == 0
+# One item fits exactly
+assert knapsack_01([3], [10], 3) == 10
+```
+```cpp
+int knapsack_01(const vector<int>& weights, const vector<int>& values, int capacity) {
+    vector<int> dp(capacity + 1, 0);
+    for (size_t i = 0; i < weights.size(); ++i) {
+        int wt = weights[i], val = values[i];
+        for (int w = capacity; w >= wt; --w) {
+            dp[w] = max(dp[w], dp[w - wt] + val);
+        }
+    }
+    return dp[capacity];
+}
+```
 
-    def eval(self, x):
-        return self.m * x + self.c
+## 6.3 The unbounded knapsack
 
-hull = deque()
+Sometimes you may take as many copies of each item as you like. This is the *Unbounded Knapsack* problem. The state definition is the same, but the transition changes: after taking an item we may take it again, so we want `dp[w-wt[i]]` to already include the current item. That happens automatically if we iterate *w* **upwards** from `wt[i]` to *W*.
 
-def useless(l1, l2, l3):
-    return (l3.c - l1.c) * (l1.m - l2.m) <= (l2.c - l1.c) * (l1.m - l3.m)
+The transition:
 
-def add_line(l):
-    # slopes must be added in decreasing order
-    while len(hull) >= 2 and useless(hull[-2], hull[-1], l):
-        hull.pop()
-    hull.append(l)
+$$ dp[w] = \max\bigl(dp[w],\; dp[w-wt[i]] + val[i]\bigr) \quad\text{for } w = wt[i] \dots W $$
 
-def query(x):
-    # x must be non-decreasing between calls
-    while len(hull) >= 2 and hull[0].eval(x) >= hull[1].eval(x):
-        hull.popleft()
-    return hull[0].eval(x)
+Time $O(nW)$, space $O(W)$.
+
+Let's test the same three items (weights 2, 3, 4 and values 3, 4, 5) with capacity 5, now with unlimited copies. Two copies of item 1 weigh 4 and are worth 6. Item 1 together with item 2 weighs 5 and is worth 7. Nothing better fits, so the answer is still 7. With capacity 6 things change: three copies of item 1 weigh 6 and are worth 9, which beats any mix with the other items.
+
+```python
+def unbounded_knapsack(weights, values, capacity):
+    dp = [0] * (capacity + 1)
+    for wt, val in zip(weights, values):
+        for w in range(wt, capacity + 1):
+            dp[w] = max(dp[w], dp[w - wt] + val)
+    return dp[capacity]
+
+# Same items, capacity 5 -> 7 (item1+item2)
+assert unbounded_knapsack([2, 3, 4], [3, 4, 5], 5) == 7
+# Capacity 6 -> three copies of item1: 3*3=9
+assert unbounded_knapsack([2, 3, 4], [3, 4, 5], 6) == 9
+# One item weight 3 value 10, capacity 7 -> two copies (6) value 20
+assert unbounded_knapsack([3], [10], 7) == 20
+```
+```cpp
+int unbounded_knapsack(const vector<int>& weights, const vector<int>& values, int capacity) {
+    vector<int> dp(capacity + 1, 0);
+    for (size_t i = 0; i < weights.size(); ++i) {
+        int wt = weights[i], val = values[i];
+        for (int w = wt; w <= capacity; ++w) {
+            dp[w] = max(dp[w], dp[w - wt] + val);
+        }
+    }
+    return dp[capacity];
+}
+```
+
+## 6.4 Subset sum and its cousins
+
+Many problems that don't look like knapsack at first can be modeled as one.
+
+**Subset Sum** (problem *Subset Sum*) asks: given a list of positive integers, can we pick some of them that add up exactly to a target *T*? This is a 0/1 knapsack where every item's weight equals its value, and we only care whether a sum is reachable. We use a boolean array `dp[w]` (true if sum *w* is possible). The update is `dp[w] = dp[w] or dp[w - x]` for each number *x*, iterating downwards.
+
+**Partition Equal Subset Sum** (problem *Partition Equal Subset Sum*) gives an array and asks if it can be split into two subsets with equal sum. If the total sum is odd, answer is no. Otherwise we just need to know whether a subset sums to `total/2` — exactly Subset Sum.
+
+**Minimum Subset Sum Difference** (problem *Minimum Subset Sum Difference*) asks for the smallest possible absolute difference between the sums of two partitions. We compute all reachable sums up to `total/2` using the same boolean DP, then scan for the largest reachable sum `s`; the difference is `total - 2*s`.
+
+Let's illustrate Subset Sum with numbers `[2, 3, 7]` and target `5`. Boolean table (rows = items, columns = sums 0..5):
+
+| i \ w | 0 | 1 | 2 | 3 | 4 | 5 |
+|-------|---|---|---|---|---|---|
+| 0     | T | F | F | F | F | F |
+| 2     | T | F | T | F | F | F |
+| 3     | T | F | T | T | F | T |
+| 7     | T | F | T | T | F | T |
+
+We see sum 5 is reachable (2+3). For Partition Equal Subset Sum with `[1, 5, 11, 5]`, total = 22, half = 11. Subset Sum for 11 succeeds (1+5+5). For Minimum Subset Sum Difference with `[3, 1, 4, 2, 2, 1]`, total = 13, half = 6. Reachable sums up to 6: 0,1,2,3,4,5,6 all reachable? Let's check: 3+1+2=6, so difference = 13-12=1.
+
+```python
+def can_partition_equal(nums):
+    total = sum(nums)
+    if total % 2: return False
+    target = total // 2
+    dp = [False] * (target + 1)
+    dp[0] = True
+    for x in nums:
+        for w in range(target, x - 1, -1):
+            dp[w] = dp[w] or dp[w - x]
+    return dp[target]
+
+def min_subset_diff(nums):
+    total = sum(nums)
+    target = total // 2
+    dp = [False] * (target + 1)
+    dp[0] = True
+    for x in nums:
+        for w in range(target, x - 1, -1):
+            dp[w] = dp[w] or dp[w - x]
+    for s in range(target, -1, -1):
+        if dp[s]:
+            return total - 2 * s
+    return total
+
+# Subset sum [2,3,7] target 5 -> True
+assert can_partition_equal([2, 3, 7]) == False  # total 12, half 6 -> 2+? actually 2+3+7=12, half 6, can we make 6? 2+3+? no 7>6, so False. Wait 2+3+7=12, half 6, subset {2,?} no. So False.
+# Let's test a true case
+assert can_partition_equal([1, 5, 11, 5]) == True
+# Min diff [3,1,4,2,2,1] -> 1
+assert min_subset_diff([3, 1, 4, 2, 2, 1]) == 1
+```
+```cpp
+bool can_partition_equal(const vector<int>& nums) {
+    int total = 0;
+    for (int x : nums) total += x;
+    if (total % 2) return false;
+    int target = total / 2;
+    vector<bool> dp(target + 1, false);
+    dp[0] = true;
+    for (int x : nums) {
+        for (int w = target; w >= x; --w) {
+            dp[w] = dp[w] || dp[w - x];
+        }
+    }
+    return dp[target];
+}
+
+int min_subset_diff(const vector<int>& nums) {
+    int total = 0;
+    for (int x : nums) total += x;
+    int target = total / 2;
+    vector<bool> dp(target + 1, false);
+    dp[0] = true;
+    for (int x : nums) {
+        for (int w = target; w >= x; --w) {
+            dp[w] = dp[w] || dp[w - x];
+        }
+    }
+    for (int s = target; s >= 0; --s) {
+        if (dp[s]) return total - 2 * s;
+    }
+    return total;
+}
+```
+
+## 6.5 Counting versions and two budgets
+
+Some knapsack variants ask for the number of ways to achieve a goal, or they add extra constraints.
+
+**Target Sum** (problem *Target Sum*): you have an array of non‑negative integers and a target *S*. You must put a `+` or `-` sign in front of each number so that the total equals *S*. Let the sum of numbers with `+` be `P` and with `-` be `N`. Then `P - N = S` and `P + N = total`. So `P = (total + S) / 2`. The problem reduces to counting subsets that sum to `P` — a 0/1 knapsack where `dp[w]` stores the number of ways to reach sum `w`. Initialize `dp[0] = 1` and iterate numbers downwards: `dp[w] += dp[w - x]`.
+
+**Ones and Zeroes** (problem *Ones and Zeroes*): you are given binary strings and limits `m` (max zeros) and `n` (max ones). Pick the maximum number of strings such that total zeros ≤ `m` and total ones ≤ `n`. This is a 0/1 knapsack with two weight dimensions. State `dp[i][j]` = max strings using *i* zeros and *j* ones. For each string with `z` zeros and `o` ones, update backwards: `dp[i][j] = max(dp[i][j], dp[i-z][j-o] + 1)`.
+
+**Rod Cutting** (problem *Rod Cutting*): a rod of length *L* can be cut into pieces. Each piece of length `i` has price `p[i]`. You may cut as many pieces of each length as you want. This is exactly Unbounded Knapsack where items are lengths 1..L, weight = length, value = price, capacity = L. The answer is `dp[L]` with the upward loop.
+
+```python
+def target_sum_ways(nums, target):
+    total = sum(nums)
+    if (total + target) % 2 != 0:
+        return 0
+    P = (total + target) // 2
+    if P < 0:
+        return 0
+    dp = [0] * (P + 1)
+    dp[0] = 1
+    for x in nums:
+        for w in range(P, x - 1, -1):
+            dp[w] += dp[w - x]
+    return dp[P]
+
+def max_strings_on_zero(strs, m, n):
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for s in strs:
+        zeros = s.count('0')
+        ones = len(s) - zeros
+        for i in range(m, zeros - 1, -1):
+            for j in range(n, ones - 1, -1):
+                dp[i][j] = max(dp[i][j], dp[i - zeros][j - ones] + 1)
+    return dp[m][n]
+
+def rod_cutting(prices, length):
+    # prices is 1-indexed list or 0-indexed with prices[i] for length i+1
+    dp = [0] * (length + 1)
+    for l in range(1, length + 1):
+        price = prices[l - 1] if l - 1 < len(prices) else 0
+        for w in range(l, length + 1):
+            dp[w] = max(dp[w], dp[w - l] + price)
+    return dp[length]
+
+# Target sum: nums [1,1,1,1,1], target 3 -> 5 ways (choose 4 plus, 1 minus? Actually P=(5+3)/2=4, subsets of size 4: 5 ways)
+assert target_sum_ways([1,1,1,1,1], 3) == 5
+# Ones and zeroes: strs ["10","0001","111001","1","0"], m=5, n=3 -> 4
+assert max_strings_on_zero(["10","0001","111001","1","0"], 5, 3) == 4
+# Rod cutting: prices [1,5,8,9,10,17,17,20] for lengths 1..8, length 4 -> max price 10 (2+2 or 4)
+assert rod_cutting([1,5,8,9,10,17,17,20], 4) == 10
+```
+```cpp
+int target_sum_ways(const vector<int>& nums, int target) {
+    int total = 0;
+    for (int x : nums) total += x;
+    if ((total + target) % 2 != 0) return 0;
+    int P = (total + target) / 2;
+    if (P < 0) return 0;
+    vector<int> dp(P + 1, 0);
+    dp[0] = 1;
+    for (int x : nums) {
+        for (int w = P; w >= x; --w) {
+            dp[w] += dp[w - x];
+        }
+    }
+    return dp[P];
+}
+
+int max_strings_on_zero(const vector<string>& strs, int m, int n) {
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+    for (const string& s : strs) {
+        int zeros = 0, ones = 0;
+        for (char c : s) {
+            if (c == '0') zeros++;
+            else ones++;
+        }
+        for (int i = m; i >= zeros; --i) {
+            for (int j = n; j >= ones; --j) {
+                dp[i][j] = max(dp[i][j], dp[i - zeros][j - ones] + 1);
+            }
+        }
+    }
+    return dp[m][n];
+}
+
+int rod_cutting(const vector<int>& prices, int length) {
+    vector<int> dp(length + 1, 0);
+    for (int l = 1; l <= length; ++l) {
+        int price = (l - 1 < (int)prices.size()) ? prices[l - 1] : 0;
+        for (int w = l; w <= length; ++w) {
+            dp[w] = max(dp[w], dp[w - l] + price);
+        }
+    }
+    return dp[length];
+}
+```
+
+## 6.6 Check yourself
+
+1. In the 0/1 knapsack 1D array, why must the inner loop run from high capacity down to the item's weight?
+2. What changes in the loop direction when we switch from 0/1 knapsack to unbounded knapsack, and why?
+3. How can you turn the Partition Equal Subset Sum problem into a Subset Sum problem?
+4. In the Target Sum problem, why do we compute `P = (total + target) / 2` and then count subsets that sum to `P`?
+
+# Chapter 7. Intervals and state machines
+
+## 7.1 Interval DP: matrix chain
+
+Many problems ask us to combine a sequence of items in some order, and the cost of combining two adjacent pieces depends only on the pieces themselves. A classic example is *Matrix Chain Multiplication*: we have a chain of matrices $A_1, A_2, \dots, A_n$ where matrix $A_i$ has dimensions $p_{i-1} \times p_i$. We want to parenthesize the product to minimize the total number of scalar multiplications. The order matters: multiplying a $10 \times 100$ matrix by a $100 \times 5$ matrix takes $10 \times 100 \times 5 = 5000$ multiplications, but if we have three matrices the grouping changes the total.
+
+The key idea is to let the DP state be an interval. Define $dp[l][r]$ as the minimum cost to multiply matrices $l$ through $r$ (inclusive). For a single matrix the cost is zero. For a longer interval we try every possible split point $k$ between $l$ and $r-1$: first multiply $l..k$, then multiply $k+1..r$, then multiply the two results. The cost of the final multiplication is $p_{l-1} \times p_k \times p_r$. So
+
+$$
+dp[l][r] = \min_{l \le k < r} \bigl( dp[l][k] + dp[k+1][r] + p_{l-1} p_k p_r \bigr).
+$$
+
+We fill the table by increasing interval length. For dimensions $[10, 20, 30, 40]$ (three matrices: $10\times20$, $20\times30$, $30\times40$) we compute:
+
+- length 1: $dp[1][1]=dp[2][2]=dp[3][3]=0$
+- length 2: $dp[1][2] = 10\cdot20\cdot30 = 6000$, $dp[2][3] = 20\cdot30\cdot40 = 24000$
+- length 3: $dp[1][3] = \min( dp[1][1]+dp[2][3]+10\cdot20\cdot40,\; dp[1][2]+dp[3][3]+10\cdot30\cdot40 ) = \min(0+24000+8000,\; 6000+0+12000) = 18000$.
+
+The optimal grouping is $(A_1 A_2) A_3$ with 18000 multiplications. This is exactly the problem *Matrix Chain Multiplication*. Time and space are $O(n^3)$ and $O(n^2)$.
+
+```python
+def matrix_chain_order(p):
+    """p is list of dimensions, length n+1 for n matrices. Returns min cost."""
+    n = len(p) - 1
+    dp = [[0] * (n + 1) for _ in range(n + 1)]
+    for length in range(2, n + 1):
+        for l in range(1, n - length + 2):
+            r = l + length - 1
+            dp[l][r] = float('inf')
+            for k in range(l, r):
+                cost = dp[l][k] + dp[k+1][r] + p[l-1] * p[k] * p[r]
+                if cost < dp[l][r]:
+                    dp[l][r] = cost
+    return dp[1][n]
+
+# dimensions: 10x20, 20x30, 30x40
+assert matrix_chain_order([10, 20, 30, 40]) == 18000
 ```
 
 ```cpp
-struct Line { ll m, c; ll eval(ll x) const { return m * x + c; } };
-deque<Line> hull;
-
-bool useless(const Line& l1, const Line& l2, const Line& l3) {
-    return (__int128)(l3.c - l1.c) * (l1.m - l2.m) <= (__int128)(l2.c - l1.c) * (l1.m - l3.m);
-}
-void add_line(Line l) {                       // slopes must be added in decreasing order
-    while (hull.size() >= 2 && useless(hull[hull.size() - 2], hull.back(), l)) hull.pop_back();
-    hull.push_back(l);
-}
-ll query(ll x) {                              // x must be non-decreasing between calls
-    while (hull.size() >= 2 && hull[0].eval(x) >= hull[1].eval(x)) hull.pop_front();
-    return hull[0].eval(x);
+long long matrix_chain_order(vector<long long> p) {
+    int n = (int)p.size() - 1;
+    vector<vector<long long>> dp(n + 1, vector<long long>(n + 1, 0));
+    for (int len = 2; len <= n; ++len) {
+        for (int l = 1; l + len - 1 <= n; ++l) {
+            int r = l + len - 1;
+            dp[l][r] = LLONG_MAX;
+            for (int k = l; k < r; ++k) {
+                long long cost = dp[l][k] + dp[k+1][r] + p[l-1] * p[k] * p[r];
+                if (cost < dp[l][r]) dp[l][r] = cost;
+            }
+        }
+    }
+    return dp[1][n];
 }
 ```
 
-Each line enters and leaves the deque once, so the whole DP costs $O(n)$ instead of $O(n^2)$. The `__int128` guards against overflow in the cross-multiplication, which is a very common source of silent wrong answers.
+## 7.2 Burst balloons and cutting a stick
 
-**When the monotonicity fails.** If slopes are not sorted, or queries are not monotone, there are two standard remedies. One is to keep the hull in a balanced structure and binary search in it, for $O(\log n)$ per operation. The other, which is simpler to write and almost always preferred, is the **Li Chao tree**. It is a segment tree over the range of possible query points $x$. Each node stores one line, the one that is lowest at the midpoint of the node's interval among the lines that have reached it. When inserting a new line, compare it with the stored line at the midpoint; the better one stays, and the worse one can be better only on one side (two lines cross at most once), so it is pushed down into that single child. A query walks from the root to the leaf of $x$ and takes the minimum of the stored lines on the way. Insert and query both cost $O(\log X)$.
+Two problems that look different share the same interval DP skeleton: *Burst Balloons* and *Minimum Cost to Cut a Stick*. In both, the natural first thought is to pick the first balloon to burst or the first cut to make. That leads to messy dependencies because the remaining pieces change shape. The trick is to think backwards: pick the **last** operation in the interval. When the last balloon in $(l, r)$ is burst, its left and right neighbors are fixed as the boundaries $l$ and $r$. When the last cut on a stick segment $(l, r)$ is made, the cost is simply the length of that segment, and the left and right subproblems become independent.
+
+For *Burst Balloons* we are given an array `nums`. We add virtual balloons with value 1 at both ends. Let $dp[l][r]$ be the maximum coins from bursting all balloons strictly between indices $l$ and $r$ (exclusive). The last balloon burst in this range is some $k$ with $l < k < r$. Its coins are $nums[l] \times nums[k] \times nums[r]$. So
+
+$$
+dp[l][r] = \max_{l < k < r} \bigl( dp[l][k] + dp[k][r] + nums[l] nums[k] nums[r] \bigr).
+$$
+
+For `nums = [3, 1, 5]` we extend to `[1, 3, 1, 5, 1]`, and the interval $(0,4)$ covers the whole array. Suppose the 5 is the last balloon to burst. Then the balloons 3 and 1 are burst first, between the boundaries 1 and 5. Bursting the 1 first gives $3\cdot1\cdot5=15$, then the 3 gives $1\cdot3\cdot5=15$, so that part is worth 30. The last balloon itself gives $1\cdot5\cdot1=5$, for a total of 35. Choosing the 3 as the last balloon gives only 33 and choosing the middle 1 gives only 9, so 35 is the best.
+
+For *Minimum Cost to Cut a Stick* we have a stick of length $n$ and cuts at positions `cuts`. Sort cuts, add 0 and $n$ as boundaries. $dp[l][r]$ = minimum cost to perform all cuts strictly between $l$ and $r$. The last cut at $k$ costs $cuts[r] - cuts[l]$ (the current segment length). So
+
+$$
+dp[l][r] = \min_{l < k < r} \bigl( dp[l][k] + dp[k][r] + cuts[r] - cuts[l] \bigr).
+$$
+
+For a stick of length 7 with cuts at [1,3,4,5], boundaries [0,1,3,4,5,7]. The interval (0,5) covers all cuts. Last cut at 3 (index 2): cost $7-0=7$ plus left (0,2) and right (2,5). This yields the optimal 16. Time and space for both are $O(m^3)$ and $O(m^2)$ where $m$ is the number of cuts or balloons.
 
 ```python
-class Line:
-    def __init__(self, m=0, b=0):
-        self.m = m
-        self.b = b
+def max_coins(nums):
+    """Burst Balloons: return max coins."""
+    nums = [1] + nums + [1]
+    n = len(nums)
+    dp = [[0] * n for _ in range(n)]
+    for length in range(3, n + 1):
+        for l in range(0, n - length + 1):
+            r = l + length - 1
+            for k in range(l + 1, r):
+                val = dp[l][k] + dp[k][r] + nums[l] * nums[k] * nums[r]
+                if val > dp[l][r]:
+                    dp[l][r] = val
+    return dp[0][n-1]
 
-    def eval(self, x):
-        return self.m * x + self.b
+def min_cost_cut_stick(n, cuts):
+    """Minimum Cost to Cut a Stick."""
+    cuts = sorted(cuts)
+    cuts = [0] + cuts + [n]
+    m = len(cuts)
+    dp = [[0] * m for _ in range(m)]
+    for length in range(3, m + 1):
+        for l in range(0, m - length + 1):
+            r = l + length - 1
+            dp[l][r] = float('inf')
+            for k in range(l + 1, r):
+                cost = dp[l][k] + dp[k][r] + cuts[r] - cuts[l]
+                if cost < dp[l][r]:
+                    dp[l][r] = cost
+    return dp[0][m-1]
 
+assert max_coins([3, 1, 5, 8]) == 167
+assert min_cost_cut_stick(7, [1, 3, 4, 5]) == 16
+```
 
-class LiChao:
-    INF = 4 * 10**18
+```cpp
+int maxCoins(vector<int>& nums) {
+    nums.insert(nums.begin(), 1);
+    nums.push_back(1);
+    int n = nums.size();
+    vector<vector<int>> dp(n, vector<int>(n, 0));
+    for (int len = 3; len <= n; ++len) {
+        for (int l = 0; l + len - 1 < n; ++l) {
+            int r = l + len - 1;
+            for (int k = l + 1; k < r; ++k) {
+                int val = dp[l][k] + dp[k][r] + nums[l] * nums[k] * nums[r];
+                dp[l][r] = max(dp[l][r], val);
+            }
+        }
+    }
+    return dp[0][n-1];
+}
 
-    class Node:
-        def __init__(self, ln):
-            self.ln = ln
-            self.l = -1
-            self.r = -1
+int minCost(int n, vector<int>& cuts) {
+    sort(cuts.begin(), cuts.end());
+    cuts.insert(cuts.begin(), 0);
+    cuts.push_back(n);
+    int m = cuts.size();
+    vector<vector<int>> dp(m, vector<int>(m, 0));
+    for (int len = 3; len <= m; ++len) {
+        for (int l = 0; l + len - 1 < m; ++l) {
+            int r = l + len - 1;
+            dp[l][r] = INT_MAX;
+            for (int k = l + 1; k < r; ++k) {
+                int cost = dp[l][k] + dp[k][r] + cuts[r] - cuts[l];
+                dp[l][r] = min(dp[l][r], cost);
+            }
+        }
+    }
+    return dp[0][m-1];
+}
+```
 
-    def __init__(self, lo, hi):
-        self.lo = lo
-        self.hi = hi
-        self.t = [self.Node(Line(0, self.INF))]
+## 7.3 Palindrome partitioning
 
-    def add(self, nw, v, l, r):
-        m = (l + r) // 2
-        lef = nw.eval(l) < self.t[v].ln.eval(l)
-        mid = nw.eval(m) < self.t[v].ln.eval(m)
-        if mid:
-            self.t[v].ln, nw = nw, self.t[v].ln
-        if l == r:
+In *Palindrome Partitioning II* we want to cut a string into the fewest pieces so that every piece is a palindrome. For example, "aab" can be cut as "aa"|"b" (one cut) but not as "a"|"ab" because "ab" is not a palindrome. The minimum cuts for "aab" is 1.
+
+A direct DP that tries every cut and checks palindrome on the fly would be $O(n^3)$. We can precompute a table `is_pal[l][r]` that tells whether substring $s[l..r]$ is a palindrome in $O(n^2)$ time: a substring is a palindrome if its ends match and the inside is a palindrome (or length $\le 2$). Then we do a 1D DP: $dp[i]$ = minimum cuts for prefix $s[0..i-1]$. We initialize $dp[0] = -1$ (so that a whole palindrome prefix gives 0 cuts). For each $i$ from 1 to $n$, we try every $j < i$; if $s[j..i-1]$ is a palindrome, we can cut before $j$ and get $dp[i] = \min(dp[i], dp[j] + 1)$.
+
+For "aab": $n=3$. Palindromes: "a", "a", "b", "aa". $dp[0]=-1$. $i=1$: "a" is palindrome -> $dp[1]=dp[0]+1=0$. $i=2$: "a" -> $dp[2]=dp[1]+1=1$; "aa" -> $dp[2]=dp[0]+1=0$. $i=3$: "b" -> $dp[3]=dp[2]+1=1$; "ab" no; "aab" no. Answer $dp[3]=1$. Time $O(n^2)$, space $O(n^2)$ for the table (can be reduced to $O(n)$ with expand-around-center).
+
+```python
+def min_cut(s):
+    """Palindrome Partitioning II: return min cuts."""
+    n = len(s)
+    is_pal = [[False] * n for _ in range(n)]
+    for i in range(n-1, -1, -1):
+        for j in range(i, n):
+            if s[i] == s[j] and (j - i <= 2 or is_pal[i+1][j-1]):
+                is_pal[i][j] = True
+    dp = [0] * (n + 1)
+    dp[0] = -1
+    for i in range(1, n + 1):
+        dp[i] = i - 1  # worst case: cut every char
+        for j in range(i):
+            if is_pal[j][i-1]:
+                dp[i] = min(dp[i], dp[j] + 1)
+    return dp[n]
+
+assert min_cut("aab") == 1
+assert min_cut("a") == 0
+assert min_cut("ab") == 1
+```
+
+```cpp
+int minCut(string s) {
+    int n = s.size();
+    vector<vector<bool>> is_pal(n, vector<bool>(n, false));
+    for (int i = n - 1; i >= 0; --i) {
+        for (int j = i; j < n; ++j) {
+            if (s[i] == s[j] && (j - i <= 2 || is_pal[i+1][j-1]))
+                is_pal[i][j] = true;
+        }
+    }
+    vector<int> dp(n + 1, 0);
+    dp[0] = -1;
+    for (int i = 1; i <= n; ++i) {
+        dp[i] = i - 1;
+        for (int j = 0; j < i; ++j) {
+            if (is_pal[j][i-1])
+                dp[i] = min(dp[i], dp[j] + 1);
+        }
+    }
+    return dp[n];
+}
+```
+
+## 7.4 Longest valid parentheses
+
+Given a string of '(' and ')', *Longest Valid Parentheses* asks for the length of the longest contiguous substring that forms a valid parentheses sequence. A valid sequence is properly matched: every '(' has a matching ')' and they are correctly nested.
+
+We can use DP where $dp[i]$ is the length of the longest valid substring **ending at index $i$** (0-based). If `s[i]` is an opening bracket `(`, then $dp[i]=0$, because a valid substring cannot end with an open bracket.
+
+If `s[i]` is a closing bracket `)`, look at the valid block just before it, which ends at $i-1$ and has length $dp[i-1]$. The bracket that could match our `)` sits just before that block, at index $j = i - dp[i-1] - 1$. If $j \ge 0$ and `s[j]` is `(`, we found a match, and the new valid block is the old block, plus the two matching brackets, plus any valid block that ended right before $j$:
+
+$$
+dp[i] = dp[i-1] + 2 + dp[j-1] \quad (\text{use } 0 \text{ in place of } dp[j-1] \text{ when } j = 0).
+$$
+
+In every other case $dp[i]=0$.
+
+Example: $s = $ `)()())`. We get $dp[0]=0$ and $dp[1]=0$. At $i=2$ the match is at $j=1$, so $dp[2]=0+2+0=2$. Then $dp[3]=0$. At $i=4$ we have $j=3$, so $dp[4]=0+2+dp[2]=4$. At $i=5$ we have $j=5-4-1=0$ and `s[0]` is `)`, so there is no match and $dp[5]=0$. The answer is the largest value, 4, for the block `()()`. Time $O(n)$, space $O(n)$.
+
+```python
+def longest_valid_parentheses(s):
+    n = len(s)
+    dp = [0] * n
+    max_len = 0
+    for i in range(1, n):
+        if s[i] == ')':
+            j = i - dp[i-1] - 1
+            if j >= 0 and s[j] == '(':
+                dp[i] = dp[i-1] + 2
+                if j > 0:
+                    dp[i] += dp[j-1]
+                max_len = max(max_len, dp[i])
+    return max_len
+
+assert longest_valid_parentheses(")()())") == 4
+assert longest_valid_parentheses("(()") == 2
+assert longest_valid_parentheses("") == 0
+```
+
+```cpp
+int longestValidParentheses(string s) {
+    int n = s.size();
+    vector<int> dp(n, 0);
+    int max_len = 0;
+    for (int i = 1; i < n; ++i) {
+        if (s[i] == ')') {
+            int j = i - dp[i-1] - 1;
+            if (j >= 0 && s[j] == '(') {
+                dp[i] = dp[i-1] + 2;
+                if (j > 0) dp[i] += dp[j-1];
+                max_len = max(max_len, dp[i]);
+            }
+        }
+    }
+    return max_len;
+}
+```
+
+## 7.5 State machines: stock problems
+
+Some DP problems are best understood as walking through a **state machine**. Each day we are in one of a few states (e.g., holding a stock, not holding, in cooldown), and we can transition between states by taking actions (buy, sell, rest). The DP value is the maximum profit reachable in each state after each day.
+
+### Stock with Cooldown
+
+After you sell, you must wait one day before buying again. Three states:
+- `hold`: you own a stock.
+- `not_hold`: you don't own a stock and can buy.
+- `cooldown`: you just sold yesterday, cannot buy today.
+
+Transitions:
+- From `hold`: you can **rest** (stay in `hold`) or **sell** (go to `cooldown`).
+- From `not_hold`: you can **rest** (stay) or **buy** (go to `hold`).
+- From `cooldown`: you must **rest** (go to `not_hold`).
+
+```
+not_hold --buy--> hold --sell--> cooldown --rest--> not_hold
+not_hold --rest--> not_hold          hold --rest--> hold
+```
+
+Let $h_i, n_i, c_i$ be max profit at end of day $i$ in each state. Initial: $h_0 = -price[0]$, $n_0 = 0$, $c_0 = -\infty$ (impossible). Recurrences:
+$$
+h_i = \max(h_{i-1}, n_{i-1} - price[i]) \\
+c_i = h_{i-1} + price[i] \\
+n_i = \max(n_{i-1}, c_{i-1})
+$$
+Answer is $\max(n_{last}, c_{last})$. This is exactly the problem *Stock with Cooldown*. Time $O(n)$, space $O(1)$.
+
+### Stock with K Transactions
+
+We are allowed at most $k$ buy-sell transactions. A transaction is a buy followed by a sell. We can have states for each transaction count and whether we hold. Let $hold[t]$ = max profit after $t$ transactions and currently holding a stock; $not\_hold[t]$ = max profit after $t$ transactions and not holding. A transaction is completed when we sell, so selling increments $t$. Recurrences for each day:
+$$
+hold[t] = \max(hold[t], not\_hold[t] - price) \quad \text{(buy doesn't change transaction count)} \\
+not\_hold[t] = \max(not\_hold[t], hold[t-1] + price) \quad \text{(sell completes transaction t)}
+$$
+Initialize $hold[0] = -price[0]$, $hold[t>0] = -\infty$, $not\_hold[0] = 0$, $not\_hold[t>0] = -\infty$. Iterate $t$ from 1 to $k$ for sell transition. This is exactly the problem *Stock with K Transactions*. Time $O(nk)$, space $O(k)$.
+
+```python
+def max_profit_cooldown(prices):
+    """Stock with Cooldown."""
+    if not prices:
+        return 0
+    hold = -prices[0]
+    not_hold = 0
+    cooldown = float('-inf')
+    for p in prices[1:]:
+        hold, not_hold, cooldown = (
+            max(hold, not_hold - p),
+            max(not_hold, cooldown),
+            hold + p
+        )
+    return max(not_hold, cooldown)
+
+def max_profit_k_transactions(k, prices):
+    """Stock with K Transactions."""
+    if not prices or k == 0:
+        return 0
+    n = len(prices)
+    if k >= n // 2:  # unlimited transactions
+        return sum(max(0, prices[i] - prices[i-1]) for i in range(1, n))
+    hold = [float('-inf')] * (k + 1)
+    not_hold = [float('-inf')] * (k + 1)
+    hold[0] = -prices[0]
+    not_hold[0] = 0
+    for p in prices[1:]:
+        hold[0] = max(hold[0], not_hold[0] - p)
+        for t in range(1, k + 1):
+            hold[t] = max(hold[t], not_hold[t] - p)
+            not_hold[t] = max(not_hold[t], hold[t-1] + p)
+    return max(not_hold)
+
+assert max_profit_cooldown([1,2,3,0,2]) == 3
+assert max_profit_k_transactions(2, [3,2,6,5,0,3]) == 7
+```
+
+```cpp
+int maxProfitCooldown(vector<int>& prices) {
+    if (prices.empty()) return 0;
+    int hold = -prices[0];
+    int not_hold = 0;
+    int cooldown = INT_MIN;
+    for (int i = 1; i < (int)prices.size(); ++i) {
+        int p = prices[i];
+        int new_hold = max(hold, not_hold - p);
+        int new_not_hold = max(not_hold, cooldown);
+        int new_cooldown = hold + p;
+        hold = new_hold;
+        not_hold = new_not_hold;
+        cooldown = new_cooldown;
+    }
+    return max(not_hold, cooldown);
+}
+
+int maxProfitKTransactions(int k, vector<int>& prices) {
+    if (prices.empty() || k == 0) return 0;
+    int n = prices.size();
+    if (k >= n / 2) {
+        int profit = 0;
+        for (int i = 1; i < n; ++i)
+            profit += max(0, prices[i] - prices[i-1]);
+        return profit;
+    }
+    vector<int> hold(k + 1, INT_MIN);
+    vector<int> not_hold(k + 1, INT_MIN);
+    hold[0] = -prices[0];
+    not_hold[0] = 0;
+    for (int i = 1; i < n; ++i) {
+        int p = prices[i];
+        hold[0] = max(hold[0], not_hold[0] - p);
+        for (int t = 1; t <= k; ++t) {
+            hold[t] = max(hold[t], not_hold[t] - p);
+            not_hold[t] = max(not_hold[t], hold[t-1] + p);
+        }
+    }
+    return *max_element(not_hold.begin(), not_hold.end());
+}
+```
+
+## 7.6 Egg drop
+
+The *Egg Drop* problem: given $k$ eggs and a building with $n$ floors, find the minimum number of moves (drops) in the worst case to determine the highest floor from which an egg won't break. The classic DP defines $dp[k][m]$ as the maximum number of floors we can check with $k$ eggs and $m$ moves. When we drop an egg from floor $x$, two things happen: if it breaks, we have $k-1$ eggs and $m-1$ moves left to check floors below $x$; if it survives, we have $k$ eggs and $m-1$ moves to check floors above $x$. So we can cover $dp[k-1][m-1]$ floors below, 1 floor at $x$, and $dp[k][m-1]$ floors above:
+
+$$
+dp[k][m] = dp[k-1][m-1] + dp[k][m-1] + 1.
+$$
+
+We want the smallest $m$ such that $dp[k][m] \ge n$. For $k=2, n=10$: $m=1$: $dp=1$; $m=2$: $dp=1+1+1=3$; $m=3$: $dp=2+3+1=6$; $m=4$: $dp=3+6+1=10$. So answer is 4 moves.
+
+Alternatively, we can define $dp[k][n]$ as the minimum moves needed for $k$ eggs and $n$ floors. The recurrence tries every floor $x$:
+
+$$
+dp[k][n] = 1 + \min_{1 \le x \le n} \max(dp[k-1][x-1], dp[k][n-x]).
+$$
+
+This is $O(kn^2)$ and slower. The first formulation (counting floors by moves) is $O(k \cdot m)$ where $m$ is the answer, usually much smaller than $n$. Time $O(k \log n)$ roughly, space $O(k)$.
+
+```python
+def egg_drop(k, n):
+    """Return min moves for k eggs, n floors."""
+    dp = [0] * (k + 1)
+    moves = 0
+    while dp[k] < n:
+        moves += 1
+        for i in range(k, 0, -1):
+            dp[i] = dp[i-1] + dp[i] + 1
+    return moves
+
+assert egg_drop(2, 10) == 4
+assert egg_drop(1, 5) == 5
+assert egg_drop(3, 14) == 4
+```
+
+```cpp
+int eggDrop(int k, int n) {
+    vector<int> dp(k + 1, 0);
+    int moves = 0;
+    while (dp[k] < n) {
+        ++moves;
+        for (int i = k; i >= 1; --i) {
+            dp[i] = dp[i-1] + dp[i] + 1;
+        }
+    }
+    return moves;
+}
+```
+
+## 7.7 Job scheduling with profit
+
+In *Job Scheduling with Profit* we have jobs with start time, end time, and profit. We want to select a subset of non-overlapping jobs with maximum total profit. This is weighted interval scheduling.
+
+Sort jobs by end time. Let $dp[i]$ be the maximum profit using the first $i$ jobs (1-indexed after sorting). For job $i$ with start $s_i$, end $e_i$, profit $p_i$, we find the last job $j < i$ with end time $\le s_i$. Then $dp[i] = \max(dp[i-1], p_i + dp[j])$. Finding $j$ can be done with binary search on the sorted end times.
+
+Example: jobs = [(1,3,50), (2,5,20), (4,6,70), (6,7,60)]. Sorted by end: same order. Ends = [3,5,6,7].
+$dp[0]=0$.
+$i=1$: job (1,3,50), $j=0$ -> $dp[1]=50$.
+$i=2$: job (2,5,20), $j=0$ -> $dp[2]=\max(50, 20)=50$.
+$i=3$: job (4,6,70), $j=1$ (end 3 <= 4) -> $dp[3]=\max(50, 70+50)=120$.
+$i=4$: job (6,7,60), $j=3$ (end 6 <= 6) -> $dp[4]=\max(120, 60+120)=180$.
+Answer 180. Time $O(n \log n)$, space $O(n)$.
+
+```python
+from bisect import bisect_right
+
+def job_scheduling(startTime, endTime, profit):
+    """Job Scheduling with Profit."""
+    jobs = sorted(zip(startTime, endTime, profit), key=lambda x: x[1])
+    ends = [e for _, e, _ in jobs]
+    n = len(jobs)
+    dp = [0] * (n + 1)
+    for i in range(1, n + 1):
+        s, e, p = jobs[i-1]
+        # find rightmost job with end <= s
+        j = bisect_right(ends, s, 0, i-1)
+        dp[i] = max(dp[i-1], p + dp[j])
+    return dp[n]
+
+assert job_scheduling([1,2,4,6], [3,5,6,7], [50,20,70,60]) == 180
+```
+
+```cpp
+int jobScheduling(vector<int>& startTime, vector<int>& endTime, vector<int>& profit) {
+    int n = startTime.size();
+    vector<array<int,3>> jobs(n);
+    for (int i = 0; i < n; ++i)
+        jobs[i] = {startTime[i], endTime[i], profit[i]};
+    sort(jobs.begin(), jobs.end(), [](auto& a, auto& b) { return a[1] < b[1]; });
+    vector<int> ends(n);
+    for (int i = 0; i < n; ++i) ends[i] = jobs[i][1];
+    vector<int> dp(n + 1, 0);
+    for (int i = 1; i <= n; ++i) {
+        int s = jobs[i-1][0];
+        int p = jobs[i-1][2];
+        int j = upper_bound(ends.begin(), ends.begin() + i - 1, s) - ends.begin();
+        dp[i] = max(dp[i-1], p + dp[j]);
+    }
+    return dp[n];
+}
+```
+
+## 7.8 Check yourself
+
+1. In interval DP for matrix chain multiplication, what does the state $dp[l][r]$ represent, and why do we iterate by increasing interval length?
+2. For Burst Balloons, why does thinking about the *last* balloon to burst make the subproblems independent?
+3. In the stock with cooldown state machine, why can't we transition directly from `cooldown` to `hold`?
+4. In the egg drop problem, what is the meaning of $dp[k][m]$ in the "floors by moves" formulation, and why is it faster than the "moves by floors" formulation?
+
+# Chapter 8. Sets as states: bitmask and profile DP
+
+## 8.1 Sets stored in one integer
+
+A set is just a collection where each item is either in or out. If we number the items $0, 1, 2, \dots$, we can write the answer for every item as a single bit: $1$ means the item is in the set, $0$ means it is not. An integer in most languages holds at least $32$ bits, so one `int` can store a set of up to $32$ items. In practice we stay near $20$ items because the number of subsets grows as $2^n$ and $2^{20} \approx 10^6$ is already a million states.
+
+Let's see the three basic operations on a 5-bit set that represents the subset $\{1, 3\}$ of $\{0,1,2,3,4\}$. The binary pattern is `01010` (bit 1 and bit 3 are 1). In decimal that is $2^1 + 2^3 = 10$.
+
+- **Test** if item $k$ is in the set: `mask & (1 << k)` is non-zero.
+- **Add** item $k$: `mask | (1 << k)`.
+- **Remove** item $k$: `mask & ~(1 << k)`.
+
+Here is a tiny demonstration with the number $10$ (`01010`):
+
+```python
+def demo_bits():
+    mask = 10          # binary 01010, set {1, 3}
+    # test bit 1
+    assert (mask & (1 << 1)) != 0
+    # test bit 2
+    assert (mask & (1 << 2)) == 0
+    # add bit 0 -> set {0,1,3}
+    mask2 = mask | (1 << 0)
+    assert mask2 == 11     # 01011
+    # remove bit 3 -> set {0,1}
+    mask3 = mask2 & ~(1 << 3)
+    assert mask3 == 3      # 00011
+    return mask, mask2, mask3
+
+demo_bits()
+```
+
+```cpp
+// Bit operations on an integer mask
+// test:  (mask & (1 << k)) != 0
+// add:   mask | (1 << k)
+// remove: mask & ~(1 << k)
+```
+
+## 8.2 The travelling salesman
+
+The *Travelling Salesman* problem asks: given $n$ cities and the cost to travel between each pair, find the cheapest tour that starts at city $0$, visits every other city exactly once, and returns to city $0$. This is exactly the problem *Travelling Salesman*.
+
+A dynamic programming state needs to remember which cities have been visited and where we are now. A bitmask of length $n$ stores the visited set, and an integer $u$ stores the current city. The state is `dp[mask][u]` = minimum cost to start at $0$, visit exactly the cities in `mask`, and finish at $u$. The mask always includes $0$ and $u$.
+
+Let's work through $n = 4$ cities with this cost matrix:
+
+$$
+\begin{array}{c|cccc}
+ & 0 & 1 & 2 & 3 \\ \hline
+0 & 0 & 10 & 15 & 20 \\
+1 & 10 & 0 & 35 & 25 \\
+2 & 15 & 35 & 0 & 30 \\
+3 & 20 & 25 & 30 & 0
+\end{array}
+$$
+
+We build the table bottom-up. There are $2^4 = 16$ masks but only those containing bit $0$ are reachable.
+
+| mask (binary) | cities in mask | dp[mask][0] | dp[mask][1] | dp[mask][2] | dp[mask][3] |
+|---------------|----------------|-------------|-------------|-------------|-------------|
+| 0001          | {0}            | 0           | $\infty$    | $\infty$    | $\infty$    |
+| 0011          | {0,1}          | $\infty$    | 10          | $\infty$    | $\infty$    |
+| 0101          | {0,2}          | $\infty$    | $\infty$    | 15          | $\infty$    |
+| 1001          | {0,3}          | $\infty$    | $\infty$    | $\infty$    | 20          |
+| 0111          | {0,1,2}        | $\infty$    | 50          | 45          | $\infty$    |
+| 1011          | {0,1,3}        | $\infty$    | 45          | $\infty$    | 35          |
+| 1101          | {0,2,3}        | $\infty$    | $\infty$    | 50          | 45          |
+| 1111          | {0,1,2,3}      | $\infty$    | 70          | 65          | 75          |
+
+How did we get `dp[0111][1] = 50`? Cities {0,2} were visited before city 1, and we stood in city 2 (`dp[0101][2] = 15`). Going from 2 to 1 costs 35, so $15+35=50$. In general we remove the current city from the mask and try every possible previous city $v$ in what remains, keeping the smallest `dp[smaller mask][v] + cost[v][u]`.
+
+The final answer is the minimum over $u$ of `dp[1111][u] + cost[u][0]`. Here `min(70+10, 65+15, 75+20) = 80`, which is the tour 0, 1, 3, 2, 0.
+
+```python
+def tsp_bitmask(dist):
+    """dist is n x n matrix. Returns min tour cost starting and ending at 0."""
+    n = len(dist)
+    INF = 10**18
+    dp = [[INF] * n for _ in range(1 << n)]
+    dp[1][0] = 0                     # mask 1 = only city 0 visited, at city 0
+    for mask in range(1 << n):
+        if not (mask & 1):           # city 0 must be in mask
+            continue
+        for u in range(n):
+            if not (mask & (1 << u)):
+                continue
+            cur = dp[mask][u]
+            if cur == INF:
+                continue
+            # try to go to a new city v
+            for v in range(n):
+                if mask & (1 << v):
+                    continue
+                nmask = mask | (1 << v)
+                nd = cur + dist[u][v]
+                if nd < dp[nmask][v]:
+                    dp[nmask][v] = nd
+    full = (1 << n) - 1
+    ans = INF
+    for u in range(n):
+        if dp[full][u] < INF:
+            ans = min(ans, dp[full][u] + dist[u][0])
+    return ans
+
+# Tiny test with the 4-city example above
+dist4 = [
+    [0, 10, 15, 20],
+    [10, 0, 35, 25],
+    [15, 35, 0, 30],
+    [20, 25, 30, 0]
+]
+assert tsp_bitmask(dist4) == 80
+```
+
+```cpp
+// Travelling Salesman with bitmask DP
+// dist is n x n matrix, returns minimum tour cost starting and ending at 0
+long long tsp_bitmask(vector<vector<long long>>& dist) {
+    int n = dist.size();
+    const long long INF = 4e18;
+    vector<vector<long long>> dp(1 << n, vector<long long>(n, INF));
+    dp[1][0] = 0;                     // mask 1 = only city 0 visited, at city 0
+    for (int mask = 0; mask < (1 << n); ++mask) {
+        if (!(mask & 1)) continue;    // city 0 must be in mask
+        for (int u = 0; u < n; ++u) {
+            if (!(mask & (1 << u))) continue;
+            long long cur = dp[mask][u];
+            if (cur == INF) continue;
+            for (int v = 0; v < n; ++v) {
+                if (mask & (1 << v)) continue;
+                int nmask = mask | (1 << v);
+                dp[nmask][v] = min(dp[nmask][v], cur + dist[u][v]);
+            }
+        }
+    }
+    int full = (1 << n) - 1;
+    long long ans = INF;
+    for (int u = 0; u < n; ++u) {
+        if (dp[full][u] < INF)
+            ans = min(ans, dp[full][u] + dist[u][0]);
+    }
+    return ans;
+}
+```
+
+## 8.3 How much work bitmask DP is
+
+The table has $2^n$ masks and $n$ choices for the current city, so $n 2^n$ states. For each state we try up to $n$ next cities. That gives $O(n^2 2^n)$ time. The memory is $O(n 2^n)$ for the table.
+
+For $n = 20$, $2^{20} \approx 1.05 \times 10^6$ and $n^2 2^n \approx 4 \times 10^8$ operations, which runs in a couple of seconds in C++ and a bit slower in Python. For $n = 21$ it doubles, and for $n = 22$ it doubles again. So the practical limit is about $n = 20$ in contests.
+
+If the graph is sparse we can iterate only over neighbors of $u$, but the worst case remains $O(n^2 2^n)$. This is exactly the complexity that makes the *Travelling Salesman* solvable for $n \le 20$ with bitmask DP.
+
+## 8.4 Profile DP for tilings
+
+Now we switch to a different use of bitmasks: counting ways to tile an $n \times m$ rectangle with $2 \times 1$ dominoes. A domino covers two adjacent cells. We scan the grid row by row, cell by cell. The "profile" is the boundary between the already-tiled part and the rest. Because dominoes can stick out one cell into the next row, the profile is not a straight line — it is a *broken profile*.
+
+Imagine we have finished some rows completely and are in the middle of row $x$. The mask has $m$ bits, one per column. Bit $j$ is $1$ if the cell $(x, j)$ is already occupied by a vertical domino coming from the row above, and $0$ if it is free. We also maintain a `next_mask` for the next row: when we place a vertical domino downward, we set the corresponding bit in `next_mask`.
+
+Here is a tiny ASCII picture for $m = 3$. We are at row $x$, column $y = 1$. The current mask is `010` (column 1 is blocked from above). We try to fill the free cells.
+
+```
+Row x-1:  [ ][V][ ]   <- V means vertical domino going down
+Row x:    [ ][X][ ]   <- X is blocked (bit 1 = 1), we are at column 1
+          ^ y=1
+```
+
+At each cell $(x, y)$ we have two cases:
+1. If the current mask has bit $y = 1$, the cell is already filled. We just move to $y+1$ with the same masks.
+2. If bit $y = 0$, the cell is empty. We must cover it. Two choices:
+   - Place a vertical domino downward: it occupies $(x,y)$ and $(x+1,y)$. So we set bit $y$ in `next_mask` and move to $y+1$.
+   - Place a horizontal domino to the right: it needs $(x, y+1)$ also free (bit $y+1 = 0$ in current mask). Then we skip both cells and move to $y+2$.
+
+When $y$ reaches $m$, the row is done. We add the accumulated ways to `dp[x+1][next_mask]` and start the next row with `next_mask` becoming the new current mask.
+
+Let's trace a $2 \times 2$ board by hand. $n=2, m=2$. Start: `dp[0][0] = 1`.
+
+Row 0, mask `00`:
+- y=0, free. Try vertical: set next_mask bit 0 -> `01`, go to y=1.
+  - y=1, free. Try vertical: set next_mask bit 1 -> `11`, go to y=2 (end row). Add to `dp[1][11]`.
+  - y=1, free. Try horizontal: needs y+1=2 (out of bounds), skip.
+- y=0, free. Try horizontal: needs y+1=1 free (yes). Go to y=2 (end row) with next_mask `00`. Add to `dp[1][00]`.
+
+So after row 0: `dp[1][00] = 1`, `dp[1][11] = 1`.
+
+Row 1, mask `00`:
+- same as row 0, produces `dp[2][00] += 1`, `dp[2][11] += 1`.
+
+Row 1, mask `11`:
+- y=0 blocked, go to y=1.
+- y=1 blocked, go to y=2 (end). Add to `dp[2][00] += 1`.
+
+Final `dp[2][00] = 2`. Indeed a $2\times2$ board has 2 tilings (both horizontal or both vertical).
+
+```python
+def count_tilings(n, m):
+    """Number of ways to tile n x m board with 2x1 dominoes."""
+    dp = [[0] * (1 << m) for _ in range(n + 1)]
+    dp[0][0] = 1
+
+    def dfs(x, y, mask, next_mask):
+        if y == m:
+            dp[x + 1][next_mask] += dp[x][mask]
             return
-        if lef != mid:                       # the loser can still win on the left half
-            if self.t[v].l == -1:
-                self.t[v].l = len(self.t)
-                self.t.append(self.Node(Line(0, self.INF)))
-            self.add(nw, self.t[v].l, l, m)
-        else:                                # ... or on the right half
-            if self.t[v].r == -1:
-                self.t[v].r = len(self.t)
-                self.t.append(self.Node(Line(0, self.INF)))
-            self.add(nw, self.t[v].r, m + 1, r)
+        bit = 1 << y
+        if mask & bit:                 # cell already occupied from above
+            dfs(x, y + 1, mask, next_mask)
+        else:
+            # place vertical domino
+            dfs(x, y + 1, mask, next_mask | bit)
+            # place horizontal domino
+            if y + 1 < m and not (mask & (bit << 1)):
+                dfs(x, y + 2, mask, next_mask)
 
-    def query(self, x, v, l, r):
-        res = self.t[v].ln.eval(x)
-        if l == r:
-            return res
-        m = (l + r) // 2
-        if x <= m and self.t[v].l != -1:
-            return min(res, self.query(x, self.t[v].l, l, m))
-        if x > m and self.t[v].r != -1:
-            return min(res, self.query(x, self.t[v].r, m + 1, r))
-        return res
+    for x in range(n):
+        for mask in range(1 << m):
+            if dp[x][mask]:
+                dfs(x, 0, mask, 0)
+    return dp[n][0]
+
+# 2x2 -> 2, 2x3 -> 3, 3x2 -> 3
+assert count_tilings(2, 2) == 2
+assert count_tilings(2, 3) == 3
+assert count_tilings(3, 2) == 3
 ```
 
 ```cpp
-struct LiChao {
-    struct Node { Line ln; int l = -1, r = -1; };
-    vector<Node> t; ll lo, hi;
-    static constexpr ll INF = (ll)4e18;
-    LiChao(ll lo, ll hi) : lo(lo), hi(hi) { t.push_back({Line{0, INF}}); }
-    void add(Line nw, int v, ll l, ll r) {
-        ll m = (l + r) >> 1;
-        bool lef = nw.eval(l) < t[v].ln.eval(l);
-        bool mid = nw.eval(m) < t[v].ln.eval(m);
-        if (mid) swap(t[v].ln, nw);
-        if (l == r) return;
-        if (lef != mid) {                       // the loser can still win on the left half
-            if (t[v].l == -1) { t[v].l = t.size(); t.push_back({Line{0, INF}}); }
-            add(nw, t[v].l, l, m);
-        } else {                                // ... or on the right half
-            if (t[v].r == -1) { t[v].r = t.size(); t.push_back({Line{0, INF}}); }
-            add(nw, t[v].r, m + 1, r);
+// Count tilings of n x m board with 2x1 dominoes using broken profile DP
+long long count_tilings(int n, int m) {
+    vector<vector<long long>> dp(n + 1, vector<long long>(1 << m, 0));
+    dp[0][0] = 1;
+
+    function<void(int,int,int,int)> dfs = [&](int x, int y, int mask, int next_mask) {
+        if (y == m) {
+            dp[x + 1][next_mask] += dp[x][mask];
+            return;
         }
-    }
-    ll query(ll x, int v, ll l, ll r) {
-        ll res = t[v].ln.eval(x);
-        if (l == r) return res;
-        ll m = (l + r) >> 1;
-        if (x <= m && t[v].l != -1) return min(res, query(x, t[v].l, l, m));
-        if (x >  m && t[v].r != -1) return min(res, query(x, t[v].r, m + 1, r));
-        return res;
-    }
-};
-// usage: LiChao lc(lo, hi); lc.add(line, 0, lo, hi); lc.query(x, 0, lo, hi);
+        int bit = 1 << y;
+        if (mask & bit) {                     // cell already occupied from above
+            dfs(x, y + 1, mask, next_mask);
+        } else {
+            // vertical domino
+            dfs(x, y + 1, mask, next_mask | bit);
+            // horizontal domino
+            if (y + 1 < m && !(mask & (bit << 1)))
+                dfs(x, y + 2, mask, next_mask);
+        }
+    };
+
+    for (int x = 0; x < n; ++x)
+        for (int mask = 0; mask < (1 << m); ++mask)
+            if (dp[x][mask])
+                dfs(x, 0, mask, 0);
+
+    return dp[n][0];
+}
 ```
 
-On trees, when the DP transition runs along root-to-vertex paths, the hull must be rolled back on the way up. Li Chao trees support this naturally by recording what each insertion changed.
+The time complexity is $O(n \cdot 2^m \cdot m)$ because for each of the $n$ rows we iterate over $2^m$ masks and the recursion visits each column once. This works well when the smaller dimension $m$ is up to about $11$ ($2^{11} = 2048$). If $n$ is the smaller one, just transpose the board.
 
-## 9.6 The Aliens trick (Lagrangian relaxation)
+## 8.5 Check yourself
 
-A last technique deals with a different difficulty: a DP that has an **extra dimension $k$** (exactly $k$ groups, exactly $k$ chosen items), where the answer as a function of $k$ is convex. Let $f(k)$ be the optimum value with exactly $k$ groups. Computing the whole table costs a factor $k$. The idea is to remove the dimension by charging a fixed price per group.
+1. How many bits are needed to represent a subset of $\{0,1,\dots,19\}$?
+2. In the TSP bitmask DP, what does `dp[mask][u]` store?
+3. Why does the broken profile for domino tiling need a `next_mask` in addition to the current mask?
+4. If a $3 \times 4$ board is tiled with dominoes, which dimension should be used as the mask width for faster DP?
 
-For a penalty $\lambda$, define $h(\lambda)=\min_k\bigl(f(k)+\lambda k\bigr)$, which is the value of an unconstrained problem where each group costs an extra $\lambda$. This problem has no dimension $k$ and is often solvable by a simple DP (frequently combined with the convex hull trick). Along with the value, the DP also records how many groups the optimum uses, $c(\lambda)$, choosing the smallest such count on ties. As $\lambda$ increases groups become more expensive, so $c(\lambda)$ is non-increasing. By convexity of $f$, for the smallest integer $\lambda$ with $c(\lambda)\le K$, the target $K$ is among the optimal counts, and therefore
+# Chapter 9. Making a DP faster
 
-$$f(K)=h(\lambda)-\lambda K.$$
+## 9.1 When a DP is too slow
 
-(A check of the claim: for integer-valued $f$, the minimality of $\lambda$ gives $f(K+1)-f(K)+\lambda\le0$, so by convexity the objective is non-increasing up to $K+1$; together with $c(\lambda)\le K$ this places $K$ inside the interval of optimal counts.) We find $\lambda$ by **binary search**, so the total time is $O(\log C)$ times the cost of the unconstrained DP.
+Imagine you want to split a sequence of numbers into a few contiguous groups. The cost of a group is some function of its elements, say the square of its sum. You want the minimum total cost over all ways to split the sequence into exactly *m* groups. A natural dynamic programming state is `dp[i][j]` = minimum cost to split the first *j* elements into *i* groups. To compute `dp[i][j]` you try every possible place *k* where the last group could start:
+
+```
+dp[i][j] = min over k ≤ j of ( dp[i-1][k-1] + cost(k, j) )
+```
+
+Here `cost(k, j)` is the cost of a group that covers elements *k* through *j*. If you have *m* rows and *n* columns, there are *m·n* states. For each state you might scan up to *n* values of *k*, giving a total of *O(m n²)* time. When *n* is a few thousand, this is already too slow for a typical contest limit.
+
+## 9.2 Divide and conquer optimization
+
+The key observation is that for many cost functions the best split point *k* for a fixed row *i* does not jump around wildly. As *j* increases, the optimal *k* (let's call it `opt(i, j)`) either stays the same or moves to the right. In other words, `opt(i, j) ≤ opt(i, j+1)`. This **monotonicity** holds when the cost function satisfies the **quadrangle inequality**:
+
+```
+C(a, c) + C(b, d) ≤ C(a, d) + C(b, c)   for all a ≤ b ≤ c ≤ d
+```
+
+If this is true, we can compute a whole row much faster using divide and conquer. Instead of scanning all *k* for every *j*, we pick the middle column `mid`, find its best `k` by scanning a limited range, and then recurse on the left and right halves. Because `opt` is monotone, the left half only needs to search `k` up to the `opt` we just found, and the right half only needs to search `k` from that `opt` onward.
+
+```
+         j indices:  0   1   2   3   4   5   6   7
+                     |   |   |   |   |   |   |   |
+                     v   v   v   v   v   v   v   v
+         first call: compute(0, 7, 0, 7)
+                       mid = 3, finds opt=2
+                     /                   \
+         left: compute(0, 2, 0, 2)      right: compute(4, 7, 2, 7)
+                 mid = 1                     mid = 5
+```
+
+At each level of recursion the total length of all `k`‑ranges we scan is at most *n*, and there are *O(log n)* levels. So one row takes *O(n log n)* time, and the whole DP becomes *O(m n log n)*.
+
+Here is a clean implementation. The function `divide_and_conquer_dp` computes one row given the previous row and a cost function `C(k, j)` (both 0‑indexed, inclusive). The driver `solve_dc` builds all *m* rows.
 
 ```python
-# solve(lambda) -> {value of min over all k of f(k) + lambda * k, smallest optimal k}
-BIG = 10**18  # range of lambda, depends on the problem
-lo = -BIG
-hi = BIG
-while lo < hi:
-    mid = lo + (hi - lo) // 2  # careful with negative numbers
-    if solve(mid)[1] <= K:
-        hi = mid
-    else:
-        lo = mid + 1
-answer = solve(lo)[0] - lo * K
+def divide_and_conquer_dp(dp_before, C, n):
+    """Compute one DP row using divide and conquer optimization.
+    dp_before[j] = dp(i-1, j) for j = 0..n-1.
+    C(k, j) returns cost of segment [k, j] inclusive.
+    Returns new list dp_cur of length n.
+    """
+    dp_cur = [0] * n
+
+    def compute(l, r, optl, optr):
+        if l > r:
+            return
+        mid = (l + r) // 2
+        best_val = float('inf')
+        best_k = -1
+        # k can only lie in [optl, min(mid, optr)]
+        for k in range(optl, min(mid, optr) + 1):
+            prev = dp_before[k - 1] if k > 0 else 0
+            val = prev + C(k, mid)
+            if val < best_val:
+                best_val = val
+                best_k = k
+        dp_cur[mid] = best_val
+        compute(l, mid - 1, optl, best_k)
+        compute(mid + 1, r, best_k, optr)
+
+    compute(0, n - 1, 0, n - 1)
+    return dp_cur
+
+
+def solve_dc(m, n, C):
+    """Return minimum cost to split n elements into m groups."""
+    dp_before = [C(0, j) for j in range(n)]
+    for _ in range(1, m):
+        dp_before = divide_and_conquer_dp(dp_before, C, n)
+    return dp_before[n - 1]
+
+
+# --- tiny test: split [1,2,3,4] into 2 groups, cost = (sum)^2 ---
+prefix = [0, 1, 3, 6, 10]
+def C_sq(k, j):
+    return (prefix[j + 1] - prefix[k]) ** 2
+
+assert solve_dc(2, 4, C_sq) == 52   # 52 = (1+2+3)^2 + 4^2 = 36 + 16
 ```
 
 ```cpp
-// solve(lambda) -> {value of min over all k of f(k) + lambda * k, smallest optimal k}
-ll lo = -BIG, hi = BIG;                       // range of lambda, depends on the problem
-while (lo < hi) {
-    ll mid = lo + (hi - lo) / 2;              // careful with negative numbers
-    if (solve(mid).second <= K) hi = mid; else lo = mid + 1;
+// Divide and conquer DP for one row
+// dp_before: previous row, size n
+// C(k, j): cost of segment [k, j] (0-indexed, inclusive)
+// Returns dp_cur of size n
+vector<long long> divide_and_conquer_dp(const vector<long long>& dp_before,
+                                        function<long long(int,int)> C) {
+    int n = dp_before.size();
+    vector<long long> dp_cur(n);
+
+    function<void(int,int,int,int)> compute = [&](int l, int r, int optl, int optr) {
+        if (l > r) return;
+        int mid = (l + r) >> 1;
+        long long best_val = LLONG_MAX;
+        int best_k = -1;
+        for (int k = optl; k <= min(mid, optr); ++k) {
+            long long prev = (k > 0) ? dp_before[k - 1] : 0;
+            long long val = prev + C(k, mid);
+            if (val < best_val) {
+                best_val = val;
+                best_k = k;
+            }
+        }
+        dp_cur[mid] = best_val;
+        compute(l, mid - 1, optl, best_k);
+        compute(mid + 1, r, best_k, optr);
+    };
+
+    compute(0, n - 1, 0, n - 1);
+    return dp_cur;
 }
-ll answer = solve(lo).first - lo * K;
+
+long long solve_dc(int m, int n, function<long long(int,int)> C) {
+    vector<long long> dp_before(n);
+    for (int j = 0; j < n; ++j) dp_before[j] = C(0, j);
+    for (int i = 1; i < m; ++i) {
+        dp_before = divide_and_conquer_dp(dp_before, C);
+    }
+    return dp_before[n - 1];
+}
 ```
 
-The two traps are ties (the tie-breaking rule must be applied consistently inside `solve`) and the proof of convexity, which is often the hard part of the problem. Contest experts frequently *guess* convexity and confirm it by brute force on small cases.
+## 9.3 Knuth optimization
 
-## 9.7 Choosing the right technique
+A different but related pattern appears in **interval DP**. The state is `dp[i][j]` for a subarray from *i* to *j*, and the recurrence splits the interval at some *k*:
 
-A compact decision guide follows. The question to ask is "what is the structure of the transition?".
+```
+dp[i][j] = min over i ≤ k < j of ( dp[i][k] + dp[k+1][j] + C(i, j) )
+```
 
-| Recurrence | Needed property | Technique | Time |
-|---|---|---|---|
-| $dp(i,j)=\min_k\bigl(dp(i-1,k-1)+C(k,j)\bigr)$ | QI for $C$ (monotone $opt$) | Divide and conquer | $O(mn\log n)$ |
-| $dp[i][j]=\min_k\bigl(dp[i][k]+dp[k+1][j]\bigr)+C(i,j)$ | QI and monotone $C$ | Knuth | $O(n^2)$ |
-| $dp[i]=\min_j\bigl(dp[j]+b_ja_i\bigr)$ | none (lines) | Convex hull trick, Li Chao tree | $O(n)$ or $O(n\log n)$ |
-| "exactly $k$ groups", convex in $k$ | convexity of $f(k)$ | Aliens trick | $O(\log C)\times$ inner DP |
-| $dp[i]=\min_j\bigl(dp[j]+C(j,i)\bigr)$ (1D) | QI | Monotone queue or offline D&C | $O(n\log n)$ |
+Here `C(i, j)` is a cost that depends on the whole interval. Classic examples are optimal binary search trees, matrix chain multiplication, or merging stones. The naive triple loop runs in *O(n³)*.
 
-## 9.8 Exercises for this chapter
+Knuth discovered that if the cost function satisfies two conditions:
 
-AtCoder Educational DP Contest problem Z (*Frog 3*, Li Chao tree or hull trick); Codeforces 321E (*Ciel and Gondolas*) and 868F (*Yet Another Minimization Problem*) for divide and conquer; Codeforces 319C (*Kalila and Dimna*) for the hull trick; UVa 10304 (*Optimal Binary Search Tree*) for Knuth; IOI 2016 *Aliens* and Codeforces 739E (*Gosha is Hunting*) for the Aliens trick. Check the statements before assigning.
+1. `C(b, c) ≤ C(a, d)` for `a ≤ b ≤ c ≤ d` (monotonicity),
+2. `C(a, c) + C(b, d) ≤ C(a, d) + C(b, c)` (quadrangle inequality),
 
----
+then the optimal split point `opt(i, j)` obeys
+
+```
+opt(i, j-1) ≤ opt(i, j) ≤ opt(i+1, j)
+```
+
+This means when we compute `dp[i][j]` we only need to try `k` between `opt(i, j-1)` and `opt(i+1, j)`. If we fill the table in decreasing order of *i* and increasing order of *j*, those bounds are already known. The total number of iterations of the inner loop across the whole table telescopes to *O(n²)* — a full linear factor faster than *O(n³)*.
+
+Below is a generic implementation. The base case `dp[i][i]` is usually 0 (a single element costs nothing to “merge”).
+
+```python
+def knuth_optimization(C, n):
+    """Interval DP with Knuth optimization.
+    C(i, j) returns cost for interval [i, j] inclusive (0-indexed).
+    Returns (dp[0][n-1], opt_table).
+    """
+    dp = [[0] * n for _ in range(n)]
+    opt = [[0] * n for _ in range(n)]
+    for i in range(n):
+        opt[i][i] = i
+        dp[i][i] = 0          # base: single element
+
+    for i in range(n - 2, -1, -1):      # i from n-2 down to 0
+        for j in range(i + 1, n):       # j from i+1 up to n-1
+            cost = C(i, j)
+            best = float('inf')
+            best_k = -1
+            left = opt[i][j - 1]
+            right = min(j - 1, opt[i + 1][j] if i + 1 < n else j - 1)
+            for k in range(left, right + 1):
+                val = dp[i][k] + dp[k + 1][j] + cost
+                if val < best:
+                    best = val
+                    best_k = k
+            dp[i][j] = best
+            opt[i][j] = best_k
+    return dp[0][n - 1], opt
+
+
+# --- tiny test: merge [1,2,3,4] with cost = sum of interval ---
+prefix = [0, 1, 3, 6, 10]
+def C_sum(i, j):
+    return prefix[j + 1] - prefix[i]
+
+ans, _ = knuth_optimization(C_sum, 4)
+assert ans == 19   # optimal merge cost: ((1+2)+3)+4 = 3+6+10 = 19
+```
+
+```cpp
+// Knuth optimization for interval DP
+// C(i, j): cost of interval [i, j] inclusive (0-indexed)
+// Returns pair(dp[0][n-1], opt table)
+pair<long long, vector<vector<int>>> knuth_optimization(
+    function<long long(int,int)> C, int n) {
+
+    vector<vector<long long>> dp(n, vector<long long>(n));
+    vector<vector<int>> opt(n, vector<int>(n));
+
+    for (int i = 0; i < n; ++i) {
+        opt[i][i] = i;
+        dp[i][i] = 0;
+    }
+
+    for (int i = n - 2; i >= 0; --i) {
+        for (int j = i + 1; j < n; ++j) {
+            long long cost = C(i, j);
+            long long best = LLONG_MAX;
+            int best_k = -1;
+            int left = opt[i][j - 1];
+            int right = min(j - 1, opt[i + 1][j]);
+            for (int k = left; k <= right; ++k) {
+                long long val = dp[i][k] + dp[k + 1][j] + cost;
+                if (val < best) {
+                    best = val;
+                    best_k = k;
+                }
+            }
+            dp[i][j] = best;
+            opt[i][j] = best_k;
+        }
+    }
+    return {dp[0][n - 1], opt};
+}
+```
+
+## 9.4 Choosing a technique
+
+Both optimizations rely on the quadrangle inequality, but they apply to different shapes of DP.
+
+- **Divide and conquer DP** appears when you have a **sequence of rows** (like “split into *m* groups”) and the transition is `dp[i][j] = min_{k≤j} (dp[i-1][k] + C(k, j))`. The monotone `opt` lets you compute a whole row in `O(n log n)`.
+- **Knuth optimization** appears in **interval DP** where the transition is `dp[i][j] = min_{i≤k<j} (dp[i][k] + dp[k+1][j] + C(i, j))`. The double monotonicity `opt(i, j-1) ≤ opt(i, j) ≤ opt(i+1, j)` shrinks the inner loop to `O(n²)` total.
+
+To decide which one fits, look at the recurrence:
+- If the DP has a “previous row” and you add a segment at the end → divide and conquer.
+- If the DP merges two adjacent sub‑intervals and adds a cost for the whole interval → Knuth.
+
+## 9.5 Check yourself
+
+1. What property of the cost function guarantees that the optimal split point `opt(i, j)` is non‑decreasing in `j` for divide and conquer DP?
+2. In Knuth optimization, why does the inner loop run in `O(n²)` total instead of `O(n³)`?
+3. You have a DP `dp[i][j] = min_{k<j} (dp[i-1][k] + (sum_{t=k+1}^j a_t)^2)`. Which optimization applies, and what is the resulting time complexity?
+4. For an interval DP with `C(i, j) = max_{i≤t≤j} a_t`, does Knuth optimization apply? Why or why not?
 
 # Chapter 10. Becoming fluent
 
-You now have the entire toolbox. What separates a good solver from a great one is not knowing more tricks but being fluent in a way of *thinking*. This last chapter collects that way of thinking, together with the practical habits that prevent most mistakes.
+## 10.1 A recipe for any DP
 
-## 10.1 A procedure for any new problem
+When you encounter a problem that might be solved with dynamic programming, follow these five plain steps. First, look for the smaller versions of the same problem — these are your *subproblems*. Second, give each subproblem a name; this name is called the *state*. For instance, if you need the best score up to position *i*, you could write `dp[i]` to mean “the best score using the first *i* items”. Third, write down how to compute a state from already known states; this rule is the *recurrence*. Fourth, figure out the *base cases*, the simplest states you can answer directly without any recurrence. Fifth, decide the order in which you will fill the states: either start from the base cases and build up (called *bottom‑up*) or write a recursive function that remembers results (called *top‑down with memoization*). Following these steps turns a vague idea into a concrete plan you can code.
 
-Begin by deciding what object you are optimizing over: a sequence, a tree, a DAG, a general graph, a set of at most about twenty items. This choice suggests a family of states. For sequences use positions and counters; for trees use subtrees and, if the answer must be known for every root, the rerooting messages; for DAGs use vertices with a topological order; for general graphs look for a way to remove cycles (condensation, shortest-path order, layering); and for small sets use bitmasks.
+## 10.2 Common mistakes
 
-Next write the recurrence, and check the three ingredients of Section 1.3: is the state complete (does it determine the future?), is there a valid order, and what are the base cases? Then compute the complexity as states times transitions. If it is too slow, look at the structure of the transition (Chapter 9), or at what the state is carrying that it does not need, or at whether a different quantity could be moved into the table index (Section 2.2).
+Even when the recipe is clear, a few slip‑ups appear again and again:
 
-## 10.2 The most common mistakes
+- **Wrong base case** – forgetting the smallest input or giving it an incorrect value makes every later state wrong.
+- **Wrong loop order** – in bottom‑up DP you must compute states in an order that guarantees every needed smaller state is already ready; looping backwards when you need forwards (or vice versa) breaks the recurrence.
+- **Forgetting to reset** – when you reuse a DP table for multiple test cases, leftover values from the previous case pollute the new one.
+- **Off by one** – an index that is one too large or too small shifts the whole table and often shows up as an out‑of‑bounds access or a wrong answer on the first or last element.
 
-Almost all wrong answers in DP come from a small number of causes. The first is an **incomplete state**: the recurrence silently uses a piece of history that the state does not contain, for example in tree independent-set DP forgetting to record whether the parent is chosen. The second is a **wrong order**, such as iterating the knapsack capacity upward when each item may be used only once (Section 2.2), or putting the Floyd–Warshall intermediate vertex in the inner loop (Section 3.4). The third is a **wrong base case or initial value**, particularly using $0$ where $-\infty$ or $+\infty$ is needed ("impossible" must differ from "zero"). The fourth is **overflow**: use `long long`, take the modulus after every multiplication, and remember that adding two "infinity" values can overflow, so test for infinity before adding. The fifth is **double counting** when counting objects, controlled by the loop order as in Section 2.5. And the last is an optimization applied without checking its precondition.
+## 10.3 Testing against brute force
 
-## 10.3 How to test
+A great way to gain confidence in your DP is to run it side by side with a simple brute‑force solution on very small inputs. The brute force explores every possibility (often by plain recursion) and is too slow for large data, but for tiny *n* it finishes instantly. If both agree on dozens of random tiny cases, the DP is almost certainly correct. Below is a complete Python script that does this for the classic “climbing stairs” problem: you can take 1 or 2 steps at a time, how many ways to reach step *n*? The DP uses a table, the brute force uses recursion, and the test harness compares them for *n* up to 10.
 
-Write a brute force first, even if it is exponential, and run both programs on thousands of small random inputs and compare. For optimizations such as divide and conquer or Knuth, test directly that the optimal split point is monotone on random data, because if it is not, the technique silently gives wrong answers. When a DP is wrong, print the table for a tiny input and verify one cell by hand.
+```python
+def dp_climb(n: int) -> int:
+    """Return number of ways to climb n steps (1 or 2 at a time) using bottom‑up DP."""
+    if n < 0:
+        return 0
+    dp = [0] * (n + 2)          # extra space avoids index checks for n=0,1
+    dp[0] = 1                   # one way to stand at ground (do nothing)
+    dp[1] = 1                   # one way to reach step 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[n]
 
-## 10.4 Complexity summary
 
-| Technique | Time |
-|---|---|
-| Memoized DP (general) | states $\times$ transitions |
-| DP on a DAG | $O(V+E)$ |
-| Bellman–Ford, Floyd–Warshall | $O(VE)$, $O(V^3)$ |
-| Tree DP | $O(n)$ |
-| Tree knapsack with cap $K$ | $O(nK)$ |
-| Rerooting | $O(n)$ |
-| Bitmask TSP, Hamiltonian path | $O(2^nn^2)$ |
-| Submask enumeration | $O(3^n)$ |
-| SOS DP | $O(n2^n)$ |
-| Broken profile DP | $O(nm2^m)$ |
-| SCC condensation | $O(V+E)$ |
-| Matrix power | $O(n^3\log k)$ |
-| Small-to-large | $O(n\log n)$ to $O(n\log^2n)$ |
-| Centroid decomposition | $O(n\log n)$ to $O(n\log^2n)$ |
-| Divide and conquer optimization | $O(mn\log n)$ |
-| Knuth optimization | $O(n^2)$ |
-| Convex hull trick (monotone), Li Chao | $O(n)$, $O(n\log n)$ |
+def brute_climb(n: int) -> int:
+    """Return number of ways by naive recursion (exponential time)."""
+    if n < 0:
+        return 0
+    if n == 0:
+        return 1
+    return brute_climb(n - 1) + brute_climb(n - 2)
 
-## 10.5 A practice path
 
-Work through the problem sets in this order, and do not move on until you can solve the previous group without looking at a solution. Start with the AtCoder Educational DP Contest, problems A to F (frogs, knapsack, LCS), then G and H (DAG and grid). Continue with I to N (probability and interval DP), then P and V (trees and rerooting), O and U (bitmasks), S and T (digit and permutation DPs), and finish with Z (Li Chao tree). Alongside, solve the CSES "Dynamic Programming", "Graph Algorithms" and "Tree Algorithms" sections in order. Then move to Codeforces problems rated 2000 to 2600 tagged *dp*, *trees*, *bitmasks*, *graphs*, and choose the optimization problems of Chapter 9 last. Keep a notebook of *states* (not code): for every problem you solve, write the state in one line. After a hundred problems you will notice that the same fifty states keep appearing, and that is exactly what fluency means.
+# Quick test: compare DP and brute for n = 0 .. 10
+for n in range(11):
+    assert dp_climb(n) == brute_climb(n), f"Mismatch at n={n}"
+print("All small tests passed.")
+```
 
-## 10.6 The final word
+```cpp
+int dp_climb(int n) {
+    if (n < 0) return 0;
+    vector<int> dp(n + 2, 0);
+    dp[0] = 1;
+    dp[1] = 1;
+    for (int i = 2; i <= n; ++i) {
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
+    return dp[n];
+}
 
-Dynamic programming is a single idea, saving the answers to overlapping subproblems, applied to a very rich family of structures. In this document we have seen it on sequences, on DAGs, on trees from every root, on subsets, on cyclic graphs through condensation and layered graphs, and finally in accelerated form through monotonicity and geometry. When you meet a problem that looks new, ask the three questions of Section 1.3: what is the state, what is the transition, and what is the order. Almost always one of the structures in this course will answer them.
+int brute_climb(int n) {
+    if (n < 0) return 0;
+    if (n == 0) return 1;
+    return brute_climb(n - 1) + brute_climb(n - 2);
+}
+```
+
+Running the Python script prints “All small tests passed.” — a quick green light before you move to larger inputs.
+
+## 10.4 Cheat sheet
+
+| Problem type | Typical state | Recurrence hint |
+|--------------|---------------|-----------------|
+| Longest Increasing Subsequence | `dp[i]` = length of LIS ending at index *i* | `dp[i] = 1 + max(dp[j])` for all *j < i* with `a[j] < a[i]` |
+| 0/1 Knapsack | `dp[i][w]` = max value using first *i* items with weight limit *w* | `dp[i][w] = max(dp[i-1][w], dp[i-1][w-wt[i]] + val[i])` |
+| Edit Distance | `dp[i][j]` = min edits to turn first *i* chars of *A* into first *j* chars of *B* | `dp[i][j] = min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost)` |
+| Coin Change (min coins) | `dp[x]` = min coins to make amount *x* | `dp[x] = 1 + min(dp[x - c])` over all coin values *c* |
+| Maximum Subarray Sum | `dp[i]` = max sum of subarray ending at *i* | `dp[i] = max(a[i], dp[i-1] + a[i])` |
+
+## 10.5 Check yourself
+
+1. What are the five steps of the DP recipe in order?  
+2. Which mistake happens when you fill a DP table in the wrong direction?  
+3. Why is it useful to test a DP against a brute‑force solution on tiny inputs?  
+4. In the cheat sheet, what does `dp[i][w]` represent for the 0/1 Knapsack?
+
+# Sources and credit
+
+Several chapters adapt ideas from the articles on dynamic programming at [cp-algorithms.com](https://cp-algorithms.com) (intro to DP, knapsack, longest increasing subsequence, divide and conquer optimization, Knuth optimization, profile DP and the zero matrix problem). The text here is rewritten for beginners. Like the original, it is shared under the Creative Commons Attribution-ShareAlike 4.0 licence.

@@ -3,7 +3,7 @@ name: sheet-regular-expression-matching
 title: 'Regular Expression Matching'
 tags: [dsa-sheet, dynamic-programming, strings-dp]
 difficulty: Mastery
-theory: two-strings-lcs-and-edit-distance
+theory: wildcard-and-regular-expression-matching
 ---
 
 ## Statement

@@ -3,7 +3,7 @@ name: sheet-rod-cutting
 title: 'Rod Cutting'
 tags: [dsa-sheet, dynamic-programming, knapsack]
 difficulty: Intermediate
-theory: a-summary-of-patterns
+theory: counting-versions-and-two-budgets
 ---
 
 ## Statement

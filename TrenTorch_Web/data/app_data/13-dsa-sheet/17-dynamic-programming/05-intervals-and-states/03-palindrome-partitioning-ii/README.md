@@ -3,6 +3,7 @@ name: sheet-palindrome-partitioning-ii
 title: 'Palindrome Partitioning: Fewest Cuts'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Advanced
+theory: palindrome-partitioning
 ---
 
 ## Statement

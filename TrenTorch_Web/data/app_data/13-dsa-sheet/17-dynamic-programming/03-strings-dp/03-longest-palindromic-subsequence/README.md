@@ -3,7 +3,7 @@ name: sheet-longest-palindromic-subsequence
 title: 'Longest Palindromic Subsequence'
 tags: [dsa-sheet, dynamic-programming, strings-dp]
 difficulty: Intermediate
-theory: two-strings-lcs-and-edit-distance
+theory: palindromes-inside-strings
 ---
 
 ## Statement

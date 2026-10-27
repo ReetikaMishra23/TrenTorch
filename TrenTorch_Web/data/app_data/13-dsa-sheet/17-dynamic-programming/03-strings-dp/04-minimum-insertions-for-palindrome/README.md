@@ -3,7 +3,7 @@ name: sheet-minimum-insertions-for-palindrome
 title: 'Insertions to Make a Palindrome'
 tags: [dsa-sheet, dynamic-programming, strings-dp]
 difficulty: Intermediate
-theory: two-strings-lcs-and-edit-distance
+theory: palindromes-inside-strings
 ---
 
 ## Statement

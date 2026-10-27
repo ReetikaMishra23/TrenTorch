@@ -3,7 +3,7 @@ name: sheet-house-robber
 title: 'House Robber'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Beginner
-theory: three-questions-to-ask-about-every-dp
+theory: house-robber
 ---
 
 ## Statement

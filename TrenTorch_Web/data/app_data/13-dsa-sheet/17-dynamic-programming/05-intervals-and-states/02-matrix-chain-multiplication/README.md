@@ -3,6 +3,7 @@ name: sheet-matrix-chain-multiplication
 title: 'Matrix Chain Multiplication'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Mastery
+theory: interval-dp-matrix-chain
 ---
 
 ## Statement

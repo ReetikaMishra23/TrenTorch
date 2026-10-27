@@ -3,7 +3,7 @@ name: sheet-maximal-square
 title: 'Maximal Square'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Intermediate
-theory: paths-in-a-grid
+theory: squares-inside-a-grid
 ---
 
 ## Statement

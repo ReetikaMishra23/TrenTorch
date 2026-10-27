@@ -3,7 +3,7 @@ name: sheet-wildcard-matching
 title: 'Wildcard Matching'
 tags: [dsa-sheet, dynamic-programming, strings-dp]
 difficulty: Advanced
-theory: two-strings-lcs-and-edit-distance
+theory: wildcard-and-regular-expression-matching
 ---
 
 ## Statement

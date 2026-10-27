@@ -3,7 +3,7 @@ name: sheet-count-square-submatrices
 title: 'Count Square Submatrices of Ones'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Intermediate
-theory: paths-in-a-grid
+theory: squares-inside-a-grid
 ---
 
 ## Statement

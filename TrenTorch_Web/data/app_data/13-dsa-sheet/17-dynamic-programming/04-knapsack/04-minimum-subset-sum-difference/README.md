@@ -3,7 +3,7 @@ name: sheet-minimum-subset-sum-difference
 title: 'Minimum Subset Sum Difference'
 tags: [dsa-sheet, dynamic-programming, knapsack]
 difficulty: Advanced
-theory: the-0-1-knapsack-problem
+theory: subset-sum-and-its-cousins
 ---
 
 ## Statement

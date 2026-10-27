@@ -3,6 +3,7 @@ name: sheet-egg-drop
 title: 'Egg Drop'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Mastery
+theory: egg-drop
 ---
 
 ## Statement

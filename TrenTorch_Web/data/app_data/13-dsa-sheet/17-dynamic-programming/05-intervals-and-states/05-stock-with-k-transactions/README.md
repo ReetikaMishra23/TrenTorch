@@ -3,6 +3,7 @@ name: sheet-stock-with-k-transactions
 title: 'Stock Trading With at Most K Transactions'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Mastery
+theory: state-machines-stock-problems
 ---
 
 ## Statement

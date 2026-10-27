@@ -3,7 +3,7 @@ name: sheet-distinct-subsequences
 title: 'Distinct Subsequences'
 tags: [dsa-sheet, dynamic-programming, strings-dp]
 difficulty: Advanced
-theory: two-strings-lcs-and-edit-distance
+theory: counting-subsequences
 ---
 
 ## Statement

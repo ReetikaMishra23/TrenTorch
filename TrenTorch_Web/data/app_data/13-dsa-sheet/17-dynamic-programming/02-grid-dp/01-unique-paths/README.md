@@ -3,7 +3,7 @@ name: sheet-unique-paths
 title: 'Unique Paths'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Beginner
-theory: paths-in-a-grid
+theory: counting-paths-in-a-grid
 ---
 
 ## Statement

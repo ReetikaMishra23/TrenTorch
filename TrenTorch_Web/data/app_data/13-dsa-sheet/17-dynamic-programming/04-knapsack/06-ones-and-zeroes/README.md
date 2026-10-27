@@ -3,7 +3,7 @@ name: sheet-ones-and-zeroes
 title: 'Ones and Zeroes'
 tags: [dsa-sheet, dynamic-programming, knapsack]
 difficulty: Advanced
-theory: the-0-1-knapsack-problem
+theory: counting-versions-and-two-budgets
 ---
 
 ## Statement

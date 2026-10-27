@@ -3,7 +3,7 @@ name: sheet-longest-common-substring
 title: 'Longest Common Substring'
 tags: [dsa-sheet, dynamic-programming, strings-dp]
 difficulty: Intermediate
-theory: two-strings-lcs-and-edit-distance
+theory: longest-common-substring
 ---
 
 ## Statement

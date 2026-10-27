@@ -3,6 +3,7 @@ name: sheet-job-scheduling-with-profit
 title: 'Weighted Job Scheduling'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Advanced
+theory: job-scheduling-with-profit
 ---
 
 ## Statement

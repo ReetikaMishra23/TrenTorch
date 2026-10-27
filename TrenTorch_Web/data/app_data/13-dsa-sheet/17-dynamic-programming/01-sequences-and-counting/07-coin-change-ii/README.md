@@ -3,7 +3,7 @@ name: sheet-coin-change-ii
 title: 'Coin Change: Count the Ways'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
-theory: counting-ordered-versus-unordered-ways
+theory: coin-change
 ---
 
 ## Statement

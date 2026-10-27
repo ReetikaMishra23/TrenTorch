@@ -3,7 +3,7 @@ name: sheet-longest-common-subsequence
 title: 'Longest Common Subsequence'
 tags: [dsa-sheet, dynamic-programming, strings-dp]
 difficulty: Intermediate
-theory: two-strings-lcs-and-edit-distance
+theory: longest-common-subsequence
 ---
 
 ## Statement
