@@ -1,26 +1,34 @@
-import { questionsById } from './curriculum-index';
-import type { QuestionMetadata } from '$data/curriculum/types';
+import { curriculum } from '$data/questions';
 
 export interface TrackQuestion {
 	id: string;
 	title: string;
-	difficulty: QuestionMetadata['difficulty'];
 }
 
-// Every question in the same track as `id`, in curriculum order -- the
-// IDE header's quick-nav drawer lists these. Scoped to one track rather
-// than the whole curriculum so each prerendered page only carries a
-// handful of titles, not hundreds.
-export function getTrackQuestions(id: string): {
+export interface TrackQuestions {
+	/** Id of the Part (the /questions/[partId] page) the question belongs to. */
+	partId: string | null;
+	/** The track's own title, from its meta.json. */
 	track: string | null;
 	questions: TrackQuestion[];
-} {
-	const current = questionsById.get(id);
-	if (!current) return { track: null, questions: [] };
-	const questions = [...questionsById.values()]
-		.filter(
-			(q) => q.root === current.root && q.section === current.section && q.track === current.track
-		)
-		.map(({ id, title, difficulty }) => ({ id, title, difficulty }));
-	return { track: current.track, questions };
+}
+
+// Every question in the same track as `id`, in the order /questions lists
+// them -- the IDE header's quick-nav drawer shows these. Read from the same
+// catalogue the Questions pages use, so the drawer, its title and the back
+// arrow's destination can never disagree with them. Scoped to one track
+// rather than the whole curriculum so each prerendered page only carries
+// that track's titles.
+export function getTrackQuestions(id: string): TrackQuestions {
+	for (const part of curriculum) {
+		for (const track of part.tracks) {
+			if (!track.questions.some((q) => q.slug === id)) continue;
+			return {
+				partId: part.id,
+				track: track.name,
+				questions: track.questions.map(({ slug, title }) => ({ id: slug, title }))
+			};
+		}
+	}
+	return { partId: null, track: null, questions: [] };
 }

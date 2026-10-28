@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { QuestionContent, RuntimeState } from '$data/curriculum/types';
-	import type { TrackQuestion } from '$processes/ide-content/get-track-questions';
+	import type { TrackQuestions } from '$processes/ide-content/get-track-questions';
+	import SolvedMark from '$components/SolvedMark.svelte';
 	import * as Dialog from '$components/ui/dialog';
 	import { solved } from '$processes/progress-tracking/solved.svelte';
 	import {
@@ -13,15 +14,14 @@
 		RefreshCcw,
 		Maximize,
 		Minimize,
-		Loader2,
-		Check
+		Loader2
 	} from '@lucide/svelte';
 
 	let {
 		content,
 		fromPage = null,
 		fromPotd = false,
-		trackQuestions = { track: null, questions: [] },
+		trackQuestions = { partId: null, track: null, questions: [] },
 		runtimeState = 'ready',
 		isRunning = false,
 		isFullscreen = false,
@@ -34,7 +34,7 @@
 		content: QuestionContent;
 		fromPage?: string | null;
 		fromPotd?: boolean;
-		trackQuestions?: { track: string | null; questions: TrackQuestion[] };
+		trackQuestions?: TrackQuestions;
 		runtimeState: RuntimeState;
 		isRunning: boolean;
 		isFullscreen?: boolean;
@@ -58,7 +58,9 @@
 				: resolve('/potd')
 			: fromPage
 				? resolve(`/questions?page=${fromPage}`)
-				: resolve('/questions')
+				: trackQuestions.partId
+					? resolve('/questions/[partId]', { partId: trackQuestions.partId })
+					: resolve('/questions')
 	);
 	const backLabel = $derived(fromPotd ? 'Back to Problem of the Day' : 'Back to Module');
 
@@ -99,8 +101,8 @@
 				<div class="border-b border-border px-4 py-3">
 					<Dialog.Title class="text-sm">Problems</Dialog.Title>
 					{#if trackQuestions.track}
-						<Dialog.Description class="text-muted-foreground capitalize">
-							{trackQuestions.track.replaceAll('-', ' ')}
+						<Dialog.Description class="text-muted-foreground">
+							{trackQuestions.track}
 						</Dialog.Description>
 					{/if}
 				</div>
@@ -112,29 +114,16 @@
 							href={questionHref(question.id)}
 							onclick={() => (isNavOpen = false)}
 							aria-current={isCurrent ? 'page' : undefined}
-							class="flex items-center gap-3 px-4 py-2 transition-colors hover:bg-secondary {isCurrent
-								? 'bg-secondary text-foreground'
-								: 'text-muted-foreground hover:text-foreground'}"
+							class="flex items-center gap-3 border-l-2 px-4 py-2 transition-colors hover:bg-secondary {isCurrent
+								? 'border-yellow-500 bg-secondary font-medium text-foreground dark:border-yellow-400'
+								: 'border-transparent text-muted-foreground hover:text-foreground'}"
 						>
 							<span class="w-5 shrink-0 text-right tabular-nums opacity-60">{i + 1}</span>
-							<!-- Same read-only solved indicator as QuestionRow's -->
-							<span
-								class="flex size-4 shrink-0 items-center justify-center rounded-[4px] border {isSolved
-									? 'border-primary bg-primary text-primary-foreground'
-									: 'border-input'}"
-								role="img"
-								aria-label={isSolved
-									? `'${question.title}' is solved`
-									: `'${question.title}' is not solved yet`}
-							>
-								{#if isSolved}
-									<Check class="size-3.5" />
-								{/if}
-							</span>
+							<SolvedMark {isSolved} questionTitle={question.title} />
 							<span class="truncate">{question.title}</span>
 							{#if isCurrent}
 								<span
-									class="ml-auto size-2 shrink-0 rounded-full bg-yellow-500 dark:bg-yellow-400"
+									class="ml-auto size-2.5 shrink-0 rounded-full bg-yellow-500 dark:bg-yellow-400"
 									title="Current problem"
 								></span>
 							{/if}
