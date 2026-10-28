@@ -29,8 +29,14 @@ const WHEELS_CACHE = 'wheels-v1';
 const LAZY_SEGMENTS = ['/wheels/', '/vendor/'];
 const isLazyFile = (path: string) => LAZY_SEGMENTS.some((segment) => path.includes(segment));
 
+// In-browser language runtimes (Go, Rust, Java), tens of MB each, fetched by the worker of the language a
+// student picks. Their names are not versioned, so they are left to the HTTP cache rather than cached here.
+const RUNTIME_SEGMENTS = ['/go-runtime/', '/rust-runtime/', '/java-runtime/'];
+const isRuntimeFile = (path: string) => RUNTIME_SEGMENTS.some((segment) => path.includes(segment));
+
 // These files are large and only some questions need them: leave them out of the install-time precache.
-const PRECACHE = [...build, ...files.filter((file) => !isLazyFile(file))];
+// Without this, every first-time visitor downloaded about 100 MB of runtimes in the background.
+const PRECACHE = [...build, ...files.filter((file) => !isLazyFile(file) && !isRuntimeFile(file))];
 
 sw.addEventListener('install', (event) => {
 	event.waitUntil(

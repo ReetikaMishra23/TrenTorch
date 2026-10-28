@@ -1,6 +1,8 @@
 // Web Worker for Go execution via Yaegi (a Go interpreter) compiled to WASM
-// ourselves (see processes/code-execution/go-wasm-src). The .wasm binary and
-// its wasm_exec.js glue are static assets, fetched lazily on first run.
+// ourselves (see processes/code-execution/go-wasm-src). The binary (yaegi.wasm.gz, 38 MB
+// raw, 8 MB gzipped) and its wasm_exec.js glue are static assets, fetched when the
+// student picks Go. It is gzipped on disk and decompressed here, not via Content-Encoding,
+// so the host serves it as-is.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 declare function importScripts(...urls: string[]): void;
@@ -15,8 +17,12 @@ function ensureRuntime(): Promise<void> {
 	runtimeReady = (async () => {
 		importScripts('/go-runtime/wasm_exec.js');
 		const go = new Go();
-		const resp = await fetch('/go-runtime/yaegi.wasm');
-		const { instance } = await WebAssembly.instantiateStreaming(resp, go.importObject);
+		const resp = await fetch('/go-runtime/yaegi.wasm.gz');
+		if (!resp.ok || !resp.body) throw new Error(`fetch /go-runtime/yaegi.wasm.gz: ${resp.status}`);
+		const bytes = await new Response(
+			resp.body.pipeThrough(new DecompressionStream('gzip'))
+		).arrayBuffer();
+		const { instance } = await WebAssembly.instantiate(bytes, go.importObject);
 		// main() blocks on `select {}` to stay alive, so go.run() never resolves --
 		// runGo() becomes callable as soon as js.Global().Set() runs inside it.
 		void go.run(instance);
@@ -58,12 +64,17 @@ self.onmessage = async (e: MessageEvent) => {
 			self.postMessage({ type: 'status', status: 'running' });
 			const startTime = performance.now();
 			const result = runGo(code || '');
+			// Yaegi already runs main() while it evaluates a `package main` source. The runner then
+			// evaluates `main.main()` a second time, which fails with this error even though the program
+			// ran fine. Drop it (the current yaegi.wasm still does this; see go-wasm-src/main.go).
+			const error =
+				result.error && /undefined selector: main\b/.test(result.error) ? null : result.error;
 			self.postMessage({
 				id,
 				type: 'run_result',
-				success: !result.error,
+				success: !error,
 				output: result.output,
-				error: result.error,
+				error,
 				durationMs: Math.round(performance.now() - startTime)
 			});
 			self.postMessage({ type: 'status', status: 'ready' });
