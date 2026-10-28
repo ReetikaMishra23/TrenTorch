@@ -93,7 +93,16 @@ export function parseProblem(raw, dir) {
 			fail(dir, `case "${testCase.id}" needs exactly one of expected or digest`);
 		}
 	}
-	return { problem, hints };
+	// What the IDE needs to write a starter in other languages: the function and the first visible
+	// example's input (small by construction, so JSON.parse's rounding of huge ints cannot matter).
+	const example = problem.cases.find((/** @type {any} */ c) => c.visible && c.input);
+	const signature = {
+		name: fn.name,
+		params: fn.params.map((/** @type {any} */ p) => ({ name: p.name, type: p.type })),
+		returns: fn.returns,
+		...(example ? { example: example.input } : {})
+	};
+	return { problem, hints, signature };
 }
 
 // The Python test file for a question that keeps its tests in problem.json: the cases and one

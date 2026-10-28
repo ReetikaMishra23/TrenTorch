@@ -89,7 +89,10 @@ class UnifiedExecutor {
 	public setLanguage(language: Language): void {
 		if (language === this.language) return;
 		this.language = language;
-		this.bind(serviceFor(language));
+		const service = serviceFor(language);
+		this.bind(service);
+		// Start fetching the runtime and its packages now, so the first Run is not the one that waits.
+		service.init();
 	}
 
 	public getLanguage(): Language {

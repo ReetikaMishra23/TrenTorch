@@ -1,6 +1,7 @@
 import type { QuestionContent } from '$data/curriculum/types';
 import type { GeneratedQuestion } from './curriculum-index';
 import { extractStarterCode } from './extract-starter-code';
+import { buildLanguageStarters } from './build-language-starters';
 import { buildTestHarness } from './build-test-harness';
 import { buildSqlEditorStarter, isSqlQuestion, splitSqlStarter } from './sql-question';
 
@@ -54,6 +55,7 @@ export function toQuestionContent(question: GeneratedQuestion): QuestionContent 
 			: extractStarterCode(question.statementMarkdown),
 		solutionCode: question.oracleSolutionCode,
 		explanationMarkdown: question.oracleExplanationMarkdown,
+		...(question.signature ? { languageStarters: buildLanguageStarters(question.signature) } : {}),
 		testHarnessCode: buildTestHarness(question),
 		previewCode: question.previewCode,
 		widgetId: question.widgetId

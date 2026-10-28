@@ -25,6 +25,15 @@ self.onmessage = async (e: MessageEvent) => {
 	const { id, action, code } = e.data;
 
 	if (action === 'init') {
+		// The student just picked this language: fetch its runtime now rather than on the first Run.
+		self.postMessage({ type: 'status', status: 'loading_packages' });
+		try {
+			await ensureJscpp();
+			self.postMessage({ type: 'status', status: 'ready' });
+		} catch {
+			// Stay quiet; the first Run tries again and reports the real error.
+			self.postMessage({ type: 'status', status: 'uninitialized' });
+		}
 		self.postMessage({ id, type: 'init_complete', success: true });
 		return;
 	}
