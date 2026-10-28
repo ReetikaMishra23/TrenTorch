@@ -29,9 +29,9 @@ const WHEELS_CACHE = 'wheels-v1';
 const LAZY_SEGMENTS = ['/wheels/', '/vendor/'];
 const isLazyFile = (path: string) => LAZY_SEGMENTS.some((segment) => path.includes(segment));
 
-// In-browser language runtimes (Go, Rust, Java), tens of MB each, fetched by the worker of the language a
+// In-browser language runtimes (Go, Rust, Java, C++), tens of MB each, fetched by the worker of the language a
 // student picks. Their names are not versioned, so they are left to the HTTP cache rather than cached here.
-const RUNTIME_SEGMENTS = ['/go-runtime/', '/rust-runtime/', '/java-runtime/'];
+const RUNTIME_SEGMENTS = ['/go-runtime/', '/rust-runtime/', '/java-runtime/', '/cpp-runtime/'];
 const isRuntimeFile = (path: string) => RUNTIME_SEGMENTS.some((segment) => path.includes(segment));
 
 // These files are large and only some questions need them: leave them out of the install-time precache.

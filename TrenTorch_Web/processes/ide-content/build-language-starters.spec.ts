@@ -13,7 +13,8 @@ describe('buildLanguageStarters', () => {
 		const s = buildLanguageStarters(countPairs);
 		expect(s.javascript).toContain('function countPairs(n) {');
 		expect(s.javascript).toContain('console.log(countPairs(4));');
-		expect(s.cpp).toContain('int countPairs(int n) {');
+		expect(s.cpp).toContain('long long countPairs(long long n) {');
+		expect(s.cpp).toContain('#include <bits/stdc++.h>');
 		expect(s.cpp).toContain('cout << countPairs(4) << endl;');
 		expect(s.java).toContain('static long countPairs(long n) {');
 		expect(s.java).toContain('System.out.println(countPairs(4L));');
@@ -35,8 +36,9 @@ describe('buildLanguageStarters', () => {
 			returns: 'bool',
 			example: { nums: [1, 2, 2], label: 'a' }
 		});
-		expect(s.cpp).toContain('bool hasDup(vector<int> nums, string label)');
-		expect(s.cpp).toContain('hasDup(vector<int>{1, 2, 2}, "a")');
+		expect(s.cpp).toContain('bool hasDup(vector<long long> nums, string label)');
+		expect(s.cpp).toContain('hasDup(vector<long long>{1, 2, 2}, "a")');
+		expect(s.cpp).toContain('boolalpha');
 		expect(s.java).toContain('static boolean hasDup(long[] nums, String label)');
 		expect(s.java).toContain('new long[]{1L, 2L, 2L}');
 		expect(s.go).toContain('func hasDup(nums []int, label string) bool');
@@ -58,7 +60,9 @@ describe('buildLanguageStarters', () => {
 				]
 			}
 		});
-		expect(s.cpp).toContain('vector<vector<int>> transpose(vector<vector<int>> grid)');
+		expect(s.cpp).toContain('vector<vector<long long>> transpose(vector<vector<long long>> grid)');
+		// A list return comes with the helper that prints it.
+		expect(s.cpp).toContain('operator<<(ostream& os, const vector<T>& v)');
 		expect(s.java).toContain('long[][] transpose(long[][] grid)');
 		expect(s.java).toContain('Arrays.deepToString(transpose(');
 		expect(s.java).toContain('return new long[0][];');

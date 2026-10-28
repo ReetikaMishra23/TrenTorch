@@ -80,8 +80,7 @@ const SYNTAX_JAVA_SCALAR: Record<Scalar, string> = {
 
 const SYNTAX: Record<Exclude<StarterLanguage, 'javascript'>, Syntax> = {
 	cpp: {
-		// `int`, not `long long`: the C++ runtime is an interpreter (JSCPP) with a smaller type set.
-		scalar: { int: 'int', float: 'double', bool: 'bool', str: 'string' },
+		scalar: { int: 'long long', float: 'double', bool: 'bool', str: 'string' },
 		list: (inner) => `vector<${inner}>`,
 		node: { TreeNode: 'TreeNode*', ListNode: 'ListNode*' },
 		zero: (shape) =>
@@ -199,8 +198,10 @@ const NODE_DECLARATIONS: Record<
 	Record<'TreeNode' | 'ListNode', string>
 > = {
 	cpp: {
-		TreeNode: 'struct TreeNode {\n    int val;\n    TreeNode* left;\n    TreeNode* right;\n};',
-		ListNode: 'struct ListNode {\n    int val;\n    ListNode* next;\n};'
+		TreeNode:
+			'struct TreeNode {\n    int val;\n    TreeNode* left;\n    TreeNode* right;\n    TreeNode(int x = 0, TreeNode* l = nullptr, TreeNode* r = nullptr) : val(x), left(l), right(r) {}\n};',
+		ListNode:
+			'struct ListNode {\n    int val;\n    ListNode* next;\n    ListNode(int x = 0, ListNode* n = nullptr) : val(x), next(n) {}\n};'
 	},
 	java: {
 		TreeNode:
@@ -281,30 +282,34 @@ function javascript(p: Prepared): string {
 	return `${parts.join('\n\n')}\n`;
 }
 
+// Lets `cout << someVector` print [1, 2, 3], nested vectors included; only added when the function returns a list.
+const CPP_PRINT_VECTOR = `template <class T>
+ostream& operator<<(ostream& os, const vector<T>& v) {
+    os << "[";
+    for (size_t i = 0; i < v.size(); i++) os << (i ? ", " : "") << v[i];
+    return os << "]";
+}`;
+
 function cpp(p: Prepared): string {
 	const fn = ident('cpp', p.name);
 	const sig = p.params.map((q) => `${typeName('cpp', q.shape)} ${ident('cpp', q.name)}`).join(', ');
 	const ret = typeName('cpp', p.returns);
 	const body = `${ret} ${fn}(${sig}) {\n    // TODO: write your solution here\n    return ${SYNTAX.cpp.zero(p.returns)};\n}`;
-	const parts = [
-		'#include <iostream>',
-		'#include <vector>',
-		'#include <string>',
-		'using namespace std;'
-	];
+	const parts = ['#include <bits/stdc++.h>', 'using namespace std;'];
 	const nodes = p.nodes.map((n) => NODE_DECLARATIONS.cpp[n]);
+	const helpers = p.args && p.returns.kind === 'list' ? [CPP_PRINT_VECTOR] : [];
 	let main = 'int main() {\n    // Call it here and print the result to try it.\n    return 0;\n}';
 	if (p.args) {
 		const call = `${fn}(${p.args.cpp.join(', ')})`;
 		const print =
-			p.returns.kind === 'list' && p.returns.depth === 1
-				? `    vector<${SYNTAX.cpp.scalar[p.returns.scalar]}> result = ${call};\n    for (size_t i = 0; i < result.size(); i++) cout << result[i] << " ";\n    cout << endl;`
-				: p.returns.kind === 'scalar'
-					? `    cout << ${call} << endl;`
-					: `    ${call};`;
+			p.returns.kind === 'node'
+				? `    ${call};`
+				: p.returns.kind === 'scalar' && p.returns.scalar === 'bool'
+					? `    cout << boolalpha << ${call} << endl;`
+					: `    cout << ${call} << endl;`;
 		main = `int main() {\n${print}\n    return 0;\n}`;
 	}
-	return `${parts.join('\n')}\n\n${[...nodes, body, main].join('\n\n')}\n`;
+	return `${parts.join('\n')}\n\n${[...nodes, ...helpers, body, main].join('\n\n')}\n`;
 }
 
 function java(p: Prepared): string {
@@ -367,7 +372,7 @@ function fallback(lang: StarterLanguage, name: string): string {
 		case 'javascript':
 			return `// ${note}\nfunction ${fn}() {\n  // TODO: write your solution here\n}\n`;
 		case 'cpp':
-			return `#include <iostream>\nusing namespace std;\n\n// ${note}\n\nint main() {\n    return 0;\n}\n`;
+			return `#include <bits/stdc++.h>\nusing namespace std;\n\n// ${note}\n\nint main() {\n    return 0;\n}\n`;
 		case 'java':
 			return `public class Main {\n    // ${note}\n\n    public static void main(String[] args) {\n    }\n}\n`;
 		case 'go':

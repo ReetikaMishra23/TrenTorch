@@ -121,6 +121,8 @@ async function runRust(source: string): Promise<{ output: string; error: string 
 		'2024',
 		'-O',
 		'-Cpanic=abort',
+		// Allow unused code: a starter's stub intentionally ignores its parameters.
+		'-Aunused',
 		'--error-format=json',
 		'--json=diagnostic-rendered-ansi',
 		'-o',

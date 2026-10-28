@@ -1,19 +1,48 @@
-// Web Worker for C++ execution via JSCPP, a C++ subset interpreter (not a
-// true compiler) loaded from jsDelivr on first use. It supports <iostream>,
-// <cmath>, <cstring>, <cstdlib>, <cstdio>, <cctype>, <ctime> and <iomanip>
-// only: there is no <vector>, <string> or <map>, so code that uses them
-// fails with "cannot find library". Only the browser builds up to 2.0.6 are
-// published on the CDN.
+// Web Worker for C++ execution via a real clang and wasm-ld compiled to WebAssembly (LLVM 22,
+// wasm32-wasi), so students get actual C++20 with libc++: vector, map, templates, lambdas, references
+// and the rest. The compiler, linker and sysroot (platform/static/cpp-runtime/, about 29 MB
+// gzipped) are fetched when the student picks C++; compiling is in cpp-toolchain.ts.
+//
+// Not supported: exceptions (try/catch, throw) and threads, because the sysroot's libc++ is built
+// without them.
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { CppToolchain } from './cpp-toolchain';
+import bitsStdcpp from './cpp-bits-stdcpp.h?raw';
 
-declare const JSCPP: any;
+const BASE = '/cpp-runtime/';
 
-let loaded = false;
-async function ensureJscpp(): Promise<void> {
-	if (loaded) return;
-	// @ts-expect-error -- importScripts is a Worker global, not in the TS lib for modules
-	importScripts('https://cdn.jsdelivr.net/npm/JSCPP@2.0.6/dist/JSCPP.es5.min.js');
-	loaded = true;
+// The assets are gzipped on disk (not served via Content-Encoding), so the browser's own gzip decoder
+// unpacks them here.
+async function gunzip(name: string): Promise<ReadableStream<Uint8Array>> {
+	const resp = await fetch(`${BASE}${name}`);
+	if (!resp.ok || !resp.body) throw new Error(`fetch ${BASE}${name}: ${resp.status}`);
+	return resp.body.pipeThrough(new DecompressionStream('gzip'));
+}
+
+// Compile the wasm while it is still downloading and unpacking, which matters for clang's 44 MB.
+async function compileWasm(name: string): Promise<WebAssembly.Module> {
+	const stream = await gunzip(name);
+	const response = new Response(stream, { headers: { 'Content-Type': 'application/wasm' } });
+	return WebAssembly.compileStreaming(response);
+}
+
+let toolchainReady: Promise<CppToolchain> | null = null;
+function ensureToolchain(): Promise<CppToolchain> {
+	if (toolchainReady) return toolchainReady;
+	toolchainReady = (async () => {
+		const [clang, lld, sysroot] = await Promise.all([
+			compileWasm('clang.wasm.gz'),
+			compileWasm('lld.wasm.gz'),
+			(async () =>
+				new Uint8Array(await new Response(await gunzip('sysroot.tar.gz')).arrayBuffer()))()
+		]);
+		return new CppToolchain({ clang, lld, sysroot, bitsStdcpp });
+	})();
+	// A failed download must not stay cached, or a retry could never succeed.
+	toolchainReady.catch(() => {
+		toolchainReady = null;
+	});
+	return toolchainReady;
 }
 
 self.onmessage = async (e: MessageEvent) => {
@@ -26,10 +55,10 @@ self.onmessage = async (e: MessageEvent) => {
 	const { id, action, code } = e.data;
 
 	if (action === 'init') {
-		// The student just picked this language: fetch its runtime now rather than on the first Run.
+		// The student just picked this language: fetch the compiler now rather than on the first Run.
 		self.postMessage({ type: 'status', status: 'loading_packages' });
 		try {
-			await ensureJscpp();
+			await ensureToolchain();
 			self.postMessage({ type: 'status', status: 'ready' });
 		} catch {
 			// Stay quiet; the first Run tries again and reports the real error.
@@ -42,29 +71,16 @@ self.onmessage = async (e: MessageEvent) => {
 	if (action === 'run') {
 		try {
 			self.postMessage({ type: 'status', status: 'loading_packages' });
-			await ensureJscpp();
+			const toolchain = await ensureToolchain();
 			self.postMessage({ type: 'status', status: 'running' });
 			const startTime = performance.now();
-			const lines: string[] = [];
-			let error: string | undefined;
-			try {
-				JSCPP.run(code || '', '', {
-					stdio: {
-						write(s: string) {
-							lines.push(s);
-							return s.length;
-						}
-					}
-				});
-			} catch (err: any) {
-				error = err?.message || String(err);
-			}
+			const result = await toolchain.run(code || '');
 			self.postMessage({
 				id,
 				type: 'run_result',
-				success: !error,
-				output: lines.join(''),
-				error,
+				success: !result.error,
+				output: result.output,
+				error: result.error,
 				durationMs: Math.round(performance.now() - startTime)
 			});
 			self.postMessage({ type: 'status', status: 'ready' });

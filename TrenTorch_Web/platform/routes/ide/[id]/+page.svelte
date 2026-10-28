@@ -957,7 +957,7 @@
 				: language === 'javascript'
 					? 'JavaScript'
 					: language === 'cpp'
-						? 'C++ (JSCPP)'
+						? 'C++ (clang 22)'
 						: language === 'go'
 							? 'Go (Yaegi)'
 							: language === 'rust'
