@@ -12,6 +12,8 @@ self.onmessage = async (e: MessageEvent) => {
 	const { id, action, code } = e.data;
 
 	if (action === 'init') {
+		// Nothing to download, so the runtime is ready as soon as the worker exists.
+		self.postMessage({ type: 'status', status: 'ready' });
 		self.postMessage({ id, type: 'init_complete', success: true });
 		return;
 	}

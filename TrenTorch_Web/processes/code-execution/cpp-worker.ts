@@ -1,8 +1,9 @@
 // Web Worker for C++ execution via JSCPP, a C++ subset interpreter (not a
-// true compiler) loaded from jsDelivr on first use. Handles the common
-// subset DSA solutions need: control flow, STL vector/string/map basics,
-// <iostream>. Not full ISO C++ -- advanced template metaprogramming or
-// less-common STL headers may not run.
+// true compiler) loaded from jsDelivr on first use. It supports <iostream>,
+// <cmath>, <cstring>, <cstdlib>, <cstdio>, <cctype>, <ctime> and <iomanip>
+// only: there is no <vector>, <string> or <map>, so code that uses them
+// fails with "cannot find library". Only the browser builds up to 2.0.6 are
+// published on the CDN.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 declare const JSCPP: any;
@@ -11,7 +12,7 @@ let loaded = false;
 async function ensureJscpp(): Promise<void> {
 	if (loaded) return;
 	// @ts-expect-error -- importScripts is a Worker global, not in the TS lib for modules
-	importScripts('https://cdn.jsdelivr.net/npm/JSCPP@2.0.11/dist/JSCPP.es5.js');
+	importScripts('https://cdn.jsdelivr.net/npm/JSCPP@2.0.6/dist/JSCPP.es5.min.js');
 	loaded = true;
 }
 

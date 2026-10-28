@@ -29,7 +29,9 @@ class CppService {
 		if (typeof window === 'undefined' || this.worker) return;
 		try {
 			this.runtimeState.set('loading_runtime');
-			this.worker = new Worker(new URL('./cpp-worker.ts', import.meta.url), { type: 'module' });
+			// Classic (non-module) worker: it loads its runtime with importScripts, which
+			// module workers cannot call.
+			this.worker = new Worker(new URL('./cpp-worker.ts', import.meta.url));
 
 			this.worker.onmessage = (e: MessageEvent) => {
 				const { id, type, status, output, error, success, durationMs } = e.data;
