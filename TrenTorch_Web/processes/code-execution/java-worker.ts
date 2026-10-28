@@ -7,18 +7,36 @@
 declare function importScripts(...urls: string[]): void;
 declare function cheerpjInit(options?: Record<string, unknown>): Promise<void>;
 declare function cheerpjRunMain(...args: string[]): Promise<number>;
-declare function cheerpOSAddStringFile(path: string, data: string): void;
+declare function cheerpOSAddStringFile(path: string, data: string | Uint8Array): void;
 declare function cjFileBlob(path: string): Promise<Blob>;
 
 const LOADER_URL = 'https://cjrtnc.leaningtech.com/4.3/loader.js';
-const RUNNER_CLASSPATH = '/app/java-runtime/:/app/java-runtime/ecj.jar';
+const RUNNER_CLASSPATH = '/str/runner.jar:/str/ecj.jar';
+
+// The jars the runner needs (runner.jar holds Runner.class; rt.jar is the JDK classes ECJ compiles
+// against, cut down to the packages student code uses). They are fetched whole and put in CheerpJ's
+// in-memory /str/ filesystem instead of being read from /app/: CheerpJ reads /app/ jars with HTTP
+// Range requests, and hosts like Cloudflare Pages ignore those, so every run failed with
+// "Runner exited with code 1". Runner.class also has to sit in a jar, since CheerpJ cannot load
+// classes from a plain /app/ directory.
+const JARS = ['runner.jar', 'ecj.jar', 'rt.jar'];
 
 let runtimeReady: Promise<void> | null = null;
 function ensureRuntime(): Promise<void> {
 	if (runtimeReady) return runtimeReady;
 	runtimeReady = (async () => {
 		importScripts(LOADER_URL);
-		await cheerpjInit({ version: '17', status: 'none' });
+		const [jars] = await Promise.all([
+			Promise.all(
+				JARS.map(async (name) => {
+					const resp = await fetch(`/java-runtime/${name}`);
+					if (!resp.ok) throw new Error(`fetch /java-runtime/${name}: ${resp.status}`);
+					return new Uint8Array(await resp.arrayBuffer());
+				})
+			),
+			cheerpjInit({ version: '17', status: 'none' })
+		]);
+		JARS.forEach((name, i) => cheerpOSAddStringFile(`/str/${name}`, jars[i]));
 	})();
 	runtimeReady.catch(() => {
 		runtimeReady = null;

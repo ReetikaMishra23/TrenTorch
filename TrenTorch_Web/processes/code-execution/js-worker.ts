@@ -25,7 +25,9 @@ self.onmessage = async (e: MessageEvent) => {
 		const print = (...args: unknown[]) =>
 			lines.push(
 				args
-					.map((a) => (typeof a === 'string' ? a : JSON.stringify(a, null, 2)))
+					.map((a) =>
+						typeof a === 'string' ? a : a === undefined ? 'undefined' : JSON.stringify(a, null, 2)
+					)
 					.join(' ')
 			);
 		let error: string | undefined;

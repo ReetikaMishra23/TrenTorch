@@ -86,7 +86,9 @@ class JavaService {
 		this.init();
 		this.isRunning.set(true);
 		this.consoleError.set(false);
-		this.consoleOutput.set('Starting CheerpJ (this can take a while on first run)...\n');
+		this.consoleOutput.set(
+			'Starting Java (the first run downloads the compiler; each run compiles, which takes about 10 seconds)...\n'
+		);
 
 		return new Promise((resolve, reject) => {
 			const id = ++this.requestId;
@@ -94,10 +96,10 @@ class JavaService {
 				if (this.pendingRequests.has(id)) {
 					this.pendingRequests.delete(id);
 					this.isRunning.set(false);
-					this.consoleOutput.set('[Timeout]: Execution exceeded 20 seconds.');
+					this.consoleOutput.set('[Timeout]: Execution exceeded 2 minutes.');
 					reject(new Error('Execution timed out'));
 				}
-			}, 20000);
+			}, 120000);
 
 			this.pendingRequests.set(id, {
 				resolve: (res) => {
@@ -119,7 +121,9 @@ class JavaService {
 	}
 
 	public async runTests(): Promise<SubmissionResult> {
-		throw new Error('Submit is only available in Python for now. Switch the language to test your solution.');
+		throw new Error(
+			'Submit is only available in Python for now. Switch the language to test your solution.'
+		);
 	}
 
 	public async runCustomTest(): Promise<ExecutionResult> {

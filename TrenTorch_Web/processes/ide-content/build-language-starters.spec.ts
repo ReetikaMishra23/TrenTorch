@@ -21,6 +21,8 @@ describe('buildLanguageStarters', () => {
 		expect(s.go).toContain('fmt.Println(countPairs(4))');
 		expect(s.rust).toContain('fn count_pairs(n: i64) -> i64 {');
 		expect(s.rust).toContain('println!("{:?}", count_pairs(4));');
+		// A panicking stub would show up as "unreachable" the moment the student presses Run.
+		expect(s.rust).not.toContain('todo!');
 	});
 
 	it("uses each language's list, string and bool types", () => {
@@ -59,6 +61,7 @@ describe('buildLanguageStarters', () => {
 		expect(s.cpp).toContain('vector<vector<int>> transpose(vector<vector<int>> grid)');
 		expect(s.java).toContain('long[][] transpose(long[][] grid)');
 		expect(s.java).toContain('Arrays.deepToString(transpose(');
+		expect(s.java).toContain('return new long[0][];');
 		expect(s.go).toContain('[][]int{[]int{1, 2}, []int{3, 4}}');
 		expect(s.rust).toContain('vec![vec![1, 2], vec![3, 4]]');
 	});

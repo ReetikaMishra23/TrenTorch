@@ -71,6 +71,13 @@ interface Syntax {
 	zero: (shape: Shape) => string;
 }
 
+const SYNTAX_JAVA_SCALAR: Record<Scalar, string> = {
+	int: 'long',
+	float: 'double',
+	bool: 'boolean',
+	str: 'String'
+};
+
 const SYNTAX: Record<Exclude<StarterLanguage, 'javascript'>, Syntax> = {
 	cpp: {
 		// `int`, not `long long`: the C++ runtime is an interpreter (JSCPP) with a smaller type set.
@@ -93,11 +100,15 @@ const SYNTAX: Record<Exclude<StarterLanguage, 'javascript'>, Syntax> = {
 		list: (inner) => `${inner}[]`,
 		node: { TreeNode: 'TreeNode', ListNode: 'ListNode' },
 		zero: (shape) =>
-			shape.kind === 'scalar' && shape.scalar !== 'str'
-				? shape.scalar === 'bool'
-					? 'false'
-					: '0'
-				: 'null'
+			shape.kind === 'node'
+				? 'null'
+				: shape.kind === 'list'
+					? `new ${SYNTAX_JAVA_SCALAR[shape.scalar]}[0]${'[]'.repeat(shape.depth - 1)}`
+					: shape.scalar === 'str'
+						? '""'
+						: shape.scalar === 'bool'
+							? 'false'
+							: '0'
 	},
 	go: {
 		scalar: { int: 'int', float: 'float64', bool: 'bool', str: 'string' },
@@ -116,7 +127,19 @@ const SYNTAX: Record<Exclude<StarterLanguage, 'javascript'>, Syntax> = {
 		scalar: { int: 'i64', float: 'f64', bool: 'bool', str: 'String' },
 		list: (inner) => `Vec<${inner}>`,
 		node: { TreeNode: 'Option<Box<TreeNode>>', ListNode: 'Option<Box<ListNode>>' },
-		zero: () => 'todo!()'
+		// Not todo!(): main() calls the stub, and a panic would show up as "unreachable" on Run.
+		zero: (shape) =>
+			shape.kind === 'node'
+				? 'None'
+				: shape.kind === 'list'
+					? 'Vec::new()'
+					: shape.scalar === 'str'
+						? 'String::new()'
+						: shape.scalar === 'bool'
+							? 'false'
+							: shape.scalar === 'float'
+								? '0.0'
+								: '0'
 	}
 };
 
