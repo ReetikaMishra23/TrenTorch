@@ -6,6 +6,9 @@ import type {
 	SubmissionResult
 } from '$data/curriculum/types';
 
+import { customExternal, submitExternal } from './external-submit';
+import { workerRunner } from './worker-runner';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Same shape as CppService; backed by go-worker.ts, which lazy-loads the
@@ -121,15 +124,52 @@ class GoService {
 		return { output: '', figures: [] };
 	}
 
-	public async runTests(): Promise<SubmissionResult> {
-		throw new Error(
-			'Submit is only available in Python for now. Switch the language to test your solution.'
+	// Submit and Run: the tests are made and judged by Python; the student's function runs in the go worker.
+	public runTests(
+		code: string,
+		testHarnessCode: string,
+		contentId: string,
+		sampleLimit?: number
+	): Promise<SubmissionResult> {
+		this.init();
+		return submitExternal(this, this.runner, code, testHarnessCode, contentId, sampleLimit);
+	}
+
+	public runCustomTest(
+		code: string,
+		testHarnessCode: string,
+		contentId: string,
+		functionName: string,
+		argumentsJson: string,
+		expectedJson: string
+	): Promise<ExecutionResult> {
+		this.init();
+		return customExternal(
+			this,
+			this.runner,
+			code,
+			testHarnessCode,
+			contentId,
+			functionName,
+			argumentsJson,
+			expectedJson
 		);
 	}
 
-	public async runCustomTest(): Promise<ExecutionResult> {
-		throw new Error('Custom runs are only available in Python for now.');
-	}
+	private runner = workerRunner({
+		language: 'go',
+		worker: () => {
+			this.init();
+			return this.worker as Worker;
+		},
+		// A program stuck in a loop cannot be interrupted from inside: end the whole worker.
+		discard: () => {
+			this.worker?.terminate();
+			this.worker = null;
+			this.runtimeState.set('uninitialized');
+			this.init();
+		}
+	});
 }
 
 export const goService = new GoService();
