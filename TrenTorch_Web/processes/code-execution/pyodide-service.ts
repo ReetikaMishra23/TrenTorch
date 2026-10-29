@@ -6,6 +6,7 @@ import type {
 	SubmissionResult
 } from '$data/curriculum/types';
 import { sanitizeStudentCode } from './sanitize-student-code';
+import type { ExternalJudgement, ExternalOutputs, ExternalPlan } from './external-protocol';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -118,6 +119,15 @@ class PyodideService {
 						// handleRunTests, which owns the `solved` store this service
 						// doesn't know about.
 						req.resolve(subResult);
+					}
+					return;
+				}
+
+				if (type === 'external_prepared' || type === 'external_judged') {
+					const req = this.pendingRequests.get(id);
+					if (req) {
+						this.pendingRequests.delete(id);
+						req.resolve({ error, ...rest });
 					}
 					return;
 				}
@@ -318,6 +328,50 @@ class PyodideService {
 				contentId,
 				sampleLimit
 			});
+		});
+	}
+
+	// Python's two parts of judging a submission in another language (see external-protocol.ts). The
+	// caller owns the console and the running flag, because the language runs in between.
+	private async askExternal<T>(message: Record<string, unknown>, timeoutMs = 60000): Promise<T> {
+		this.init();
+		return new Promise<T>((resolve, reject) => {
+			const id = ++this.requestId;
+			const timeout = setTimeout(() => {
+				if (this.pendingRequests.delete(id)) reject(new Error('Judging timed out'));
+			}, timeoutMs);
+			this.pendingRequests.set(id, {
+				resolve: (res) => {
+					clearTimeout(timeout);
+					resolve(res);
+				},
+				reject: (err) => {
+					clearTimeout(timeout);
+					reject(err);
+				}
+			});
+			this.worker?.postMessage({ id, ...message });
+		});
+	}
+
+	public prepareExternal(
+		testHarnessCode: string,
+		maxInt: string,
+		sampleLimit?: number
+	): Promise<{ plan: ExternalPlan | null; error: string | null }> {
+		return this.askExternal({ action: 'external_prepare', testHarnessCode, maxInt, sampleLimit });
+	}
+
+	public judgeExternal(
+		testHarnessCode: string,
+		outputs: ExternalOutputs,
+		sampleLimit?: number
+	): Promise<ExternalJudgement> {
+		return this.askExternal({
+			action: 'external_judge',
+			testHarnessCode,
+			outputsJson: JSON.stringify(outputs),
+			sampleLimit
 		});
 	}
 }

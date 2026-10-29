@@ -18,6 +18,13 @@
 	// bottom of the content" -- the homepage is the one place it's meant to
 	// be a page-ending element.
 	let showFooter = $derived(page.url.pathname === '/');
+
+	// The IDE has its own single top bar (logo, back, Run, Submit, account), so the
+	// site navbar steps aside there and the workspace gets its height back. The long theory
+	// pages hide it too, so the side menu and the text get the full height.
+	let showNavbar = $derived(
+		!page.url.pathname.startsWith('/ide') && !page.url.pathname.startsWith('/dsa/theory')
+	);
 </script>
 
 <svelte:head>
@@ -34,7 +41,9 @@
      edge on any screen size, and each page's own sections cap their
      content at a readable width via the shared .container class instead. -->
 <div class="relative flex min-h-screen flex-col">
-	<Navbar />
+	{#if showNavbar}
+		<Navbar />
+	{/if}
 	<div class="w-full flex-1">
 		{@render children()}
 	</div>

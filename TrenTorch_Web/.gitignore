@@ -26,3 +26,6 @@ vite.config.ts.timestamp-*
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Go-to-WASM build output (source of the real asset in platform/static/go-runtime)
+processes/code-execution/go-runtime/

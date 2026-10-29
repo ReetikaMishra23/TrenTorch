@@ -5,8 +5,16 @@
 	import { browser } from '$app/environment';
 	import type { QuestionContent } from '$data/curriculum/types';
 	import { unifiedExecutor } from '$processes/code-execution/unified-executor';
-	import { detectLanguage } from '$processes/code-execution/detect-language';
+	import {
+		detectLanguage,
+		isLanguageSelectable,
+		DSA_LANGUAGES
+	} from '$processes/code-execution/detect-language';
 	import { loadUserCode } from '$processes/code-execution/load-user-code';
+	import {
+		loadDsaLanguage,
+		saveDsaLanguage
+	} from '$processes/code-execution/dsa-language-preference';
 	import { saveUserCode } from '$processes/code-execution/save-user-code';
 	import { draftSync } from '$processes/code-execution/draft-sync.svelte';
 	import { resetUserCode } from '$processes/code-execution/reset-user-code';
@@ -35,19 +43,23 @@
 	import TestResultsView from '$components/ide/TestResultsView.svelte';
 	import CustomRunPanel from '$components/ide/CustomRunPanel.svelte';
 	import PaneResizer from '$components/ide/PaneResizer.svelte';
+	import IdeStatusBar from '$components/ide/IdeStatusBar.svelte';
+	import { ideTheme } from '$components/ide/ide-theme.svelte';
+	import { themeStyle } from '$components/ide/ide-themes';
 	import {
 		BookOpen,
 		Code2,
 		Terminal,
 		ShieldCheck,
+		Play,
+		ChevronDown,
+		ChevronUp,
 		ArrowLeft,
-		IndentIncrease,
-		ZoomIn,
-		ZoomOut
+		IndentIncrease
 	} from '@lucide/svelte';
 	import type { PageData } from './$types';
 
-	const DEFAULT_LAYOUT: IdeLayout = { leftPanePercent: 38, bottomPanePercent: 42 };
+	const DEFAULT_LAYOUT: IdeLayout = { leftPanePercent: 44, bottomPanePercent: 42 };
 	const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 	let { data } = $props<{ data: PageData }>();
@@ -93,6 +105,16 @@
 	// would encounter these questions from the menu. GuidePane turns these
 	// ids into hrefs itself (via resolve).
 	let adjacentQuestions = $derived({ prevId: data.prevId, nextId: data.nextId });
+	// Same ?from=N is carried through, so "back" a few questions later still lands on
+	// the page the student came from.
+	const questionHref = (id: string | null) =>
+		id
+			? fromPage
+				? resolve(`/ide/[id]?from=${fromPage}`, { id })
+				: resolve('/ide/[id]', { id })
+			: null;
+	let prevHref = $derived(questionHref(adjacentQuestions.prevId));
+	let nextHref = $derived(questionHref(adjacentQuestions.nextId));
 
 	// Problem of the Day questions get a reduced guide: today's featured
 	// question -- and any question scheduled for a FUTURE date, reachable
@@ -108,6 +130,13 @@
 	// set until hydration can compute it for real.
 	let guideTabs = $derived.by<('description' | 'theory' | 'solution' | 'discussion')[]>(() => {
 		if (!content) return ['description', 'theory', 'solution'];
+		// DSA sheet: the solution and walkthrough open only after the question is solved.
+		if (content.metadata.kind === 'dsa') {
+			// No Theory tab: a DSA question links to its step's theory page from the Description.
+			return solved.isSolved(content.id)
+				? ['description', 'solution', 'discussion']
+				: ['description'];
+		}
 		const entry = potdEntries.find((e) => e.questionId === content.id);
 		if (!entry) return ['description', 'theory', 'solution'];
 		if (!browser) return ['description', 'theory', 'solution'];
@@ -122,6 +151,13 @@
 	// whole hidden suite and is what actually marks the question solved.
 	const SAMPLE_TEST_COUNT = 2;
 	let activeRightTab = $state<'console' | 'tests' | 'custom'>('tests');
+	// The results panel starts as just its tab bar, so the editor gets the height, and opens
+	// when something is run or a tab is picked.
+	let resultsOpen = $state(false);
+	$effect(() => {
+		void content?.id;
+		resultsOpen = false;
+	});
 	let mobileActiveTab = $state<'guide' | 'editor' | 'output'>('editor');
 	let ratingFeedback = $state<{
 		questionId: string;
@@ -167,8 +203,55 @@
 			// storage blocked: the size just won't persist
 		}
 	});
-	let language = $derived(content ? detectLanguage(content) : 'python');
+	// For DSA questions the student can pick their language; everything else stays
+	// auto-detected from content. selectedLanguage is reset to the auto-detected
+	// default whenever content changes (see the $effect below).
+	let selectedLanguage = $state<ReturnType<typeof detectLanguage> | null>(null);
+	let languageSelectable = $derived(content ? isLanguageSelectable(content) : false);
+	let language = $derived(
+		languageSelectable && selectedLanguage
+			? selectedLanguage
+			: content
+				? detectLanguage(content)
+				: 'python'
+	);
 	let isSql = $derived(language === 'sql');
+
+	const LANGUAGE_LABELS: Record<string, string> = {
+		python: 'Python',
+		javascript: 'JavaScript',
+		cpp: 'C++',
+		java: 'Java',
+		go: 'Go',
+		rust: 'Rust'
+	};
+
+	// The starter for a language: Python's is the hand-written one, the others are built from the
+	// question's signature (processes/ide-content/build-language-starters.ts).
+	function starterFor(lang: string): string {
+		if (!content) return '';
+		if (lang === 'python') return content.starterCode;
+		return (
+			content.languageStarters?.[lang as keyof NonNullable<typeof content.languageStarters>] ?? ''
+		);
+	}
+
+	function handleLanguageChange(next: string) {
+		if (!content) return;
+		const picked = next as ReturnType<typeof detectLanguage>;
+		selectedLanguage = picked;
+		saveDsaLanguage(picked);
+		// Also starts downloading that language's runtime and packages.
+		unifiedExecutor.setLanguage(picked);
+		// Each language keeps its own draft; one never seen before opens on its starter.
+		userCode = loadUserCode(content.id, starterFor(picked), picked);
+		editedSinceLoad = false;
+		// Whatever Run/Submit showed was for the other language's code.
+		unifiedExecutor.testResults.set(null);
+		unifiedExecutor.consoleOutput.set('');
+		unifiedExecutor.consoleError.set(false);
+		unifiedExecutor.consoleFigures.set([]);
+	}
 	let lastSavedAt = $state<number | null>(null);
 
 	// Resizable panes: left guide/code split, and code/console split within
@@ -198,6 +281,7 @@
 	}
 
 	onMount(() => {
+		ideTheme.init();
 		const layout = loadIdeLayout(DEFAULT_LAYOUT);
 		leftPanePercent = layout.leftPanePercent;
 		bottomPanePercent = layout.bottomPanePercent;
@@ -236,8 +320,12 @@
 			// onMount-only call would miss that second case entirely, since
 			// SvelteKit reuses this component across /ide/[id] param changes
 			// rather than remounting it.
+			const preferred = isLanguageSelectable(content) ? loadDsaLanguage() : null;
+			selectedLanguage = preferred;
 			unifiedExecutor.init(content);
-			userCode = loadUserCode(content.id, content.starterCode);
+			if (preferred) unifiedExecutor.setLanguage(preferred);
+			const openLanguage = preferred ?? detectLanguage(content);
+			userCode = loadUserCode(content.id, starterFor(openLanguage), openLanguage);
 			editedSinceLoad = false;
 			unifiedExecutor.testResults.set(null);
 			unifiedExecutor.consoleError.set(false);
@@ -256,7 +344,9 @@
 
 	$effect(() => {
 		void draftSync.version;
-		if (!content || editedSinceLoad || !draftSync.wasPulled(content.id)) return;
+		// Only Python drafts sync across devices.
+		if (!content || language !== 'python') return;
+		if (editedSinceLoad || !draftSync.wasPulled(content.id)) return;
 		userCode = loadUserCode(content.id, content.starterCode);
 	});
 
@@ -264,15 +354,15 @@
 		if (!content) return;
 		editedSinceLoad = true;
 		userCode = newCode;
-		saveUserCode(content.id, newCode);
+		saveUserCode(content.id, newCode, language);
 		lastSavedAt = Date.now();
 	}
 
 	function handleResetCode() {
 		if (!content) return;
 		if (confirm('Reset code to the original starter template for this question?')) {
-			resetUserCode(content.id);
-			userCode = content.starterCode;
+			resetUserCode(content.id, language);
+			userCode = starterFor(language);
 			lastSavedAt = Date.now();
 			// Whatever Run/Submit showed was for the code that just got
 			// discarded -- leaving it up would read as still describing the
@@ -295,7 +385,7 @@
 			)
 		) {
 			resetUserCode(content.id);
-			userCode = content.starterCode;
+			userCode = starterFor(language);
 			lastSavedAt = Date.now();
 			solved.unmarkSolved(content.id);
 			attempted.unmarkAttempted(content.id);
@@ -324,6 +414,7 @@
 
 	async function handleRunCode() {
 		activeRightTab = 'console';
+		resultsOpen = true;
 		mobileActiveTab = 'output';
 
 		// No question loaded (an id with no published content): nothing to
@@ -379,6 +470,7 @@
 	async function handleRunTests() {
 		if (!content) return;
 		activeRightTab = 'tests';
+		resultsOpen = true;
 		mobileActiveTab = 'output';
 		ratingFeedback = null;
 		// Snapshot what is actually being tested. The student can keep typing or
@@ -502,6 +594,7 @@
 	) {
 		if (!content) return;
 		activeRightTab = 'console';
+		resultsOpen = true;
 		mobileActiveTab = 'output';
 		unifiedExecutor.testResults.set(null);
 		unifiedExecutor.consoleError.set(false);
@@ -526,9 +619,13 @@
 	let runtimeStatusText = $derived.by(() => {
 		switch ($runtimeState) {
 			case 'loading_runtime':
-				return isSql ? 'Loading SQLite…' : 'Loading Python runtime…';
+				return isSql
+					? 'Loading SQLite…'
+					: `Loading ${LANGUAGE_LABELS[language] ?? 'Python'} runtime…`;
 			case 'loading_packages':
-				return isSql ? 'Loading SQLite…' : 'Loading libraries…';
+				return isSql
+					? 'Loading SQLite…'
+					: `Loading ${LANGUAGE_LABELS[language] ?? 'Python'} packages…`;
 			case 'running':
 				return 'Executing…';
 			case 'testing':
@@ -536,7 +633,7 @@
 			case 'error':
 				return 'Runtime error';
 			default:
-				return isSql ? 'SQLite 3.39 • Ctrl/Cmd+Enter to run' : 'Python 3.12 • Shift+Enter to run';
+				return 'Ready';
 		}
 	});
 
@@ -572,7 +669,7 @@
 
 {#if !content}
 	<div
-		class="flex h-[calc(100vh-3.5rem)] w-full flex-col items-center justify-center gap-4 bg-background px-6 text-center"
+		class="flex h-dvh w-full flex-col items-center justify-center gap-4 bg-background px-6 text-center"
 	>
 		<p class="font-mono text-sm text-muted-foreground">
 			No IDE content published yet for <span class="text-foreground">{data.id}</span>.
@@ -588,7 +685,8 @@
 {:else}
 	<div
 		bind:this={ideRoot}
-		class="ide-shell flex h-[calc(100vh-3.5rem)] w-full flex-col overflow-hidden bg-black font-mono text-white"
+		class="ide-shell flex h-dvh w-full flex-col overflow-hidden"
+		style={themeStyle(ideTheme.current)}
 	>
 		<!-- IDE Top Header -->
 		<IdeHeader
@@ -599,6 +697,10 @@
 			runtimeState={$runtimeState}
 			isRunning={$isRunning}
 			{isFullscreen}
+			{prevHref}
+			{nextHref}
+			fontSize={editorFontSize}
+			onFontSize={(size) => (editorFontSize = size)}
 			onResetCode={handleResetCode}
 			onReattempt={handleReattemptQuestion}
 			onRunCode={handleRunCode}
@@ -607,11 +709,14 @@
 		/>
 
 		<!-- Mobile Tab Switcher -->
-		<div class="flex border-b border-border bg-secondary text-xs md:hidden">
+		<div
+			class="mx-2 mb-2 flex gap-1 rounded-lg border border-border bg-secondary p-1 text-xs md:hidden"
+		>
 			<button
 				type="button"
-				class="flex flex-1 items-center justify-center gap-1.5 py-2 {mobileActiveTab === 'guide'
-					? 'border-b-2 border-primary bg-primary font-bold text-primary-foreground'
+				class="flex flex-1 items-center justify-center gap-1.5 rounded-md py-2 font-medium transition-colors {mobileActiveTab ===
+				'guide'
+					? 'bg-muted text-foreground'
 					: 'text-muted-foreground'}"
 				onclick={() => (mobileActiveTab = 'guide')}
 			>
@@ -620,8 +725,9 @@
 			</button>
 			<button
 				type="button"
-				class="flex flex-1 items-center justify-center gap-1.5 py-2 {mobileActiveTab === 'editor'
-					? 'border-b-2 border-primary bg-primary font-bold text-primary-foreground'
+				class="flex flex-1 items-center justify-center gap-1.5 rounded-md py-2 font-medium transition-colors {mobileActiveTab ===
+				'editor'
+					? 'bg-muted text-foreground'
 					: 'text-muted-foreground'}"
 				onclick={() => (mobileActiveTab = 'editor')}
 			>
@@ -630,8 +736,9 @@
 			</button>
 			<button
 				type="button"
-				class="flex flex-1 items-center justify-center gap-1.5 py-2 {mobileActiveTab === 'output'
-					? 'border-b-2 border-primary bg-primary font-bold text-primary-foreground'
+				class="flex flex-1 items-center justify-center gap-1.5 rounded-md py-2 font-medium transition-colors {mobileActiveTab ===
+				'output'
+					? 'bg-muted text-foreground'
 					: 'text-muted-foreground'}"
 				onclick={() => (mobileActiveTab = 'output')}
 			>
@@ -641,10 +748,10 @@
 		</div>
 
 		<!-- Main Multi-Pane Area -->
-		<div bind:this={mainAreaEl} class="flex flex-1 overflow-hidden">
+		<div bind:this={mainAreaEl} class="flex flex-1 overflow-hidden px-2 pb-2">
 			<!-- Left Pane: Guide -->
 			<div
-				class="ide-left-pane h-full shrink-0 overflow-hidden border-r border-border {mobileActiveTab ===
+				class="ide-left-pane h-full shrink-0 overflow-hidden rounded-lg border border-border bg-background {mobileActiveTab ===
 				'guide'
 					? 'block w-full'
 					: 'hidden md:block'}"
@@ -654,8 +761,6 @@
 					{content}
 					isCompleted={solved.isSolved(content.id)}
 					companies={data.companies}
-					prevId={adjacentQuestions.prevId}
-					nextId={adjacentQuestions.nextId}
 					visibleTabs={guideTabs}
 				/>
 			</div>
@@ -678,76 +783,43 @@
 			>
 				<!-- Top Section: Editor -->
 				<div
-					class="flex min-h-[40%] flex-1 flex-col overflow-hidden border-b border-border {mobileActiveTab ===
+					class="flex min-h-[40%] flex-1 flex-col overflow-hidden rounded-lg border border-border bg-background {mobileActiveTab ===
 					'output'
 						? 'hidden md:flex'
 						: 'flex w-full'}"
 				>
 					<div
-						class="flex h-8 items-center justify-between border-b border-border bg-secondary px-3 text-[11px] text-muted-foreground"
+						class="flex h-10 shrink-0 items-center justify-between border-b border-border bg-secondary px-3 text-xs text-muted-foreground"
 					>
-						<div class="flex items-center gap-1.5">
-							<Code2 class="size-3" />
-							<span>{content.id}{isSql ? '.sql' : '.py'}</span>
+						<div class="flex items-center gap-2">
+							<Code2 class="size-4 text-(--ide-accent)" />
+							{#if languageSelectable}
+								<select
+									class="rounded-md border border-border bg-secondary px-1.5 py-0.5 text-sm font-medium text-foreground"
+									value={language}
+									onchange={(e) => handleLanguageChange((e.target as HTMLSelectElement).value)}
+								>
+									{#each DSA_LANGUAGES as lang (lang)}
+										<option value={lang}>{LANGUAGE_LABELS[lang]}</option>
+									{/each}
+								</select>
+							{:else}
+								<span class="text-sm font-medium text-foreground">{isSql ? 'SQL' : 'Python'}</span>
+							{/if}
 						</div>
 						<div class="flex items-center gap-2">
-							<div class="flex items-center gap-0.5" role="group" aria-label="Editor font size">
-								<button
-									type="button"
-									class="rounded p-0.5 transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-30"
-									onclick={() => (editorFontSize = Math.max(EDITOR_FONT_MIN, editorFontSize - 1))}
-									disabled={editorFontSize <= EDITOR_FONT_MIN}
-									title="Smaller text (Ctrl -)"
-									aria-label="Decrease editor font size"
-								>
-									<ZoomOut class="size-3.5" />
-								</button>
-								<button
-									type="button"
-									class="min-w-8 rounded px-1 py-0.5 text-center text-[10px] tabular-nums transition-colors hover:bg-foreground/10 hover:text-foreground"
-									onclick={() => (editorFontSize = EDITOR_FONT_DEFAULT)}
-									title="Reset font size (Ctrl 0)"
-									aria-label="Reset editor font size"
-								>
-									{editorFontSize}px
-								</button>
-								<button
-									type="button"
-									class="rounded p-0.5 transition-colors hover:bg-foreground/10 hover:text-foreground disabled:opacity-30"
-									onclick={() => (editorFontSize = Math.min(EDITOR_FONT_MAX, editorFontSize + 1))}
-									disabled={editorFontSize >= EDITOR_FONT_MAX}
-									title="Larger text (Ctrl +)"
-									aria-label="Increase editor font size"
-								>
-									<ZoomIn class="size-3.5" />
-								</button>
-							</div>
 							{#if !isSql}
 								<button
 									type="button"
-									class="flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] text-amber-600 transition-colors hover:bg-amber-500/10 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
+									class="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
 									onclick={() => reindentCode()}
 									title="Fix indentation for the entire file"
 									aria-label="Fix indentation"
 								>
-									<IndentIncrease class="size-3" />
+									<IndentIncrease class="size-3.5" />
 									<span class="hidden sm:inline">Fix indent</span>
 								</button>
 							{/if}
-							<div
-								class="flex items-center gap-1.5 text-[10px] {$runtimeState === 'loading_runtime' ||
-								$runtimeState === 'loading_packages'
-									? 'text-amber-600 dark:text-amber-500'
-									: $runtimeState === 'error'
-										? 'text-red-600 dark:text-red-400'
-										: 'text-muted-foreground'}"
-							>
-								{#if $runtimeState === 'loading_runtime' || $runtimeState === 'loading_packages'}
-									<span class="size-1.5 animate-pulse rounded-full bg-amber-500" aria-hidden="true"
-									></span>
-								{/if}
-								{runtimeStatusText}
-							</div>
 						</div>
 					</div>
 					<div class="min-h-0 flex-1 overflow-hidden">
@@ -760,15 +832,10 @@
 								onCursorChange={(pos) => (cursorPos = pos)}
 								bind:reindent={reindentCode}
 								bind:fontSize={editorFontSize}
+								palette={ideTheme.current.editor}
+								dark={ideTheme.current.mode === 'dark'}
 							/>
 						{/key}
-					</div>
-					<!-- Editor status bar -->
-					<div
-						class="flex h-6 shrink-0 items-center justify-between border-t border-border bg-secondary px-3 text-[10px] text-muted-foreground"
-					>
-						<span>{lastSavedAt ? 'Saved' : ''}</span>
-						<span class="tabular-nums">Ln {cursorPos.line}, Col {cursorPos.col}</span>
 					</div>
 				</div>
 
@@ -778,59 +845,74 @@
 					valueNow={bottomPanePercent}
 					valueMin={15}
 					valueMax={75}
-					class="hidden md:block"
+					class={resultsOpen ? 'hidden md:block' : 'hidden'}
 				/>
 
 				<!-- Bottom Section: Terminal & Test Results -->
 				<div
-					class="ide-bottom-pane flex min-h-[180px] shrink-0 flex-col overflow-hidden {mobileActiveTab ===
-					'editor'
+					class="ide-bottom-pane flex min-h-[180px] shrink-0 flex-col overflow-hidden rounded-lg border border-border bg-background {resultsOpen
+						? ''
+						: 'ide-bottom-collapsed'} {mobileActiveTab === 'editor'
 						? 'hidden md:flex'
 						: 'flex h-[42%] w-full'}"
 					style="--ide-bottom-pane-percent: {bottomPanePercent}%"
 				>
 					<!-- Tabs Bar -->
-					<div class="flex h-8 items-center border-b border-border bg-secondary px-1 text-xs">
-						<button
-							type="button"
-							class="flex items-center gap-1.5 px-3 py-1 font-mono text-[11px] tracking-wider uppercase transition-colors {activeRightTab ===
-							'tests'
-								? 'border-t-2 border-primary bg-primary font-bold text-primary-foreground'
-								: 'text-muted-foreground hover:text-foreground'}"
-							onclick={() => (activeRightTab = 'tests')}
-						>
-							<ShieldCheck class="size-3" />
-							<span>Test Result</span>
-						</button>
-						<button
-							type="button"
-							class="flex items-center gap-1.5 px-3 py-1 font-mono text-[11px] tracking-wider uppercase transition-colors {activeRightTab ===
-							'console'
-								? 'border-t-2 border-primary bg-primary font-bold text-primary-foreground'
-								: 'text-muted-foreground hover:text-foreground'}"
-							onclick={() => (activeRightTab = 'console')}
-						>
-							<Terminal class="size-3" />
-							<span>Console</span>
-						</button>
-						{#if !isSql}
+					<div
+						class="flex h-10 shrink-0 items-center gap-1 border-b border-border bg-secondary px-2 text-xs"
+						role="tablist"
+					>
+						{#each [{ id: 'tests', label: 'Test result', icon: ShieldCheck }, { id: 'console', label: 'Console', icon: Terminal }, ...(isSql ? [] : [{ id: 'custom', label: 'Custom run', icon: Play }])] as tab (tab.id)}
 							<button
 								type="button"
-								class="flex items-center gap-1.5 px-3 py-1 font-mono text-[11px] tracking-wider uppercase transition-colors {activeRightTab ===
-								'custom'
-									? 'border-t-2 border-primary bg-primary font-bold text-primary-foreground'
-									: 'text-muted-foreground hover:text-foreground'}"
-								onclick={() => (activeRightTab = 'custom')}
+								role="tab"
+								aria-selected={activeRightTab === tab.id}
+								class="flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium transition-colors {activeRightTab ===
+								tab.id
+									? 'bg-muted text-foreground'
+									: 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'}"
+								onclick={() => {
+									activeRightTab = tab.id as 'tests' | 'console' | 'custom';
+									resultsOpen = true;
+								}}
 							>
-								<span>Custom Run</span>
+								<tab.icon class="size-3.5" />
+								<span>{tab.label}</span>
 							</button>
-						{/if}
+						{/each}
+						<span
+							class="ml-auto hidden pr-1 text-xs text-muted-foreground {resultsOpen
+								? ''
+								: 'md:inline'}">Run your code to see results</span
+						>
+						<button
+							type="button"
+							class="hidden rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:flex {resultsOpen
+								? 'ml-auto'
+								: ''}"
+							title={resultsOpen ? 'Collapse results' : 'Show results'}
+							aria-label={resultsOpen ? 'Collapse results' : 'Show results'}
+							aria-expanded={resultsOpen}
+							onclick={() => (resultsOpen = !resultsOpen)}
+						>
+							{#if resultsOpen}
+								<ChevronDown class="size-4" />
+							{:else}
+								<ChevronUp class="size-4" />
+							{/if}
+						</button>
 					</div>
 
 					<!-- Tab Contents -->
-					<div class="flex-1 overflow-hidden">
+					<div class="flex-1 overflow-hidden {resultsOpen ? '' : 'md:hidden'}">
 						{#if activeRightTab === 'tests'}
-							<TestResultsView results={$testResults} ratingFeedback={visibleRatingFeedback} />
+							<TestResultsView
+								results={$testResults}
+								ratingFeedback={visibleRatingFeedback}
+								nextHref={adjacentQuestions.nextId
+									? resolve('/ide/[id]', { id: adjacentQuestions.nextId })
+									: null}
+							/>
 						{:else if activeRightTab === 'console'}
 							<OutputConsole
 								output={$consoleOutput}
@@ -857,6 +939,27 @@
 				</div>
 			</div>
 		</div>
+
+		<IdeStatusBar
+			runtimeState={$runtimeState}
+			runtimeText={runtimeStatusText}
+			language={isSql
+				? 'SQL (SQLite)'
+				: language === 'javascript'
+					? 'JavaScript'
+					: language === 'cpp'
+						? 'C++ (clang 22)'
+						: language === 'go'
+							? 'Go (Yaegi)'
+							: language === 'rust'
+								? 'Rust (rustc-wasm)'
+								: language === 'java'
+									? 'Java (CheerpJ)'
+									: 'Python 3.12'}
+			line={cursorPos.line}
+			col={cursorPos.col}
+			saved={lastSavedAt !== null}
+		/>
 	</div>
 {/if}
 
@@ -871,20 +974,59 @@
 		.ide-bottom-pane {
 			height: var(--ide-bottom-pane-percent);
 		}
+		.ide-bottom-pane.ide-bottom-collapsed {
+			height: 2.75rem;
+			min-height: 0;
+		}
 	}
 
-	/* The IDE always renders on a black background regardless of the
-	   site's light/dark toggle, so its scrollbars need their own fixed
-	   dark coloring instead of the theme-driven --border/--muted-foreground
-	   the rest of the site uses (which would go near-invisible here in
-	   light mode). */
+	/* The IDE is a workbench: a darker gutter with the guide, editor and
+	   results floating on it as rounded panels. Re-pointing the theme
+	   variables here re-skins every component inside (guide, tests, console)
+	   without touching their classes: panels use --background, panel headers
+	   --secondary, chips --muted, lines --border. */
 	:global(.ide-shell) {
-		scrollbar-color: #333333 transparent;
+		/* Theme tokens (--ide-*) come from the chosen theme as inline style on
+		   the shell (see ide-themes.ts); these fallbacks are Ember. */
+		--ide-gutter: #0d0c0b;
+		--ide-panel: #171513;
+		--ide-head: #1e1b18;
+		--ide-line: #2f2a25;
+		--ide-chip: #28231f;
+		--ide-text: #f2ede6;
+		--ide-text-2: #a99f93;
+		--ide-code: #12100e;
+		--ide-accent: #e0795a;
+		--ide-accent-fg: #1b0b04;
+		--ide-ok: #5fd39a;
+		--ide-ok-fg: #06180d;
+		--ide-bad: #e5786f;
+		--ide-warn: #ffb04a;
+		--ide-sans: 'IBM Plex Sans', var(--font-sans);
+		--ide-mono: 'IBM Plex Mono', var(--font-mono);
+		--background: var(--ide-panel);
+		--secondary: var(--ide-head);
+		--muted: var(--ide-chip);
+		--border: var(--ide-line);
+		--foreground: var(--ide-text);
+		--muted-foreground: var(--ide-text-2);
+		--primary: var(--ide-accent);
+		--primary-foreground: var(--ide-accent-fg);
+		background: var(--ide-gutter);
+		color: var(--ide-text);
+		font-family: var(--ide-sans);
+		scrollbar-color: var(--ide-line) transparent;
+	}
+	:global(.ide-shell .font-mono) {
+		font-family: var(--ide-mono);
+	}
+	:global(.ide-shell .font-sans) {
+		font-family: var(--ide-sans);
 	}
 	:global(.ide-shell *)::-webkit-scrollbar-thumb {
-		background-color: #333333;
+		background-color: var(--ide-line);
 	}
 	:global(.ide-shell *)::-webkit-scrollbar-thumb:hover {
-		background-color: #525252;
+		background-color: var(--ide-text-2);
 	}
 </style>

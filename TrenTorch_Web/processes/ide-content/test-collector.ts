@@ -49,6 +49,9 @@ def run_tests(limit=None):
             _call_test(fn)
             tests.append({"name": name, "passed": True, "error": None})
         except Exception as e:
+            if getattr(e, "skipped", False):
+                tests.append({"name": name, "passed": True, "skipped": True, "error": str(e).strip()})
+                continue
             import linecache
             import traceback
 
