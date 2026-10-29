@@ -3,6 +3,7 @@ name: sheet-maximum-points-from-cards
 title: 'Maximum Points From Cards'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: taking-cards-from-the-ends
 ---
 
 ## Statement
@@ -46,16 +47,26 @@ Output:
 - `1 <= k <= len(points) <= 200000`
 - `-10**4 <= points[i] <= 10**4`
 
-## Theory
-
-A **sliding window** is a range `[left, right]` of the data that grows on the right and shrinks on the left. Because each end only moves forward, the whole pass is `O(n)`, while the window always describes one candidate subarray or substring.
-
-Whatever you do, the `k` cards you take are always some number `i` from the **left** end and `k - i` from the **right** end. The cards you do **not** take form one contiguous block in the middle of length `n - k`.
-
-So the problem is the same as finding the **minimum-sum window of size `n - k`** and subtracting it from the total. Slide a fixed window of size `n - k` and keep the smallest window sum. `O(n)`.
-
-Looking at the complement (what you leave) is the key that turns "two ends" into one window.
-
 ## Explanation
 
 `total - min_window` is the best sum of the cards taken from the ends. When `k == n` the window is empty and everything is taken.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                          | Variables                    |
+| ---------------------------------------- | ---------------------------- |
+| `n = len(points)`                        | `n = 7`                      |
+| `size = n - k`                           | `size = 4`                   |
+| `smallest = window`                      | `window = 10, smallest = 10` |
+| `for i in range(size, n):`               | `i = 4`                      |
+| `for i in range(size, n):`               | `window = 14, i = 5`         |
+| `window += points[i] - points[i - size]` | `window = 18`                |
+| `window += points[i] - points[i - size]` | `window = 16, i = 6`         |
+| `return`                                 | `returned = 12`              |
+
+### Complexity
+
+- Time: O(n). The cards left in the middle form a window of fixed size `n - k` with the smallest sum.
+- Space: O(1). A few numbers.

@@ -3,6 +3,7 @@ name: sheet-floor-and-ceil-in-a-bst
 title: 'Floor and Ceil in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: floor-and-ceil
 ---
 
 ## Statement
@@ -49,20 +50,11 @@ Output:
 - The tree is a BST, not deeper than 800 levels.
 - `0 <= val, x <= 10**9`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-Walk down as in a search for `x`, and remember the best candidates seen on the way:
-
-- If `node.val == x`, both the floor and the ceil are `x`.
-- If `node.val < x`, this node is a floor candidate (record it), and a bigger floor can only be in the **right** subtree.
-- If `node.val > x`, this node is a ceil candidate, and a smaller ceil can only be in the **left** subtree.
-
-The last recorded floor and ceil are the answer. One path, `O(h)`.
-
 ## Explanation
 
 `floor` and `ceil` keep the closest values found so far on each side of `x` while the walk narrows the interval.
+
+### Complexity
+
+- Time: O(h). One root-to-leaf walk remembering the last smaller and the last larger value.
+- Space: O(1). Two numbers; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

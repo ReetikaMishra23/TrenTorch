@@ -3,6 +3,7 @@ name: sheet-search-rows-and-columns
 title: 'Search a Row- and Column-Sorted Matrix'
 tags: [dsa-sheet, binary-search, searching-grids]
 difficulty: Advanced
+theory: cutting-a-long-thin-grid
 ---
 
 ## Statement
@@ -46,14 +47,13 @@ False
 - `-10**9 <= matrix[i][j], target <= 10**9`
 - The big tests count how many cells you read.
 
-## Theory
-
-The flattened matrix is **not** sorted here, so the one-big-list trick fails. But you can still discard a whole row or column with each comparison if you start in the right corner.
-
-Start at the **top-right** cell. It is the biggest value in its row and the smallest in its column. Compare it with the target: if it equals the target you are done. If it is **too big**, nothing below it in its column can help (they are even bigger), so move **left**. If it is **too small**, nothing to its left in its row can help (they are even smaller), so move **down**.
-
-Each step removes a row or a column, so you take at most `rows + cols` steps: `O(rows + cols)`. It looks like a staircase walk toward the target.
-
 ## Explanation
 
-`row, col` start at the top-right. While inside the matrix, compare `matrix[row][col]` with the target: equal returns `True`, bigger moves `col` left, smaller moves `row` down. Leaving the matrix means the target is absent.
+Binary search the middle row of the current block for the first value `>= target`. If it equals `target`, done. Otherwise the target can only be in the block above-right of that spot or the block below-left of it: everything above and to the left is smaller than the target, and everything below and to the right is larger. Search those two smaller blocks the same way; when the block is wider than tall, cut along the middle row, otherwise along the middle column.
+
+This takes `O(m log(2n / m))` reads for a matrix with `m` lines on the shorter side. It beats the simple staircase walk, which costs `O(r + c)`, whenever the matrix is far from square (a single row costs only `log c`).
+
+### Complexity
+
+- Time: O(m log(2n / m)) with m = min(r, c) and n = max(r, c). Binary search the middle line of the shorter side; the answer can only be in two smaller blocks, which leaves `m` lines to search in total, each costing `log` of its share of the longer side.
+- Space: O(log m). The recursion is `log m` deep.

@@ -3,6 +3,7 @@ name: sheet-most-stones-removed
 title: 'Most Stones Removed'
 tags: [dsa-sheet, graphs, disjoint-sets]
 difficulty: Advanced
+theory: grouping-by-a-rule
 ---
 
 ## Statement
@@ -47,16 +48,26 @@ Output:
 - `0 <= x, y <= 10000`
 - No two stones share a cell.
 
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-A **disjoint set union (DSU)**, also called **union-find**, keeps track of a partition of items into groups. It supports two operations: `find(x)` returns the representative (the "leader") of the group of `x`, and `union(a, b)` merges the groups of `a` and `b`. Store a `parent` array where each item points toward its leader. Two tricks make it almost `O(1)` per operation: **path compression** (while walking up in `find`, point nodes closer to the root) and **union by size** (attach the smaller group under the larger). Two items are in the same group exactly when `find(a) == find(b)`.
-
-Call two stones **connected** if they share a row or a column. In each group of connected stones you can remove all stones **except one** (remove them in the order of a DFS from the last leaf backwards, so every removed stone still has a neighbour). Stones in different groups cannot help each other. The answer is `number of stones - number of groups`.
-
-To count groups with union-find, you do not need to compare stones: treat each **row** and each **column** as an item, and union the row `x` with the column `y` for every stone (use `y + 10001` to keep the two kinds apart). Count the distinct leaders among the stones. `O(n α)`.
-
 ## Explanation
 
 Every stone connects its row with its column; the groups of rows and columns are exactly the groups of connected stones.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                     | Variables                                                                                                                                                       |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `parent = {}`                       | `parent = {}`                                                                                                                                                   |
+| `ra, rb = find(x), find(y + 10001)` | `parent = {0: 0, 10001: 10001}, size = {0: 1, 10001: 1}, find = <function remove_stones.<locals>.find at 0x000002BDE6AF08B0>, x = 0, y = 0, ra = 0, rb = 10001` |
+| `ra, rb = find(x), find(y + 10001)` | `parent = {0: 0, 10001: 0, 10002: 10002}, size = {0: 2, 10001: 1, 10002: 1}, y = 1, rb = 10002`                                                                 |
+| `ra, rb = find(x), find(y + 10001)` | `parent = {0: 0, 10001: 0, 10002: 0, 1: 1}, size = {0: 3, 10001: 1, 10002: 1, 1: 1}, x = 1, y = 0, ra = 1, rb = 0`                                              |
+| `for x, y in stones:`               | `parent = {0: 0, 10001: 0, 10002: 0, 1: 0}, size = {0: 4, 10001: 1, 10002: 1, 1: 1}, y = 2, ra = 0, rb = 1`                                                     |
+| `for x, y in stones:`               | `parent = {0: 0, 10001: 0, 10002: 0, 1: 0, 10003: 0}, size = {0: 5, 10001: 1, 10002: 1, 1: 1, 10003: 1}, x = 2, y = 1, rb = 10003`                              |
+| `size[ra] += size[rb]`              | `parent = {0: 0, 10001: 0, 10002: 0, 1: 0, 10003: 0, 2: 0}, size = {0: 6, 10001: 1, 10002: 1, 1: 1, 10003: 1, 2: 1}, rb = 2`                                    |
+| `return`                            | `returned = 5`                                                                                                                                                  |
+
+### Complexity
+
+- Time: O(s * alpha(s)). Each stone joins its row and its column in a union-find (`s` stones); with union by size and path halving each operation is `O(alpha(n))`, which is below 5 for any input that fits in memory.
+- Space: O(s). The parent and size tables over the used rows and columns.

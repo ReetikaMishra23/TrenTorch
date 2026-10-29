@@ -3,6 +3,7 @@ name: sheet-cheapest-flights-within-k-stops
 title: 'Cheapest Flights Within K Stops'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Advanced
+theory: cheapest-flights-within-k-stops
 ---
 
 ## Statement
@@ -48,16 +49,11 @@ Output:
 - `0 <= price <= 10**4`
 - `0 <= k <= n`
 
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-Plain Dijkstra picks the cheapest route, but here a limit on the **number of edges** matters: the cheapest route may use too many stops, and a more expensive route with fewer stops may be the only valid one. So the state must include the number of flights used.
-
-**Bellman–Ford with a round limit** handles it: let `best[v]` be the cheapest known price to reach `v`. Run `k + 1` rounds; in each round, relax every flight **using the values from the previous round only** (copy the array first), so that each round adds exactly one more flight to any path. After `k + 1` rounds, `best[dst]` is the answer. `O(k · m)`.
-
-The copy is the trap: without it, one round could chain several flights and break the stop limit.
-
 ## Explanation
 
 `nxt` starts as a copy of `best`. Each flight is relaxed from the old `best`, so a path gains at most one flight per round.
+
+### Complexity
+
+- Time: O(k * e). Bellman-Ford limited to `k + 1` rounds, each round relaxes every flight once.
+- Space: O(n). Two arrays of distances.

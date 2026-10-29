@@ -3,6 +3,7 @@ name: sheet-simplify-path
 title: 'Simplify a File Path'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: walking-through-folders
 ---
 
 ## Statement
@@ -52,14 +53,11 @@ Output:
 - Letters, digits, `.`, `_` and `/`; `path` starts with `/`.
 - A name made only of three or more dots, like `...`, is an ordinary name.
 
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-Split the path on `/` to get the names. Then handle each name: an empty name or `.` means nothing, `..` goes to the parent (**pop** the stack if it is not empty), and any other name goes one level deeper (**push**). The stack is the current directory path.
-
-Finally join the stack with `/` and put a `/` in front. An empty stack gives `/`. A stack is the right tool because `..` undoes the **latest** step.
-
 ## Explanation
 
 `path.split("/")` gives empty strings for repeated slashes; they are skipped like `.`. A `..` at the root pops nothing.
+
+### Complexity
+
+- Time: O(n). One pass over the path parts.
+- Space: O(n). The stack of directory names.

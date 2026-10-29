@@ -3,6 +3,7 @@ name: sheet-single-number-ii
 title: 'Single Number, Others Three Times'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Advanced
+theory: everything-else-appears-three-times
 ---
 
 ## Statement
@@ -45,14 +46,11 @@ Output:
 - `len(nums) % 3 == 1`
 - `-2**31 <= nums[i] < 2**31`
 
-## Theory
-
-XOR cancels pairs but not triples. The fix is to count **per bit position** (mod 3): for each of the 32 bit positions, add up that bit over all numbers. A number that appears three times contributes a multiple of 3 to every position, so only the single number leaves a remainder: the sum at that position `% 3` is the single number's bit.
-
-A loop over the 32 positions works (`sum((x >> i) & 1 for x in nums) % 3`), but it reads the list 32 times. The same counting can be done for **all bits at once** with two numbers: `ones` holds the bits seen once (mod 3) and `twos` the bits seen twice. For each `x`: `ones = (ones ^ x) & ~twos`, then `twos = (twos ^ x) & ~ones`. A bit that is seen a third time is cleared from both, so only the single number remains in `ones`.
-
-That is one pass, `O(n)` time and `O(1)` memory. Python integers behave like infinitely long two's complement numbers for `^`, `&` and `~`, so negative values work without special care.
-
 ## Explanation
 
 For each bit, the number of times it is seen is a multiple of 3 for the tripled values, so only the single number's bits are left in `ones` after every value is processed.
+
+### Complexity
+
+- Time: O(n). One pass; two bit-masks count every bit position modulo 3.
+- Space: O(1). Two integers.

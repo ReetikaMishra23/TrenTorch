@@ -3,6 +3,7 @@ name: sheet-perfect-squares
 title: 'Perfect Squares'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
+theory: perfect-squares-and-word-break
 ---
 
 ## Statement
@@ -47,14 +48,28 @@ Output:
 
 - `0 <= n <= 12000`
 
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-This is **coin change** where the coins are all the perfect squares up to `n`. **State:** `fewest(i)`, the fewest squares that sum to `i`. **Transition:** `fewest(i) = 1 + min(fewest(i - k*k))` over all `k` with `k*k <= i`. **Base case:** `fewest(0) = 0`. `O(n √n)`.
-
-(Lagrange's four-square theorem says the answer is never more than 4, which gives an even faster number-theory solution, but the DP shows the general method.)
-
 ## Explanation
 
-`best[i]` starts at `i` (all ones) and improves with each square that fits.
+Two classic theorems finish this without a table. Lagrange: every positive integer is a sum of at most four squares, so the answer is 1, 2, 3 or 4. Legendre: it needs four exactly when, after removing all factors of 4, the number leaves remainder 7 when divided by 8.
+
+So check in order: a perfect square gives 1; the 4-test gives 4; a loop over `i` from 1 up to `sqrt(n)` looking for `n - i^2` being a perfect square gives 2; everything else is 3.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line    | Variables          |
+| ------------------ | ------------------ |
+| `m = n`            | `m = 12`           |
+| `m //= 4`          | `m = 3`            |
+| `rest = n - i * i` | `i = 1, rest = 11` |
+| `i += 1`           | `i = 2`            |
+| `rest = n - i * i` | `rest = 8`         |
+| `i += 1`           | `i = 3`            |
+| `i += 1`           | `i = 4, rest = 3`  |
+| `return`           | `returned = 3`     |
+
+### Complexity
+
+- Time: O(sqrt(n)). Lagrange's four-square theorem says the answer is at most 4; Legendre's three-square theorem gives exactly when it is 4 (`n = 4^a * (8b + 7)`); 1 and 2 are found by testing every square up to `sqrt(n)`.
+- Space: O(1). A few integers.

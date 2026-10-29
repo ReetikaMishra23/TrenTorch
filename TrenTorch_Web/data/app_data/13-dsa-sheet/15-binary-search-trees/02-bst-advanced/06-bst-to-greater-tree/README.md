@@ -3,6 +3,7 @@ name: sheet-bst-to-greater-tree
 title: 'BST to Greater Sum Tree'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Intermediate
+theory: greater-sum-tree-by-reverse-inorder
 ---
 
 ## Statement
@@ -49,16 +50,11 @@ Output:
 - The tree is a BST, not deeper than 800 levels.
 - `0 <= val <= 10**4`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-The new value of a node is a **suffix sum** of the sorted values: the sum of itself and everything larger. So visit the nodes from the **largest to the smallest**, keeping a running total: that is a **reverse inorder** traversal (right, node, left). At each node, add its value to the total and write the total back into the node.
-
-A single pass, `O(n)` time and `O(h)` memory.
-
 ## Explanation
 
 The traversal goes right first, so larger values are added to `total` before smaller ones. `node.val = total` after the addition includes the node's own old value.
+
+### Complexity
+
+- Time: O(n). A reverse in-order walk visits each node once while keeping a running sum.
+- Space: O(h). The stack holds one path; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

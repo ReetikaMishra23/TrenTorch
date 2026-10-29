@@ -3,6 +3,7 @@ name: sheet-symmetric-tree
 title: 'Symmetric Tree'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Beginner
+theory: same-tree-and-symmetric-tree
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ False
 - `0 <= number of nodes <= 100000`
 - The tree is not deeper than 800 levels.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-Compare **two trees at once**. Two trees `a` and `b` are mirror images when: both are empty, or both exist with equal values and **`a.left` mirrors `b.right`** and **`a.right` mirrors `b.left`** (the cross comparison is the mirror).
-
-So write a helper `mirror(a, b)` and call it on the left and right subtrees of the root. Recursion handles the rest. `O(n)`. Comparing two trees node by node, in lockstep, is a pattern you will reuse (same tree, subtree of another tree, merge two trees).
-
 ## Explanation
 
 `mirror` returns `True` for two `None`s, `False` if only one is `None` or the values differ, and otherwise checks the crossed children.
+
+### Complexity
+
+- Time: O(n). Every node is compared with its mirror once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

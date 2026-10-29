@@ -3,6 +3,7 @@ name: sheet-furthest-building-you-can-reach
 title: 'Furthest Building You Can Reach'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Advanced
+theory: regret-again-ladders-for-the-biggest-climbs
 ---
 
 ## Statement
@@ -50,14 +51,11 @@ Output:
 - `0 <= bricks <= 10**9`
 - `0 <= ladders <= len(heights)`
 
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-Ladders are best spent on the **biggest** climbs, since they cover any height; bricks are best on the small ones. But you only learn the climbs as you go, so decide **later**: when you meet a climb, tentatively use a ladder on it. Keep the climbs that currently have a ladder in a **min-heap**. When you have used more ladders than you own, take the **smallest** climb off its ladder and pay for it with bricks. If the bricks run out, you cannot go further: return the current index.
-
-That keeps the `ladders` largest climbs on ladders and the rest on bricks at every moment. `O(n log L)`.
-
 ## Explanation
 
 `heap` holds the climbs currently covered by ladders. When it grows beyond `ladders`, the smallest is moved to bricks (`bricks -= popped`). Negative bricks means this step cannot be done.
+
+### Complexity
+
+- Time: O(n log L). A min-heap of the `L` biggest climbs (the ones that get ladders); each climb is pushed and popped at most once.
+- Space: O(L). The heap, `L` = number of ladders.

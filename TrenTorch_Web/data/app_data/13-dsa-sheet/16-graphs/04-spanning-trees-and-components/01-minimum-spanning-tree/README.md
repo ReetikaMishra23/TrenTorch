@@ -3,6 +3,7 @@ name: sheet-minimum-spanning-tree
 title: 'Minimum Spanning Tree'
 tags: [dsa-sheet, graphs, spanning-trees-and-components]
 difficulty: Advanced
+theory: kruskal-cheapest-edge-first
 ---
 
 ## Statement
@@ -47,16 +48,26 @@ Output:
 - `0 <= len(edges) <= 200000`
 - `1 <= w <= 10**4`
 
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-A **disjoint set union (DSU)**, also called **union-find**, keeps track of a partition of items into groups. It supports two operations: `find(x)` returns the representative (the "leader") of the group of `x`, and `union(a, b)` merges the groups of `a` and `b`. Store a `parent` array where each item points toward its leader. Two tricks make it almost `O(1)` per operation: **path compression** (while walking up in `find`, point nodes closer to the root) and **union by size** (attach the smaller group under the larger). Two items are in the same group exactly when `find(a) == find(b)`.
-
-**Kruskal's algorithm** is greedy: sort the edges by weight; take an edge if it joins two **different** groups (use the union-find), skip it if the ends are already connected (it would close a cycle). Stop when you have `n - 1` edges. The greedy choice is safe: the lightest edge that does not close a cycle belongs to some minimum spanning tree (the _cut property_).
-
-If fewer than `n - 1` edges could be taken, the graph is disconnected: `-1`. `O(m log m)` for the sort.
-
 ## Explanation
 
 `taken` counts the accepted edges; the total weight grows with each accepted edge.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                                     | Variables                                                                                                     |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `parent = list(range(n))`                           | `parent = [0, 1, 2, 3]`                                                                                       |
+| `taken = 0`                                         | `size = [1, 1, 1, 1], find = <function mst_weight.<locals>.find at 0x000002BDE6AF1360>, total = 0, taken = 0` |
+| `parent[rb] = ra`                                   | `parent = [0, 0, 2, 3], a = 0, b = 1, w = 1, ra = 0, rb = 1`                                                  |
+| `for a, b, w in sorted(edges, key=lambda e: e[2]):` | `size = [2, 1, 1, 1], total = 1, taken = 1, a = 1, b = 2, w = 2`                                              |
+| `total += w`                                        | `parent = [0, 0, 0, 3], size = [3, 1, 1, 1], total = 3, rb = 2`                                               |
+| `parent[rb] = ra`                                   | `parent = [0, 0, 0, 0], taken = 2, a = 2, b = 3, w = 3, rb = 3`                                               |
+| `taken += 1`                                        | `size = [4, 1, 1, 1], total = 6, taken = 3`                                                                   |
+| `return`                                            | `returned = 6`                                                                                                |
+
+### Complexity
+
+- Time: O(e log e). Kruskal's algorithm: sorting the edges dominates, and the `e` union-find operations cost almost nothing extra.
+- Space: O(n + e). The union-find arrays and the sorted edges.

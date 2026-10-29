@@ -3,6 +3,7 @@ name: sheet-union-find-operations
 title: 'Union-Find Operations'
 tags: [dsa-sheet, design, classic-designs]
 difficulty: Intermediate
+theory: union-by-size-and-path-compression
 ---
 
 ## Statement
@@ -51,14 +52,11 @@ Output:
 - `0 <= len(ops) <= 100000`
 - `0 <= a, b < n`
 
-## Theory
-
-In a **design** question you build a small data structure and run a list of operations on it. The operations are given as text, one per string, and you return the answers of the operations that produce one. Think about which operations must be fast and choose the data structure for them.
-
-This is the union-find structure from the graphs topic as a class. Keep `parent[x]` (the leader chain) and `size[leader]`. `find(x)` follows the parents to the leader and **compresses the path** (points nodes closer to the leader). `union(a, b)` links the **smaller** group under the larger (**union by size**) and adds the sizes. Then `connected` is `find(a) == find(b)` and `size(a)` is `size[find(a)]`.
-
-With both tricks every operation is almost `O(1)` (inverse Ackermann time).
-
 ## Explanation
 
 `find` uses path halving. `union` swaps so the larger group's leader stays on top, and the size of the new leader grows.
+
+### Complexity
+
+- Time: O(n + q * alpha(n)). Union by size with path halving makes each operation O(alpha(n)), below 5 in practice.
+- Space: O(n). The parent and size arrays.

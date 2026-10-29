@@ -3,6 +3,7 @@ name: sheet-restore-ip-addresses
 title: 'Restore IP Addresses'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Intermediate
+theory: cutting-a-string-into-valid-pieces
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ Output:
 - `0 <= len(s) <= 14`
 - `s` contains only digits.
 
-## Theory
-
-Choose **how long each of the four parts is**: 1, 2 or 3 digits. That is a recursion of depth four with three choices each, at most 81 possibilities, so it is tiny.
-
-`go(start, parts)`: if you have four parts, the string must be fully used, and then you have an answer. Otherwise try the next part as `s[start:start + length]` for length 1, 2 or 3, and **prune** when the part is invalid (it has a leading zero, or its value is over `255`) or when the remaining digits cannot fill the remaining parts (each part takes at most 3 digits and at least 1).
-
-The validity rules (range and leading zeros) are the whole difficulty; the recursion is simple.
-
 ## Explanation
 
 With four parts the whole string must be used (`start == len(s)`). For fewer parts, every length from 1 to 3 is tried; a part is valid when it does not start with `0` (unless it is exactly `"0"`) and is at most `255`. The final list is sorted.
+
+### Complexity
+
+- Time: O(1). At most 3 choices for each of 4 parts, so 81 branches; the string has at most 12 digits.
+- Space: O(1). The output has at most a few dozen addresses.

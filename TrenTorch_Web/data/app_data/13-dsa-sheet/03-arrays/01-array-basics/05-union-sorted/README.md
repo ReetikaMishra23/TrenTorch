@@ -3,6 +3,7 @@ name: sheet-union-sorted
 title: 'Union of Two Sorted Lists'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: merging-two-sorted-lists
 ---
 
 ## Statement
@@ -44,12 +45,11 @@ Output:
 - `0 <= len(a), len(b) <= 2 * 10**5`
 - Both lists are sorted in non-decreasing order.
 
-## Theory
-
-With a `set` you could write `sorted(set(a) | set(b))`, which costs `O(n log n)`. Because both lists are already sorted, you can **merge** them in `O(n)` like the merge step of merge sort, and skip repeats as you go.
-
-Walk both lists with two pointers. Take the smaller current value (from `a` on a tie), and add it to the answer only if it differs from the last value added. Because the output is built in increasing order, a repeat is always equal to the last value added.
-
 ## Explanation
 
 Each round picks the next value: from `a` if `b` is used up or `a[i] <= b[j]`, otherwise from `b`. Then it appends the value unless it equals the last appended value. Loop until both lists are used up.
+
+### Complexity
+
+- Time: O(n + m). A merge of the two lists, each pointer only moves forward.
+- Space: O(n + m). The result list; nothing else is allocated.

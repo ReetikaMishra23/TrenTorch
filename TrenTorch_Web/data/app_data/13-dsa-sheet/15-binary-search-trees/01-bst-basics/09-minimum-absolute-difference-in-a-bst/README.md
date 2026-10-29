@@ -3,6 +3,7 @@ name: sheet-minimum-absolute-difference-in-a-bst
 title: 'Minimum Difference in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: smallest-gap-between-values
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ Output:
 - `2 <= number of nodes <= 100000`
 - The tree is a BST, not deeper than 800 levels.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-The closest two values are **neighbours in sorted order**. And the inorder traversal of a BST gives the sorted order for free. So walk the tree in inorder, keep the **previous value** visited, and take the minimum of `current - previous`. No sorting and no list of all values are needed. `O(n)` time, `O(h)` memory.
-
 ## Explanation
 
 `prev` is the value visited just before the current node in inorder. Because the order is increasing, the difference is never negative.
+
+### Complexity
+
+- Time: O(n). An in-order walk visits values in increasing order, so the best pair is a neighbour pair.
+- Space: O(h). The stack holds one path; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

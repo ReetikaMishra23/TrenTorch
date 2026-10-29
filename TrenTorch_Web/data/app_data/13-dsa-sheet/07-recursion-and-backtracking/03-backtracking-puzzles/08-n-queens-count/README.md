@@ -3,6 +3,7 @@ name: sheet-n-queens-count
 title: 'N Queens: Count the Solutions'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Advanced
+theory: queens-that-do-not-attack
 ---
 
 ## Statement
@@ -45,14 +46,11 @@ Output:
 
 - `0 <= n <= 9`
 
-## Theory
-
-Place one queen per row, from the top. Row `r` needs a column that is not attacked: not in a column already used, and not on a diagonal of an earlier queen. **Backtracking**: try each column in row `r`; if it is safe place the queen and recurse to row `r + 1`; if you reach row `n` all queens are placed (count one); then remove the queen and try the next column.
-
-To test "is this square attacked" in `O(1)`, keep **three sets**: used columns, used `r - c` values (one per `\` diagonal) and used `r + c` values (one per `/` diagonal). Squares on the same diagonal share `r - c` or `r + c`.
-
-Compare with trying all `n^n` placements, or even all `n!` column permutations: pruning the moment two queens clash removes nearly all of them.
-
 ## Explanation
 
 `go(r)` counts the solutions that extend the rows above `r`. For each column `c` that is not in `cols`, `r - c` is not in `diag1` and `r + c` is not in `diag2`, add the three markers, recurse, and remove them. Reaching `r == n` is one solution.
+
+### Complexity
+
+- Time: O(n!). One queen per row with columns and both diagonals blocked, so at most `n!` placements are explored.
+- Space: O(n). The three sets and the recursion.

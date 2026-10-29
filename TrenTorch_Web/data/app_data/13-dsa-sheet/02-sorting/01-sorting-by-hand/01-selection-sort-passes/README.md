@@ -3,6 +3,7 @@ name: sheet-selection-sort-passes
 title: 'Selection Sort, Pass by Pass'
 tags: [dsa-sheet, sorting, sorting-by-hand]
 difficulty: Beginner
+theory: selection-sort-pass-by-pass
 ---
 
 ## Statement
@@ -57,16 +58,13 @@ Pass 0 takes the leftmost 1 (index 1). Pass 1 takes the other 1. Pass 2 swaps 3 
 - `0 <= len(nums) <= 300`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-Selection sort repeats one idea: _the next smallest value belongs at the front of the unsorted part_. After pass `i` the first `i + 1` positions hold the `i + 1` smallest values in their final places.
-
-Finding the smallest of `m` items takes `m - 1` comparisons, so the passes cost `(n-1) + (n-2) + ... + 1 = n(n-1)/2` comparisons. That is `O(n²)` no matter how the input looks, even if it is already sorted. It never does more than `n - 1` swaps, which is why it is used when writing to memory is expensive.
-
-It is not **stable**: swapping the minimum across the list can jump an equal value over another one and change their original order.
-
 ## Explanation
 
 Copy the list so the input is untouched. For each `i` from `0` to `n - 2`, scan `i + 1 .. n - 1` for the index of the smallest value, using `<` so the leftmost smallest wins. Swap it into place and append a copy of the list to the result.
 
 Appending `list(a)` and not `a` matters: otherwise every snapshot would be the same list object and show only the final state.
+
+### Complexity
+
+- Time: O(n^2). About `n^2 / 2` comparisons to find the minimum of every pass, plus `n` copies of length `n`.
+- Space: O(n^2). The answer holds `n - 1` snapshots of the list, `n` values each, so this is the size of the output.

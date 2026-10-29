@@ -3,6 +3,7 @@ name: sheet-inorder-successor-in-a-bst
 title: 'Inorder Successor'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: inorder-successor
 ---
 
 ## Statement
@@ -49,16 +50,11 @@ None
 - The tree is a BST, not deeper than 800 levels.
 - `p` is a value in the tree.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-You do not need parent pointers. Search for `p` from the root, and remember the **last node where you turned left**: that node is bigger than `p` and is a candidate for the successor. Each time `node.val > p`, record it and go left (to look for a smaller value still above `p`); otherwise go right.
-
-When the walk ends, the recorded candidate is the smallest value above `p` that you passed. If you never turned left, `p` is the largest value and there is no successor. `O(h)`.
-
 ## Explanation
 
 `answer` holds the smallest node larger than `p` seen so far. Moving right means the current node is too small, so it is skipped.
+
+### Complexity
+
+- Time: O(h). One root-to-leaf walk remembering the last node that was larger.
+- Space: O(1). One pointer; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

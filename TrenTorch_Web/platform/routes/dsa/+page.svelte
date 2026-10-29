@@ -2,7 +2,7 @@
 	import { resolve } from '$app/paths';
 	import FilterBar from '$components/FilterBar.svelte';
 	import { SvelteSet } from 'svelte/reactivity';
-	import { ArrowRight, Check, ChevronDown, RotateCcw } from '@lucide/svelte';
+	import { ArrowRight, BookOpen, Check, ChevronDown, RotateCcw } from '@lucide/svelte';
 	import { dsaQuestions, dsaSteps } from '$data/dsa-sheet';
 	import {
 		countSolved,
@@ -165,6 +165,14 @@
 
 						{#if open}
 							<div id="step-body-{step.id}" class="step-body">
+								{#if step.hasTheory}
+									<a class="theory-row" href={resolve('/dsa/theory/[step]', { step: step.id })}>
+										<BookOpen class="size-4 shrink-0" aria-hidden="true" />
+										<span class="theory-row-title">{step.title} Theory</span>
+										<span class="topic-count">Read the theory</span>
+										<ArrowRight class="size-4 shrink-0" aria-hidden="true" />
+									</a>
+								{/if}
 								{#each step.topics as topic (topic.id)}
 									{@const topicKey = `${step.id}/${topic.id}`}
 									{@const topicOpen = filtering || openTopics.has(topicKey)}
@@ -378,6 +386,24 @@
 		border: 1px solid color-mix(in oklab, var(--foreground) 9%, transparent);
 		border-radius: 10px;
 		background: var(--level-topic);
+	}
+
+	.theory-row {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 12px 16px;
+		border: 1px solid color-mix(in oklab, var(--foreground) 9%, transparent);
+		border-radius: 10px;
+		background: var(--level-topic);
+		color: var(--foreground);
+	}
+	.theory-row:hover {
+		background: color-mix(in oklab, var(--level-topic) 80%, var(--foreground) 6%);
+	}
+	.theory-row-title {
+		flex: 1;
+		font-weight: 600;
 	}
 
 	.topic-head {

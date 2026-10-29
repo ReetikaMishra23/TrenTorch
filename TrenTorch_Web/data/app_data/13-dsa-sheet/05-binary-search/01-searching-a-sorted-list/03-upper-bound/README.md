@@ -3,6 +3,7 @@ name: sheet-upper-bound
 title: 'Upper Bound'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Beginner
+theory: upper-bound-first-value-larger
 ---
 
 ## Statement
@@ -52,14 +53,11 @@ Every value is greater than 0, so the answer is 0.
 - `-10**9 <= nums[i], target <= 10**9`
 - The big tests count how many values your code reads from the list (the limit is stated in the failure message). Reading every value, or using `in`, `.index`, `.count`, `min` or `sorted` on the whole list, fails them.
 
-## Theory
-
-This is the sibling of the lower bound: the same "find where `False` switches to `True`" search, with the condition changed from `nums[i] >= target` to `nums[i] > target`. That one character moves the answer past all the equal values.
-
-Together the two bounds describe a block of equal values: it starts at `lower_bound(target)` and ends just before `upper_bound(target)`. Many problems (counting occurrences, first and last position, a range of values) are two bound searches.
-
-In Python these are `bisect.bisect_right` (upper bound) and `bisect.bisect_left` (lower bound).
-
 ## Explanation
 
 The only difference from the lower bound is the comparison: a value `<= target` is not big enough, so `lo = mid + 1`; a value `> target` could be the answer, so `hi = mid`.
+
+### Complexity
+
+- Time: O(log n). The search range halves at every step.
+- Space: O(1). Two indices.

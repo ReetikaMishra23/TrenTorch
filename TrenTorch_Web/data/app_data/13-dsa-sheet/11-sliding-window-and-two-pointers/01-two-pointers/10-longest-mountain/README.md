@@ -3,6 +3,7 @@ name: sheet-longest-mountain
 title: 'Longest Mountain in an Array'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Intermediate
+theory: the-longest-mountain
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ Output:
 - `0 <= len(arr) <= 200000`
 - `0 <= arr[i] <= 10**9`
 
-## Theory
-
-**Two pointers** means keeping two positions in the data (often one at each end, or one behind the other) and moving them according to a rule, so that each position moves at most `n` times in total. That turns a double loop (`O(n²)`) into a single pass (`O(n)`).
-
-Each mountain has a peak. Scan for positions where `arr[i - 1] < arr[i] > arr[i + 1]`, and from such a peak **expand outwards**: a left pointer goes down while the values keep decreasing to the left, a right pointer goes down while they keep decreasing to the right. The mountain is `right - left + 1` long.
-
-A cleverer scan jumps `i` to `right` after each mountain, so every element is read a constant number of times: `O(n)`. (Just advancing `i` by 1 can revisit the same slope many times in some inputs, which is why you skip.)
-
 ## Explanation
 
 After a peak is found and expanded, `i` continues from `right`, because no element before `right` can be the peak of a longer mountain that also starts inside this one.
+
+### Complexity
+
+- Time: O(n). Every element is visited a constant number of times because the scan resumes after each mountain.
+- Space: O(1). A few indices.

@@ -3,6 +3,7 @@ name: sheet-non-overlapping-intervals
 title: 'Remove Overlapping Intervals'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Intermediate
+theory: removing-the-fewest-intervals
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ Output:
 - `0 <= len(intervals) <= 200000`
 - `0 <= start < end <= 10**9`
 
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-Removing the fewest intervals means **keeping the most**: this is exactly activity selection. Sort by **end time**, keep an interval if it starts at or after the end of the last kept one, and count the ones you skip. The skipped ones are the removals.
-
-The exchange argument is the same: the interval that ends first leaves the most room for the others.
-
 ## Explanation
 
 `last_end` is the end of the last kept interval. An interval that starts earlier than that overlaps it and is removed.
+
+### Complexity
+
+- Time: O(n log n). Sorting by end time dominates; the scan is one pass.
+- Space: O(n). The sorted list.

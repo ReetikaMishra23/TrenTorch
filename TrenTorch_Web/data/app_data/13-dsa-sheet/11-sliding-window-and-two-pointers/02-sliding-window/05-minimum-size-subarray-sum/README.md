@@ -3,6 +3,7 @@ name: sheet-minimum-size-subarray-sum
 title: 'Smallest Subarray With a Large Sum'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: the-shortest-block-with-a-large-sum
 ---
 
 ## Statement
@@ -49,14 +50,11 @@ Output:
 - `1 <= nums[i] <= 10**4`
 - `1 <= target <= 10**9`
 
-## Theory
-
-A **sliding window** is a range `[left, right]` of the data that grows on the right and shrinks on the left. Because each end only moves forward, the whole pass is `O(n)`, while the window always describes one candidate subarray or substring.
-
-Because all numbers are **positive**, adding numbers only increases the sum and removing them only decreases it, so a window can be grown and shrunk greedily. Expand `right` and add `nums[right]` to the sum. While the sum is `>= target`, the window is valid: record its length and **shrink from the left** (subtract `nums[left]`, advance `left`) to look for something shorter.
-
-Each index enters and leaves the window once: `O(n)`. With negative numbers this stops working (you saw the deque version in the queues topic).
-
 ## Explanation
 
 The `while` loop shrinks as long as the window is still big enough, recording each smaller valid length. If no window ever reached the target, `best` stays at infinity and `0` is returned.
+
+### Complexity
+
+- Time: O(n). Each index enters and leaves the window once (values are positive).
+- Space: O(1). A few numbers.

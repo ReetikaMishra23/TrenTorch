@@ -3,6 +3,7 @@ name: sheet-trim-a-bst
 title: 'Trim a BST'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Intermediate
+theory: trimming-to-a-range
 ---
 
 ## Statement
@@ -48,20 +49,11 @@ Output:
 - `0 <= number of nodes <= 100000`
 - The tree is a BST, not deeper than 800 levels.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-Use the order again to decide quickly what to drop:
-
-- If `node.val < low`: the node and its **whole left subtree** are too small, so the answer is the trimmed **right** subtree.
-- If `node.val > high`: the node and its whole right subtree are too large, so the answer is the trimmed **left** subtree.
-- Otherwise keep the node and trim both children.
-
-A recursive function that returns the trimmed subtree for each call does it in `O(n)`.
-
 ## Explanation
 
 Each call returns the root of the trimmed subtree, so the parent just re-attaches whatever comes back.
+
+### Complexity
+
+- Time: O(n). Every node is visited at most once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

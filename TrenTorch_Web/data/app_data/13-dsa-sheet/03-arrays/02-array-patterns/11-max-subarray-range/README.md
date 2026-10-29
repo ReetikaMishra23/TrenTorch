@@ -3,6 +3,7 @@ name: sheet-max-subarray-range
 title: 'Maximum Subarray With Its Range'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: kadane-the-best-run
 ---
 
 ## Statement
@@ -50,14 +51,11 @@ All values are negative, so the best run is the single `-1` at position 1.
 - `1 <= len(nums) <= 2 * 10**5`
 - `-10**4 <= nums[i] <= 10**4`
 
-## Theory
-
-You already know Kadane's algorithm for the best sum. To also report _where_ the best run is, track where the current run started. The rule that makes Kadane work is: **if the running sum before a value is negative, drop it and start a new run at that value**; otherwise extend the run.
-
-Keep `start` (where the current run began) next to the running sum. Whenever the running sum beats the best **strictly**, record the new best together with `start` and the current position as `end`. Using a strict comparison keeps the earliest and shortest run when there are ties, because a later run that only equals the best never replaces it.
-
-Still one pass, still `O(n)`.
-
 ## Explanation
 
 `current` is the sum of the run ending at position `i`, and `begin` is where it started. If `current` was negative before adding `nums[i]`, reset it: `current = nums[i]`, `begin = i`; otherwise add. Then `if current > best`, store `[current, begin, i]`.
+
+### Complexity
+
+- Time: O(n). Kadane with a start index: one pass, restarting whenever the running sum goes negative.
+- Space: O(1). A few variables.

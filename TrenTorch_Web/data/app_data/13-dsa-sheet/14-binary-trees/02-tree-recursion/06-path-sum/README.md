@@ -3,6 +3,7 @@ name: sheet-path-sum
 title: 'Root-to-Leaf Path Sum'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Beginner
+theory: root-to-leaf-path-sum
 ---
 
 ## Statement
@@ -49,14 +50,11 @@ False
 - The tree is not deeper than 800 levels.
 - `-1000 <= val <= 1000`, `-10**9 <= target <= 10**9`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-Pass the **remaining sum** down the recursion. At each node subtract its value from the target; the question for a child is the same question with the smaller target. At a **leaf**, the path is complete: it works exactly when the remaining target equals the leaf's value.
-
-The answer for a node is `True` if either child's subtree has a matching path (`or`). Remember that only leaves end a path: a node with a single child must continue into it.
-
 ## Explanation
 
 The leaf check `not root.left and not root.right` is where the path ends. For inner nodes the target shrinks by the node's value.
+
+### Complexity
+
+- Time: O(n). Every node is visited at most once.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

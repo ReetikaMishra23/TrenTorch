@@ -3,6 +3,7 @@ name: sheet-unique-paths
 title: 'Unique Paths'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Beginner
+theory: counting-paths-in-a-grid
 ---
 
 ## Statement
@@ -47,16 +48,11 @@ Output:
 
 - `1 <= rows, cols <= 1000`
 
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-**State:** `paths(r, c)`, the number of paths to cell `(r, c)`. **Transition:** the last move came from above or from the left: `paths(r, c) = paths(r - 1, c) + paths(r, c - 1)`. **Base cases:** the first row and the first column have exactly one path each.
-
-One row of the table is enough: while moving along a row, `row[c]` (still holding the value from the row above) plus `row[c - 1]` (already updated) gives the new `row[c]`. `O(rows × cols)` time, `O(cols)` memory.
-
-A closed formula exists too: every path has `rows - 1` downs and `cols - 1` rights in some order, so the answer is `C(rows + cols - 2, rows - 1)`.
-
 ## Explanation
 
-`row[c] += row[c - 1]` combines the cell above (old `row[c]`) and the cell to the left.
+Every path has exactly `rows - 1` down moves and `cols - 1` right moves in some order, so the number of paths is the number of ways to choose where the down moves go: `C(rows + cols - 2, rows - 1)`. `math.comb` computes that in `O(min(rows, cols))` multiplications, and the result is reduced modulo `10^9 + 7`. The grid table (`row[c] += row[c - 1]`) gives the same answer in `O(rows * cols)` and is the method to use once obstacles appear.
+
+### Complexity
+
+- Time: O(min(r, c)). Every path is a choice of which `r - 1` of the `r + c - 2` moves go down, which is the binomial coefficient `C(r + c - 2, r - 1)`.
+- Space: O(1). A few big integers.

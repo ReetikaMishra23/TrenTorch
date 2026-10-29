@@ -3,6 +3,7 @@ name: sheet-sudoku-solver
 title: 'Sudoku Solver'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Mastery
+theory: sudoku
 ---
 
 ## Statement
@@ -30,14 +31,11 @@ Output:
 - The board is 9 by 9.
 - Each puzzle has exactly one solution.
 
-## Theory
-
-Sudoku is **backtracking** on a grid. Pick an empty cell, try the digits `1` to `9` that do not clash with its row, column or box, place one, and recurse; if the rest of the puzzle cannot be completed, remove it and try the next digit.
-
-Plain left-to-right filling can take a very long time on hard puzzles. The big improvement is to always fill the cell with the **fewest possible digits** ("most constrained first"): a cell with one candidate is forced, and a cell with none means you must backtrack right away. Keep sets of the digits already used in each row, column and box so candidates are found in `O(1)`.
-
-This one search idea, "choose the most constrained choice first", is what makes many hard puzzle solvers practical.
-
 ## Explanation
 
 `rows`, `cols` and `boxes` hold the digits used so far. `go()` finds the empty cell with the fewest candidates; none means dead end (return `False`), otherwise it tries each candidate, placing it in the board and in the three sets, recursing, and undoing on failure. When no empty cell remains the puzzle is solved.
+
+### Complexity
+
+- Time: O(9^m) worst case, m = number of empty cells. Backtracking tries up to 9 digits per empty cell; always filling the cell with the fewest candidates prunes almost every branch on real puzzles, and Sudoku is NP-complete when generalised, so no polynomial method is known.
+- Space: O(1). The board is a fixed 9 x 9 and the recursion is at most 81 deep.

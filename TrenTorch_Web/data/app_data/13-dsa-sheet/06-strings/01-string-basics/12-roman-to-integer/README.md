@@ -3,6 +3,7 @@ name: sheet-roman-to-integer
 title: 'Roman Numeral to Integer'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: roman-numerals-to-numbers
 ---
 
 ## Statement
@@ -48,12 +49,11 @@ Output:
 - `1 <= len(s) <= 15`
 - `s` is a valid Roman numeral (a number from 1 to 3999) made of the seven symbols.
 
-## Theory
-
-Add the value of each symbol, except that a symbol that is **smaller than the one after it** is subtracted instead. That one rule covers all six subtractive pairs, so you do not need to list them.
-
-Walk the string with its index. For symbol `i`, compare `value[s[i]]` with `value[s[i + 1]]` (the last symbol has no next one and is always added). Keep a dictionary from symbol to value.
-
 ## Explanation
 
 `values` maps each symbol to its number. For each position, if the next symbol is bigger the current one is subtracted, otherwise added. The last symbol is added.
+
+### Complexity
+
+- Time: O(n). One pass; a symbol smaller than the next one is subtracted.
+- Space: O(1). A fixed table of seven symbols.

@@ -3,6 +3,7 @@ name: sheet-is-anagram
 title: 'Anagram Check'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: counting-with-counter
 ---
 
 ## Statement
@@ -44,12 +45,11 @@ False
 - `0 <= len(a), len(b) <= 2 * 10**5`
 - Both strings contain only lower-case letters.
 
-## Theory
-
-`collections.Counter` turns an iterable into a dictionary of `value -> how many times it appears`. Two `Counter` objects compare equal when every count matches, so `Counter(a) == Counter(b)` is the whole check, in `O(n)`.
-
-Sorting both strings and comparing also works (`O(n log n)`). The counting version is faster for long strings, and the habit of counting with a `Counter` returns in nearly every hashing problem.
-
 ## Explanation
 
 Strings with different lengths cannot be anagrams, and `Counter` equality already covers that (the counts differ). No extra length check is needed, though adding one skips the work early.
+
+### Complexity
+
+- Time: O(n + m). Each string is counted once, and the lengths are compared first.
+- Space: O(k). Two counters with at most `k = 26` letters.

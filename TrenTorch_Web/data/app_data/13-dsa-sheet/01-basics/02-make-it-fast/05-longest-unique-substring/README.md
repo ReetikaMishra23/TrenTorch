@@ -3,6 +3,7 @@ name: sheet-longest-unique-substring
 title: 'Longest Substring Without Repeats'
 tags: [dsa-sheet, basics, make-it-fast]
 difficulty: Intermediate
+theory: a-window-that-grows-and-shrinks
 ---
 
 ## Statement
@@ -66,14 +67,13 @@ The longest is `wke`.
 - `0 <= len(s) <= 2 * 10**5`
 - `s` can contain any characters.
 
-## Theory
-
-Restarting from every position repeats a lot of work. If you are scanning `abcdeb` and meet the second `b`, you do not need to go back to `b` and start over: the run can simply continue from just after the first `b`.
-
-That is a **sliding window**: keep a window `[start, i]` with no repeats and move its left edge only forward. Store the last position of each character in a dictionary. When the current character was last seen inside the window, jump `start` to one past that position. Every character is visited once, so the time is `O(n)`.
-
 ## Explanation
 
 `last[ch]` is the last index where `ch` appeared. If `last[ch] >= start`, then `ch` is already in the current window, so move `start` to `last[ch] + 1`. Then record `last[ch] = i` and update the best length `i - start + 1`.
 
 The check `last[ch] >= start` matters: a character seen long ago, before the window began, must not move `start` backwards.
+
+### Complexity
+
+- Time: O(n). The window start only moves forward, so every character is handled once.
+- Space: O(min(n, k)). The dictionary holds at most one entry per distinct character, `k` being the alphabet size.

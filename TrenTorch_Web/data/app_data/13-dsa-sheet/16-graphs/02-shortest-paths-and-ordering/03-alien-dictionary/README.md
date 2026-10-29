@@ -3,6 +3,7 @@ name: sheet-alien-dictionary
 title: 'Alien Dictionary'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Mastery
+theory: alien-dictionary
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ Output:
 - `0 <= len(words) <= 10000`
 - `1 <= len(word) <= 20`, lower-case letters.
 
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-Each pair of **neighbouring words** gives at most one fact: find the first position where they differ; the letter of the first word comes **before** the letter of the second. That is an arrow `x -> y` between letters. (If the second word is a **prefix** of the first, like `"abc"` before `"ab"`, the list is impossible.)
-
-The letters and arrows form a directed graph; the order is a **topological sort**, and the smallest one uses a min-heap with Kahn's algorithm (as in the course order question). If not all letters can be output, there is a cycle: return `""`. Only the neighbouring pairs matter, because "sorted" is transitive.
-
 ## Explanation
 
 `edges` is a set of `(x, y)` pairs, so repeated facts count once. The in-degree counts only distinct arrows.
+
+### Complexity
+
+- Time: O(S + L log L + e). `S` is the total number of characters: comparing neighbouring words gives at most one edge per pair; then a heap-based topological sort over the `L` distinct letters.
+- Space: O(L + e). The graph over at most 26 letters.

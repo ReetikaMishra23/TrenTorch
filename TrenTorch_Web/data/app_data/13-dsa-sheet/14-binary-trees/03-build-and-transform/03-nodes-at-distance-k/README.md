@@ -3,6 +3,7 @@ name: sheet-nodes-at-distance-k
 title: 'Nodes at Distance K'
 tags: [dsa-sheet, binary-trees, build-and-transform]
 difficulty: Advanced
+theory: nodes-at-distance-k
 ---
 
 ## Statement
@@ -49,16 +50,11 @@ Output:
 - The tree is not deeper than 800 levels.
 - All values are different; `0 <= k <= 100000`.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A node only knows its children, but the nodes at distance `k` can also be reached **through the parent**. The fix is to turn the tree into an **undirected graph**: first walk the tree once and record each node's **parent** (a dictionary `node -> parent`). Now you can move to `left`, `right` and `parent`.
-
-Then run a **BFS from the target**: start at distance 0, and expand level by level for `k` rounds, remembering visited nodes so you do not go back. The nodes still in the queue after `k` rounds are the answer.
-
-This "give nodes a parent pointer" step is the standard way to make tree questions about distances solvable. `O(n)`.
-
 ## Explanation
 
 `parent` is built with one DFS. The BFS visits neighbours (children and parent) that are not yet seen; after `k` rounds the frontier is exactly the nodes at distance `k`.
+
+### Complexity
+
+- Time: O(n). One pass records every parent, then a breadth-first search of at most `k` levels visits each node once.
+- Space: O(n). The parent table and the visited set.

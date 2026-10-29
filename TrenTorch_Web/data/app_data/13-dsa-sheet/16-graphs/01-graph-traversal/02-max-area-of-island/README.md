@@ -3,6 +3,7 @@ name: sheet-max-area-of-island
 title: 'Largest Island'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Beginner
+theory: flood-fill-and-counting-islands
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ Output:
 - `0 <= rows, cols <= 300`
 - Every cell is `0` or `1`.
 
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-A **grid** is a graph too: each cell is a node and its neighbours are the cells up, down, left and right (sometimes the diagonals as well).
-
-It is the previous question with one change: instead of only counting the floods, **count the cells each flood visits** and keep the maximum. A DFS or BFS returns the number of cells it marked. `O(rows * cols)`.
-
 ## Explanation
 
 `size` counts the cells taken from the stack during one flood; `best` keeps the largest.
+
+### Complexity
+
+- Time: O(r * c). Every cell is pushed and popped at most once and each has 4 neighbours.
+- Space: O(r * c). The visited grid and the stack.

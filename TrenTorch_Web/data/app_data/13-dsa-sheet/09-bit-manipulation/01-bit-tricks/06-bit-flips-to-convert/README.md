@@ -3,6 +3,7 @@ name: sheet-bit-flips-to-convert
 title: 'Bit Flips to Convert'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Beginner
+theory: how-many-bits-differ
 ---
 
 ## Statement
@@ -43,12 +44,11 @@ Output:
 
 - `0 <= a, b < 2**31`
 
-## Theory
-
-`a ^ b` (xor) has a `1` exactly where the bits of `a` and `b` **differ**. So the answer is the number of set bits of `a ^ b`, which you already know how to count.
-
-This number is called the **Hamming distance**. XOR is the natural "difference" operator for bits: `x ^ x = 0` and `x ^ 0 = x`.
-
 ## Explanation
 
 `a ^ b` marks the differing positions; Kernighan's loop counts them.
+
+### Complexity
+
+- Time: O(s). The XOR has a one exactly where the numbers differ, and the loop clears one set bit per step (`s` = number of differing bits).
+- Space: O(1). One counter.

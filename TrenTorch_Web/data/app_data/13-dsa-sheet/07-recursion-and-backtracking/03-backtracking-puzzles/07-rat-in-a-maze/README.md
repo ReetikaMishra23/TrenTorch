@@ -3,6 +3,7 @@ name: sheet-rat-in-a-maze
 title: 'Rat in a Maze'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Intermediate
+theory: recording-the-moves-of-the-rat
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ Output:
 - `0 <= rows, cols <= 6`
 - Each cell is `0` or `1`.
 
-## Theory
-
-A depth-first search that **records the path** and **backtracks**: from the current cell try each of the four moves; if the next cell is inside the grid, open and not yet used on this path, step there and continue. When you reach the goal, save the path string. Then **unmark** the cell so other paths can use it.
-
-Trying the moves in the order `D, L, R, U` (alphabetical) makes the paths come out already sorted.
-
-The difference from a shortest-path search is that you want **all** paths, so you must undo the visited marks when you backtrack: a cell that was used by one path may be used by another.
-
 ## Explanation
 
 `go(r, c)` returns immediately if the cell is closed or already on the current path. At the goal it records `"".join(path)`. Otherwise it marks the cell, tries `D, L, R, U` appending the letter to the path before each recursive call, and unmarks the cell on the way back.
+
+### Complexity
+
+- Time: O(4^(r * c)) worst case. Every cell can be tried in 4 directions; the visited marks cut paths that revisit a cell.
+- Space: O(r * c). The visited grid and the current path, plus the output.

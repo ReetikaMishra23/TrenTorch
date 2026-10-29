@@ -3,6 +3,7 @@ name: sheet-time-based-key-value-store
 title: 'Time-Based Key-Value Store'
 tags: [dsa-sheet, design, classic-designs]
 difficulty: Intermediate
+theory: a-store-with-timestamps
 ---
 
 ## Statement
@@ -51,14 +52,11 @@ Output:
 - Keys and values are lower-case words or numbers without spaces.
 - The times of the `set` operations strictly increase.
 
-## Theory
-
-In a **design** question you build a small data structure and run a list of operations on it. The operations are given as text, one per string, and you return the answers of the operations that produce one. Think about which operations must be fast and choose the data structure for them.
-
-For each key keep the list of its `(time, value)` pairs. Because the times only increase, each list is **already sorted by time**. A `get` asks for the last pair with time `<= t`: a **binary search** (`bisect_right` on the list of times, minus one).
-
-`set` is `O(1)` (append) and `get` is `O(log m)` for a key with `m` values.
-
 ## Explanation
 
 `times[key]` and `values[key]` are parallel lists. `bisect_right(times, t)` is the number of entries with time `<= t`, so the entry before that index is the answer.
+
+### Complexity
+
+- Time: O(n log n). A `set` appends in O(1) because times grow; a `get` is one binary search over the times of that key.
+- Space: O(n). All stored values.

@@ -3,6 +3,7 @@ name: sheet-dice-roll-sum
 title: 'Dice Roll Sum'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Intermediate
+theory: dice-roll-sum
 ---
 
 ## Statement
@@ -49,14 +50,11 @@ Output:
 - `1 <= faces <= 60`
 - `0 <= target <= 1000`
 
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-**State:** `ways(d, t)`, the number of ways `d` dice can sum to `t`. **Transition:** the last die shows a face `f`, so `ways(d, t) = sum of ways(d - 1, t - f)` for `f = 1..faces`. **Base case:** `ways(0, 0) = 1`.
-
-Keep one row per number of dice. The sum over `faces` terms can be made `O(1)` with a **sliding window** (or prefix sums): each new total is the previous window sum plus one entering value minus one leaving value. Then the whole thing is `O(dice × target)`.
-
 ## Explanation
 
 `row[t]` is the number of ways for the current number of dice. `prefix` makes each window sum a subtraction of two prefix values.
+
+### Complexity
+
+- Time: O(dice * target). Prefix sums make each cell of a row O(1) instead of O(faces).
+- Space: O(target). Two rows of the table.

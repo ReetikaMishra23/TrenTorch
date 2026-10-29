@@ -3,6 +3,7 @@ name: sheet-reorder-linked-list
 title: 'Reorder a Linked List'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Advanced
+theory: halve-reverse-weave
 ---
 
 ## Statement
@@ -48,16 +49,11 @@ Output:
 - `0 <= number of nodes <= 100000`
 - `-10**9 <= val <= 10**9`
 
-## Theory
-
-The pattern "front, back, front, back" is hard on a singly linked list because you cannot walk backwards. The fix is to **combine three tools**:
-
-1. Find the **middle** with slow and fast pointers and cut the list in two halves.
-2. **Reverse** the second half. Now its first node is the old last node.
-3. **Weave** the halves: take one node from the first half, then one from the reversed second half, and so on.
-
-Each step is `O(n)` and uses `O(1)` memory. The skill is recognising that a hard-looking problem is a sequence of small tools you already have.
-
 ## Explanation
 
 `slow` stops at the end of the first half (the first half is the longer one for odd lengths). The second half is cut off and reversed, and the weave loop links `first -> second -> (first.next)` repeatedly.
+
+### Complexity
+
+- Time: O(n). Find the middle, reverse the second half, then interleave the two halves; each step is one pass.
+- Space: O(1). A few pointers.

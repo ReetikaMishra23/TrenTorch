@@ -3,6 +3,7 @@ name: sheet-odd-even-linked-list
 title: 'Odd Even Linked List'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Intermediate
+theory: two-chains-odd-and-even-places
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ Output:
 - `0 <= number of nodes <= 100000`
 - `-10**9 <= val <= 10**9`
 
-## Theory
-
-Build **two chains while walking once**: an odd chain and an even chain, then join the end of the odd chain to the head of the even chain.
-
-Keep `odd` (the last node of the odd chain) and `even` (the last node of the even chain), and remember `even_head`. In each round, link `odd.next` to the node after `even`, move `odd`, then link `even.next` to the node after the new `odd`, move `even`. At the end, `odd.next = even_head`.
-
-The loop condition `while even and even.next` stops when there is no next odd node to take.
-
 ## Explanation
 
 `odd` and `even` leapfrog down the list, each skipping over the other. `even_head` was saved before any pointer changed, so the final join `odd.next = even_head` puts the even group after the odd group.
+
+### Complexity
+
+- Time: O(n). One pass relinking nodes into an odd chain and an even chain.
+- Space: O(1). A few pointers.

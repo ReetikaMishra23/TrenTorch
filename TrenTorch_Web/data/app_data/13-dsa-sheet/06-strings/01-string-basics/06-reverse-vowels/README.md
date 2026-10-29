@@ -3,6 +3,7 @@ name: sheet-reverse-vowels
 title: 'Reverse the Vowels'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: swapping-from-both-ends
 ---
 
 ## Statement
@@ -44,12 +45,11 @@ Output:
 - `0 <= len(s) <= 3 * 10**5`
 - `s` contains letters.
 
-## Theory
-
-Collect the vowels in order, reverse them, and write them back into the vowel positions. Python strings are immutable, so work on a **list of characters**, change the list, and `"".join` it at the end.
-
-A neat way to do it with two pointers: `i` from the left and `j` from the right; move each until it points at a vowel, swap, and continue inward. The version with a reversed list of vowels and an iterator is shorter: replace each vowel by the next one popped from the end.
-
 ## Explanation
 
 `vowels` is the list of vowels in order; `reversed_vowels = iter(reversed(vowels))` hands them out from the end. Scanning `s`, each vowel is replaced by the next reversed vowel and all other characters are copied unchanged.
+
+### Complexity
+
+- Time: O(n). One pass collects the vowels and one pass rebuilds the string.
+- Space: O(n). The vowel list and the result.

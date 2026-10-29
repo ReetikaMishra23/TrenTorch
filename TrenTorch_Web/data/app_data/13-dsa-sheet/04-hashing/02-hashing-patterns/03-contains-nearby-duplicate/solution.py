@@ -1,7 +1,9 @@
 def contains_nearby_duplicate(nums, k):
-    last = {}
+    window = set()
     for i, x in enumerate(nums):
-        if x in last and i - last[x] <= k:
+        if x in window:
             return True
-        last[x] = i
+        window.add(x)
+        if i >= k:
+            window.discard(nums[i - k])
     return False

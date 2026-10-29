@@ -3,6 +3,7 @@ name: sheet-binary-strings-no-adjacent-ones
 title: 'Binary Strings Without Two Ones in a Row'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Beginner
+theory: a-rule-on-the-next-choice
 ---
 
 ## Statement
@@ -44,12 +45,11 @@ Output:
 - `0 <= n <= 16`
 - The answer has about `1.6^n` strings (4,181 for `n = 18`).
 
-## Theory
-
-Build the string one character at a time, always **keeping it valid**. A `0` can always be added. A `1` can be added only if the previous character was **not** a `1`. Trying `0` first gives dictionary order.
-
-Because the rule is checked while building, every branch of the recursion can be completed into a valid string, so nothing is wasted. The count of valid strings follows the **Fibonacci** numbers: a valid string of length `n` ends in `0` (any valid string of length `n - 1` before it) or in `01` (any valid string of length `n - 2` before it), so `count(n) = count(n - 1) + count(n - 2)`.
-
 ## Explanation
 
 `go(prefix)` returns when the prefix has length `n`. It always tries adding `0`, and tries adding `1` only when the prefix is empty or does not end in `1`.
+
+### Complexity
+
+- Time: O(n * F(n)). The number of valid strings is a Fibonacci number, about `1.618^n`, and the check "no `1` after `1`" prunes the rest.
+- Space: O(n * F(n)). The output.

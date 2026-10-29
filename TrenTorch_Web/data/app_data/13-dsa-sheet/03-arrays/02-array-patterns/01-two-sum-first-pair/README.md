@@ -3,6 +3,7 @@ name: sheet-two-sum-first-pair
 title: 'Two Sum: First Pair'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Beginner
+theory: looking-back-for-a-partner
 ---
 
 ## Statement
@@ -53,14 +54,11 @@ No pair adds to 7.
 - `0 <= nums[i] <= 10**9`
 - `-1 <= target <= 2 * 10**9`
 
-## Theory
-
-Checking every pair is `O(n²)`. For each value `x` the partner you need is `target - x`, and a **dictionary** answers "is that value somewhere earlier, and where?" in `O(1)` on average.
-
-Scan left to right. For the value at position `j`, look up `target - nums[j]` among the values seen before. Store only the **first** index of each value, because you want the smallest `i`. Every matching pair `(i, j)` is found when its `j` is reached, so keep the best pair seen using the order "smaller `i` first, then smaller `j`". Stopping at the first match found would be wrong: a later `j` can pair with an earlier `i`.
-
-This "remember what you have seen in a dictionary" pattern is the foundation of most hashing problems.
-
 ## Explanation
 
 `first[v]` is the first index of value `v`. For each `j`, if `target - nums[j]` has a first index `i < j`, then `(i, j)` is a candidate. The best candidate is the smallest tuple. The scan covers every `j`, so it cannot miss a pair with a smaller `i` found later.
+
+### Complexity
+
+- Time: O(n). One pass with one dictionary lookup per element (O(1) on average).
+- Space: O(n). The dictionary of first positions.

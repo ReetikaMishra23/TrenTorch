@@ -3,6 +3,7 @@ name: sheet-meeting-rooms-ii
 title: 'Meeting Rooms'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Intermediate
+theory: which-room-is-free-first
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ Output:
 - `0 <= len(meetings) <= 100000`
 - `0 <= start < end <= 10**9`
 
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-Process the meetings in order of **start time**. Keep a min-heap of the **end times of the rooms currently in use**. For a new meeting: if the room that frees up the earliest (the heap top) is already free (`end <= start`), **reuse it** (pop it); then push this meeting's end time. The size of the heap at its largest is the number of rooms needed.
-
-Each meeting costs `O(log n)`, plus the sort: `O(n log n)` overall. Compare with the earlier "minimum platforms" question, which solved the same problem by sorting starts and ends separately.
-
 ## Explanation
 
 `rooms` holds end times. Reusing a room means replacing its end time with the new one, so the heap grows only when no room is free.
+
+### Complexity
+
+- Time: O(n log n). Sorting by start time dominates; the heap holds room end times, `O(log n)` per meeting.
+- Space: O(n). The heap and the sorted list.

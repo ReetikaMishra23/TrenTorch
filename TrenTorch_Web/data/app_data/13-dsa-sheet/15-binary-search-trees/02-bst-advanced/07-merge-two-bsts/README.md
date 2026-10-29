@@ -3,6 +3,7 @@ name: sheet-merge-two-bsts
 title: 'Merge Two BSTs into a Sorted List'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Intermediate
+theory: merging-two-bsts-into-a-sorted-list
 ---
 
 ## Statement
@@ -48,16 +49,11 @@ Output:
 - `0 <= number of nodes <= 50000` in each tree
 - Both trees are BSTs, not deeper than 800 levels.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-The inorder traversal of each tree is already sorted. So take the two sorted lists and **merge** them with two pointers, as in merge sort: `O(n + m)`, instead of collecting everything and sorting in `O((n + m) log(n + m))`.
-
-The previous topics showed how to get the inorder list with an iterative traversal.
-
 ## Explanation
 
 `inorder` returns the sorted values of one tree. The merge loop takes the smaller front value each time and appends the leftovers at the end.
+
+### Complexity
+
+- Time: O(n + m). Two in-order walks and one merge of the sorted lists.
+- Space: O(n + m). The two lists and the merged result.

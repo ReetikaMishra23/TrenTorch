@@ -3,6 +3,7 @@ name: sheet-valid-palindrome
 title: 'Valid Palindrome'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: skipping-characters-we-do-not-care-about
 ---
 
 ## Statement
@@ -44,12 +45,26 @@ False
 - `0 <= len(s) <= 3 * 10**5`
 - `s` contains printable ASCII characters.
 
-## Theory
-
-Clean the string first, then compare it with its reverse. `str.isalnum()` is `True` for letters and digits, `str.lower()` removes case differences, and `text[::-1]` reverses a string. The whole check is `O(n)`.
-
-The **two-pointer** version avoids building the cleaned string: one pointer from each end, move inward, skip characters that are not letters or digits, and compare the lower-cased characters. It uses `O(1)` extra memory, and it is the version to give in an interview.
-
 ## Explanation
 
-`cleaned` keeps only alphanumeric characters, lower-cased. The string is a palindrome when it equals its reverse. Two-pointer code would reach the same answer without the copy.
+Two pointers, one at each end. Skip any character that is not a letter or digit. When both point at letters or digits, compare them in lower case: a difference means it is not a palindrome. Move both inward; reaching the middle means it is one. An empty string, or one with only punctuation, is a palindrome.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line        | Variables         |
+| ---------------------- | ----------------- |
+| `i, j = 0, len(s) - 1` | `i = 0, j = 29`   |
+| `i += 1`               | `i = 3, j = 28`   |
+| `j -= 1`               | `i = 5, j = 25`   |
+| `j -= 1`               | `i = 8, j = 24`   |
+| `j -= 1`               | `i = 10, j = 22`  |
+| `i += 1`               | `i = 12, j = 20`  |
+| `i += 1`               | `i = 15, j = 18`  |
+| `return`               | `returned = True` |
+
+### Complexity
+
+- Time: O(n). Two pointers move toward each other, skipping non-alphanumeric characters.
+- Space: O(1). Two indices.

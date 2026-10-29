@@ -3,6 +3,7 @@ name: sheet-all-permutations
 title: 'All Permutations'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Intermediate
+theory: all-orderings
 ---
 
 ## Statement
@@ -45,14 +46,11 @@ Output:
 - All values are different.
 - `-100 <= nums[i] <= 100`
 
-## Theory
-
-A permutation is built by choosing **which value goes in each position**, one position at a time: any value that has **not been used yet** can go next. Keep a `used` flag per value. The recursive function fills position `len(current)`; it loops over all values, skips used ones, places one, recurses, and un-places it.
-
-With the values sorted, trying them in increasing order produces the permutations in dictionary order.
-
-There are `n!` permutations (5,040 for `n = 7`), which grows faster than `2^n`. That is the true cost of the problem, not a flaw in the method.
-
 ## Explanation
 
 `used[j]` says whether `a[j]` is already in the current permutation. When `current` has `len(a)` values, record a copy. Otherwise try every unused value in sorted order: mark, append, recurse, then undo both.
+
+### Complexity
+
+- Time: O(n * n!). There are `n!` permutations, and each leaf costs `O(n)` to scan and copy.
+- Space: O(n * n!). The output; the recursion adds only `O(n)`.

@@ -3,6 +3,7 @@ name: sheet-lru-cache
 title: 'LRU Cache'
 tags: [dsa-sheet, design, caches]
 difficulty: Intermediate
+theory: dictionary-plus-list
 ---
 
 ## Statement
@@ -51,12 +52,11 @@ Output:
 - `0 <= len(ops) <= 100000`
 - `0 <= key, value <= 10**9`
 
-## Theory
-
-The cache must find a key in `O(1)` **and** know which key was used least recently, moving a key to the "most recent" end in `O(1)`. A dictionary alone has no order of use; a list has the order but needs `O(n)` to find or remove a key.
-
-Combine them: a **hash map plus a doubly linked list** (the classic answer), or in Python an **`OrderedDict`**, which is exactly that. `move_to_end(key)` marks a key as most recent, and `popitem(last=False)` removes the oldest. All operations are `O(1)`.
-
 ## Explanation
 
 `cache` keeps keys in the order of use, oldest first. Reading or writing a key moves it to the end; a new key beyond the capacity evicts the first one.
+
+### Complexity
+
+- Time: O(n). `OrderedDict` gets, moves and evicts in O(1) each, with `n` operations.
+- Space: O(capacity). The cache.

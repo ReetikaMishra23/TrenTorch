@@ -3,6 +3,7 @@ name: sheet-bubble-sort-passes
 title: 'How Many Bubble Sort Passes?'
 tags: [dsa-sheet, sorting, sorting-by-hand]
 difficulty: Beginner
+theory: how-many-passes
 ---
 
 ## Statement
@@ -63,16 +64,28 @@ No swaps in the first pass, so it stops after 1.
 - `0 <= len(nums) <= 1500`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-After the first pass the largest value has "bubbled" to the end, after the second pass the second largest is in place, and so on. Each pass fixes at least one more value, so there are at most `n` passes, and each pass costs `n - 1` comparisons: `O(n²)` in the worst case.
-
-The `swapped` flag gives it a fast path. If the input is already sorted, one pass finds nothing to swap and stops in `O(n)`.
-
-A value only moves left by **one place per pass**. So a small value that starts far to the right needs many passes to arrive. The number of passes is decided by the element that has to travel left the farthest, and you can read that distance straight from the input without simulating.
-
 ## Explanation
 
-Simulating is fine at this size: copy the list, run the passes exactly as written, and count them.
+In each pass, an element that has a bigger value somewhere before it moves exactly one place to the left. So the number of passes that make a swap is the largest "how many bigger values are before me" over all elements, and the final pass without swaps adds one.
 
-There is also a shortcut. In each pass, an element that has a bigger value somewhere before it moves exactly one place left. So the number of passes with swaps is the largest "how many bigger values are before me" over all elements, and the final pass without swaps adds one.
+A Fenwick tree over the ranks of the values counts "bigger values before me" in `O(log n)` per element. Simulating the passes one by one also works at this size, in `O(n^2)`.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                                              | Variables                                                                |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| `rank = {v: i + 1 for i, v in enumerate(sorted(set(nums)))}` | `rank = {1: 1, 2: 2, 3: 3}`                                              |
+| `for seen, x in enumerate(nums):`                            | `size = 3, tree = [0, 0, 0, 0], most_bigger_before = 0, seen = 0, x = 3` |
+| `i -= i & -i`                                                | `i = 0, not_bigger = 0`                                                  |
+| `for seen, x in enumerate(nums):`                            | `tree = [0, 0, 0, 1], seen = 1, x = 2, i = 4`                            |
+| `i = rank[x]`                                                | `most_bigger_before = 1, i = 2`                                          |
+| `i = rank[x]`                                                | `tree = [0, 0, 1, 1], seen = 2, x = 1, i = 1`                            |
+| `tree[i] += 1`                                               | `tree = [0, 1, 1, 1], most_bigger_before = 2`                            |
+| `return`                                                     | `returned = 3`                                                           |
+
+### Complexity
+
+- Time: O(n log n). Each element moves left by exactly one place per pass, so the number of passes is `1 +` the largest count of bigger values to the left of any element; a Fenwick tree counts those in `log n` per element.
+- Space: O(n). The Fenwick tree and the rank table.

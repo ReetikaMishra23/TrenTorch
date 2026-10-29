@@ -3,6 +3,7 @@ name: sheet-queue-with-two-stacks
 title: 'Queue Made of Two Stacks'
 tags: [dsa-sheet, stack-and-queue, queues-and-deques]
 difficulty: Intermediate
+theory: why-it-is-fast-on-average
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ Output:
 - `0 <= len(ops) <= 200000`
 - `-10**9 <= x <= 10**9`
 
-## Theory
-
-A stack reverses the order of what you put in. **Two reversals give the original order**. Keep an `inbox` stack for `push` and an `outbox` stack for `pop` and `peek`. When the outbox is empty and you need the front, **move everything** from the inbox to the outbox, one pop and push at a time. Now the oldest value is on top of the outbox.
-
-Moving looks expensive, but each value is moved **at most once** on its way through the queue, so over `n` operations the total moving work is `O(n)`. That is called **amortized** `O(1)` per operation.
-
-The queue is empty only when both stacks are empty.
-
 ## Explanation
 
 `move()` refills the outbox only when it is empty. Between refills, `pop` and `peek` work on the outbox top, which is the front of the queue.
+
+### Complexity
+
+- Time: O(n). Every value moves from the inbox to the outbox at most once, so each operation is O(1) amortised.
+- Space: O(n). The two stacks.

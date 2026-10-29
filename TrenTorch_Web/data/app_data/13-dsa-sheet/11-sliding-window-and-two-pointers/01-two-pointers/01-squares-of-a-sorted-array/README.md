@@ -3,6 +3,7 @@ name: sheet-squares-of-a-sorted-array
 title: 'Squares of a Sorted Array'
 tags: [dsa-sheet, two-pointers, two-pointers]
 difficulty: Beginner
+theory: squares-of-a-sorted-list
 ---
 
 ## Statement
@@ -47,14 +48,11 @@ Output:
 - `-10**4 <= nums[i] <= 10**4`
 - `nums` is sorted in increasing order.
 
-## Theory
-
-**Two pointers** means keeping two positions in the data (often one at each end, or one behind the other) and moving them according to a rule, so that each position moves at most `n` times in total. That turns a double loop (`O(n²)`) into a single pass (`O(n)`).
-
-The biggest square is at one of the two **ends** of `nums`: the most negative number or the largest positive number. So put one pointer at each end, compare `|left|` and `|right|`, and write the bigger square into the answer from the **back**, moving that pointer inwards. Repeat until the pointers cross.
-
-Filling from the back is the trick: you always know the next largest square, so no sorting is needed.
-
 ## Explanation
 
 `out[i]` is filled from the last index down. The pointer with the larger absolute value supplies the next square and moves inwards.
+
+### Complexity
+
+- Time: O(n). The largest square is at one of the two ends, so two pointers fill the result from the back.
+- Space: O(n). The result list.

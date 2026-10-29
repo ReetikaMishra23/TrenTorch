@@ -3,6 +3,7 @@ name: sheet-evaluate-rpn
 title: 'Evaluate Reverse Polish Notation'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: operators-after-their-numbers
 ---
 
 ## Statement
@@ -45,16 +46,11 @@ Output:
 - The expression is valid and never divides by zero.
 - Every intermediate value fits in 64 bits.
 
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-In postfix notation, no brackets or precedence are needed. Read the tokens left to right: a number is **pushed**; an operator **pops the top two numbers**, applies the operation and **pushes the result**. At the end, one number is left.
-
-Watch the order: the first number popped is the **right** operand. For `-` and `/` this matters: with `a b -` you compute `a - b`, where `b` is popped first.
-
-Python's `//` rounds toward negative infinity, but this question wants truncation toward zero: use `int(a / b)` (safe for the sizes here) or fix the sign by hand.
-
 ## Explanation
 
 `b = stack.pop()` comes first, then `a = stack.pop()`. Division uses `int(a / b)` only when both are small enough for float division to be exact; here an integer-only test avoids precision loss: `q = abs(a) // abs(b)`, negated if the signs differ.
+
+### Complexity
+
+- Time: O(n). Each token is read once and each operator costs O(1).
+- Space: O(n). The stack of operands.

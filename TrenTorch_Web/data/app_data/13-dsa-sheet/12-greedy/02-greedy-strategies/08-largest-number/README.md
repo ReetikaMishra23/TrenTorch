@@ -3,6 +3,7 @@ name: sheet-largest-number
 title: 'Largest Number'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Advanced
+theory: largest-number-from-a-list
 ---
 
 ## Statement
@@ -46,16 +47,11 @@ Output:
 - `0 <= len(nums) <= 30000`
 - `0 <= nums[i] <= 10**9`
 
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-Sorting the numbers by value fails (`30` vs `3`: `330` is bigger than `303`). What matters is which of the two **joined strings** is bigger: put `a` before `b` if `a + b > b + a` (as text). Example: `"3" + "30" = "330"` beats `"30" + "3" = "303"`, so `3` comes first.
-
-This comparison is consistent (it is a proper ordering), so a normal sort with a custom comparison works. In Python use `functools.cmp_to_key`. Join the sorted strings; if the first one is `"0"`, all are zeros: return `"0"`.
-
-The proof that the pairwise rule gives the global best is an exchange argument: if two neighbours are in the wrong order, swapping them makes the number larger.
-
 ## Explanation
 
 `key=cmp_to_key(compare)` sorts with `a + b` versus `b + a`. A leading `"0"` after sorting means every number is zero.
+
+### Complexity
+
+- Time: O(n * d * log n). Sorting with the rule "`a + b` before `b + a`" costs `n log n` comparisons of strings of up to `d` digits.
+- Space: O(n * d). The strings.

@@ -3,6 +3,7 @@ name: sheet-count-primes
 title: 'Count Primes'
 tags: [dsa-sheet, maths, number-theory]
 difficulty: Intermediate
+theory: counting-primes-with-the-sieve
 ---
 
 ## Statement
@@ -47,14 +48,11 @@ Output:
 
 - `0 <= n <= 2000000`
 
-## Theory
-
-Many contest problems are about **numbers**, and the input is huge (up to `10^12` or more), so a loop up to `n` is far too slow. The tools: the **square root bound** (a number `n` has a divisor `<= sqrt(n)` unless it is prime), **modular arithmetic** (work with remainders so the numbers stay small), and **formulas** that replace a loop. Python's big integers make the arithmetic itself safe, but the number of steps is what you must control.
-
-The **sieve of Eratosthenes** finds all primes below `n` at once. Make a table of booleans, all true. Walk `i` from 2: if `i` is still marked prime, mark all its multiples `i*i, i*i + i, ...` as not prime (smaller multiples were already marked by smaller primes). You only need `i` up to `sqrt(n)`.
-
-The total work is `O(n log log n)`, almost linear. In Python use a `bytearray` and **slice assignment** (`sieve[i*i::i] = bytes(count)`) so the marking runs in C.
-
 ## Explanation
 
 `sieve[i]` is 1 while `i` may be prime. For each prime `i` up to `sqrt(n)`, the whole slice of its multiples is cleared at once. The answer is the sum of the remaining ones.
+
+### Complexity
+
+- Time: O(n log log n). Sieve of Eratosthenes: for each prime `p` up to `sqrt(n)` one slice assignment crosses out its multiples, and the work adds up to `n * (1/2 + 1/3 + 1/5 + ...)`.
+- Space: O(n). A byte per number.

@@ -3,6 +3,7 @@ name: sheet-count-doubling-steps
 title: 'Doubling Steps'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Beginner
+theory: doubling-is-halving-in-reverse
 ---
 
 ## Statement
@@ -57,14 +58,13 @@ Output:
 
 - `1 <= n <= 10**18`
 
-## Theory
-
-Doubling and halving are the same idea seen from two sides: both take `log₂ n` steps. A loop whose counter is multiplied each round is `O(log n)`.
-
-The tricky part is the boundary. The loop runs while `i < n`, so for `n = 8` it stops when `i` reaches `8` (3 steps), but for `n = 9` it needs one more (4 steps). The answer is the smallest `k` with `2**k >= n`.
-
 ## Explanation
 
 After `k` rounds `i = 2**k`. The loop stops at the first `k` with `2**k >= n`, which is `ceil(log₂ n)`.
 
 `(n - 1).bit_length()` computes exactly that with integers. A float `math.log2` would round wrong near powers of two for large `n`.
+
+### Complexity
+
+- Time: O(1). `bit_length()` of `n - 1` replaces a loop of about `log2(n)` doublings.
+- Space: O(1). A single integer is produced.

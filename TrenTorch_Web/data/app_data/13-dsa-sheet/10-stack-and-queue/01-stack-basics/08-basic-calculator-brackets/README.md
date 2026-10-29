@@ -3,6 +3,7 @@ name: sheet-basic-calculator-brackets
 title: 'Calculator With Brackets'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Advanced
+theory: brackets-and-minus-signs
 ---
 
 ## Statement
@@ -47,16 +48,11 @@ Output:
 - The expression is valid.
 - Every number and intermediate value fits in 64 bits.
 
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-Only `+` and `-` are involved, so no precedence is needed; brackets are the only difficulty. The key idea: **a minus in front of a bracket flips the sign of everything inside it.**
-
-Keep a running `result`, the `sign` of the next number (`+1` or `-1`), and a stack. At `(`: push the `result` so far and the `sign` in front of the bracket, then restart with `result = 0` and `sign = +1`. At `)`: the bracket is finished, so `result = saved_result + saved_sign * result` (pop both).
-
-A `-` before a number or a bracket just sets `sign = -1`, which also covers unary minus.
-
 ## Explanation
 
 `result += sign * num` is done when a number ends. The stack remembers the outside value and the sign that applies to the whole bracket.
+
+### Complexity
+
+- Time: O(n). One pass; each bracket pair pushes and pops once.
+- Space: O(n). The stack holds one entry per open bracket.

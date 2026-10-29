@@ -3,6 +3,7 @@ name: sheet-top-characters
 title: 'Most Frequent Characters'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: counting-with-counter
 ---
 
 ## Statement
@@ -51,12 +52,11 @@ Only three different characters exist, so all three are returned. `y` and `z` ti
 - `0 <= k <= 100`
 - `s` contains only lower-case letters.
 
-## Theory
-
-`Counter(s).most_common(k)` returns the `k` biggest counts, but when counts tie it keeps the order in which the characters were **first seen**, not alphabetical. It is a common trap.
-
-To control ties, sort the `(character, count)` pairs yourself with a tuple key `(-count, character)`: biggest count first, then the smaller character. The number of different characters is small (26 here), so sorting them is cheap; counting is the `O(n)` part.
-
 ## Explanation
 
 Count once with `Counter`, then sort the (at most 26) items by `(-count, char)` and cut to `k`. Slicing with `[:k]` already handles `k` larger than the number of items and `k = 0`.
+
+### Complexity
+
+- Time: O(n + k log k). One pass to count the `n` characters, then a sort of the at most `k = 26` distinct letters, so O(n) overall.
+- Space: O(k). The counter and the sorted list hold at most 26 entries.

@@ -1,6 +1,9 @@
 def minimum_length_encoding(words):
-    keep = set(words)
-    for w in words:
-        for k in range(1, len(w)):
-            keep.discard(w[k:])
-    return sum(len(w) + 1 for w in keep)
+    trie = {}
+    ends = []
+    for word in set(words):
+        node = trie
+        for ch in reversed(word):
+            node = node.setdefault(ch, {})
+        ends.append((node, len(word)))
+    return sum(length + 1 for node, length in ends if not node)

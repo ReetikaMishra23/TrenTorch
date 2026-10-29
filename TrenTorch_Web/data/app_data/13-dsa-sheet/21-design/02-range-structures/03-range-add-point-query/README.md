@@ -3,6 +3,7 @@ name: sheet-range-add-point-query
 title: 'Range Add, Point Query'
 tags: [dsa-sheet, design, range-structures]
 difficulty: Advanced
+theory: range-add-with-a-difference-array
 ---
 
 ## Statement
@@ -51,14 +52,11 @@ Output:
 - `0 <= len(ops) <= 50000`
 - `-10 <= v <= 10`
 
-## Theory
-
-In a **design** question you build a small data structure and run a list of operations on it. The operations are given as text, one per string, and you return the answers of the operations that produce one. Think about which operations must be fast and choose the data structure for them.
-
-Adding to a whole range one element at a time is `O(n)` per operation. Use a **difference array**: store `diff[i] = value[i] - value[i - 1]`. Then adding `v` to `l..r` changes only two entries: `diff[l] += v` and `diff[r + 1] -= v`. The value at `i` is the sum of `diff[0..i]`, a **prefix sum**.
-
-To make both the update and the point query `O(log n)`, keep the difference array in a **Fenwick tree**: `add(l, v)`, `add(r + 1, -v)`, and `value(i) = prefix(i)`. This is "range update, point query", a very common use of the Fenwick tree.
-
 ## Explanation
 
 The Fenwick tree stores the difference array. Two point updates mark the ends of the range; a prefix sum recovers the value.
+
+### Complexity
+
+- Time: O((n + q) log n). A range add is two updates of a Fenwick tree over differences, and a point query is one prefix sum.
+- Space: O(n). The tree.

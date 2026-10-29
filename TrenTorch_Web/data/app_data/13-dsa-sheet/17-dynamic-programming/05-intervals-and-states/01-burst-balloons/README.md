@@ -3,6 +3,7 @@ name: sheet-burst-balloons
 title: 'Burst Balloons'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Mastery
+theory: burst-balloons-and-cutting-a-stick
 ---
 
 ## Statement
@@ -48,16 +49,11 @@ Output:
 - `0 <= len(nums) <= 120`
 - `0 <= nums[i] <= 100`
 
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-The obvious state ("which balloons are left") has `2^n` values. The trick: think about which balloon is burst **last** in a range. If balloon `k` is the last one burst in the range `(i, j)` (exclusive), its neighbours at that moment are exactly the borders `i` and `j`, and the two sides `(i, k)` and `(k, j)` are independent problems.
-
-**State:** `best(i, j)`, the most coins from balloons strictly between `i` and `j`. **Transition:** `best(i, j) = max over k of best(i, k) + best(k, j) + nums[i] * nums[k] * nums[j]`. Pad `nums` with a `1` at both ends. **Order:** by increasing range length. `O(n³)`.
-
-This "choose the last one" idea is the standard interval DP.
-
 ## Explanation
 
 `dp[i][j]` is filled for increasing `j - i`. `k` runs over the balloons between the borders.
+
+### Complexity
+
+- Time: O(n^3). The table has `n^2` cells, each trying up to `n` last balloons.
+- Space: O(n^2). The table.

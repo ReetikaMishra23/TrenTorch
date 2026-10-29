@@ -3,6 +3,7 @@ name: sheet-closest-value-in-a-bst
 title: 'Closest Value in a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: closest-value-to-a-target
 ---
 
 ## Statement
@@ -49,16 +50,11 @@ Output:
 - The tree is a BST, not deeper than 800 levels.
 - `-10**9 <= target <= 10**9`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-Walk down as if searching for `target`. At each node compare its distance to `target` with the best so far (breaking ties toward the smaller value), then go left if `target` is smaller than the node and right otherwise. The closest value is always on this path: values off the path are further away than some node on the path.
-
-`O(h)` time, `O(1)` memory.
-
 ## Explanation
 
 The key `(abs(v - target), v)` makes the tie-break automatic: the smaller distance wins, and for equal distances the smaller value.
+
+### Complexity
+
+- Time: O(h). One root-to-leaf walk toward the target.
+- Space: O(1). Two numbers; `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

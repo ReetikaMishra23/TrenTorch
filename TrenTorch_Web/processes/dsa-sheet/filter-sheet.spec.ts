@@ -16,6 +16,7 @@ const steps: DsaSheetStep[] = [
 	{
 		id: 's1',
 		title: 'Step 1',
+		hasTheory: false,
 		topics: [
 			{
 				id: 't1',
@@ -28,6 +29,7 @@ const steps: DsaSheetStep[] = [
 	{
 		id: 's2',
 		title: 'Step 2',
+		hasTheory: false,
 		topics: [{ id: 't3', title: 'Topic 3', questions: [q('d', 'Beginner')] }]
 	}
 ];

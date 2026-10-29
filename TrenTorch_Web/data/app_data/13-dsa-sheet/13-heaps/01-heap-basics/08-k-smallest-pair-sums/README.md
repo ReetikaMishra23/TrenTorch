@@ -3,6 +3,7 @@ name: sheet-k-smallest-pair-sums
 title: 'K Smallest Pair Sums'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Advanced
+theory: pairs-are-secretly-sorted-lists
 ---
 
 ## Statement
@@ -49,14 +50,11 @@ Output:
 - `0 <= k <= 10000`
 - `-10**9 <= value <= 10**9`
 
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-There are `n * m` pairs, but you only need the first `k`. Think of the pairs as a grid: `sum(i, j) = nums1[i] + nums2[j]` increases along each row and each column. The smallest is `(0, 0)`. After taking `(i, j)`, the next candidates are `(i + 1, j)` and `(i, j + 1)`.
-
-A min-heap holds the candidates `(sum, i, j)`. Start with `(0, 0)` ... or, simpler, with `(i, 0)` for the first `k` values of `nums1`, and when you pop `(i, j)`, push `(i, j + 1)` only. After `k` pops you have the answer. The heap never holds more than `min(n, k)` items: `O(k log k)`.
-
 ## Explanation
 
 Starting with the first `k` rows is enough: a row index of `k` or more can never be among the `k` smallest sums, since there are `k` rows before it that are all at most as large.
+
+### Complexity
+
+- Time: O(k log k). A heap with at most `k` entries, one pop and one push per answer.
+- Space: O(k). The heap (the result is output).

@@ -3,6 +3,7 @@ name: sheet-count-frequencies
 title: 'Frequency Queries'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Beginner
+theory: counting-how-often-things-appear
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ Output:
 - `0 <= len(nums), len(queries) <= 2 * 10**5`
 - `-10**9 <= value <= 10**9`
 
-## Theory
-
-Counting one value in a list costs `O(n)`. Doing it for `q` queries costs `O(n * q)`.
-
-A **hash table** removes the repeated work. In Python a `dict` stores a value under a _key_, and finds it in `O(1)` on average by computing the key's **hash**: a number that tells where to look, instead of scanning everything. `collections.Counter` is a dictionary built for counting: `Counter(nums)` counts every value in one pass, and `counts[v]` answers a query instantly (a missing key gives `0`).
-
-The pattern is: **pay `O(n)` once to build a table, then answer each query in `O(1)`**. It appears in almost every hashing problem.
-
 ## Explanation
 
 Build `counts = Counter(nums)` once. Each query is then `counts[q]`, and a value that never appears gives `0` without raising an error. Total time is `O(n + q)`.
+
+### Complexity
+
+- Time: O(n + q). One pass to count `n` values and one lookup for each of the `q` queries.
+- Space: O(n). The counter may hold all `n` distinct values (the answer list of size `q` is output).

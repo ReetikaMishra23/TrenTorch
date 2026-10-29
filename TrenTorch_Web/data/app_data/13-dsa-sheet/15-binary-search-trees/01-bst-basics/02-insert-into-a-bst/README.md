@@ -3,6 +3,7 @@ name: sheet-insert-into-a-bst
 title: 'Insert into a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Beginner
+theory: inserting-a-new-leaf
 ---
 
 ## Statement
@@ -49,16 +50,11 @@ Output:
 - The tree is a BST, not deeper than 800 levels.
 - `val` is not already in the tree.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-Insertion is a search that ends at an empty place: the new node always becomes a **leaf**. Walk down with the same left/right rule, remembering the parent. When you reach `None`, attach the new node to the parent's left or right, depending on which side you came from.
-
-An empty tree is the special case: the new node is the root. A recursive version is shorter: `insert(None, val)` returns a new node, and `insert(node, val)` sets `node.left` or `node.right` to the result of inserting below, then returns `node`.
-
 ## Explanation
 
 The loop keeps `parent` one step behind `node`. When `node` is `None` the new leaf is attached to the correct side of `parent`.
+
+### Complexity
+
+- Time: O(h). The new value follows one root-to-leaf path.
+- Space: O(1). One pointer (one new node); `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced).

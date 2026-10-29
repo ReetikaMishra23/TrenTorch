@@ -3,6 +3,7 @@ name: sheet-climbing-stairs
 title: 'Climbing Stairs'
 tags: [dsa-sheet, dynamic-programming, sequences-and-counting]
 difficulty: Beginner
+theory: climbing-stairs
 ---
 
 ## Statement
@@ -47,14 +48,11 @@ Output:
 
 - `0 <= n <= 1000000`
 
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-**State:** `ways(i)`, the number of ways to reach step `i`. **Transition:** the last move came from step `i - 1` or step `i - 2`, so `ways(i) = ways(i - 1) + ways(i - 2)`. **Base cases:** `ways(0) = ways(1) = 1`. These are the **Fibonacci numbers**.
-
-The recursion `ways(n - 1) + ways(n - 2)` computes `ways(n - 3)` twice, `ways(n - 4)` three times, and so on: the number of calls grows exponentially. Computing the values **in order** from the bottom and keeping only the last two removes all the repetition: `O(n)` time and `O(1)` memory.
-
 ## Explanation
 
-`a` and `b` are the last two values. Each loop round shifts them forward by one step, taking the sum modulo `10**9 + 7` to keep the numbers small.
+The number of ways to climb `n` steps is the Fibonacci number `F(n + 1)`: the last move is a 1-step from `n - 1` or a 2-step from `n - 2`. Instead of adding `n` times, use fast doubling: from the pair `(F(k), F(k+1))` you get `F(2k) = F(k) * (2 * F(k+1) - F(k))` and `F(2k+1) = F(k)^2 + F(k+1)^2`, all modulo `10^9 + 7`. Recurse on `k >> 1` and step once more when `k` is odd. That is `log2(n)` levels.
+
+### Complexity
+
+- Time: O(log n). The number of ways is a Fibonacci number, and fast doubling gets `F(n)` in `log2(n)` steps.
+- Space: O(log n). The recursion is `log2(n)` deep.

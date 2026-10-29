@@ -3,6 +3,7 @@ name: sheet-k-closest-points
 title: 'K Closest Points to the Origin'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: top-k-by-a-custom-key
 ---
 
 ## Statement
@@ -46,14 +47,28 @@ Output:
 - `0 <= k <= len(points) <= 100000`
 - `-10**4 <= x, y <= 10**4`
 
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-Sorting all `n` points costs `O(n log n)`. When `k` is much smaller than `n` you can do better by keeping only the `k` best so far in a **max-heap of size `k`** (the farthest of the current `k` on top). For each new point: push it; if the heap now has more than `k` points, pop the farthest. At the end the heap holds the `k` closest points. This costs `O(n log k)`.
-
-Python's `heapq.nsmallest(k, points, key=...)` does exactly this for you. Compare squared distances: no square root is needed to compare which is closer.
-
 ## Explanation
 
-The key `(x*x + y*y, x, y)` gives the required order, including the tie-breaks. `nsmallest` returns the `k` smallest items in sorted order.
+Sort order is `(squared distance, x, y)`. Pair every point with that key and run quickselect: pick a random pivot key, split into smaller keys, equal keys and larger keys, and keep going on the side that contains the `k`-th smallest. When the pool holds exactly the points that belong in the answer, sort just those `k`. Squared distances avoid square roots and floating point.
+
+`heapq.nsmallest(k, points, key=...)` does the same with a heap in `O(n log k)`.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                                                         | Variables                                              |
+| ----------------------------------------------------------------------- | ------------------------------------------------------ |
+| `pool = [((p[0] * p[0] + p[1] * p[1], p[0], p[1]), p) for p in points]` | `pool = [((10, 1, 3), [1, 3]), ((8, -2, 2), [-2, 2])]` |
+| `chosen = []`                                                           | `chosen = []`                                          |
+| `pivot = random.choice(pool)[0]`                                        | `need = 1, pivot = (8, -2, 2)`                         |
+| `less = [item for item in pool if item[0] < pivot]`                     | `less = []`                                            |
+| `equal = [item for item in pool if item[0] == pivot]`                   | `equal = [((8, -2, 2), [-2, 2])]`                      |
+| `chosen += equal[: need - len(less)]`                                   | `chosen = [((8, -2, 2), [-2, 2])]`                     |
+| `pool = chosen`                                                         | `pool = [((8, -2, 2), [-2, 2])], need = 0`             |
+| `return`                                                                | `returned = [[-2, 2]]`                                 |
+
+### Complexity
+
+- Time: O(n + k log k) expected. Randomised quickselect on the distance keys is expected O(n), then only the `k` chosen points are sorted.
+- Space: O(n). The list of `(key, point)` pairs.

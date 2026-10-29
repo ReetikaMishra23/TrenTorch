@@ -3,6 +3,7 @@ name: sheet-linked-list-cycle-start
 title: 'Where Does the Cycle Start?'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Advanced
+theory: where-does-the-loop-begin
 ---
 
 ## Statement
@@ -50,14 +51,11 @@ No cycle: the answer is `None`, shown as `-1`.
 - `0 <= number of nodes <= 100000`
 - The cycle position `k` is `-1` or a valid index.
 
-## Theory
-
-First find out whether there is a cycle with slow and fast pointers, as in the previous question. The surprise is that the **meeting point also tells you where the cycle starts**.
-
-Say the list has `a` nodes before the cycle, and `slow` has walked `a + b` steps when they meet (`b` inside the cycle). Then `fast` has walked `2(a + b)` steps, and the extra `a + b` equals a whole number of laps of the cycle. It follows that walking `a` more steps from the meeting point brings you back to the cycle start.
-
-So: when they meet, put one pointer back at `head` and move **both one step at a time**. They meet again exactly at the first node of the cycle. If `fast` ever hits `None`, return `None`.
-
 ## Explanation
 
 After the first meeting, `slow` restarts from `head` while `fast` stays at the meeting point. Both then move one step per round; they meet at the node where the cycle begins.
+
+### Complexity
+
+- Time: O(n). Floyd's algorithm finds a meeting point; restarting one pointer at the head and moving both one step at a time makes them meet at the cycle start.
+- Space: O(1). Two pointers.

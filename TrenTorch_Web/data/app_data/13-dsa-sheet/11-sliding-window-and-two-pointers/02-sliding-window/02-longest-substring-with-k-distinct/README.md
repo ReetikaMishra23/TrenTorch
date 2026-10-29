@@ -3,6 +3,7 @@ name: sheet-longest-substring-with-k-distinct
 title: 'Longest Substring With K Distinct Characters'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: at-most-k-different-letters
 ---
 
 ## Statement
@@ -49,16 +50,11 @@ Output:
 - `0 <= k <= 26`
 - `s` contains lower-case letters.
 
-## Theory
-
-A **sliding window** is a range `[left, right]` of the data that grows on the right and shrinks on the left. Because each end only moves forward, the whole pass is `O(n)`, while the window always describes one candidate subarray or substring.
-
-This window has a **condition**: at most `k` different characters. Keep a dictionary `count` of the characters inside the window. Move `right` forward one character at a time (add it to `count`). If the window now has more than `k` different characters (`len(count) > k`), **shrink from the left** until it is valid again: decrease the count of `s[left]`, delete the key when it reaches 0, and advance `left`.
-
-After every step the window is valid; its length is a candidate answer. Every character enters and leaves once: `O(n)`.
-
-This "expand right, shrink left while invalid" loop is the standard form for the **longest valid window** questions.
-
 ## Explanation
 
 `count` maps each character in the window to how many times it appears. A key whose count drops to zero is deleted so `len(count)` stays the number of different characters.
+
+### Complexity
+
+- Time: O(n). Each index enters and leaves the window once.
+- Space: O(k). The count map has at most `k + 1` entries.

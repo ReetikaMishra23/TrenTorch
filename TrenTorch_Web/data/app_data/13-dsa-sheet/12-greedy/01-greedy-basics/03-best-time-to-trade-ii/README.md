@@ -3,6 +3,7 @@ name: sheet-best-time-to-trade-ii
 title: 'Buy and Sell Stock, Many Trades'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Beginner
+theory: take-every-rise
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ Output:
 - `0 <= len(prices) <= 200000`
 - `0 <= prices[i] <= 10**9`
 
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-Any rise over several days is the sum of the one-day rises: `price[3] - price[0] = (p1 - p0) + (p2 - p1) + (p3 - p2)`. So collecting every **positive day-to-day difference** collects every profitable trade, and skipping the negative ones avoids every loss.
-
-The greedy rule: add `max(0, prices[i] - prices[i - 1])` for every day. `O(n)`, one pass.
-
 ## Explanation
 
 Every upward step is profit you could have captured by buying the day before and selling today. A downward step is never taken.
+
+### Complexity
+
+- Time: O(n). One pass adding every rise between neighbouring days.
+- Space: O(1). A running sum.

@@ -3,6 +3,7 @@ name: sheet-subarrays-divisible-by-k
 title: 'Subarrays Divisible by K'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Advanced
+theory: remainders-instead-of-sums
 ---
 
 ## Statement
@@ -51,14 +52,11 @@ The only run has sum 5, not divisible by 9.
 - `-10**4 <= nums[i] <= 10**4`
 - `1 <= k <= 10**4`
 
-## Theory
-
-A run's sum is `prefix[b] - prefix[a]`. That difference is divisible by `k` exactly when the two prefix sums have the **same remainder** modulo `k`. So you only need to count how many earlier prefixes share the current prefix's remainder.
-
-Keep a dictionary (or list of size `k`) counting the remainders seen so far, starting with remainder `0` counted once for the empty prefix. For each new prefix compute `prefix % k`, add `seen[remainder]` to the answer, then record the remainder.
-
-Python's `%` always gives a result in `0..k-1` even for negative numbers (`-1 % 5 == 4`). In languages like C or Java a negative number can give a negative remainder, so you must fix it up there; Python spares you this classic bug.
-
 ## Explanation
 
 `seen[r]` counts earlier prefixes with remainder `r`; it starts as `{0: 1}`. Each new prefix remainder `r = prefix % k` forms a divisible run with every earlier prefix of remainder `r`, so add `seen[r]`, then `seen[r] += 1`.
+
+### Complexity
+
+- Time: O(n). One pass; two prefixes with the same remainder bound a divisible subarray.
+- Space: O(min(n, k)). The dictionary has at most one entry per remainder.

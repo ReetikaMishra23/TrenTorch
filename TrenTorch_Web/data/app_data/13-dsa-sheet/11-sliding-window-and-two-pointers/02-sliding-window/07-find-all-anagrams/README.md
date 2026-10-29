@@ -3,6 +3,7 @@ name: sheet-find-all-anagrams
 title: 'Find All Anagrams in a String'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: windows-of-letter-counts
 ---
 
 ## Statement
@@ -45,14 +46,11 @@ Output:
 - `0 <= len(s) <= 200000`
 - Lower-case letters; an empty `p` has no matches.
 
-## Theory
-
-A **sliding window** is a range `[left, right]` of the data that grows on the right and shrinks on the left. Because each end only moves forward, the whole pass is `O(n)`, while the window always describes one candidate subarray or substring.
-
-This is the same fixed window as the permutation question, but you collect **all** the positions instead of stopping at the first. Slide a window of size `len(p)`, keep its letter counts, and every time the counts equal those of `p`, the start index `i - len(p) + 1` is an answer.
-
-To avoid comparing 26 counts every step, you can keep a running number `matched` of letters whose counts are equal and update it as counts change. The simple comparison is already fast enough here.
-
 ## Explanation
 
 After processing index `i`, the window is `s[i - m + 1 .. i]`. If its counts equal `p`'s counts, `i - m + 1` is recorded.
+
+### Complexity
+
+- Time: O(n). The window moves one step at a time and comparing two 26-letter counts is O(26).
+- Space: O(1). Two arrays of 26 counts (the result list is output).

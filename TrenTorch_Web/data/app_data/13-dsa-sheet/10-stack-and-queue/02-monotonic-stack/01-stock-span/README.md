@@ -3,6 +3,7 @@ name: sheet-stock-span
 title: 'Stock Span'
 tags: [dsa-sheet, stack-and-queue, monotonic-stack]
 difficulty: Intermediate
+theory: looking-to-the-left
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ Output:
 - `0 <= len(prices) <= 200000`
 - `1 <= prices[i] <= 10**9`
 
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-The span of day `i` reaches back to the nearest earlier day with a **strictly higher** price (the "previous greater element"). Everything between them is at most `prices[i]`. So `span = i - previous_greater_index` (use `-1` if there is none).
-
-Find it with a monotonic stack of indices: pop all indices whose price is `<=` the current price (they cannot block later days either, since the current day is at least as high and later), then the top, if any, is the previous greater. Push the current index. `O(n)`.
-
 ## Explanation
 
 The stack keeps indices with strictly decreasing prices. After popping the smaller or equal ones, the top is the nearest higher price on the left.
+
+### Complexity
+
+- Time: O(n). Each index is pushed once and popped at most once.
+- Space: O(n). The stack and the result.

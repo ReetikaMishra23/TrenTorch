@@ -3,6 +3,7 @@ name: sheet-pivot-index
 title: 'Balance Point'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: left-sum-equals-right-sum
 ---
 
 ## Statement
@@ -50,12 +51,11 @@ No index balances.
 - `0 <= len(nums) <= 2 * 10**5`
 - `-10**4 <= nums[i] <= 10**4`
 
-## Theory
-
-Summing both sides for each index costs `O(n)` per index, so `O(n²)` in total. But the two sums are related. If `total` is the sum of the whole list and `left` is the sum before index `i`, then the sum on the right is `total - left - nums[i]`. So an index balances when `left == total - left - nums[i]`.
-
-Compute `total` once, then scan while keeping `left` as a **running (prefix) sum**. Each index is checked in `O(1)`: `O(n)` overall. Prefix sums are one of the most reused ideas in array problems.
-
 ## Explanation
 
 `left` starts at `0` and grows by `nums[i]` after each index is checked. The right sum is derived from the total, so no inner loop is needed. Negative values do not matter because only sums are compared.
+
+### Complexity
+
+- Time: O(n). One `sum` pass and one pass that keeps the left sum.
+- Space: O(1). Two integers.

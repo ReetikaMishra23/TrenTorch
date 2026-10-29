@@ -1,11 +1,17 @@
 def count_palindromic_substrings(s):
-    n = len(s)
-    count = 0
-    for center in range(2 * n - 1):
-        left = center // 2
-        right = left + center % 2
-        while left >= 0 and right < n and s[left] == s[right]:
-            count += 1
-            left -= 1
-            right += 1
-    return count
+    t = "#" + "#".join(s) + "#"
+    n = len(t)
+    radius = [0] * n
+    centre = right = 0
+    for i in range(n):
+        if i < right:
+            radius[i] = min(right - i, radius[2 * centre - i])
+        while (
+            i - radius[i] - 1 >= 0
+            and i + radius[i] + 1 < n
+            and t[i - radius[i] - 1] == t[i + radius[i] + 1]
+        ):
+            radius[i] += 1
+        if i + radius[i] > right:
+            centre, right = i, i + radius[i]
+    return sum((r + 1) // 2 for r in radius)

@@ -3,6 +3,7 @@ name: sheet-count-pairs
 title: 'Count the Pairs'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Beginner
+theory: pairs-and-the-staircase
 ---
 
 ## Statement
@@ -59,16 +60,13 @@ No pair fits.
 - `0 <= n <= 10**12`
 - Your function must answer instantly, even for the largest `n`.
 
-## Theory
-
-The time a program takes is, to a first approximation, how many times its innermost line runs. Counting that is the basic skill behind every complexity bound.
-
-Here the inner loop runs `n-1` times when `i = 0`, `n-2` times when `i = 1`, and so on down to `0`. The total is `(n-1) + (n-2) + ... + 1 + 0 = n(n-1)/2`.
-
-That grows like `n²`, so the code is `O(n²)`: doubling `n` makes it about four times slower. The formula answers in one step, which is `O(1)`.
-
 ## Explanation
 
 The inner loop runs `n-1-i` times for each `i`, so the total is the sum of `0..n-1`, which is `n(n-1)/2`.
 
 `n * (n - 1)` is always even (one of two neighbours is even), so `//` gives the exact answer. Python integers do not overflow, so `10**12` squared is fine.
+
+### Complexity
+
+- Time: O(1). One multiplication, one subtraction and one division on a number that fits in a machine word.
+- Space: O(1). Nothing is stored besides the input and the result.

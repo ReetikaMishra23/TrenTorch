@@ -3,6 +3,7 @@ name: sheet-jump-game
 title: 'Jump Game'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Intermediate
+theory: jump-game
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ False
 - `0 <= len(nums) <= 200000`
 - `0 <= nums[i] <= 100000`
 
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-You do not need to know _which_ jumps to make, only whether the end is reachable. Keep `far`, the **farthest index you can reach** so far. Scan the indices from left to right: if you reach an index `i` that is **beyond** `far`, you are stuck, so return `False`. Otherwise update `far = max(far, i + nums[i])`.
-
-If `far` reaches the last index, return `True`. `O(n)` time and `O(1)` memory, instead of trying all jump sequences.
-
 ## Explanation
 
 Every index up to `far` is reachable, because you can reach `far` by some jump and shorter jumps land on everything in between. An index past `far` can never be reached.
+
+### Complexity
+
+- Time: O(n). One pass keeping the furthest reachable index.
+- Space: O(1). One integer.

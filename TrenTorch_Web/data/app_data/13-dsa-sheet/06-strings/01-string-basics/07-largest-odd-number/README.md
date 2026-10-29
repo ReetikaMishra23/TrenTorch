@@ -3,6 +3,7 @@ name: sheet-largest-odd-number
 title: 'Largest Odd Number in a String'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: scanning-from-the-end
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ There is no odd digit.
 - `0 <= len(num) <= 3 * 10**5`
 - `num` contains digits and may start with `0`.
 
-## Theory
-
-A number is odd exactly when its **last digit** is odd. So the candidates are the substrings that end at an odd digit.
-
-For a fixed end, the best substring starts as early as possible, so it is a prefix: a longer string of digits is a bigger number. And the **latest** odd digit gives the longest prefix, so it beats every earlier one.
-
-So find the **last odd digit** and return everything up to and including it: `num[:i + 1]`. There is no need to compare numbers. If `num` starts with zeros the prefix keeps them: the answer is the longest substring that ends in an odd digit.
-
 ## Explanation
 
 Scan from the right for the first digit that is odd (`1 3 5 7 9`). Return the prefix up to it. If no digit is odd, return `""`.
+
+### Complexity
+
+- Time: O(n). Scan from the right until an odd digit is found, then slice.
+- Space: O(n). The returned slice.

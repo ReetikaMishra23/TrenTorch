@@ -3,6 +3,7 @@ name: sheet-binomial-coefficient-modulo
 title: 'Binomial Coefficient Modulo a Prime'
 tags: [dsa-sheet, maths, counting-and-digits]
 difficulty: Advanced
+theory: factorials-and-binomial-coefficients
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ Output:
 - `0 <= n <= 10**9`
 - `-1 <= k <= n` and `min(k, n - k) <= 10**6`
 
-## Theory
-
-Many contest problems are about **numbers**, and the input is huge (up to `10^12` or more), so a loop up to `n` is far too slow. The tools: the **square root bound** (a number `n` has a divisor `<= sqrt(n)` unless it is prime), **modular arithmetic** (work with remainders so the numbers stay small), and **formulas** that replace a loop. Python's big integers make the arithmetic itself safe, but the number of steps is what you must control.
-
-`C(n, k) = n × (n - 1) × ... × (n - k + 1) / k!`. The numbers are huge, but we only want the remainder modulo a **prime** `p = 10**9 + 7`. Division is not allowed in modular arithmetic; instead multiply by the **modular inverse**. Since `p` is prime, Fermat's little theorem gives the inverse of `x` as `x^(p-2) mod p`, computed with `pow(x, p - 2, p)`.
-
-So: numerator `= Π (n - i) mod p`, denominator `= k! mod p`, answer `= numerator × pow(denominator, p - 2, p) mod p`. Use `k = min(k, n - k)` to keep the loop short. This needs `n < p`, which holds here. `O(k)`.
-
 ## Explanation
 
 Both products are reduced modulo `p` at every step so they never grow. One `pow` at the end turns the division into a multiplication.
+
+### Complexity
+
+- Time: O(k + log mod). With `k = min(k, n - k)`, the product of `k` terms is built in a loop, then one modular inverse by fast exponentiation.
+- Space: O(1). A few integers.

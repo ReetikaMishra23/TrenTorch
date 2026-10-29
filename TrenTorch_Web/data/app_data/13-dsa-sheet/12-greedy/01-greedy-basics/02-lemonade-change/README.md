@@ -3,6 +3,7 @@ name: sheet-lemonade-change
 title: 'Lemonade Stand Change'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Beginner
+theory: greedy-with-a-small-memory
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ False
 - `0 <= len(bills) <= 200000`
 - Each bill is 5, 10 or 20.
 
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-Change for a 5 needs nothing, for a 10 needs one 5, and for a 20 needs 15: either `10 + 5` or `5 + 5 + 5`. Count your 5s and 10s. For a 20 there are two ways; the greedy rule is to **prefer `10 + 5`**, because 10s can only be used for change in this one situation, while 5s are useful in every situation (including as change for another 10). Keep the flexible bills.
-
-Process the queue, updating the counts; if you cannot make the change at any point, return `False`.
-
 ## Explanation
 
 Using the 10 first when a 20 arrives keeps as many 5s as possible. If neither way works, the answer is `False`.
+
+### Complexity
+
+- Time: O(n). One pass keeping the number of 5 and 10 bills.
+- Space: O(1). Two counters.

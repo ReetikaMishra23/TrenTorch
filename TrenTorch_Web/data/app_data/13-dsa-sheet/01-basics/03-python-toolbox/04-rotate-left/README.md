@@ -3,6 +3,7 @@ name: sheet-rotate-left
 title: 'Rotate Left'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: slicing-and-zip
 ---
 
 ## Statement
@@ -49,16 +50,13 @@ Rotating by 7 is the same as rotating by 1.
 - `0 <= k <= 10**18`
 - Do not change `nums`.
 
-## Theory
-
-Slicing copies part of a list: `nums[k:]` is everything from index `k`, and `nums[:k]` is everything before it. Rotating left by `k` is `nums[k:] + nums[:k]`, in `O(n)`.
-
-Rotating by `n` is the identity, so only `k % n` matters. Take the remainder first; this also keeps `k = 10**18` from doing anything silly. Check for an empty list before the `%`, because `k % 0` is an error.
-
-For repeated rotations at both ends, `collections.deque` has `rotate(-k)`, which is the tool to reach for when you rotate a queue many times.
-
 ## Explanation
 
 For an empty list return `[]`. Otherwise `k %= len(nums)` and return `nums[k:] + nums[:k]`.
 
 Python slices never raise an error for out-of-range indices, so `k = 0` works without a special case.
+
+### Complexity
+
+- Time: O(n). Two slices and one concatenation copy each element a constant number of times.
+- Space: O(n). A new list is required because `nums` must not change.

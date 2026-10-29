@@ -130,9 +130,10 @@
 		if (!content) return ['description', 'theory', 'solution'];
 		// DSA sheet: the solution and walkthrough open only after the question is solved.
 		if (content.metadata.kind === 'dsa') {
+			// No Theory tab: a DSA question links to its step's theory page from the Description.
 			return solved.isSolved(content.id)
-				? ['description', 'theory', 'solution', 'discussion']
-				: ['description', 'theory'];
+				? ['description', 'solution', 'discussion']
+				: ['description'];
 		}
 		const entry = potdEntries.find((e) => e.questionId === content.id);
 		if (!entry) return ['description', 'theory', 'solution'];

@@ -1,16 +1,19 @@
 def decode_string(s):
-    stack = []
-    text = ""
+    out = []
+    open_blocks = []
     num = 0
     for ch in s:
         if ch.isdigit():
             num = num * 10 + int(ch)
         elif ch == "[":
-            stack.append((text, num))
-            text, num = "", 0
+            open_blocks.append((len(out), num))
+            num = 0
         elif ch == "]":
-            saved, count = stack.pop()
-            text = saved + text * count
+            start, count = open_blocks.pop()
+            if count == 0:
+                del out[start:]
+            elif count > 1:
+                out.extend(out[start:] * (count - 1))
         else:
-            text += ch
-    return text
+            out.append(ch)
+    return "".join(out)

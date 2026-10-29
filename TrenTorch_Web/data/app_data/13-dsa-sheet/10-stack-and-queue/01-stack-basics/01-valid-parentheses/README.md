@@ -3,6 +3,7 @@ name: sheet-valid-parentheses
 title: 'Valid Brackets'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Beginner
+theory: brackets-that-must-match
 ---
 
 ## Statement
@@ -43,14 +44,11 @@ False
 
 - `0 <= len(s) <= 200000`
 
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-Brackets match like nested boxes: the **last** one opened must be the **first** one closed. That is exactly what a stack gives you. Walk through the string: push every opening bracket; for a closing bracket, the top of the stack must be its matching opening bracket (pop it), otherwise the string is invalid. At the end the stack must be empty (no bracket was left open).
-
-Two things to remember: a closing bracket with an **empty stack** is invalid, and leftover openers at the end are invalid. `O(n)` time and `O(n)` memory.
-
 ## Explanation
 
 A dictionary maps each closing bracket to its opening bracket. On a closing bracket, the stack must be non-empty and its top must be the matching opener; popping removes it.
+
+### Complexity
+
+- Time: O(n). Each character is pushed or popped at most once.
+- Space: O(n). The stack can hold all opening brackets.

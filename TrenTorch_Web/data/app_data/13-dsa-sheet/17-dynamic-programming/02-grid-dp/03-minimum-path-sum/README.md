@@ -3,6 +3,7 @@ name: sheet-minimum-path-sum
 title: 'Minimum Path Sum'
 tags: [dsa-sheet, dynamic-programming, grid-dp]
 difficulty: Beginner
+theory: blocked-cells-and-cheapest-paths
 ---
 
 ## Statement
@@ -48,12 +49,11 @@ Output:
 - `0 <= rows, cols <= 500`
 - `0 <= grid[r][c] <= 100`
 
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-**State:** `best(r, c)`, the smallest sum of a path ending at `(r, c)`. **Transition:** you arrive from above or from the left: `best(r, c) = grid[r][c] + min(best(r - 1, c), best(r, c - 1))`. **Base cases:** the first row and column have only one way in. One row of the table is enough. `O(rows × cols)`.
-
 ## Explanation
 
 `row[c]` holds `best(r - 1, c)` before the update and the new `best(r, c)` after; `row[c - 1]` is the left neighbour.
+
+### Complexity
+
+- Time: O(r * c). Every cell is computed once from its left and upper neighbours.
+- Space: O(c). One row of the table.

@@ -3,6 +3,7 @@ name: sheet-word-ladder
 title: 'Word Ladder'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Advanced
+theory: graphs-made-from-a-rule-word-ladder
 ---
 
 ## Statement
@@ -49,16 +50,11 @@ Output:
 - `1 <= len(word) <= 8`, lower-case letters, all the same length.
 - `begin` may or may not be in `words`.
 
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-The words are the **nodes**; two words are joined by an edge when they differ in one letter; the chain is a **shortest path**, so use **BFS**.
-
-The expensive part is finding the neighbours of a word: comparing it with all other words costs `O(n·L)` per word. A trick: group the words by **patterns with one wildcard**: `hot` belongs to the groups `*ot`, `h*t` and `ho*`. Two words that differ in one letter share exactly one pattern. Build a dictionary `pattern -> words` once, and the neighbours of a word are the members of its `L` patterns: `O(L)` lookups per word.
-
-Total `O(n·L²)` (with strings of length `L`), instead of `O(n²·L)`.
-
 ## Explanation
 
 `groups` maps each wildcard pattern to the words that match it. BFS pops a word, looks up its patterns, and queues the unseen words found there; `steps` counts the words in the chain.
+
+### Complexity
+
+- Time: O(N * L^2). `N` words of length `L`: every word is put in `L` pattern groups, each costing `O(L)` to build, and the search visits each word once.
+- Space: O(N * L^2). The pattern groups hold `N * L` strings of length `L`.

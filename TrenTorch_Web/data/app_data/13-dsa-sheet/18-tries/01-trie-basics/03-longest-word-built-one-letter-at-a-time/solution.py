@@ -1,9 +1,14 @@
 def longest_word(words):
+    by_length = {}
+    for word in set(words):
+        by_length.setdefault(len(word), []).append(word)
     built = {""}
     best = ""
-    for word in sorted(set(words)):
-        if word[:-1] in built:
-            built.add(word)
-            if len(word) > len(best):
-                best = word
-    return best
+    length = 1
+    while True:
+        good = [w for w in by_length.get(length, ()) if w[:-1] in built]
+        if not good:
+            return best
+        built.update(good)
+        best = min(good)
+        length += 1

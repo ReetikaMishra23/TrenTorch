@@ -3,6 +3,7 @@ name: sheet-binary-tree-paths
 title: 'All Root-to-Leaf Paths'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Intermediate
+theory: listing-all-root-to-leaf-paths
 ---
 
 ## Statement
@@ -49,16 +50,11 @@ Output:
 - The tree is not deeper than 800 levels.
 - `-100 <= val <= 100`
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-This question needs **all** answers, not one number. Carry the path so far down the recursion (a list or a string). At a leaf, record the finished path; at an inner node, recurse into the children with the path extended by the node.
-
-Passing the list and appending/popping (**backtracking**) avoids building a new list at each step; passing an immutable string builds a new one each time, which is simpler to read.
-
-The total output size can be large (a deep tree has long paths), which is why the node limit is lower here.
-
 ## Explanation
 
 `go(node, path)` extends the path with the node's value. When a node has no children, `"->".join(path)` is a finished answer. Visiting left before right gives the left-to-right order.
+
+### Complexity
+
+- Time: O(n + S). `S` is the total length of the answer strings: each leaf writes out its whole path.
+- Space: O(S). The output, plus `O(h)` for the current path.

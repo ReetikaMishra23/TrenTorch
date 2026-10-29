@@ -3,6 +3,7 @@ name: sheet-four-sum-count
 title: 'Four Lists Sum to Zero'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Advanced
+theory: four-lists-become-two-pairs
 ---
 
 ## Statement
@@ -51,14 +52,11 @@ The only tuple adds to 0.
 - `-10**6 <= value <= 10**6`
 - All four lists have length `n`.
 
-## Theory
-
-Four nested loops are `O(n⁴)`. **Split the problem in two halves.** The equation `a + b + c + d = 0` is the same as `a + b = -(c + d)`.
-
-Count every sum `a[i] + b[j]` in a dictionary (`n²` sums, `O(n²)` time). Then for every pair `c[k] + d[l]`, look up `-(c[k] + d[l])` in that dictionary and add its count. The total is `O(n²)`, a huge drop from `O(n⁴)`.
-
-This is called **meet in the middle**: instead of searching the whole space at once, build one half, store it in a hash table, and let the other half look things up.
-
 ## Explanation
 
 `Counter(x + y for x in a for y in b)` counts how many ways each sum `a + b` can be made. For each `c + d`, the number of completing pairs is `sums[-(x + y)]`, which is `0` for a missing key. Adding them all counts every tuple once.
+
+### Complexity
+
+- Time: O(n^2). All `n^2` sums of `a` and `b` are counted once, then each of the `n^2` sums of `c` and `d` is one lookup.
+- Space: O(n^2). The counter of pair sums.

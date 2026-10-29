@@ -3,6 +3,7 @@ name: sheet-longest-subarray-sum-k
 title: 'Longest Subarray With Sum K'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Intermediate
+theory: a-window-that-grows-and-shrinks
 ---
 
 ## Statement
@@ -51,16 +52,13 @@ No run adds to 5.
 - `0 <= nums[i] <= 10**4`
 - `0 <= k <= 10**9`
 
-## Theory
-
-Trying every start and end is `O(n²)`. Because no value is negative, adding a value to a run can only **increase** its sum, and removing a value from the front can only **decrease** it. That monotonic behaviour lets you use a **sliding window**.
-
-Keep a window `[left, right]` and its sum. Move `right` forward and add the value. While the sum is too big, remove values from the left. When the sum equals `k`, record the window length. Each value enters and leaves the window at most once, so the total work is `O(n)`.
-
-This only works for non-negative values. With negative values the sum is no longer monotonic, and you need prefix sums and a dictionary instead.
-
 ## Explanation
 
 `total` is the sum of `nums[left..right]`. After adding `nums[right]`, shrink from the left while `total > k`. Then check `total == k` and update `best`. If `left` passes `right` the window is empty with sum `0`; recording its length `0` changes nothing.
 
 `k = 0` works too: a run of zeros has sum `0`, and the window keeps all of them.
+
+### Complexity
+
+- Time: O(n). Values are non-negative, so a sliding window works and each pointer only moves forward.
+- Space: O(1). Two pointers and a running sum.

@@ -26,6 +26,8 @@ export interface DsaSheetTopic {
 export interface DsaSheetStep {
 	id: string;
 	title: string;
+	// The step has a theory page (/dsa/theory/<id>).
+	hasTheory: boolean;
 	topics: DsaSheetTopic[];
 }
 export interface DsaSheet {
@@ -57,6 +59,8 @@ export interface GeneratedQuestion {
 	signature?: DsaSignature;
 	// DSA sheet: further reading, shown under the keywords (from references.json).
 	references?: { title: string; url: string }[];
+	// DSA sheet: the step's theory page and the heading anchor to link to.
+	theory?: { step: string; anchor: string };
 	tools?: string[];
 	topic?: string;
 	root: string;

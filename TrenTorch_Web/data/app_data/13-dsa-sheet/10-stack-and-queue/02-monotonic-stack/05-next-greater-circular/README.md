@@ -3,6 +3,7 @@ name: sheet-next-greater-circular
 title: 'Next Greater Element in a Circle'
 tags: [dsa-sheet, stack-and-queue, monotonic-stack]
 difficulty: Intermediate
+theory: going-around-a-circle
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ Output:
 - `0 <= len(nums) <= 200000`
 - `-10**9 <= nums[i] <= 10**9`
 
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-A circle can be handled by **walking the list twice**. Run the usual monotonic stack over indices `0 .. 2n - 1`, using `nums[i % n]` as the value. Only push an index in the first lap (`i < n`): the second lap is only there to answer the indices still waiting.
-
-Everything else is the same as in the plain next greater element question. `O(n)`.
-
 ## Explanation
 
 In the second lap values only answer waiting indices; they are not pushed again, so every index is answered at most once.
+
+### Complexity
+
+- Time: O(n). Two laps over the array, each index pushed once and popped at most once.
+- Space: O(n). The stack and the result.

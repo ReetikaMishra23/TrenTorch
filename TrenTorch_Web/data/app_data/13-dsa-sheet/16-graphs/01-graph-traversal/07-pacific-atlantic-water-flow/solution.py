@@ -22,4 +22,9 @@ def pacific_atlantic(heights):
     atlantic = flood(
         [(r, cols - 1) for r in range(rows)] + [(rows - 1, c) for c in range(cols)]
     )
-    return [list(cell) for cell in sorted(pacific & atlantic)]
+    return [
+        [r, c]
+        for r in range(rows)
+        for c in range(cols)
+        if (r, c) in pacific and (r, c) in atlantic
+    ]

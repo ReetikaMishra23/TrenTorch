@@ -3,6 +3,7 @@ name: sheet-letter-combinations
 title: 'Phone Keypad Letters'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Beginner
+theory: a-menu-for-every-position
 ---
 
 ## Statement
@@ -46,14 +47,11 @@ Output:
 - `0 <= len(digits) <= 8`
 - Every character is a digit from `2` to `9`.
 
-## Theory
-
-At each digit you **choose one of its letters**, then move on to the next digit: a recursion of depth `len(digits)`, branching 3 or 4 ways each time. The base case is when every digit has been used: record the string built so far.
-
-Because the letters of a key are in alphabetical order and you handle the digits left to right, the results come out in dictionary order without sorting.
-
-You can also do it iteratively: start with `[""]` and for each digit replace every string `s` by `s + letter` for each letter. That is the same idea written as a loop (`itertools.product` does it too).
-
 ## Explanation
 
 `go(i, prefix)` appends each letter of digit `i` to the prefix and recurses to the next digit; at `i == len(digits)` the prefix is a full answer. An empty digit string returns `[]`, not `[""]`.
+
+### Complexity
+
+- Time: O(n * 4^n). There are at most `4^n` combinations of `n` digits, each of length `n`.
+- Space: O(n * 4^n). The output.

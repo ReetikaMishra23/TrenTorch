@@ -3,6 +3,7 @@ name: sheet-connect-ropes
 title: 'Connect Ropes With Minimum Cost'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: join-the-cheapest-pair
 ---
 
 ## Statement
@@ -48,14 +49,11 @@ Output:
 - `0 <= len(ropes) <= 100000`
 - `1 <= ropes[i] <= 10**4`
 
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-A rope that is joined early gets **counted again** in every later join that contains it. So the long ropes should be joined **last**, and the short ones first: always join the **two shortest** ropes. (This is the same idea as building a Huffman code.)
-
-A min-heap gives the two shortest ropes in `O(log n)`: pop two, add their sum to the total, push the sum back. Repeat until one rope is left. `O(n log n)`.
-
 ## Explanation
 
 Each loop pops the two smallest, adds the cost and pushes the new rope. The heap shrinks by one each round.
+
+### Complexity
+
+- Time: O(n log n). Each of `n - 1` joins pops two ropes and pushes one, `O(log n)` each; always joining the two shortest is optimal (Huffman).
+- Space: O(n). The heap.

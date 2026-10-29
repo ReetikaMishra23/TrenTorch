@@ -1,5 +1,5 @@
 def nth_root(n, m):
-    lo, hi = 1, n
+    lo, hi = 1, 1 << (n.bit_length() // m + 1)
     while lo <= hi:
         mid = (lo + hi) // 2
         power = mid**m

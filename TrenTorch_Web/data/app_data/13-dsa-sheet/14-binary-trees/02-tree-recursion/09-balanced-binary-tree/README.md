@@ -3,6 +3,7 @@ name: sheet-balanced-binary-tree
 title: 'Balanced Binary Tree'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Intermediate
+theory: balanced-tree-check
 ---
 
 ## Statement
@@ -48,16 +49,11 @@ False
 - `0 <= number of nodes <= 100000`
 - The tree is not deeper than 800 levels.
 
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-The natural solution checks each node's balance using a `height` function that walks the whole subtree: that repeats work, `O(n²)` in a thin tree.
-
-Do both in **one pass**: let the recursion return the height, or a **signal value** (`-1`) meaning "this subtree is already unbalanced". For a node: get the left and right results; if either is `-1`, or their difference is above 1, return `-1`; otherwise return `1 + max(left, right)`. The tree is balanced when the root's result is not `-1`.
-
-This "return the answer plus the failure in one number" trick makes it `O(n)`.
-
 ## Explanation
 
 `check(node)` returns the height, or `-1` if any node below is unbalanced. The first `-1` bubbles up unchanged.
+
+### Complexity
+
+- Time: O(n). Heights are computed bottom up and the search stops at the first unbalanced node.
+- Space: O(h). `h` is the height of the tree (`O(n)` in the worst case, `O(log n)` if it is balanced) for the recursion.

@@ -3,6 +3,7 @@ name: sheet-minimum-cost-to-cut-a-stick
 title: 'Minimum Cost to Cut a Stick'
 tags: [dsa-sheet, dynamic-programming, intervals-and-states]
 difficulty: Mastery
+theory: burst-balloons-and-cutting-a-stick
 ---
 
 ## Statement
@@ -49,14 +50,28 @@ Output:
 - `0 <= len(cuts) <= 100`
 - `1 <= cut < length`, all different
 
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-Like burst balloons, think of the **first cut** of a piece. Sort the cuts and add the ends `0` and `length`. For the piece between positions `i` and `j` (indices in this list), choosing the first cut at `k` costs the piece length `points[j] - points[i]` and splits the problem into two independent pieces `(i, k)` and `(k, j)`.
-
-**State:** `cost(i, j)`. **Transition:** `cost(i, j) = points[j] - points[i] + min over k of cost(i, k) + cost(k, j)`. **Base case:** a piece with no cut inside costs 0. Fill by increasing range. `O(m³)` for `m` cuts.
-
 ## Explanation
 
-`points` includes both ends; `dp[i][j]` covers the piece between `points[i]` and `points[j]` and `k` is the first cut made in it.
+Add the two ends to the cut points and sort. `dp[i][j]` is the cheapest way to make all cuts strictly between points `i` and `j`: choose the first cut `k` there, pay the length `points[j] - points[i]`, and solve the two halves.
+
+Trying every `k` makes `O(m^3)`. But the best `k` for `(i, j)` never lies left of the best `k` for `(i, j - 1)` nor right of the best `k` for `(i + 1, j)` (Knuth's optimisation). Remember the best `k` of each cell and only search between those two, and the searches along each diagonal add up to `O(m)`.
+
+### Worked example
+
+The solution run on example 1, one step at a time. The values are recorded from the real code.
+
+| After this line                          | Variables                                                                                                                                                                                                    |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `points = [0] + sorted(cuts) + [length]` | `points = [0, 1, 3, 4, 5, 7]`                                                                                                                                                                                |
+| `low = max(i + 1, best_cut[i][j - 1])`   | `n = 6, dp = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, ..., best_cut = [[0, 1, 0, 0, 0, 0], [0, 0, 2, 0, 0, 0], [0, 0, 0, 3, 0, ..., i = 0, span = 2, j = 2, low = 1`                         |
+| `for i in range(n - span):`              | `dp = [[0, 0, 3, 0, 0, 0], [0, 0, 0, 3, 0, 0], [0, 0, 0, 0, 0, ..., best_cut = [[0, 1, 1, 0, 0, 0], [0, 0, 2, 2, 0, 0], [0, 0, 0, 3, 0, ..., i = 2, j = 3, low = 2, high = 2, best = 0, k = 2, value = 0`    |
+| `for span in range(2, n):`               | `dp = [[0, 0, 3, 0, 0, 0], [0, 0, 0, 3, 0, 0], [0, 0, 0, 0, 2, ..., best_cut = [[0, 1, 1, 0, 0, 0], [0, 0, 2, 2, 0, 0], [0, 0, 0, 3, 3, ..., i = 3, span = 3, j = 5, low = 4, high = 4, k = 4`               |
+| `value = dp[i][k] + dp[k][j]`            | `dp = [[0, 0, 3, 7, 0, 0], [0, 0, 0, 3, 0, 0], [0, 0, 0, 0, 2, ..., best_cut = [[0, 1, 1, 1, 0, 0], [0, 0, 2, 2, 0, 0], [0, 0, 0, 3, 3, ..., i = 1, j = 4, low = 2, high = 3, best = None, k = 2, value = 2` |
+| `for i in range(n - span):`              | `dp = [[0, 0, 3, 7, 0, 0], [0, 0, 0, 3, 6, 0], [0, 0, 0, 0, 2, ..., best_cut = [[0, 1, 1, 1, 0, 0], [0, 0, 2, 2, 2, 0], [0, 0, 0, 3, 3, ..., i = 0, span = 4, j = 5, low = 3, high = 4, best = 2, k = 4`     |
+| `high = min(j - 1, best_cut[i + 1][j])`  | `dp = [[0, 0, 3, 7, 10, 0], [0, 0, 0, 3, 6, 0], [0, 0, 0, 0, 2,..., best_cut = [[0, 1, 1, 1, 2, 0], [0, 0, 2, 2, 2, 0], [0, 0, 0, 3, 3, ..., i = 1, low = 2, best = 5, k = 2, value = 5`                     |
+| `return`                                 | `returned = 16`                                                                                                                                                                                              |
+
+### Complexity
+
+- Time: O(m^2). Knuth's optimisation: the best cut for `[i, j]` lies between the best cuts for `[i, j - 1]` and `[i + 1, j]`, so each diagonal of the `m x m` table costs only O(m) in total.
+- Space: O(m^2). The cost table and the best-cut table (`m` = number of cuts + 2).

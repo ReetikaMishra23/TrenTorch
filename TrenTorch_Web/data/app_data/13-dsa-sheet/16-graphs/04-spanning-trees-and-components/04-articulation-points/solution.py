@@ -5,7 +5,7 @@ def articulation_points(n, edges):
         adj[b].append(a)
     disc = [-1] * n
     low = [0] * n
-    cut = set()
+    is_cut = [False] * n
     timer = 0
     for root in range(n):
         if disc[root] != -1:
@@ -32,7 +32,7 @@ def articulation_points(n, edges):
             elif parent != -1:
                 low[parent] = min(low[parent], low[node])
                 if parent != root and low[node] >= disc[parent]:
-                    cut.add(parent)
+                    is_cut[parent] = True
         if root_children >= 2:
-            cut.add(root)
-    return sorted(cut)
+            is_cut[root] = True
+    return [v for v in range(n) if is_cut[v]]
