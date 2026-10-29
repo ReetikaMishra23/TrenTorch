@@ -257,6 +257,11 @@
 	.theory-body :global(.tok-punctuation) {
 		color: var(--tok-operator);
 	}
+	/* The same monospace font as the IDE editor. */
+	.theory-body :global(pre),
+	.theory-body :global(code) {
+		font-family: 'IBM Plex Mono', 'Geist Mono', ui-monospace, Menlo, monospace;
+	}
 	.theory-body :global(h1),
 	.theory-body :global(h2),
 	.theory-body :global(h3) {
