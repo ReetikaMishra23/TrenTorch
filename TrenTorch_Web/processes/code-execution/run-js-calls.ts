@@ -1,3 +1,4 @@
+import { compileStudentCode } from './student-function';
 import { ident } from '../ide-content/build-language-starters';
 import type { ExternalCall, ExternalPlan, ExternalRecord } from './external-protocol';
 
@@ -118,8 +119,8 @@ function loadProgram(source: string, name: string, log: (...args: unknown[]) => 
 	const quiet = { log, error: log, warn: log, info: log };
 	// The student's code runs in an inner function so it can declare its own ListNode and TreeNode (the starter
 	// does) without clashing with the ones above, which it falls back to when it does not.
-	const factory = new Function(
-		'console',
+	const factory = compileStudentCode(
+		['console'],
 		`"use strict";\n${NODE_CLASSES}\nreturn (function () {\n${source}\n;return { fn: typeof ${name} === 'function' ? ${name} : undefined, ListNode, TreeNode };\n})();`
 	);
 	const program = factory(quiet) as {

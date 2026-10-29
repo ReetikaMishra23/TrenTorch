@@ -53,6 +53,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           queries: security-extended
+          config-file: ./.github/codeql/codeql-config.yml
 
       - name: Autobuild
         # Only the python leg needs a real build step (trentorch's package
