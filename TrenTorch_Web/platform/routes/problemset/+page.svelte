@@ -1,17 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import FilterSelect from '$components/FilterSelect.svelte';
+	import FilterBar from '$components/FilterBar.svelte';
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';
-	import {
-		ArrowRight,
-		Check,
-		ChevronLeft,
-		ChevronRight,
-		RotateCcw,
-		Search,
-		SlidersHorizontal
-	} from '@lucide/svelte';
+	import { ArrowRight, Check, ChevronLeft, ChevronRight, RotateCcw } from '@lucide/svelte';
 	import ProblemsetPotdBanner from '$components/ProblemsetPotdBanner.svelte';
 	import { getPartIcon } from '$data/part-icons';
 	import {
@@ -49,6 +41,16 @@
 	const topics = [...new Set(problemsetProblems.map((problem) => problem.topic))].sort((a, b) =>
 		topicLabel(a).localeCompare(topicLabel(b))
 	);
+	const topicChoices = topics.map((topic) => ({
+		value: topic,
+		label: topicLabel(topic),
+		count: problemsetProblems.filter((problem) => problem.topic === topic).length
+	}));
+	const companyChoices = companies.map((company) => ({
+		value: company,
+		label: company,
+		count: problemsetProblems.filter((problem) => problem.caseCompany === company).length
+	}));
 	let searchQuery = $state('');
 	let activeModule = $state('');
 	let activeTopic = $state('');
@@ -56,8 +58,6 @@
 	let selectedDifficulty = $state('');
 	let selectedStatus = $state<ProblemsetStatus>('all');
 	let pastPotdOnly = $state(false);
-	let filterOpen = $state(false);
-	let filterRoot = $state<HTMLDivElement>();
 	let showAllModules = $state(false);
 	let pastPotdSlugs = $state<ReadonlySet<string>>(new Set());
 	let moduleRail = $state<HTMLDivElement>();
@@ -79,17 +79,6 @@
 		Math.max(1, Math.ceil(filteredProblems.length / PROBLEMSET_PAGE_SIZE))
 	);
 	const pagedProblems = $derived(paginateProblemset(filteredProblems, currentPage));
-	const activeFilterCount = $derived(
-		[
-			activeModule,
-			activeTopic,
-			selectedCompany,
-			selectedDifficulty,
-			selectedStatus !== 'all',
-			pastPotdOnly
-		].filter(Boolean).length
-	);
-
 	function topicLabel(topic: string): string {
 		const acronyms: Record<string, string> = {
 			cnn: 'CNN',
@@ -115,21 +104,6 @@
 		selectedDifficulty = '';
 		selectedStatus = 'all';
 		pastPotdOnly = false;
-	}
-
-	function onWindowPointerDown(event: PointerEvent) {
-		const target = event.target as Element;
-		if (target.closest('[data-slot="select-content"]')) return;
-		if (filterOpen && filterRoot && !filterRoot.contains(target)) filterOpen = false;
-	}
-
-	function onWindowKeydown(event: KeyboardEvent) {
-		if (
-			filterOpen &&
-			event.key === 'Escape' &&
-			!document.querySelector('[data-slot="select-content"]')
-		)
-			filterOpen = false;
 	}
 
 	function goToPage(nextPage: number) {
@@ -161,8 +135,6 @@
 		if (currentPage > totalPages) goToPage(totalPages);
 	});
 </script>
-
-<svelte:window onpointerdown={onWindowPointerDown} onkeydown={onWindowKeydown} />
 
 <svelte:head>
 	<title>Problemset - TrenTorch</title>
@@ -260,112 +232,31 @@
 			</div>
 		{/if}
 
-		<div class="mb-3 flex items-center gap-2">
-			<label class="search-field">
-				<span class="sr-only">Search problems</span>
-				<Search class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-				<input bind:value={searchQuery} type="search" placeholder="Search problems..." />
-			</label>
-
-			<div class="relative" bind:this={filterRoot}>
-				<button
-					type="button"
-					class="filter-trigger press {filterOpen || activeFilterCount ? 'active' : ''}"
-					aria-haspopup="dialog"
-					aria-expanded={filterOpen}
-					onclick={() => (filterOpen = !filterOpen)}
-				>
-					<SlidersHorizontal class="size-4" aria-hidden="true" />
-					Filters
-					{#if activeFilterCount}
-						<span class="filter-count">{activeFilterCount}</span>
-					{/if}
-				</button>
-
-				{#if filterOpen}
-					<div role="dialog" aria-label="Filters" class="filter-popover">
-						<div class="filter-field">
-							<span>Module</span>
-							<FilterSelect
-								bind:value={activeModule}
-								label="Filter by module"
-								class="w-full justify-between"
-								options={[
-									{ value: '', label: 'All modules' },
-									...problemsetModules.map((module) => ({ value: module.id, label: module.title }))
-								]}
-							/>
-						</div>
-						<div class="filter-field">
-							<span>Topic</span>
-							<FilterSelect
-								bind:value={activeTopic}
-								label="Filter by topic"
-								class="w-full justify-between"
-								options={[
-									{ value: '', label: 'All topics' },
-									...topics.map((topic) => ({ value: topic, label: topicLabel(topic) }))
-								]}
-							/>
-						</div>
-						<div class="filter-field">
-							<span>Company</span>
-							<FilterSelect
-								bind:value={selectedCompany}
-								label="Filter by company"
-								class="w-full justify-between"
-								options={[
-									{ value: '', label: 'All companies' },
-									...companies.map((company) => ({ value: company, label: company }))
-								]}
-							/>
-						</div>
-						<div class="filter-field">
-							<span>Status</span>
-							<FilterSelect
-								bind:value={selectedStatus}
-								label="Filter by status"
-								class="w-full justify-between"
-								options={statuses}
-							/>
-						</div>
-						<div class="filter-field">
-							<span>Difficulty</span>
-							<FilterSelect
-								bind:value={selectedDifficulty}
-								label="Filter by difficulty"
-								class="w-full justify-between"
-								options={[
-									{ value: '', label: 'All difficulties' },
-									...difficulties.map((difficulty) => ({ value: difficulty, label: difficulty }))
-								]}
-							/>
-						</div>
-						<label class="filter-check">
-							<input type="checkbox" bind:checked={pastPotdOnly} />
-							Past Problem of the Day only
-						</label>
-						{#if activeFilterCount}
-							<button type="button" class="clear-button" onclick={resetFilters}>
-								<RotateCcw class="size-3.5" />
-								Clear filters
-							</button>
-						{/if}
-					</div>
-				{/if}
-			</div>
-		</div>
-
-		<p class="mb-2 text-xs text-muted-foreground" aria-live="polite">
-			{filteredProblems.length}
-			{filteredProblems.length === 1 ? 'problem' : 'problems'}
-		</p>
+		<FilterBar
+			bind:query={searchQuery}
+			bind:moduleId={activeModule}
+			bind:topic={activeTopic}
+			bind:company={selectedCompany}
+			bind:difficulty={selectedDifficulty}
+			bind:status={selectedStatus}
+			bind:pastPotd={pastPotdOnly}
+			modules={problemsetModules}
+			topics={topicChoices}
+			companies={companyChoices}
+			{difficulties}
+			{statuses}
+			resultCount={filteredProblems.length}
+		/>
 
 		{#if filteredProblems.length === 0}
 			<p class="empty-state">
 				{pastPotdOnly
 					? 'No past Problem of the Day problems match these filters.'
 					: 'No problems match these filters.'}
+				<button type="button" class="empty-clear" onclick={resetFilters}>
+					<RotateCcw class="size-3.5" aria-hidden="true" />
+					Clear filters
+				</button>
 			</p>
 		{:else}
 			<div class="overflow-x-auto">
@@ -541,116 +432,6 @@
 		opacity: 0.4;
 	}
 
-	.filter-trigger {
-		display: inline-flex;
-		height: 38px;
-		align-items: center;
-		gap: 8px;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--secondary);
-		padding: 0 12px;
-		color: var(--foreground);
-		font: inherit;
-		font-size: 0.78rem;
-		cursor: pointer;
-	}
-
-	.filter-trigger.active {
-		border-color: color-mix(in srgb, var(--foreground) 35%, var(--border));
-		background: var(--muted);
-	}
-
-	.filter-count {
-		min-width: 18px;
-		border-radius: 999px;
-		background: var(--foreground);
-		padding: 0 5px;
-		color: var(--background);
-		font-size: 0.68rem;
-		line-height: 18px;
-		text-align: center;
-	}
-
-	.filter-popover {
-		position: absolute;
-		z-index: 30;
-		top: calc(100% + 8px);
-		right: 0;
-		display: flex;
-		width: 300px;
-		max-width: calc(100vw - 2rem);
-		flex-direction: column;
-		gap: 12px;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		background: var(--background);
-		padding: 14px;
-		box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
-	}
-
-	.filter-field {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-		color: var(--muted-foreground);
-		font-size: 0.72rem;
-	}
-
-	.filter-check {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		color: var(--foreground);
-		font-size: 0.8rem;
-		cursor: pointer;
-	}
-
-	.search-field {
-		position: relative;
-		min-width: 180px;
-		flex: 1;
-	}
-
-	.search-field input {
-		width: 100%;
-		height: 38px;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--secondary);
-		padding: 0 12px 0 36px;
-		color: var(--foreground);
-		font: inherit;
-		font-size: 0.78rem;
-	}
-
-	.search-field input:focus {
-		border-color: var(--primary);
-		outline: 1px solid var(--primary);
-	}
-
-	.search-field :global(svg) {
-		color: var(--muted-foreground);
-	}
-
-	.clear-button {
-		display: inline-flex;
-		height: 38px;
-		align-items: center;
-		gap: 7px;
-		border: 0;
-		background: transparent;
-		padding: 0 8px;
-		color: var(--muted-foreground);
-		font: inherit;
-		font-size: 0.78rem;
-		cursor: pointer;
-	}
-
-	.clear-button:hover {
-		color: var(--foreground);
-	}
-
 	.problem-table {
 		width: 100%;
 		border-collapse: collapse;
@@ -754,12 +535,33 @@
 	}
 
 	.empty-state {
+		display: flex;
+		flex-direction: column;
 		border: 1px solid var(--border);
-		border-radius: 6px;
+		border-radius: 12px;
 		padding: 48px 12px;
 		color: var(--muted-foreground);
 		font-size: 0.85rem;
 		text-align: center;
+	}
+
+	.empty-clear {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin: 14px auto 0;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		background: var(--secondary);
+		padding: 6px 12px;
+		color: var(--foreground);
+		font: inherit;
+		font-size: 0.78rem;
+		cursor: pointer;
+	}
+
+	.empty-clear:hover {
+		border-color: var(--primary);
 	}
 
 	.pagination {
