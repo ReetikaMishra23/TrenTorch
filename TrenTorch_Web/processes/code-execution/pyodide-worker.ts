@@ -14,6 +14,7 @@ import { sanitizeStudentCode } from './sanitize-student-code';
 import { toBase64 } from './to-base64';
 import { ensurePackages } from './ensure-packages';
 import { buildPreviewScript } from './build-preview-script';
+import { buildExternalPrepareScript, buildExternalJudgeScript } from './build-external-scripts';
 
 self.onmessage = async (e: MessageEvent) => {
 	// Origin verification — only trust messages from the same origin as this worker.
@@ -137,6 +138,32 @@ json.dumps(__run_user_code())
 				output: parsed.output || '',
 				error: parsed.error || undefined,
 				durationMs: Math.round(performance.now() - startTime)
+			});
+			self.postMessage({ type: 'status', status: 'ready' });
+			return;
+		}
+
+		// Another language's submission: Python makes the inputs and judges the answers (see external-protocol.ts).
+		if (action === 'external_prepare' || action === 'external_judge') {
+			self.postMessage({ type: 'status', status: 'loading_packages' });
+			await ensurePackages(py, '', testHarnessCode || '');
+			self.postMessage({ type: 'status', status: 'testing' });
+			const testB64 = toBase64(testHarnessCode || '');
+			const limitArg =
+				typeof sampleLimit === 'number' && sampleLimit > 0 ? String(sampleLimit) : '';
+			const script =
+				action === 'external_prepare'
+					? buildExternalPrepareScript({ testB64, limitArg, maxInt: e.data.maxInt || '' })
+					: buildExternalJudgeScript({
+							testB64,
+							limitArg,
+							outputsB64: toBase64(e.data.outputsJson || '{}')
+						});
+			const parsed = JSON.parse(await py.runPythonAsync(script));
+			self.postMessage({
+				id,
+				type: action === 'external_prepare' ? 'external_prepared' : 'external_judged',
+				...parsed
 			});
 			self.postMessage({ type: 'status', status: 'ready' });
 			return;

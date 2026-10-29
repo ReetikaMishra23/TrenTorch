@@ -440,19 +440,6 @@
 			return;
 		}
 
-		// The hidden tests only run on Python, so Run in another language runs the file as a program:
-		// the starter's main() calls the function on the first example and prints it.
-		if (language !== 'python') {
-			try {
-				await unifiedExecutor.runCode(userCode);
-			} catch (e) {
-				console.error('Run failed', e);
-				consoleError.set(true);
-				consoleOutput.set(`[Run failed]: ${e instanceof Error ? e.message : String(e)}`);
-			}
-			return;
-		}
-
 		unifiedExecutor.consoleFigures.set([]);
 
 		// LeetCode-style Run: execute the code against the first couple of

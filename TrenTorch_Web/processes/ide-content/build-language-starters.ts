@@ -8,13 +8,13 @@ export type StarterLanguage = 'javascript' | 'cpp' | 'java' | 'go' | 'rust';
 export type LanguageStarters = Record<StarterLanguage, string>;
 
 // A parsed type: a scalar, a (nested) list of a scalar, or a linked structure we know how to declare.
-type Scalar = 'int' | 'float' | 'bool' | 'str';
-type Shape =
+export type Scalar = 'int' | 'float' | 'bool' | 'str';
+export type Shape =
 	| { kind: 'scalar'; scalar: Scalar }
 	| { kind: 'list'; depth: number; scalar: Scalar }
 	| { kind: 'node'; node: 'TreeNode' | 'ListNode' };
 
-function parseType(type: string): Shape | null {
+export function parseType(type: string): Shape | null {
 	if (type === 'TreeNode' || type === 'ListNode') return { kind: 'node', node: type };
 	let depth = 0;
 	let rest = type;
@@ -58,7 +58,7 @@ const RESERVED: Record<StarterLanguage, Set<string>> = {
 const camel = (snake: string) => snake.replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase());
 
 // The identifier to use in `lang` for a Python name.
-function ident(lang: StarterLanguage, snake: string): string {
+export function ident(lang: StarterLanguage, snake: string): string {
 	const name = lang === 'rust' ? snake : camel(snake);
 	return RESERVED[lang].has(name) ? `${name}_` : name;
 }
@@ -142,7 +142,7 @@ const SYNTAX: Record<Exclude<StarterLanguage, 'javascript'>, Syntax> = {
 	}
 };
 
-function typeName(lang: keyof typeof SYNTAX, shape: Shape): string {
+export function typeName(lang: keyof typeof SYNTAX, shape: Shape): string {
 	const syntax = SYNTAX[lang];
 	if (shape.kind === 'node') return syntax.node[shape.node];
 	let name = syntax.scalar[shape.scalar];
@@ -193,7 +193,7 @@ function stringLiteral(lang: StarterLanguage, value: string): string {
 	return lang === 'rust' ? `String::from(${quoted})` : quoted;
 }
 
-const NODE_DECLARATIONS: Record<
+export const NODE_DECLARATIONS: Record<
 	Exclude<StarterLanguage, 'javascript'>,
 	Record<'TreeNode' | 'ListNode', string>
 > = {

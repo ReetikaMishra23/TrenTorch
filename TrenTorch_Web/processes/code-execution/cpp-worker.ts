@@ -8,6 +8,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CppToolchain } from './cpp-toolchain';
 import bitsStdcpp from './cpp-bits-stdcpp.h?raw';
+import { buildCppDriver } from './external-driver-cpp';
+import { runTyped } from './typed-run';
 
 const BASE = '/cpp-runtime/';
 
@@ -65,6 +67,41 @@ self.onmessage = async (e: MessageEvent) => {
 			self.postMessage({ type: 'status', status: 'uninitialized' });
 		}
 		self.postMessage({ id, type: 'init_complete', success: true });
+		return;
+	}
+
+	if (action === 'external') {
+		// A submission: the student's code plus a driver that makes each call (see typed-run.ts).
+		self.postMessage({
+			type: 'external_progress',
+			message: 'Loading the C++ compiler (the first time downloads about 29 MB)...'
+		});
+		try {
+			const toolchain = await ensureToolchain();
+			self.postMessage({ type: 'external_progress', message: 'Compiling...' });
+			await runTyped({
+				language: 'cpp',
+				source: e.data.code || '',
+				plan: e.data.plan,
+				buildDriver: (source, plan, code) => buildCppDriver(source, plan.function, code),
+				post: (message) => self.postMessage(message),
+				executor: {
+					async execute(driver, input, hooks) {
+						const result = await toolchain.run(driver, {
+							inputs: { 'calls.txt': input },
+							onStdout: hooks.onText,
+							onStart: hooks.started
+						});
+						// Nothing started means the compiler stopped it; otherwise the program ran, and `error` is how it died.
+						return result.built
+							? { crash: result.error ?? undefined }
+							: { buildError: result.error ?? 'The C++ compiler stopped without a program.' };
+					}
+				}
+			});
+		} catch (err: any) {
+			self.postMessage({ type: 'external_failed', error: err?.message || String(err) });
+		}
 		return;
 	}
 

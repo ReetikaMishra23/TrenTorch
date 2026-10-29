@@ -25,11 +25,20 @@ export interface CppToolchainAssets {
 	bitsStdcpp: string;
 }
 
+export interface CppRunOptions {
+	inputs?: Record<string, string>;
+	onStdout?: (text: string) => void;
+	/** The program is built and about to start. */
+	onStart?: () => void;
+}
+
 export interface CppRunResult {
 	/** What the program printed to stdout. */
 	output: string;
 	/** Compiler diagnostics, or what the program wrote to stderr / how it exited; null when all is well. */
 	error: string | null;
+	/** The program was compiled and linked, so any error came from running it. */
+	built: boolean;
 	compileMs: number;
 	linkMs: number;
 	runMs: number;
@@ -65,17 +74,19 @@ class Stream extends Fd {
 }
 
 // Collects what a stream receives, up to a limit.
-function collector(limit: number) {
+function collector(limit: number, onText?: (text: string) => void) {
 	const decoder = new TextDecoder();
 	let text = '';
 	let truncated = false;
 	return {
 		stream: new Stream((data) => {
+			const chunk = decoder.decode(data, { stream: true });
+			onText?.(chunk);
 			if (text.length >= limit) {
 				truncated = true;
 				return;
 			}
-			text += decoder.decode(data, { stream: true });
+			text += chunk;
 		}),
 		text: () => (truncated ? `${text.slice(0, limit)}\n[output truncated]` : text)
 	};
@@ -122,9 +133,13 @@ export class CppToolchain {
 		return dir;
 	}
 
-	/** Compile, link and run one program. Calls are queued, because they share one file system. */
-	run(source: string): Promise<CppRunResult> {
-		const result = this.chain.then(() => this.runNow(source));
+	/**
+	 * Compile, link and run one program. Calls are queued, because they share one file system.
+	 * `inputs` become files under /sandbox that the program can read; `onStdout` hears the program's output
+	 * as it is written, so a caller can use the answers of a program that later gets stuck.
+	 */
+	run(source: string, options: CppRunOptions = {}): Promise<CppRunResult> {
+		const result = this.chain.then(() => this.runNow(source, options));
 		this.chain = result.catch(() => undefined);
 		return result;
 	}
@@ -144,7 +159,7 @@ export class CppToolchain {
 		return log.text();
 	}
 
-	private async runNow(source: string): Promise<CppRunResult> {
+	private async runNow(source: string, options: CppRunOptions): Promise<CppRunResult> {
 		const files = this.root.dir.contents;
 		const outputOf = (name: string): Uint8Array | null => {
 			const file = files.get(name);
@@ -153,7 +168,14 @@ export class CppToolchain {
 		files.set('main.cpp', new File(new TextEncoder().encode(source)));
 		files.delete('main.o');
 		files.delete('main.wasm');
-		const result: CppRunResult = { output: '', error: null, compileMs: 0, linkMs: 0, runMs: 0 };
+		const result: CppRunResult = {
+			output: '',
+			error: null,
+			built: false,
+			compileMs: 0,
+			linkMs: 0,
+			runMs: 0
+		};
 
 		let started = performance.now();
 		const compileLog = await this.runTool(this.assets.clang, [
@@ -219,13 +241,26 @@ export class CppToolchain {
 			return result;
 		}
 
+		result.built = true;
+		options.onStart?.();
 		started = performance.now();
-		const stdout = collector(MAX_OUTPUT_CHARS);
+		const stdout = collector(MAX_OUTPUT_CHARS, options.onStdout);
 		const stderr = collector(MAX_OUTPUT_CHARS);
 		const shim = new WASI(
 			['prog'],
 			[],
-			[new Stream(), stdout.stream, stderr.stream, new PreopenDirectory('/sandbox', [])],
+			[
+				new Stream(),
+				stdout.stream,
+				stderr.stream,
+				new PreopenDirectory(
+					'/sandbox',
+					Object.entries(options.inputs ?? {}).map(([name, text]) => [
+						name,
+						new File(new TextEncoder().encode(text))
+					])
+				)
+			],
 			{ debug: false }
 		);
 		let exitCode: number;

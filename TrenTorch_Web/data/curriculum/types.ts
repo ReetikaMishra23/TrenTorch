@@ -46,6 +46,9 @@ export interface SingleTestResult {
 	expected?: string;
 	actual?: string;
 	stdout?: string;
+	// The test could not be run in this language (for example it needs numbers too big for it). It counts
+	// as passed, so it never costs the student a solve, and is shown as skipped.
+	skipped?: boolean;
 }
 
 export interface SubmissionResult {

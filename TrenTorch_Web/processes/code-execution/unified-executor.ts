@@ -138,19 +138,19 @@ class UnifiedExecutor {
 			return sqlService.runTests(code, testHarnessCode, dbSchema || '', contentId);
 		}
 		if (this.language === 'javascript') {
-			return jsService.runTests();
+			return jsService.runTests(code, testHarnessCode, contentId, sampleLimit);
 		}
 		if (this.language === 'cpp') {
-			return cppService.runTests();
+			return cppService.runTests(code, testHarnessCode, contentId, sampleLimit);
 		}
 		if (this.language === 'java') {
-			return javaService.runTests();
+			return javaService.runTests(code, testHarnessCode, contentId, sampleLimit);
 		}
 		if (this.language === 'go') {
-			return goService.runTests();
+			return goService.runTests(code, testHarnessCode, contentId, sampleLimit);
 		}
 		if (this.language === 'rust') {
-			return rustService.runTests();
+			return rustService.runTests(code, testHarnessCode, contentId, sampleLimit);
 		}
 		return pyodideService.runTests(code, testHarnessCode, contentId, sampleLimit);
 	}
@@ -173,19 +173,54 @@ class UnifiedExecutor {
 			};
 		}
 		if (this.language === 'javascript') {
-			return jsService.runCustomTest();
+			return jsService.runCustomTest(
+				code,
+				testHarnessCode,
+				contentId,
+				functionName,
+				argumentsJson,
+				expectedJson
+			);
 		}
 		if (this.language === 'cpp') {
-			return cppService.runCustomTest();
+			return cppService.runCustomTest(
+				code,
+				testHarnessCode,
+				contentId,
+				functionName,
+				argumentsJson,
+				expectedJson
+			);
 		}
 		if (this.language === 'java') {
-			return javaService.runCustomTest();
+			return javaService.runCustomTest(
+				code,
+				testHarnessCode,
+				contentId,
+				functionName,
+				argumentsJson,
+				expectedJson
+			);
 		}
 		if (this.language === 'go') {
-			return goService.runCustomTest();
+			return goService.runCustomTest(
+				code,
+				testHarnessCode,
+				contentId,
+				functionName,
+				argumentsJson,
+				expectedJson
+			);
 		}
 		if (this.language === 'rust') {
-			return rustService.runCustomTest();
+			return rustService.runCustomTest(
+				code,
+				testHarnessCode,
+				contentId,
+				functionName,
+				argumentsJson,
+				expectedJson
+			);
 		}
 		return pyodideService.runCustomTest(
 			code,
