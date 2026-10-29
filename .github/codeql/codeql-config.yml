@@ -1,0 +1,7 @@
+name: TrenTorch CodeQL config
+
+# The IDE's JavaScript option runs the code a student typed, inside a Web Worker in their own browser.
+# That is a feature, and CodeQL reports it as code injection (js/code-injection). The call is isolated in
+# this one small file so that it is the only thing left out; every other file is analysed as usual.
+paths-ignore:
+  - TrenTorch_Web/processes/code-execution/student-function.ts

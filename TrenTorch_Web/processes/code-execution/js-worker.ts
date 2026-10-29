@@ -3,6 +3,7 @@
 // function body so top-level `return` and strict mode both work the same
 // way Pyodide's run action behaves for Python.
 import { runJsCalls } from './run-js-calls';
+import { compileStudentCode } from './student-function';
 
 self.onmessage = async (e: MessageEvent) => {
 	// A dedicated worker's messages carry an empty origin; anything else must be this site.
@@ -67,7 +68,7 @@ self.onmessage = async (e: MessageEvent) => {
 			);
 		let error: string | undefined;
 		try {
-			const fn = new Function('console', `"use strict";\n${code || ''}`);
+			const fn = compileStudentCode(['console'], `"use strict";\n${code || ''}`);
 			fn({ log: print, error: print, warn: print, info: print });
 		} catch (err) {
 			error = err instanceof Error ? err.stack || err.message : String(err);
