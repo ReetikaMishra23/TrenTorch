@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { ArrowLeft, ArrowUp } from '@lucide/svelte';
+	import { copyText } from '$processes/profile/copy-text';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -65,6 +66,9 @@
 						? 'cpp'
 						: 'python';
 					pre.hidden = lang !== language;
+					// the copy button's wrapper follows the block it belongs to
+					if (pre.parentElement?.classList.contains('code-block'))
+						pre.parentElement.hidden = pre.hidden;
 				}
 				for (const button of group.querySelectorAll<HTMLButtonElement>('.code-tab-bar button')) {
 					const active = button.dataset.lang === language;
@@ -99,12 +103,39 @@
 		apply();
 	}
 
+	// Every code block gets a Copy button. The block is wrapped so the button stays in the
+	// corner while a long line scrolls sideways inside the <pre>.
+	function addCopyButtons(root: HTMLElement) {
+		for (const pre of root.querySelectorAll<HTMLElement>('pre')) {
+			const wrapper = document.createElement('div');
+			wrapper.className = 'code-block';
+			pre.replaceWith(wrapper);
+			wrapper.append(pre);
+			const button = document.createElement('button');
+			button.type = 'button';
+			button.className = 'code-copy';
+			button.textContent = 'Copy';
+			button.setAttribute('aria-label', 'Copy code');
+			let timer: ReturnType<typeof setTimeout> | undefined;
+			button.addEventListener('click', async () => {
+				const ok = await copyText(pre.textContent ?? '');
+				button.textContent = ok ? 'Copied' : 'Press Ctrl+C';
+				clearTimeout(timer);
+				timer = setTimeout(() => (button.textContent = 'Copy'), 2000);
+			});
+			wrapper.append(button);
+		}
+	}
+
 	onMount(() => {
 		const root = document.documentElement;
 		const previousBehavior = root.style.scrollBehavior;
 		root.style.scrollBehavior = 'smooth';
 		const stopWatching = content ? watchHeadings(content) : undefined;
-		if (content) enhance(content);
+		if (content) {
+			addCopyButtons(content);
+			enhance(content);
+		}
 		// A link such as /dsa/theory/sorting#selection-sort: the page is prerendered, so the
 		// browser has already placed the heading; scroll again once the code blocks changed height.
 		if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
@@ -276,6 +307,29 @@
 		display: block;
 		max-width: 100%;
 		overflow-x: auto;
+	}
+	.theory-body :global(.code-block) {
+		position: relative;
+	}
+	.theory-body :global(.code-block pre) {
+		margin: 0;
+	}
+	.theory-body :global(.code-copy) {
+		position: absolute;
+		top: 0.4rem;
+		right: 0.4rem;
+		padding: 0.1rem 0.55rem;
+		border-radius: 0.375rem;
+		font-size: 0.75rem;
+		color: var(--muted-foreground);
+		background: var(--background);
+		border: 1px solid var(--border);
+		opacity: 0.75;
+	}
+	.theory-body :global(.code-copy:hover),
+	.theory-body :global(.code-copy:focus-visible) {
+		opacity: 1;
+		color: var(--foreground);
 	}
 	.theory-body :global(.code-tab-bar) {
 		display: flex;
