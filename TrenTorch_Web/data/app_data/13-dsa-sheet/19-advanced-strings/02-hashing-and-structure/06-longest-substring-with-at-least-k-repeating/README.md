@@ -3,6 +3,7 @@ name: sheet-longest-substring-with-at-least-k-repeating
 title: 'Longest Substring With Each Letter at Least K Times'
 tags: [dsa-sheet, advanced-strings, hashing-and-structure]
 difficulty: Advanced
+theory: divide-at-the-walls
 ---
 
 ## Statement
@@ -48,12 +49,6 @@ Output:
 - `0 <= len(s) <= 100000`
 - `1 <= k <= 100000`
 - Lower-case letters.
-
-## Theory
-
-Any letter that occurs fewer than `k` times in the **whole** string can never be part of a valid substring, so it acts like a **separator**: the answer lies entirely in one of the pieces between such letters. Count the letters; if all letters already occur at least `k` times, the whole string is valid; otherwise split at the rare letters and solve each piece the same way, taking the maximum. That is a **divide and conquer**: at most 26 levels of splitting (each level removes a different letter), so `O(26 × n)`.
-
-An alternative is a sliding window run once for each possible number of distinct letters (1 to 26).
 
 ## Explanation
 

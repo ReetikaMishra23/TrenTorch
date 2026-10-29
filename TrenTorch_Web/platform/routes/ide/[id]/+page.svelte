@@ -5,7 +5,11 @@
 	import { browser } from '$app/environment';
 	import type { QuestionContent } from '$data/curriculum/types';
 	import { unifiedExecutor } from '$processes/code-execution/unified-executor';
-	import { detectLanguage, isLanguageSelectable, DSA_LANGUAGES } from '$processes/code-execution/detect-language';
+	import {
+		detectLanguage,
+		isLanguageSelectable,
+		DSA_LANGUAGES
+	} from '$processes/code-execution/detect-language';
 	import { loadUserCode } from '$processes/code-execution/load-user-code';
 	import { saveUserCode } from '$processes/code-execution/save-user-code';
 	import { draftSync } from '$processes/code-execution/draft-sync.svelte';
@@ -122,9 +126,10 @@
 		if (!content) return ['description', 'theory', 'solution'];
 		// DSA sheet: the solution and walkthrough open only after the question is solved.
 		if (content.metadata.kind === 'dsa') {
+			// No Theory tab: a DSA question links to its step's theory page from the Description.
 			return solved.isSolved(content.id)
-				? ['description', 'theory', 'solution', 'discussion']
-				: ['description', 'theory'];
+				? ['description', 'solution', 'discussion']
+				: ['description'];
 		}
 		const entry = potdEntries.find((e) => e.questionId === content.id);
 		if (!entry) return ['description', 'theory', 'solution'];
@@ -198,7 +203,11 @@
 	let selectedLanguage = $state<ReturnType<typeof detectLanguage> | null>(null);
 	let languageSelectable = $derived(content ? isLanguageSelectable(content) : false);
 	let language = $derived(
-		languageSelectable && selectedLanguage ? selectedLanguage : content ? detectLanguage(content) : 'python'
+		languageSelectable && selectedLanguage
+			? selectedLanguage
+			: content
+				? detectLanguage(content)
+				: 'python'
 	);
 	let isSql = $derived(language === 'sql');
 
@@ -897,18 +906,18 @@
 			runtimeState={$runtimeState}
 			runtimeText={runtimeStatusText}
 			language={isSql
-			? 'SQL (SQLite)'
-			: language === 'javascript'
-				? 'JavaScript'
-				: language === 'cpp'
-					? 'C++ (JSCPP)'
-					: language === 'go'
-						? 'Go (Yaegi)'
-						: language === 'rust'
-							? 'Rust (rustc-wasm)'
-							: language === 'java'
-								? 'Java (CheerpJ)'
-								: 'Python 3.12'}
+				? 'SQL (SQLite)'
+				: language === 'javascript'
+					? 'JavaScript'
+					: language === 'cpp'
+						? 'C++ (JSCPP)'
+						: language === 'go'
+							? 'Go (Yaegi)'
+							: language === 'rust'
+								? 'Rust (rustc-wasm)'
+								: language === 'java'
+									? 'Java (CheerpJ)'
+									: 'Python 3.12'}
 			line={cursorPos.line}
 			col={cursorPos.col}
 			saved={lastSavedAt !== null}

@@ -3,6 +3,7 @@ name: sheet-second-largest
 title: 'Second Largest Value'
 tags: [dsa-sheet, arrays, array-basics]
 difficulty: Beginner
+theory: keeping-two-notes-at-once
 ---
 
 ## Statement
@@ -47,14 +48,6 @@ Only one different value, so the answer is `-1`.
 
 - `0 <= len(nums) <= 3 * 10**5`
 - `0 <= nums[i] <= 10**9`
-
-## Theory
-
-Sorting the list finds the answer but costs `O(n log n)`. You can do it in one pass with two variables: the largest value so far and the second largest so far.
-
-For each value `x`: if `x` beats the largest, the old largest becomes the second. Otherwise, if `x` is smaller than the largest but beats the second, it becomes the new second. A value equal to the largest changes nothing, which is how duplicates are skipped.
-
-Keeping a few running values and updating them as you scan is the simplest kind of **single-pass** array algorithm: `O(n)` time, `O(1)` extra memory.
 
 ## Explanation
 

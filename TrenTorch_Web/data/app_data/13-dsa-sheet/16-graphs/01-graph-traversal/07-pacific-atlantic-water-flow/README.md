@@ -3,6 +3,7 @@ name: sheet-pacific-atlantic-water-flow
 title: 'Pacific Atlantic Water Flow'
 tags: [dsa-sheet, graphs, graph-traversal]
 difficulty: Advanced
+theory: dfs-from-the-borders
 ---
 
 ## Statement
@@ -45,16 +46,6 @@ Output:
 
 - `0 <= rows, cols <= 200`
 - `0 <= heights[r][c] <= 10**5`
-
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-A **grid** is a graph too: each cell is a node and its neighbours are the cells up, down, left and right (sometimes the diagonals as well).
-
-Asking, for every cell, "can water from here reach the ocean?" means a search from each cell: far too slow. **Reverse the flow**: start at the cells next to an ocean and move **uphill** (to neighbours that are at least as high). The cells reached from the Pacific edges are those that can flow to the Pacific; likewise for the Atlantic.
-
-Run one flood from all Pacific border cells and one from all Atlantic border cells, then take the **intersection** of the two reached sets. Each flood visits every cell at most once: `O(rows * cols)`.
 
 ## Explanation
 

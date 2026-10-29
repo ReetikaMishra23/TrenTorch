@@ -3,6 +3,7 @@ name: sheet-count-digit-one
 title: 'Count the Digit One'
 tags: [dsa-sheet, maths, counting-and-digits]
 difficulty: Mastery
+theory: counting-the-digit-one
 ---
 
 ## Statement
@@ -46,17 +47,6 @@ Output:
 ### Constraints
 
 - `0 <= n <= 9 * 10**15`
-
-## Theory
-
-Many contest problems are about **numbers**, and the input is huge (up to `10^12` or more), so a loop up to `n` is far too slow. The tools: the **square root bound** (a number `n` has a divisor `<= sqrt(n)` unless it is prime), **modular arithmetic** (work with remainders so the numbers stay small), and **formulas** that replace a loop. Python's big integers make the arithmetic itself safe, but the number of steps is what you must control.
-
-Count position by position. Take the digit position with place value `p` (1, 10, 100, ...). Split `n` into `high = n // (10p)`, `cur = (n // p) % 10`, and `low = n % p`. How many numbers up to `n` have a `1` at this position?
-
-- `high × p` numbers from the complete blocks of `10p` numbers before the last (each block has `p` numbers with a 1 here);
-- plus a partial last block: if `cur > 1`, another full `p`; if `cur == 1`, `low + 1`; if `cur == 0`, nothing.
-
-Add this up for every position: about 16 positions for `n` up to `9 × 10^15`. This **digit counting** idea is the foundation of "digit DP".
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-swap-nodes-in-pairs
 title: 'Swap Nodes in Pairs'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Intermediate
+theory: swapping-neighbours
 ---
 
 ## Statement
@@ -45,12 +46,6 @@ Output:
 
 - `0 <= number of nodes <= 100000`
 - `-10**9 <= val <= 10**9`
-
-## Theory
-
-Swapping two nodes `a -> b` that sit after a node `prev` means rewiring three pointers: `prev -> b`, `b -> a`, `a -> (what came after b)`. Do it in the right order so you do not lose `b.next`: first `a.next = b.next`, then `b.next = a`, then `prev.next = b`.
-
-After a swap, `a` is the second node of the pair, so it becomes the next `prev`. A **dummy head** makes the very first swap look like all the others, and the loop ends when fewer than two nodes remain.
 
 ## Explanation
 

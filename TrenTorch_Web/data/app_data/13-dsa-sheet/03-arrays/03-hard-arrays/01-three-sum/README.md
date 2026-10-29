@@ -3,6 +3,7 @@ name: sheet-three-sum
 title: 'Three Sum'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: fix-one-squeeze-the-rest
 ---
 
 ## Statement
@@ -49,14 +50,6 @@ Only one different triple: `[0, 0, 0]`.
 
 - `0 <= len(nums) <= 1500`
 - `-10**5 <= nums[i] <= 10**5`
-
-## Theory
-
-Three nested loops are `O(n³)`. **Sort first.** Once the list is sorted, fix the smallest value `a[i]` and look for two values to its right that add up to `-a[i]`. Finding a pair with a given sum in a sorted list takes `O(n)` with **two pointers**: one at each end. If the sum is too small, move the left pointer right; if it is too big, move the right pointer left.
-
-Do that for each `i` and the total is `O(n²)`.
-
-Duplicates are the tricky part. Skip a value for `i` if it equals the previous one (it would produce the same triples). After you find a triple, move both pointers and skip over equal values on each side. Sorting is what makes all of those skips simple: equal values are adjacent.
 
 ## Explanation
 

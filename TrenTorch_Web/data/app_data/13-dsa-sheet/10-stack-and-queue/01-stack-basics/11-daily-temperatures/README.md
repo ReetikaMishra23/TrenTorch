@@ -3,6 +3,7 @@ name: sheet-daily-temperatures
 title: 'Daily Temperatures'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: counting-the-days-until
 ---
 
 ## Statement
@@ -47,12 +48,6 @@ Output:
 
 - `0 <= len(temps) <= 200000`
 - `30 <= temps[i] <= 100`
-
-## Theory
-
-This is "next greater element" asking for the **distance** instead of the value. Use the same **monotonic stack of indices**: keep the days that are still waiting for a warmer day. A new day `i` answers every waiting day with a lower temperature: pop each one `j` and set `out[j] = i - j`.
-
-Storing **indices** (not temperatures) is what lets you compute the distance. `O(n)` time.
 
 ## Explanation
 

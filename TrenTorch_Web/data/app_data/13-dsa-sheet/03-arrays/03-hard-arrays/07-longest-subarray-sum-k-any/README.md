@@ -3,6 +3,7 @@ name: sheet-longest-subarray-sum-k-any
 title: 'Longest Subarray With Sum K, Any Values'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: the-longest-run-with-any-signs
 ---
 
 ## Statement
@@ -50,14 +51,6 @@ No run adds to 5.
 - `0 <= len(nums) <= 2 * 10**5`
 - `-10**4 <= nums[i] <= 10**4`
 - `-10**9 <= k <= 10**9`
-
-## Theory
-
-With negative values the sliding window fails (the sum can go down as the window grows). Use **prefix sums** again. The run between prefix positions `a < b` has sum `prefix[b] - prefix[a]`. It equals `k` when `prefix[a] = prefix[b] - k`.
-
-To make the run **as long as possible**, you want the **earliest** position `a` with that prefix value. So store, in a dictionary, the **first index** where each prefix sum occurred (and never overwrite it). At each position look up `prefix - k` and update the best length `b - a`. Start with `{0: -1}` for the empty prefix before the first value.
-
-It is the same dictionary trick as counting runs, but you store the first index instead of a count.
 
 ## Explanation
 

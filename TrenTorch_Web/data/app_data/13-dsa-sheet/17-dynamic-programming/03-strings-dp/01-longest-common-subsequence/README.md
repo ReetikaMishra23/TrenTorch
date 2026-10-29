@@ -3,6 +3,7 @@ name: sheet-longest-common-subsequence
 title: 'Longest Common Subsequence'
 tags: [dsa-sheet, dynamic-programming, strings-dp]
 difficulty: Intermediate
+theory: longest-common-subsequence
 ---
 
 ## Statement
@@ -47,14 +48,6 @@ Output:
 
 - `0 <= len(a), len(b) <= 900`
 - Lower-case letters.
-
-## Theory
-
-**Dynamic programming (DP)** solves a problem by combining the answers to smaller versions of the same problem and **remembering** them, so each smaller version is solved only once. It works when the plain recursion keeps asking the same questions (**overlapping subproblems**) and the best answer is built from best answers of smaller parts (**optimal substructure**). The recipe: pick the **state** (what identifies one subproblem), write the **transition** (how a state's answer comes from smaller states), set the **base cases**, and choose the **order**: top-down recursion with a cache, or a bottom-up table. A table often needs only its last row or last few values, which saves memory.
-
-**State:** `lcs(i, j)`, the answer for the first `i` characters of `a` and the first `j` of `b`. **Transition:** if the last characters match (`a[i - 1] == b[j - 1]`) they can both end the common subsequence: `lcs(i, j) = 1 + lcs(i - 1, j - 1)`. Otherwise one of them is not used: `lcs(i, j) = max(lcs(i - 1, j), lcs(i, j - 1))`. **Base cases:** `lcs(0, j) = lcs(i, 0) = 0`.
-
-The table has `(len(a) + 1) × (len(b) + 1)` cells; each is filled in `O(1)`. Only the previous row is needed. This **two-string table** is the pattern behind edit distance, interleaving and many other questions.
 
 ## Explanation
 

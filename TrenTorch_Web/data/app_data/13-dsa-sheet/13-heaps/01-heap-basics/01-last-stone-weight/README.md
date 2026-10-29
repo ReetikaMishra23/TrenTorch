@@ -3,6 +3,7 @@ name: sheet-last-stone-weight
 title: 'Last Stone Weight'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Beginner
+theory: smash-the-heaviest-stones
 ---
 
 ## Statement
@@ -47,14 +48,6 @@ Output:
 
 - `0 <= len(stones) <= 100000`
 - `1 <= stones[i] <= 10**9`
-
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-Each turn needs the two **largest** stones and then a new stone is added back: exactly what a max-heap is for. Put the negated weights in a heap. Pop two (the two heaviest), and if they differ, push the difference.
-
-Sorting after every turn costs `O(n log n)` per turn, `O(n² log n)` overall; the heap makes every turn `O(log n)`, so `O(n log n)` in total.
 
 ## Explanation
 

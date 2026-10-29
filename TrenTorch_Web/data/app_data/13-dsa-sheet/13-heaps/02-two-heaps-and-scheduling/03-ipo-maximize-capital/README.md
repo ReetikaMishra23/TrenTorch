@@ -3,6 +3,7 @@ name: sheet-ipo-maximize-capital
 title: 'IPO: Maximize Capital'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Advanced
+theory: unlock-then-pick-the-best
 ---
 
 ## Statement
@@ -47,16 +48,6 @@ Output:
 - `0 <= w <= 10**9`
 - `0 <= len(profits) == len(capital) <= 100000`
 - `0 <= profits[i], capital[i] <= 10**9`
-
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-At each step, among all projects you can **afford** (`capital[i] <= current capital`), do the one with the **largest profit**: more capital now never hurts, and it can only unlock more projects.
-
-Two structures work together: sort the projects by the capital they need; as your capital grows, move all newly affordable projects into a **max-heap of profits**. Pop the best one, add its profit, and repeat up to `k` times. If the heap is empty (nothing affordable), stop.
-
-`O(n log n)`.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-hit-counter
 title: 'Hit Counter'
 tags: [dsa-sheet, design, classic-designs]
 difficulty: Intermediate
+theory: counting-hits-in-a-sliding-window
 ---
 
 ## Statement
@@ -49,14 +50,6 @@ Output:
 
 - `0 <= len(ops) <= 100000`
 - `1 <= t <= 10**9`; the seconds are not decreasing.
-
-## Theory
-
-In a **design** question you build a small data structure and run a list of operations on it. The operations are given as text, one per string, and you return the answers of the operations that produce one. Think about which operations must be fast and choose the data structure for them.
-
-Hits arrive in time order, so the oldest are at the front. Keep the hits in a **queue** (`collections.deque`). Before answering a `count t`, **remove from the front** every hit that is older than the window (`hit <= t - 300`). What is left in the queue is exactly the answer, `len(queue)`.
-
-Each hit enters the queue once and leaves once, so all operations are `O(1)` amortised. (If many hits share the same second, you can store `(second, count)` pairs instead.)
 
 ## Explanation
 

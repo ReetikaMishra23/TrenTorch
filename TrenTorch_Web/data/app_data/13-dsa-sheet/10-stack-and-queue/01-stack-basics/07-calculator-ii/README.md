@@ -3,6 +3,7 @@ name: sheet-calculator-ii
 title: 'Basic Calculator'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: plus-minus-times-and-divide
 ---
 
 ## Statement
@@ -45,20 +46,6 @@ Output:
 
 - `1 <= len(s) <= 100000`
 - The expression is valid, never divides by zero, and every intermediate value fits in 64 bits.
-
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-Precedence is the difficulty: `2*3` must be done before it is added to something. A stack of **terms** solves it. Read number by number, remembering the operator that came **before** the number:
-
-- `+`: push the number.
-- `-`: push the negative of the number.
-- `*` or `/`: pop the last term, combine it with the number, push the result.
-
-At the end, the answer is the **sum of the stack**: all the terms of the sum. Multiplication and division were done immediately because they bind tighter and always belong to the term just pushed.
-
-Trick: process the number when you reach the next operator or the end of the string, so add a sentinel `+` at the end.
 
 ## Explanation
 

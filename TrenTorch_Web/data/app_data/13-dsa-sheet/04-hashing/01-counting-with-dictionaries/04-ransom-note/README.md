@@ -3,6 +3,7 @@ name: sheet-ransom-note
 title: 'Ransom Note'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Beginner
+theory: counting-up-and-counting-down
 ---
 
 ## Statement
@@ -43,14 +44,6 @@ False
 
 - `0 <= len(note), len(magazine) <= 3 * 10**5`
 - Both strings contain lower-case letters.
-
-## Theory
-
-The note can be built exactly when, for **every letter**, the magazine has at least as many copies as the note needs. So compare counts.
-
-`Counter` supports subtraction: `Counter(note) - Counter(magazine)` keeps only the letters the note needs **more** of than the magazine has. If that result is empty, nothing is missing. An empty `Counter` is falsy, so `not (need - have)` is the whole test.
-
-Counting both strings is `O(len(note) + len(magazine))`.
 
 ## Explanation
 

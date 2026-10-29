@@ -3,6 +3,7 @@ name: sheet-search-in-rotated-duplicates
 title: 'Search in a Rotated List With Repeats'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Advanced
+theory: rotated-lists-with-repeats
 ---
 
 ## Statement
@@ -44,14 +45,6 @@ False
 - `0 <= len(nums) <= 2 * 10**5`
 - The list is a non-decreasing list rotated by some amount.
 - `-10**9 <= nums[i], target <= 10**9`
-
-## Theory
-
-Repeats break one step of the earlier idea. If `nums[lo] == nums[mid] == nums[hi]`, you cannot tell which half is sorted: `[1, 1, 1, 0, 1]` and `[1, 0, 1, 1, 1]` look identical at those three positions.
-
-In that situation the only safe move is to **shrink the range by one on each side** (`lo += 1`, `hi -= 1`): the values you drop are equal to `nums[mid]`, and `nums[mid]` was already checked against the target. Everything else works as before.
-
-That fallback means the worst case is `O(n)` (for example a list of almost all equal values), but typical inputs are `O(log n)`. It is a good example of an algorithm whose worst case is worse than its usual case.
 
 ## Explanation
 

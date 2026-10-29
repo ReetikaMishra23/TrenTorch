@@ -3,6 +3,7 @@ name: sheet-rearrange-by-sign
 title: 'Rearrange by Sign'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: filling-slots-in-turn
 ---
 
 ## Statement
@@ -49,14 +50,6 @@ After `1, -1` the negatives run out, so `2, 3` follow.
 
 - `0 <= len(nums) <= 3 * 10**5`
 - `-10**9 <= nums[i] <= 10**9`
-
-## Theory
-
-Splitting into two lists with a comprehension each keeps the order inside each group. Then you **interleave** them: take one from each in turn.
-
-The interleave is a two-pointer idea with one pointer per list. In Python `itertools.zip_longest` does it, or an index loop that appends `pos[i]` and `neg[i]` when they exist. The leftover of the longer list is added automatically because the loop runs for the longer length.
-
-The in-place version of this problem is much harder, because you must preserve order while moving values; the output-list version is the one to know first.
 
 ## Explanation
 

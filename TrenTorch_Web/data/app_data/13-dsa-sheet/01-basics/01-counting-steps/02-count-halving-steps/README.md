@@ -3,6 +3,7 @@ name: sheet-count-halving-steps
 title: 'Halving Steps'
 tags: [dsa-sheet, basics, counting-steps]
 difficulty: Beginner
+theory: halving-gives-a-logarithm
 ---
 
 ## Statement
@@ -55,12 +56,6 @@ Output:
 ### Constraints
 
 - `1 <= n <= 10**18`
-
-## Theory
-
-A loop that cuts its input in half each round runs about `log₂ n` times. That is why binary search takes `O(log n)`: 1,000 items need about 10 steps and 1,000,000,000 items only about 30.
-
-Python gives you this number directly: `n.bit_length()` is the number of binary digits of `n`, and each halving removes one digit.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-articulation-points
 title: 'Articulation Points'
 tags: [dsa-sheet, graphs, spanning-trees-and-components]
 difficulty: Mastery
+theory: articulation-points
 ---
 
 ## Statement
@@ -46,17 +47,6 @@ Output:
 - `1 <= n <= 100000`
 - `n - 1 <= len(edges) <= 200000`
 - No repeated edges, no self-loops.
-
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-This is the sibling of the bridges question and uses the same DFS with `disc` and `low` values. A node `u` is an articulation point when:
-
-- `u` is **not the root** and it has a DFS child `v` with `low[v] >= disc[u]` (the subtree of `v` cannot get above `u` without passing through `u`), or
-- `u` is the **root** of the DFS and has **two or more children** in the DFS tree.
-
-The root needs its own rule because it has no "above". As before, use an explicit stack for deep graphs. `O(n + m)`.
 
 ## Explanation
 

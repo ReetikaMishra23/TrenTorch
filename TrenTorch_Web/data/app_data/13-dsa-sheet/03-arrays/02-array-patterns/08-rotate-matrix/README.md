@@ -3,6 +3,7 @@ name: sheet-rotate-matrix
 title: 'Rotate a Matrix'
 tags: [dsa-sheet, arrays, array-patterns]
 difficulty: Intermediate
+theory: rotating-by-combining-moves
 ---
 
 ## Statement
@@ -43,14 +44,6 @@ Output:
 
 - `0 <= rows, cols`, and `rows * cols <= 250000`
 - All rows have the same length.
-
-## Theory
-
-Think about where each cell goes. The cell at row `i`, column `j` of an `m x n` matrix moves to row `j`, column `m - 1 - i` of the result.
-
-There is a very short way to say this in Python. Reversing the order of the rows (`matrix[::-1]`) and then **transposing** (swapping rows and columns with `zip(*...)`) rotates the matrix clockwise. A transpose alone mirrors it along the diagonal; flipping the rows first turns the mirror into a rotation.
-
-Rotating in place without a second matrix works for square matrices, by rotating cells in groups of four layer by layer.
 
 ## Explanation
 

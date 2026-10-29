@@ -3,6 +3,7 @@ name: sheet-count-nice-subarrays
 title: 'Count Nice Subarrays'
 tags: [dsa-sheet, sliding-window, sliding-window]
 difficulty: Intermediate
+theory: exactly-k-odd-numbers
 ---
 
 ## Statement
@@ -48,14 +49,6 @@ Output:
 - `0 <= len(nums) <= 200000`
 - `0 <= k <= len(nums)`
 - `1 <= nums[i] <= 10**5`
-
-## Theory
-
-A **sliding window** is a range `[left, right]` of the data that grows on the right and shrinks on the left. Because each end only moves forward, the whole pass is `O(n)`, while the window always describes one candidate subarray or substring.
-
-Use the **exactly = at most minus at most one less** trick again: `at_most(k) - at_most(k - 1)`, where `at_most(m)` counts the subarrays with at most `m` odd numbers.
-
-For `at_most(m)`: expand `right` (count it if odd), shrink `left` while the odd count exceeds `m`, and add `right - left + 1` for every `right`. For `m = -1` the answer is 0.
 
 ## Explanation
 

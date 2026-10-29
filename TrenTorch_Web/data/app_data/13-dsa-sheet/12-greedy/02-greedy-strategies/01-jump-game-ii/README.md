@@ -3,6 +3,7 @@ name: sheet-jump-game-ii
 title: 'Fewest Jumps to the End'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Intermediate
+theory: fewest-jumps
 ---
 
 ## Statement
@@ -47,16 +48,6 @@ Output:
 
 - `0 <= len(nums) <= 200000`
 - `0 <= nums[i] <= 100000`
-
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-Think in **levels** like a breadth-first search. The indices reachable with 1 jump form a range `1 .. far1`; with 2 jumps a range up to `far2`, which is the farthest you can get from any index in the first range; and so on.
-
-Keep three numbers: `end` (the last index reachable with the current number of jumps), `far` (the farthest index reachable with one more jump from anything seen so far) and `jumps`. Scan the indices: update `far = max(far, i + nums[i])`; when `i` reaches `end`, you must jump: `jumps += 1`, `end = far`. If `far` does not move beyond `i`, you are stuck.
-
-This is `O(n)` and needs no extra memory.
 
 ## Explanation
 

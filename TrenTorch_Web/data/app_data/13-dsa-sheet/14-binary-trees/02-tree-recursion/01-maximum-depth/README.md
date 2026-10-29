@@ -3,6 +3,7 @@ name: sheet-maximum-depth
 title: 'Maximum Depth'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Beginner
+theory: maximum-depth
 ---
 
 ## Statement
@@ -47,16 +48,6 @@ Output:
 
 - `0 <= number of nodes <= 100000`
 - The tree is not deeper than 800 levels.
-
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-Trust the recursion. The depth of a tree is `1 +` the larger of the depths of its two subtrees, and the depth of an empty tree is `0`. That is the whole algorithm:
-
-`depth(node) = 0 if node is None else 1 + max(depth(node.left), depth(node.right))`
-
-Always ask the three recursion questions for a tree: what is the **base case** (an empty tree), what do I **ask the children**, and how do I **combine** their answers. Time `O(n)`; memory `O(h)` for the recursion stack.
 
 ## Explanation
 

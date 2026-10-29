@@ -3,6 +3,7 @@ name: sheet-minimum-coins-indian
 title: 'Fewest Coins and Notes'
 tags: [dsa-sheet, greedy, greedy-basics]
 difficulty: Beginner
+theory: fewest-coins-and-notes
 ---
 
 ## Statement
@@ -44,14 +45,6 @@ Output:
 ### Constraints
 
 - `0 <= amount <= 10**12`
-
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-For this set of values, taking the **largest value that fits**, as many times as possible, and then going on with what is left, gives the fewest pieces. Use `divmod`: `count, amount = divmod(amount, value)` for each value from the largest.
-
-Warning: greedy is **not** correct for every set of coin values. With coins `1, 3, 4` and amount `6`, greedy takes `4 + 1 + 1` (3 coins) while `3 + 3` needs only 2. A set of values for which greedy always works is called **canonical**; this one is. When it is not canonical, dynamic programming (later in the course) is the right tool.
 
 ## Explanation
 

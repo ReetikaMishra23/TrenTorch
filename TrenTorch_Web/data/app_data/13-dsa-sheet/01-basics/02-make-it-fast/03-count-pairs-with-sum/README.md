@@ -3,6 +3,7 @@ name: sheet-count-pairs-with-sum
 title: 'Count Pairs With Sum'
 tags: [dsa-sheet, basics, make-it-fast]
 difficulty: Intermediate
+theory: looking-for-a-complement
 ---
 
 ## Statement
@@ -52,14 +53,6 @@ All three pairs of positions sum to 4.
 - `0 <= len(nums) <= 2 * 10**5`
 - `-10**9 <= nums[i], target <= 10**9`
 - The answer can exceed `10**10`.
-
-## Theory
-
-Checking all pairs is `O(n²)`. Instead of asking "which earlier number pairs with this one?" by scanning, ask a table.
-
-For each number `x`, the partner it needs is `target - x`. If you keep a `Counter` (a dictionary from value to how many times it appeared so far), then the number of earlier partners is a single lookup. Add that to the answer, then record `x`. One pass: `O(n)`.
-
-Counting before recording matters: it makes each pair counted once and stops a number from pairing with itself.
 
 ## Explanation
 

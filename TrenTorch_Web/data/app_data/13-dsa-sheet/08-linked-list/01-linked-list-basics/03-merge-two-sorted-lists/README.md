@@ -3,6 +3,7 @@ name: sheet-merge-two-sorted-lists
 title: 'Merge Two Sorted Lists'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Beginner
+theory: merging-two-sorted-lists
 ---
 
 ## Statement
@@ -46,14 +47,6 @@ Output:
 - `0 <= nodes in each list <= 100000`
 - `-10**9 <= val <= 10**9`
 - Both lists are sorted in increasing order.
-
-## Theory
-
-This is the merge step of merge sort, done with pointers. Keep a `tail` for the merged list and compare the two front nodes: attach the smaller one to `tail`, advance in that list, move `tail` forward. When one list runs out, attach the whole rest of the other (it is already sorted).
-
-A **dummy head** node makes the code simpler: `tail` starts on a throwaway node, so you never have to write "if the merged list is still empty" cases. Return `dummy.next` at the end.
-
-It takes `O(n + m)` time and `O(1)` extra memory because no node is copied, only `next` pointers are changed.
 
 ## Explanation
 

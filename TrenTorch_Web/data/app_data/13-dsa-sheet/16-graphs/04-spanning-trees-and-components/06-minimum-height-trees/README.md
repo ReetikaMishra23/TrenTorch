@@ -3,6 +3,7 @@ name: sheet-minimum-height-trees
 title: 'Minimum Height Trees'
 tags: [dsa-sheet, graphs, spanning-trees-and-components]
 difficulty: Advanced
+theory: minimum-height-trees
 ---
 
 ## Statement
@@ -47,14 +48,6 @@ Output:
 
 - `1 <= n <= 100000`
 - `len(edges) == n - 1` and the edges form a tree.
-
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-The best roots are at the **centre** of the tree. A tree has either one centre or two, and you find it by **peeling leaves**: remove all the leaves (nodes of degree 1), then the new leaves, and so on, layer by layer, like peeling an onion. When at most two nodes remain, they are the centres, and these are the roots of minimum height.
-
-Implement it like Kahn's algorithm: keep degrees, start a queue with the leaves, and process level by level, reducing the number of remaining nodes until 2 or fewer are left. `O(n)`. For `n <= 2` all nodes are answers.
 
 ## Explanation
 

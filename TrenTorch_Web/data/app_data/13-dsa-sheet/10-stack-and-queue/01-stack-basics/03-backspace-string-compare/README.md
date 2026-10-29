@@ -3,6 +3,7 @@ name: sheet-backspace-string-compare
 title: 'Backspace String Compare'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Beginner
+theory: typing-with-a-backspace-key
 ---
 
 ## Statement
@@ -45,12 +46,6 @@ False
 
 - `0 <= len(s), len(t) <= 200000`
 - Letters `a` to `z` and `#`.
-
-## Theory
-
-A text editor is a stack: a letter is pushed and a backspace pops (unless the stack is empty). Build the final text of each string with this rule and compare them.
-
-There is a trick with `O(1)` memory: scan both strings **from the end**, skipping characters that a backspace erases, and compare what is left, but the stack version is the clear first step.
 
 ## Explanation
 

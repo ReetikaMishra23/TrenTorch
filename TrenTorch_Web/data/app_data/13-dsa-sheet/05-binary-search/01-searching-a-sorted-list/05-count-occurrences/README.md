@@ -3,6 +3,7 @@ name: sheet-count-occurrences
 title: 'Count Occurrences'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Beginner
+theory: first-last-and-how-many
 ---
 
 ## Statement
@@ -45,14 +46,6 @@ Output:
 - `nums` is sorted in non-decreasing order.
 - `-10**9 <= nums[i], target <= 10**9`
 - The big tests count how many values your code reads from the list (the limit is stated in the failure message). Reading every value, or using `in`, `.index`, `.count`, `min` or `sorted` on the whole list, fails them.
-
-## Theory
-
-`nums.count(target)` reads the whole list: `O(n)`. In a sorted list the copies of a value sit in **one block**, so counting them only needs the two ends of that block.
-
-The block runs from the lower bound to the upper bound (the first index `>= target` and the first index `> target`), so the count is `upper - lower`. If the target is absent both bounds are the same index and the answer is `0`, with no special case.
-
-Python gives you both bounds: `bisect.bisect_right(nums, target) - bisect.bisect_left(nums, target)`.
 
 ## Explanation
 

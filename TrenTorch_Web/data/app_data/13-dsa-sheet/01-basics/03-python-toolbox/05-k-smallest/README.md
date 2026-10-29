@@ -3,6 +3,7 @@ name: sheet-k-smallest
 title: 'K Smallest Numbers'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: heaps-and-merging
 ---
 
 ## Statement
@@ -44,12 +45,6 @@ Output:
 - `0 <= len(nums) <= 3 * 10**5`
 - `0 <= k <= 3 * 10**5`
 - `-10**9 <= nums[i] <= 10**9`
-
-## Theory
-
-Sorting everything costs `O(n log n)` even if you only need a few results. A **heap** is a structure that always gives you its smallest (or largest) item quickly. `heapq.nsmallest(k, nums)` keeps only the `k` best candidates while it scans the list, which is `O(n log k)`. When `k` is small compared to `n` that is a big saving.
-
-Python's `heapq` is a _min_-heap stored in a plain list. The functions `heappush`, `heappop`, `nsmallest` and `nlargest` cover most interview problems. For a tiny `k` it also beats `sorted(nums)[:k]` on memory, since it never builds a second full-size list.
 
 ## Explanation
 

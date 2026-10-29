@@ -3,6 +3,7 @@ name: sheet-graph-coloring
 title: 'Can the Graph Be Coloured?'
 tags: [dsa-sheet, recursion, backtracking-puzzles]
 difficulty: Advanced
+theory: colouring-a-graph
 ---
 
 ## Statement
@@ -45,14 +46,6 @@ False
 - `0 <= len(edges) <= 40`
 - `0 <= u, v < n`
 - `1 <= colors <= 5`
-
-## Theory
-
-**Backtracking over nodes.** Colour the nodes one by one. For node `i`, try each colour `c`; it is allowed when **no neighbour that is already coloured** has colour `c`. If it is allowed, assign it and recurse to node `i + 1`; if the recursion fails, **undo** the colour and try the next one. Colouring all `n` nodes means success.
-
-Without pruning there are `colors^n` assignments. Checking neighbours _as you go_ cuts a whole subtree the moment a clash appears, which makes it far faster in practice (though still exponential in the worst case: graph colouring is a famous hard problem).
-
-Build an **adjacency list** first so that "who are the neighbours of `i`?" is quick.
 
 ## Explanation
 

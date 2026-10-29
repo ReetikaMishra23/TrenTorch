@@ -3,6 +3,7 @@ name: sheet-count-subset-sums
 title: 'Count Subsets With Sum'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Intermediate
+theory: combinations-permutations-and-meeting-in-the-middle
 ---
 
 ## Statement
@@ -51,12 +52,6 @@ Every pair of positions works: 3 ways.
 - `0 <= k <= len(nums)`
 - `-100 <= nums[i] <= 100`
 - `-2200 <= target <= 2200`
-
-## Theory
-
-When `n` is small, trying all the choices is the right answer, and the work is how you enumerate them. `itertools.combinations(items, k)` yields every way to pick `k` items without repeats, in order, without writing nested loops. There are `C(n, k)` of them: for `n = 22` and `k = 11` that is 705,432, fine for a computer, impossible by hand.
-
-Related tools in `itertools`: `permutations` (order matters), `product` (cartesian product, with repeats), `combinations_with_replacement`. Knowing which one matches a problem saves a lot of recursion code.
 
 ## Explanation
 

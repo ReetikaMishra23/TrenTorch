@@ -3,6 +3,7 @@ name: sheet-longest-subarray-within-limit
 title: 'Longest Subarray Within a Limit'
 tags: [dsa-sheet, stack-and-queue, queues-and-deques]
 difficulty: Advanced
+theory: a-window-that-grows-and-shrinks
 ---
 
 ## Statement
@@ -48,14 +49,6 @@ Output:
 - `0 <= len(nums) <= 100000`
 - `1 <= nums[i] <= 10**9`
 - `0 <= limit <= 10**9`
-
-## Theory
-
-This is a sliding window (`left`, `right`) where the window is valid while `max - min <= limit`. Growing the window can only break validity, so when it breaks, advance `left` until it is valid again.
-
-The hard part is knowing the window's **max and min quickly** as it slides. Use **two monotonic deques**, exactly as in the sliding window maximum: one keeps indices with decreasing values (front = max), the other indices with increasing values (front = min). When `left` moves past a front index, drop it.
-
-Both deques make `max` and `min` `O(1)`, so the whole algorithm is `O(n)`.
 
 ## Explanation
 

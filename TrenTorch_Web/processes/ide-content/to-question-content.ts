@@ -42,6 +42,7 @@ export function toQuestionContent(question: GeneratedQuestion): QuestionContent 
 			hint: question.hint,
 			hints: question.hints ?? (question.hint ? [question.hint] : undefined),
 			references: question.references,
+			theory: question.theory,
 			tools: question.tools
 		},
 		descriptionMarkdown: question.statementMarkdown,

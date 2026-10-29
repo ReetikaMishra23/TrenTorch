@@ -3,6 +3,7 @@ name: sheet-happy-number
 title: 'Happy Number'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Beginner
+theory: detecting-a-loop
 ---
 
 ## Statement
@@ -48,14 +49,6 @@ False
 ### Constraints
 
 - `1 <= n <= 2**31 - 1`
-
-## Theory
-
-The sequence either reaches `1` or enters a **cycle**. To detect a cycle, remember every value you have seen in a `set`: if a value comes up again, you are looping and the answer is `False`.
-
-Why does the sequence not grow forever? A number with `d` digits has a digit-square sum of at most `81 * d`, which is far smaller than the number once `d` reaches 4. So after a few steps the values stay small, and with finitely many small values a repeat must happen.
-
-A `set` of seen values detects cycles in `O(1)` per step. (Floyd's tortoise-and-hare detects cycles with `O(1)` memory; you will meet it for linked lists.)
 
 ## Explanation
 

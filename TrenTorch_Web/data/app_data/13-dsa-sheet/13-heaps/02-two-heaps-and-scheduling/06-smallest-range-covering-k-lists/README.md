@@ -3,6 +3,7 @@ name: sheet-smallest-range-covering-k-lists
 title: 'Smallest Range Covering K Lists'
 tags: [dsa-sheet, heaps, two-heaps-and-scheduling]
 difficulty: Mastery
+theory: moving-the-smallest-forward
 ---
 
 ## Statement
@@ -46,16 +47,6 @@ Output:
 - `1 <= k <= 3500`
 - `1 <= total number of values <= 100000`
 - `-10**5 <= value <= 10**5`
-
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-A range that covers every list always has one chosen number from each list. Its low end is the **minimum** of the chosen numbers and its high end is the **maximum**. Start with the **first number of each list**; their min and max form a valid range. To improve it, the only useful move is to replace the **minimum** (making the low end larger): take the next number of the list that holds the minimum.
-
-A **min-heap** holds the current choice from each list, so the minimum is the top. Keep the current maximum in a variable. Repeat: record `[top, max]` if it is smaller than the best; pop the top, push the next number from the same list (updating the maximum). Stop when a list runs out of numbers.
-
-`O(N log k)`.
 
 ## Explanation
 

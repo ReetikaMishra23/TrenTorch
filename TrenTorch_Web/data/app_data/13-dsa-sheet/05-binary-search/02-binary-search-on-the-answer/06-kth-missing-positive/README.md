@@ -3,6 +3,7 @@ name: sheet-kth-missing-positive
 title: 'Kth Missing Positive Number'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Advanced
+theory: counting-the-missing-numbers
 ---
 
 ## Statement
@@ -47,12 +48,6 @@ Output:
 - `nums` is sorted in increasing order with different positive values up to `10**9`.
 - `1 <= k <= 10**9`
 - The big tests count how many values your code reads from the list (the limit is stated in the failure message). Reading every value, or using `in`, `.index`, `.count`, `min` or `sorted` on the whole list, fails them.
-
-## Theory
-
-Counting the missing numbers by walking through the list is `O(n)`. But the list is sorted, so the **number of missing values before index `i`** is easy to compute without looking at anything else: if the list had no gaps, `nums[i]` would equal `i + 1`. So `nums[i] - (i + 1)` is exactly how many positive numbers are missing before `nums[i]`.
-
-That count never decreases as `i` grows, so you can binary search for the first index where the missing count reaches `k`: let `lo` be the number of list values that are **before** the answer. The answer then lies after exactly `lo` list values and `k` missing numbers, so it is `lo + k`.
 
 ## Explanation
 

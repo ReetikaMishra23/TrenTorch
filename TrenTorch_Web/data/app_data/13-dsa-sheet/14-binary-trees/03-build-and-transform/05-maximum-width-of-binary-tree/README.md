@@ -3,6 +3,7 @@ name: sheet-maximum-width-of-binary-tree
 title: 'Maximum Width of a Binary Tree'
 tags: [dsa-sheet, binary-trees, build-and-transform]
 difficulty: Advanced
+theory: maximum-width-by-numbering-positions
 ---
 
 ## Statement
@@ -47,14 +48,6 @@ Output:
 
 - `0 <= number of nodes <= 3000`
 - The tree is not deeper than 800 levels.
-
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-Number the nodes like in a **heap**: the root is `0`; the children of the node numbered `i` are `2i + 1` and `2i + 2`. A level's width is then `last_index - first_index + 1`, where the indices are those of the leftmost and rightmost nodes of the level. Run a BFS and keep the index with each node.
-
-Indices grow quickly in a thin tree (up to `2^depth`); Python integers do not overflow, so no special care is needed. In other languages you subtract the first index of the level before computing the children.
 
 ## Explanation
 

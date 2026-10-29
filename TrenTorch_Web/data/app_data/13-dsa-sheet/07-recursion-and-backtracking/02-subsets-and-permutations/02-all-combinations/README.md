@@ -3,6 +3,7 @@ name: sheet-all-combinations
 title: 'All Combinations of K Numbers'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Beginner
+theory: combinations-and-cutting-dead-branches
 ---
 
 ## Statement
@@ -44,14 +45,6 @@ Output:
 - `1 <= n <= 20`
 - `0 <= k <= n`
 - The answer has at most `C(n, k)` lists; the tests keep it under 200,000.
-
-## Theory
-
-Choose the numbers in increasing order, one at a time. `go(start, current)` needs `k - len(current)` more numbers, all from `start..n`. Try each `j` from `start`, add it, recurse from `j + 1`, remove it.
-
-**Prune** with a counting argument: if you still need `r` numbers, the last useful starting point is `n - r + 1`, because later starts leave too few numbers to finish. Stopping the loop there avoids many dead branches.
-
-There are `C(n, k)` answers, so the output itself is large. The standard library has `itertools.combinations`, but writing the recursion yourself is the exercise.
 
 ## Explanation
 

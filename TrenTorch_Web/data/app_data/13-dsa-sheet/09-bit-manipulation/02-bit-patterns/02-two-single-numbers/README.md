@@ -3,6 +3,7 @@ name: sheet-two-single-numbers
 title: 'Two Single Numbers'
 tags: [dsa-sheet, bit-manipulation, bit-patterns]
 difficulty: Advanced
+theory: two-single-numbers
 ---
 
 ## Statement
@@ -43,14 +44,6 @@ Output:
 
 - `2 <= len(nums) <= 300000`
 - `-2**31 <= nums[i] < 2**31`
-
-## Theory
-
-XOR of the whole list cancels the pairs and leaves `a ^ b`, the xor of the two singles. It is not zero, because `a != b`, so it has at least one set bit, and that bit is a position where `a` and `b` **differ**.
-
-Use it to **split the numbers into two groups**: those with that bit set and those without. The pairs stay together (equal numbers have equal bits), and `a` and `b` land in different groups. XOR each group separately: each ends up as one single number.
-
-To get the bit, isolate the lowest set bit of `a ^ b` with `x & -x`. The method takes two passes, `O(n)` time and `O(1)` memory.
 
 ## Explanation
 

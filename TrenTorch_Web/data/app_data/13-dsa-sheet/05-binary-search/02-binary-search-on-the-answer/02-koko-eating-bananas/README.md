@@ -3,6 +3,7 @@ name: sheet-koko-eating-bananas
 title: 'Eating Speed'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Intermediate
+theory: the-slowest-speed-that-works
 ---
 
 ## Statement
@@ -51,14 +52,6 @@ With 5 hours for 5 piles you must finish a pile every hour, so the speed is the 
 - `len(piles) <= hours <= 10**9`
 - `1 <= piles[i] <= 10**9`
 - Trying every speed one by one is too slow for the large tests.
-
-## Theory
-
-This is **binary search on the answer**. A speed `k` either works (all piles done within `hours`) or not, and if `k` works then any faster speed also works. So the speeds that work form a block `False, False, ..., True, True, ...`. The answer is the first `True`.
-
-The speed is between `1` and `max(piles)` (faster than the biggest pile never helps). For a guess `k`, the time needed is the sum over piles of `ceil(pile / k)`. In Python `-(-pile // k)` is a ceiling division with integers (no floats).
-
-Check the guess in `O(n)`, and there are about `log₂ (max pile)` guesses: `O(n log M)` in total, instead of `O(n * M)` for trying every speed.
 
 ## Explanation
 

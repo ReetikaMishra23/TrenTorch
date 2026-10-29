@@ -3,6 +3,7 @@ name: sheet-merge-sorted-pair
 title: 'Merge Two Sorted Lists'
 tags: [dsa-sheet, sorting, sorting-by-hand]
 difficulty: Beginner
+theory: merging-with-a-comparison-count
 ---
 
 ## Statement
@@ -54,14 +55,6 @@ Output:
 - `0 <= len(a), len(b) <= 2 * 10**5`
 - Both lists are sorted in increasing order.
 - `-10**9 <= value <= 10**9`
-
-## Theory
-
-Merging is the building block of **merge sort**. Because both inputs are already sorted, the next smallest value overall must be at the front of one of them, so one comparison decides each output value. No looking back is ever needed.
-
-Merging lists of total length `n` costs at most `n - 1` comparisons and `O(n)` time. That is far cheaper than sorting the combined list from scratch, which is the whole point.
-
-Taking from `a` on ties keeps the merge **stable**: equal values stay in the order they came in. Stability matters when you sort records by one field and want earlier orderings kept.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-validate-binary-search-tree
 title: 'Validate a BST'
 tags: [dsa-sheet, binary-search-trees, bst-basics]
 difficulty: Intermediate
+theory: validating-with-ranges
 ---
 
 ## Statement
@@ -48,18 +49,6 @@ False
 - `0 <= number of nodes <= 100000`
 - The tree is not deeper than 800 levels.
 - `-10**9 <= val <= 10**9`
-
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-The tempting check, "left child < node < right child", is **not enough**: in `[5, 1, 4, None, None, 3, 6]` every node satisfies it with its own children, but `3` is in the right subtree of `5` and is smaller than `5`.
-
-Pass **bounds** down the recursion: every value in a subtree must lie in an open interval `(low, high)`. The root has `(-inf, inf)`. Going left, the upper bound becomes the node's value; going right, the lower bound becomes the node's value. A node outside its interval makes the tree invalid.
-
-The alternative is the **inorder** traversal: a tree is a BST exactly when its inorder values are strictly increasing. `O(n)`.
 
 ## Explanation
 

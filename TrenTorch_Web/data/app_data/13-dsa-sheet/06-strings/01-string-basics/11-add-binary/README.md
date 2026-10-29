@@ -3,6 +3,7 @@ name: sheet-add-binary
 title: 'Add Binary Strings'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: adding-with-a-carry
 ---
 
 ## Statement
@@ -43,14 +44,6 @@ Output:
 
 - `1 <= len(a), len(b) <= 10**5`
 - Both strings contain only `0` and `1`.
-
-## Theory
-
-In Python you could convert with `int(a, 2) + int(b, 2)` and format the result with `bin(...)[2:]`, which works because Python integers are unlimited. But converting a long string into an integer has a limit for decimal digits only, not for base 2, so this is fine here.
-
-The **by-hand** method is the one to know for languages without big integers: add digit by digit from the **right**, keeping a **carry**. At each position the sum is `digit_a + digit_b + carry`; the output digit is `sum % 2` and the new carry is `sum // 2`. Continue while either string has digits left or the carry is `1`, then reverse the collected digits.
-
-Both versions are `O(n)`.
 
 ## Explanation
 

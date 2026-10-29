@@ -3,6 +3,7 @@ name: sheet-count-and-say
 title: 'Count and Say'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Intermediate
+theory: reading-a-string-aloud
 ---
 
 ## Statement
@@ -51,14 +52,6 @@ Output:
 
 - `1 <= n <= 40`
 - Term 40 has about 63,000 digits.
-
-## Theory
-
-Each term is built from the previous one, so loop `n - 1` times, each time **run-length encoding** the current string: scan for runs of equal digits and write `count` followed by `digit` for each run.
-
-`itertools.groupby(term)` yields each run, so one step is `"".join(str(len(list(run))) + digit for digit, run in groupby(term))`. The strings grow by about 30% every step, which is why `n` is limited to 40.
-
-A famous fact: no term ever contains a digit bigger than `3`, and the sequence grows by a constant ratio (Conway's constant, about 1.3036). It is an example of a **simulation**: no trick, just do what the rules say, carefully.
 
 ## Explanation
 

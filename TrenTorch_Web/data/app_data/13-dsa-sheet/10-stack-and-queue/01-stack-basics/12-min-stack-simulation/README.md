@@ -3,6 +3,7 @@ name: sheet-min-stack-simulation
 title: 'Stack With Minimum'
 tags: [dsa-sheet, stack-and-queue, stack-basics]
 difficulty: Intermediate
+theory: a-stack-with-a-minimum
 ---
 
 ## Statement
@@ -48,14 +49,6 @@ Output:
 - `0 <= len(ops) <= 200000`
 - `-10**9 <= x <= 10**9`
 - `pop`, `top` and `get_min` are only used when the stack is not empty.
-
-## Theory
-
-A **stack** is last in, first out: you only add (`push`) and remove (`pop`) at the top. In Python a list does this with `append()` and `pop()`, both `O(1)`.
-
-Finding the minimum by scanning the stack costs `O(n)` per query. To get `O(1)`, remember the minimum **as it was at every depth**. Keep a second stack (or store pairs): when you push `x`, also push `min(x, current_min)` onto the second stack. When you pop, pop both. The top of the second stack is always the minimum of everything currently in the stack.
-
-The idea of keeping extra information next to each element so a query is instant is called **augmenting** a data structure.
 
 ## Explanation
 

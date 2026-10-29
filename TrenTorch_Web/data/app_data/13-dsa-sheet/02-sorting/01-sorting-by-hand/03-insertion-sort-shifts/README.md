@@ -3,6 +3,7 @@ name: sheet-insertion-sort-shifts
 title: 'Insertion Sort Shifts'
 tags: [dsa-sheet, sorting, sorting-by-hand]
 difficulty: Beginner
+theory: counting-the-shifts
 ---
 
 ## Statement
@@ -61,14 +62,6 @@ A reversed list of 5 has the most: 10 shifts.
 
 - `0 <= len(nums) <= 2000`
 - `-10**9 <= nums[i] <= 10**9`
-
-## Theory
-
-Insertion sort keeps the front of the list sorted. For each new value it shifts the larger values one place right until it finds the gap. It is **stable**, because it never moves equal values past each other, and it is **adaptive**: the work depends on how out of order the input is.
-
-The number of shifts equals the number of **inversions**: pairs of positions `i < j` with `a[i] > a[j]`. Each shift fixes exactly one inversion. A sorted list has `0`, a reversed list has `n(n-1)/2`.
-
-So insertion sort costs `O(n + inversions)`: `O(n)` on sorted data and `O(n²)` on reversed data. Nearly sorted data is its best case, which is why real libraries use it for small chunks.
 
 ## Explanation
 

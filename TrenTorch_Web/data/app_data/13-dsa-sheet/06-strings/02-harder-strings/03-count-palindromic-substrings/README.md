@@ -3,6 +3,7 @@ name: sheet-count-palindromic-substrings
 title: 'Count Palindromic Substrings'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Intermediate
+theory: counting-all-palindromic-substrings
 ---
 
 ## Statement
@@ -49,12 +50,6 @@ Output:
 
 - `0 <= len(s) <= 1000`
 - `s` contains lower-case letters.
-
-## Theory
-
-The same **expand around the centre** idea counts palindromes without checking each substring from scratch. Every palindromic substring has exactly one centre, and if a substring around a centre is a palindrome, so is every smaller one around the same centre. So when you expand from a centre and the characters match `k` times, you have found exactly `k` palindromes.
-
-Count one for every successful step of the expansion, over all `2n - 1` centres. The worst case (a string of one repeated letter) is `O(n²)`, which is also the number of palindromes it has.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-factorial-digit-sum
 title: 'Digit Sum of a Factorial'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Intermediate
+theory: maths-helpers-and-big-numbers
 ---
 
 ## Statement
@@ -49,12 +50,6 @@ Output:
 
 - `0 <= n <= 10000`
 - `10000!` has about 35,000 digits.
-
-## Theory
-
-`math.factorial(n)` computes the exact value, even when it is huge, because Python integers are unlimited. The digits are a different story: since Python 3.11, converting an integer with more than **4300 digits** to a string raises `ValueError: Exceeds the limit (4300 digits) for integer string conversion`. This is a protection against slow, attacker-controlled conversions.
-
-You have two ways around it. You can lift the limit for your program with `sys.set_int_max_str_digits(0)`. Or you can avoid strings completely and peel off digits with `divmod(x, 10)`, which is slower per digit but never hits the limit. Competitive programmers on Python 3.11+ meet this limit sooner or later, so it is worth knowing.
 
 ## Explanation
 

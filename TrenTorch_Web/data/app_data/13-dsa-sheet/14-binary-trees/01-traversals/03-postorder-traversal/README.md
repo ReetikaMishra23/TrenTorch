@@ -3,6 +3,7 @@ name: sheet-postorder-traversal
 title: 'Postorder Traversal'
 tags: [dsa-sheet, binary-trees, traversals]
 difficulty: Intermediate
+theory: iterative-postorder
 ---
 
 ## Statement
@@ -48,14 +49,6 @@ Output:
 - `0 <= number of nodes <= 100000`
 - The tree is not deeper than 800 levels.
 - `-10**9 <= val <= 10**9`
-
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-**Postorder** visits a node **after** its children. It is the order for deleting a tree, or for computing something that depends on both subtrees (the height, the size, the sum).
-
-A short iterative trick: postorder is the **reverse** of "node, right, left". So run the preorder loop with the children pushed in the opposite order (left, then right), which visits node, right, left, and reverse the result at the end.
 
 ## Explanation
 

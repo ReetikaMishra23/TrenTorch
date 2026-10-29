@@ -3,6 +3,7 @@ name: sheet-sort-records
 title: 'Leaderboard Order'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: sorting-with-a-key
 ---
 
 ## Statement
@@ -47,12 +48,6 @@ Output:
 
 - `0 <= len(records) <= 2 * 10**5`
 - `name` is a lower-case string, `0 <= score <= 10**9`
-
-## Theory
-
-`sorted(items, key=f)` sorts by whatever `f(item)` returns, without changing the items. It is `O(n log n)` and **stable**: items with equal keys stay in their original order.
-
-To sort by several criteria, return a tuple: Python compares tuples element by element. For "score high to low, then name A to Z", the key is `(-score, name)`. Negating a number flips its order, which is the usual trick for a descending sort in one key.
 
 ## Explanation
 

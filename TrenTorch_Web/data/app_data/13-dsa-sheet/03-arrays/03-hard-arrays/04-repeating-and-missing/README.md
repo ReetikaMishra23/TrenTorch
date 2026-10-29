@@ -3,6 +3,7 @@ name: sheet-repeating-and-missing
 title: 'Repeating and Missing Number'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Intermediate
+theory: two-unknowns-need-two-equations
 ---
 
 ## Statement
@@ -48,14 +49,6 @@ Output:
 - `2 <= len(nums) <= 2 * 10**5`
 - Every value is between `1` and `len(nums)`.
 - Exactly one value repeats and exactly one is missing.
-
-## Theory
-
-A set or a counting list solves it in `O(n)` with `O(n)` memory. With **maths** you can do it in `O(1)` memory.
-
-Let `r` be the repeated value and `m` the missing one. Compare the list with the ideal `1..n`: the **sums** differ by `r - m`, and the **sums of squares** differ by `r² - m²`. From the second, `r² - m² = (r - m)(r + m)`, so once you know `r - m` you get `r + m` by division. Then `r = ((r + m) + (r - m)) / 2` and `m = ((r + m) - (r - m)) / 2`.
-
-Two equations, two unknowns: a small algebra trick that turns a search problem into arithmetic.
 
 ## Explanation
 

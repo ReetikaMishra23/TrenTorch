@@ -3,6 +3,7 @@ name: sheet-sort-colors
 title: 'Sort Zeros, Ones and Twos'
 tags: [dsa-sheet, sorting, divide-and-conquer]
 difficulty: Intermediate
+theory: the-one-pass-code
 ---
 
 ## Statement
@@ -45,14 +46,6 @@ Output:
 
 - `0 <= len(nums) <= 3 * 10**5`
 - Every `nums[i]` is `0`, `1` or `2`.
-
-## Theory
-
-When the values come from a tiny range you do not need comparisons at all. **Counting sort** counts how many `0`s, `1`s and `2`s there are, then writes them out in order: two passes, `O(n)`.
-
-The **Dutch national flag** method does it in one pass with three pointers. `low` marks the end of the zeros, `high` marks the start of the twos, and `i` scans the middle. A `0` is swapped to `low`, a `2` is swapped to `high`, and a `1` stays. Everything before `low` is zero, everything after `high` is two, and the part between `low` and `i` is ones.
-
-The lesson: a general sort costs `O(n log n)` because it must compare. If you know more about the data, you can beat that bound.
 
 ## Explanation
 

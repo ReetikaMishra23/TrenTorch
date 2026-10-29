@@ -3,6 +3,7 @@ name: sheet-connect-the-network
 title: 'Operations to Connect the Network'
 tags: [dsa-sheet, graphs, disjoint-sets]
 difficulty: Intermediate
+theory: spotting-cycles
 ---
 
 ## Statement
@@ -45,16 +46,6 @@ Output:
 
 - `1 <= n <= 100000`
 - `0 <= len(connections) <= 200000`
-
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-A **disjoint set union (DSU)**, also called **union-find**, keeps track of a partition of items into groups. It supports two operations: `find(x)` returns the representative (the "leader") of the group of `x`, and `union(a, b)` merges the groups of `a` and `b`. Store a `parent` array where each item points toward its leader. Two tricks make it almost `O(1)` per operation: **path compression** (while walking up in `find`, point nodes closer to the root) and **union by size** (attach the smaller group under the larger). Two items are in the same group exactly when `find(a) == find(b)`.
-
-To join `n` computers into one network you need at least `n - 1` cables: if there are fewer, return `-1`. If there are enough, the cables are never the problem: some cables are **redundant** (they close a cycle inside a component) and can be moved freely.
-
-Count the connected components `c` with a union-find. Joining `c` components needs `c - 1` cables, and the redundant ones are enough whenever the total is at least `n - 1`. So the answer is `c - 1`.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-remove-nth-from-end
 title: 'Remove the Nth Node From the End'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Intermediate
+theory: two-runners-with-a-gap
 ---
 
 ## Statement
@@ -46,12 +47,6 @@ Output:
 - `1 <= number of nodes <= 100000`
 - `1 <= n <= number of nodes`
 - `-10**9 <= val <= 10**9`
-
-## Theory
-
-The `n`-th from the end is the `(length - n + 1)`-th from the start, but you do not know the length yet. Counting first and walking again works (two passes). One pass needs a trick: keep two pointers **`n` nodes apart**. Send `fast` ahead by `n` steps, then move both together. When `fast` reaches the last node, `slow` is just before the node to delete.
-
-Use a **dummy head** in front of the list. Then removing the first node (when `n` equals the length) is no special case: `slow` simply stays on the dummy, and `dummy.next` is the new head.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-kth-of-two-sorted
 title: 'Kth Value of Two Sorted Lists'
 tags: [dsa-sheet, binary-search, binary-search-on-the-answer]
 difficulty: Mastery
+theory: searching-for-the-cut
 ---
 
 ## Statement
@@ -47,14 +48,6 @@ Output:
 - Both lists are sorted in non-decreasing order.
 - `-10**9 <= value <= 10**9`
 - The big tests count how many values you read from each list.
-
-## Theory
-
-This is the median problem with a general `k`. Take `i` values from the shorter list `a` and `k - i` from `b` to form the `k` smallest values. That choice is right when the largest value taken from each list is at most the smallest value **not** taken from the other: `a[i-1] <= b[j]` and `b[j-1] <= a[i]`, with `j = k - i`.
-
-Binary search `i`. The number taken from `a` can be at most `min(k, len(a))`, and at least `k - len(b)` (you cannot take more than `len(b)` from `b`). If `a[i-1] > b[j]` you took too many from `a`; otherwise too few.
-
-When the split is right, the `k`-th smallest value is the larger of the two largest taken values: `max(a[i-1], b[j-1])`. `O(log min(len(a), len(b)))` reads.
 
 ## Explanation
 

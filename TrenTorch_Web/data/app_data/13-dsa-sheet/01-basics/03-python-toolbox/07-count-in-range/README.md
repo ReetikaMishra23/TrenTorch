@@ -3,6 +3,7 @@ name: sheet-count-in-range
 title: 'Count in Range'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Intermediate
+theory: binary-search-with-bisect
 ---
 
 ## Statement
@@ -47,14 +48,6 @@ Output:
 - `0 <= len(queries) <= 2 * 10**5`
 - `0 <= sorted_nums[i], lo, hi <= 10**6`
 - Counting each query with a loop over the list is too slow.
-
-## Theory
-
-In a sorted list, all values in a range sit next to each other. So you only need the _positions_ where the range starts and ends, and the count is the difference of the two positions.
-
-`bisect` finds a position in `O(log n)` by binary search. `bisect_left(a, x)` is the index of the first element `>= x`; `bisect_right(a, x)` is the index of the first element `> x`. The numbers in `[lo, hi]` are exactly those between `bisect_left(a, lo)` and `bisect_right(a, hi)`.
-
-Using `bisect_right` for the upper end is what makes `hi` inclusive. Mixing the two functions up is the classic off-by-one.
 
 ## Explanation
 

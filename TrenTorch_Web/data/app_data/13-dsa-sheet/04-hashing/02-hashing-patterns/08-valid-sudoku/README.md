@@ -3,6 +3,7 @@ name: sheet-valid-sudoku
 title: 'Valid Sudoku Board'
 tags: [dsa-sheet, hashing, hashing-patterns]
 difficulty: Intermediate
+theory: checking-rules-with-sets
 ---
 
 ## Statement
@@ -49,14 +50,6 @@ The top-left `8` repeats in its column (and in its box with the `8` below).
 
 - `board` has 9 rows of 9 cells.
 - Each cell is an integer from `0` to `9`.
-
-## Theory
-
-Check each digit against the three groups it belongs to: its row, its column and its box. A `set` per group answers "have I seen this digit here before?" in `O(1)`.
-
-The nine boxes can be numbered by integer division: the cell at row `r`, column `c` is in box `(r // 3) * 3 + c // 3`. So you need `9` sets for rows, `9` for columns and `9` for boxes, and one pass over the `81` cells.
-
-A neat shortcut stores tuples like `("row", r, digit)`, `("col", c, digit)` and `("box", b, digit)` in **one** set: if adding any of the three finds it already there, the board is invalid.
 
 ## Explanation
 

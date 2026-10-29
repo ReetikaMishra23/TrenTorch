@@ -3,6 +3,7 @@ name: sheet-lowest-common-ancestor
 title: 'Lowest Common Ancestor'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Intermediate
+theory: lowest-common-ancestor
 ---
 
 ## Statement
@@ -48,18 +49,6 @@ Output:
 - `2 <= number of nodes <= 100000`
 - The tree is not deeper than 800 levels.
 - All values are different; `p != q` and both are in the tree.
-
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-Ask each subtree "do you contain `p` or `q`?". Recurse: `find(node)` returns the node itself if it is `p` or `q`, otherwise whatever the two children return.
-
-- If **both** children return something (non-`None`), then `p` is on one side and `q` on the other, so the current node is the lowest common ancestor.
-- If only one child returns something, pass it up (it is either the LCA already found below, or the single target found so far).
-- If neither does, return `None`.
-
-A single `O(n)` pass answers it, with the recursion returning "what I found in my subtree".
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-reverse-bits
 title: 'Reverse the Bits'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Intermediate
+theory: reversing-the-bits
 ---
 
 ## Statement
@@ -44,12 +45,6 @@ Output:
 ### Constraints
 
 - `0 <= n < 2**32`
-
-## Theory
-
-Build the answer bit by bit: take the lowest bit of `n` (`n & 1`), push it into the **result from the right** (`result = (result << 1) | bit`), then shift `n` right. After 32 rounds the first bit read has moved all the way to the top.
-
-Always do all 32 rounds, even when `n` runs out of bits: leading zeros of `n` become trailing zeros of the answer, and the shifts of `result` make room for them.
 
 ## Explanation
 

@@ -4,7 +4,7 @@ import { parseReadme } from './parse-readme.mjs';
 import { buildCasesTests, parseProblem } from './build-cases-tests.mjs';
 
 export function buildQuestion(parent, trackId, questionDirName, questionDirPath) {
-	const { rootId, sectionId } = parent;
+	const { rootId, sectionId, hasTheory, trackTheory } = parent;
 	const readmeRaw = readIfExists(join(questionDirPath, 'README.md'));
 	if (readmeRaw === null) {
 		throw new Error(`Missing README.md in ${questionDirPath}`);
@@ -61,6 +61,17 @@ export function buildQuestion(parent, trackId, questionDirName, questionDirPath)
 		}
 	}
 
+	// DSA sheet: where the "Go to Theory" link points. The question's own `theory:` (a heading
+	// anchor on the step's theory page) wins over the topic's default from its meta.json.
+	const theoryAnchor =
+		typeof meta.theory === 'string'
+			? meta.theory
+			: typeof trackTheory === 'string'
+				? trackTheory
+				: null;
+	const theory =
+		hasTheory && theoryAnchor !== null ? { step: sectionId, anchor: theoryAnchor } : null;
+
 	return {
 		id: meta.name,
 		title: meta.title,
@@ -72,6 +83,7 @@ export function buildQuestion(parent, trackId, questionDirName, questionDirPath)
 			? { kind: 'dsa', hints: parseProblem(problemJson, questionDirPath).hints }
 			: {}),
 		...(references.length > 0 ? { references } : {}),
+		...(theory && problemJson !== null ? { theory } : {}),
 		...(typeof meta.caseCompany === 'string' ? { caseCompany: meta.caseCompany } : {}),
 		...(relatedModule ? { relatedModule } : {}),
 		...(typeof meta.hint === 'string' ? { hint: meta.hint } : {}),

@@ -3,6 +3,7 @@ name: sheet-normalize-text
 title: 'Normalize Text'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: cleaning-up-text
 ---
 
 ## Statement
@@ -49,12 +50,6 @@ Output:
 
 - `0 <= len(s) <= 3 * 10**5`
 - `s` contains only printable ASCII characters.
-
-## Theory
-
-Python's string methods do most of this work. `s.lower()` lower-cases. `s.split()` with no argument splits on any run of whitespace and drops empty pieces, and `" ".join(pieces)` glues them back with single spaces. Together `" ".join(s.split())` collapses spaces.
-
-To turn other characters into separators, either replace them one by one (`str.translate`, or a comprehension like `c if c.isalnum() else " "`) or use a regular expression: `re.sub(r"[^a-z0-9]+", " ", s)`. Strings are immutable, so building one by `+=` in a loop is `O(n²)` for long strings; build a list and `join` it once instead.
 
 ## Explanation
 

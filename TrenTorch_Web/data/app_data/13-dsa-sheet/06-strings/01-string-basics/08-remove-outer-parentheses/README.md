@@ -3,6 +3,7 @@ name: sheet-remove-outer-parentheses
 title: 'Remove Outer Parentheses'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: using-the-counter-to-decide-what-to-keep
 ---
 
 ## Statement
@@ -45,12 +46,6 @@ Output:
 
 - `0 <= len(s) <= 3 * 10**5`
 - `s` is balanced and contains only `(` and `)`.
-
-## Theory
-
-Track the **depth** while scanning. A `(` that raises the depth from `0` to `1` is the **opening** parenthesis of a group; a `)` that lowers the depth from `1` to `0` is its **closing** one. Those are exactly the two characters to drop.
-
-So: for `(`, add it to the answer only if the depth was already above `0`, then increase the depth. For `)`, decrease the depth first, then add it only if the depth is still above `0`. The order of "check" and "change" is the whole trick.
 
 ## Explanation
 

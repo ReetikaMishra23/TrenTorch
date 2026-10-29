@@ -3,6 +3,7 @@ name: sheet-distinct-permutations
 title: 'Distinct Permutations'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Intermediate
+theory: combinations-permutations-and-meeting-in-the-middle
 ---
 
 ## Statement
@@ -43,12 +44,6 @@ Output:
 
 - `0 <= len(s) <= 8`
 - `s` contains only lower-case letters.
-
-## Theory
-
-`itertools.permutations(s)` yields every ordering of the characters as tuples. With repeated letters it yields the same string more than once, because it treats positions as different, not values. A `set` removes the duplicates and `sorted` puts them in order.
-
-The number of results is `n!` at most: 8 letters give 40,320. Past about 10 letters the count explodes, which is why constraints on permutation problems are always small.
 
 ## Explanation
 

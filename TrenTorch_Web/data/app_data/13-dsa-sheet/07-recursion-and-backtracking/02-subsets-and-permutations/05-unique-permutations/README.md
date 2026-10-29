@@ -3,6 +3,7 @@ name: sheet-unique-permutations
 title: 'Permutations With Repeated Values'
 tags: [dsa-sheet, recursion, subsets-and-permutations]
 difficulty: Intermediate
+theory: repeated-values-in-permutations
 ---
 
 ## Statement
@@ -43,14 +44,6 @@ Output:
 
 - `0 <= len(nums) <= 8`
 - `-100 <= nums[i] <= 100`
-
-## Theory
-
-The permutations recursion produces repeats when equal values are swapped around. With `[1, 1, 2]` the two `1`s are interchangeable, so choosing "first `1` then second `1`" or "second `1` then first `1`" gives the same ordering.
-
-Sort the values, and add one rule: **skip a value if it equals the previous value and that previous value is not currently in use**. In code: `if j > 0 and a[j] == a[j - 1] and not used[j - 1]: continue`. It forces equal values to be used **in their sorted order**, so each distinct ordering is built exactly once.
-
-This is the permutation version of "skip duplicates at the same level".
 
 ## Explanation
 

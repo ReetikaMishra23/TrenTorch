@@ -3,6 +3,7 @@ name: sheet-count-subarrays-xor-k
 title: 'Subarrays With XOR K'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Advanced
+theory: prefix-xor
 ---
 
 ## Statement
@@ -50,14 +51,6 @@ The runs are `[5]` and `[5, 6, 7, 8, 9]`.
 - `0 <= len(nums) <= 2 * 10**5`
 - `0 <= nums[i] <= 10**9`
 - `0 <= k <= 2**30`
-
-## Theory
-
-The counting-subarrays trick works for any operation that can be **undone**. For sums the undo is subtraction; for XOR it is XOR itself, because `x ^ x = 0`.
-
-Let `prefix[i]` be the XOR of the first `i` values. The XOR of the run from `a` up to `b` is `prefix[a] ^ prefix[b]` (the shared front part cancels). It equals `k` exactly when `prefix[a] = prefix[b] ^ k`.
-
-So keep a dictionary counting each prefix XOR seen so far, start it with `{0: 1}`, and for each new prefix add `seen[prefix ^ k]` to the answer before recording the prefix. `O(n)`.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-count-bits-up-to
 title: 'Count Bits for Every Number'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Intermediate
+theory: counting-bits-for-every-number
 ---
 
 ## Statement
@@ -44,16 +45,6 @@ Output:
 ### Constraints
 
 - `0 <= n <= 200000`
-
-## Theory
-
-Counting the bits of each number separately costs `O(n log n)`. Dynamic programming gives `O(n)`: the number `i` is the number `i >> 1` (shifted right, dropping the last bit) plus that last bit. So
-
-`bits[i] = bits[i >> 1] + (i & 1)`
-
-and `bits[i >> 1]` is already known because `i >> 1 < i`. Start with `bits[0] = 0` and fill from left to right.
-
-This is a first taste of **DP**: use answers for smaller inputs to build the answer for bigger ones.
 
 ## Explanation
 

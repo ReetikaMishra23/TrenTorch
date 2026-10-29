@@ -3,6 +3,7 @@ name: sheet-sort-by-frequency
 title: 'Sort Characters by Frequency'
 tags: [dsa-sheet, strings, string-basics]
 difficulty: Beginner
+theory: sorting-the-characters-of-a-string
 ---
 
 ## Statement
@@ -47,12 +48,6 @@ Output:
 
 - `0 <= len(s) <= 3 * 10**5`
 - `s` contains letters and digits.
-
-## Theory
-
-Count the characters with a `Counter`, then sort the **distinct** characters by a key that puts bigger counts first and breaks ties alphabetically: `key=lambda ch: (-count[ch], ch)`.
-
-Finally repeat each character by its count: `ch * count[ch]` builds the whole group in one operation, and `"".join(...)` joins the groups. There are at most about 62 different characters here, so the sort is tiny and counting dominates: `O(n)`.
 
 ## Explanation
 

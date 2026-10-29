@@ -3,6 +3,7 @@ name: sheet-pascal-row
 title: 'A Row of Pascal's Triangle'
 tags: [dsa-sheet, arrays, hard-arrays]
 difficulty: Intermediate
+theory: a-row-of-pascal-s-triangle
 ---
 
 ## Statement
@@ -52,14 +53,6 @@ Output:
 ### Constraints
 
 - `0 <= row <= 1000`
-
-## Theory
-
-Building the whole triangle row by row costs `O(row²)` additions. But you only need one row, and each of its values is a **binomial coefficient**: the value at position `i` of row `r` is `C(r, i)`, the number of ways to choose `i` items from `r`.
-
-Neighbouring coefficients are linked: `C(r, i + 1) = C(r, i) * (r - i) / (i + 1)`. So start with `C(r, 0) = 1` and compute each next value from the previous one with one multiplication and one division. That is `O(row)` big-number operations.
-
-The division is always exact (`C(r, i + 1)` is a whole number), so use integer division `//` and multiply **before** dividing.
 
 ## Explanation
 

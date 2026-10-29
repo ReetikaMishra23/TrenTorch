@@ -3,6 +3,7 @@ name: sheet-add-two-numbers-lists
 title: 'Add Two Numbers'
 tags: [dsa-sheet, linked-list, linked-list-basics]
 difficulty: Intermediate
+theory: adding-numbers-digit-by-digit
 ---
 
 ## Statement
@@ -46,14 +47,6 @@ Output:
 - `1 <= number of nodes <= 100000` in each list
 - `0 <= val <= 9`
 - No leading zeros (a last node of `0` appears only in the number 0 itself).
-
-## Theory
-
-This is school addition. Start at the ones digits, which is also the **head** of each list, so the least significant digit comes first and a single pass does the whole job.
-
-Keep a `carry`. In each round add the two current digits (a missing digit counts as 0) and the carry; the new node holds `total % 10` and the new carry is `total // 10`. Keep going while either list has nodes **or the carry is still 1** (so `99 + 1` produces the extra digit `100`).
-
-You never need to turn the lists into big numbers: that would be wrong for 100,000 digits (and slow). Work digit by digit, with a dummy head to build the answer.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-is-anagram
 title: 'Anagram Check'
 tags: [dsa-sheet, basics, python-toolbox]
 difficulty: Beginner
+theory: counting-with-counter
 ---
 
 ## Statement
@@ -43,12 +44,6 @@ False
 
 - `0 <= len(a), len(b) <= 2 * 10**5`
 - Both strings contain only lower-case letters.
-
-## Theory
-
-`collections.Counter` turns an iterable into a dictionary of `value -> how many times it appears`. Two `Counter` objects compare equal when every count matches, so `Counter(a) == Counter(b)` is the whole check, in `O(n)`.
-
-Sorting both strings and comparing also works (`O(n log n)`). The counting version is faster for long strings, and the habit of counting with a `Counter` returns in nearly every hashing problem.
 
 ## Explanation
 

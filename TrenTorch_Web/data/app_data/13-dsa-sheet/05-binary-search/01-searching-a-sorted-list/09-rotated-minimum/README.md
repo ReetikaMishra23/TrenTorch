@@ -3,6 +3,7 @@ name: sheet-rotated-minimum
 title: 'Minimum of a Rotated List'
 tags: [dsa-sheet, binary-search, searching-a-sorted-list]
 difficulty: Intermediate
+theory: finding-the-smallest-value
 ---
 
 ## Statement
@@ -45,14 +46,6 @@ Output:
 - All values are different.
 - `-10**9 <= nums[i] <= 10**9`
 - The big tests count how many values your code reads from the list (the limit is stated in the failure message). Reading every value, or using `in`, `.index`, `.count`, `min` or `sorted` on the whole list, fails them.
-
-## Theory
-
-The minimum of a rotated list sits at the **break point** where the list drops from its largest value back to its smallest. Binary search can find that point by comparing the middle value with the **last** value of the range.
-
-If `nums[mid] > nums[hi]`, the drop is somewhere to the right of `mid` (the right part contains the wrap), so `lo = mid + 1`. Otherwise the right part up to `hi` is in order and the minimum is at `mid` or to its left, so `hi = mid`. Comparing with `nums[hi]` (not `nums[lo]`) also handles a list that was not rotated at all.
-
-The loop ends when `lo == hi`: both point at the minimum. `O(log n)` reads.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-swap-odd-even-bits
 title: 'Swap Odd and Even Bits'
 tags: [dsa-sheet, bit-manipulation, bit-tricks]
 difficulty: Intermediate
+theory: masks-that-pick-out-many-bits
 ---
 
 ## Statement
@@ -42,16 +43,6 @@ Output:
 ### Constraints
 
 - `0 <= n < 2**32`
-
-## Theory
-
-Use two masks: `0x55555555` (`0101...`) selects the bits at **even** positions and `0xAAAAAAAA` (`1010...`) the bits at **odd** positions.
-
-Shift the even bits **left** by one (into the odd slots) and the odd bits **right** by one (into the even slots), then combine with `|`:
-
-`((n & 0x55555555) << 1) | ((n & 0xAAAAAAAA) >> 1)`
-
-Masks plus shifts let you move groups of bits in one step, without a loop.
 
 ## Explanation
 

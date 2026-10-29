@@ -3,6 +3,7 @@ name: sheet-zigzag-conversion
 title: 'Zigzag Conversion'
 tags: [dsa-sheet, strings, harder-strings]
 difficulty: Intermediate
+theory: bouncing-up-and-down
 ---
 
 ## Statement
@@ -57,14 +58,6 @@ The four rows read `PIN`, `ALSIG`, `YAHR`, `PI`.
 
 - `0 <= len(s) <= 3 * 10**5`
 - `1 <= rows <= 1000`
-
-## Theory
-
-You do not need to draw the grid. Think of the **row index** each character lands on: it goes `0, 1, 2, ..., rows - 1`, then `rows - 2, ..., 1`, then `0` again, bouncing between the first and last row.
-
-So keep a list of `rows` strings (or lists). For each character, append it to the row at the current index, then move the index by `+1` or `-1`, reversing direction when you reach the first or last row. Finally join the rows. This is a simulation in `O(n)`.
-
-With a single row the index can neither go up nor down, so handle `rows == 1` (or `rows >= len(s)`) separately: the answer is `s` itself.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-bst-from-preorder
 title: 'Build a BST from Preorder'
 tags: [dsa-sheet, binary-search-trees, bst-advanced]
 difficulty: Advanced
+theory: building-from-a-preorder-list
 ---
 
 ## Statement
@@ -48,16 +49,6 @@ Output:
 - `0 <= len(preorder) <= 100000`
 - The tree is not deeper than 800 levels.
 - All values are different.
-
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-A **binary search tree (BST)** is a binary tree where, for every node, all values in its **left** subtree are **smaller** and all values in its **right** subtree are **larger** (values are different). That one rule makes searching fast: at each node you can throw away half of the tree. In a reasonably balanced tree the height is `O(log n)`, so search, insert and delete take `O(log n)`; in a thin tree (a chain) they degrade to `O(n)`. The **inorder** traversal of a BST visits the values in sorted order.
-
-Inserting the values one at a time in preorder works, but each insertion walks down from the root: `O(n·h)`. In a thin tree that is `O(n²)`.
-
-Better: build in **one pass with bounds**. The first value is the root. The next values that are smaller than the root form the left subtree, then the larger ones form the right subtree. Recursively: `build(bound)` takes values from the front of the list while they are **smaller than `bound`**; the left subtree is built with the node's value as the new bound, and the right subtree with the old bound. Keep a shared index into the list so that each value is consumed once. `O(n)`.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-word-pattern
 title: 'Word Pattern'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Intermediate
+theory: checking-both-directions
 ---
 
 ## Statement
@@ -45,12 +46,6 @@ False
 
 - `0 <= len(pattern), len(words) <= 10**5`
 - Pattern letters are lower-case; every word is a lower-case string.
-
-## Theory
-
-This is the isomorphism problem again, with letters on one side and **whole words** on the other. You need a two-way mapping: pattern letter to word, and word to pattern letter. A one-way check lets two letters share a word.
-
-Dictionary keys can be any hashable value, including strings, so the code is the same as for characters. Walk both sequences together with `zip`; check that the lengths match first, because `zip` silently stops at the shorter one.
 
 ## Explanation
 

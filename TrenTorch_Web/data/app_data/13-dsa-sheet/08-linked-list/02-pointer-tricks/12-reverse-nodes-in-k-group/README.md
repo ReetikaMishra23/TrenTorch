@@ -3,6 +3,7 @@ name: sheet-reverse-nodes-in-k-group
 title: 'Reverse Nodes in K-Groups'
 tags: [dsa-sheet, linked-list, pointer-tricks]
 difficulty: Mastery
+theory: leaving-a-short-group-alone
 ---
 
 ## Statement
@@ -47,17 +48,6 @@ Output:
 
 - `0 <= number of nodes <= 100000`
 - `1 <= k <= 100000`
-
-## Theory
-
-This is "reverse a list" applied to every block of `k` nodes, and then the blocks have to be **reconnected**. Process one block at a time:
-
-1. From `group_prev` (the node before the block), walk `k` steps to find the block's last node `kth`. If you run out of nodes, the rest is too short: stop.
-2. Remember `group_next = kth.next`.
-3. Reverse the block, with `prev` starting at `group_next` so the first node of the block automatically ends up pointing at the rest of the list.
-4. Hook the block in: `group_prev.next = kth`. The block's old first node is now its last node, so it becomes the next `group_prev`.
-
-A dummy head makes the first block like all the others. The total work is `O(n)`, because every node is walked a constant number of times.
 
 ## Explanation
 

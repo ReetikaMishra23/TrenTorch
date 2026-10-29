@@ -3,6 +3,7 @@ name: sheet-remove-duplicate-letters
 title: 'Smallest String With Each Letter Once'
 tags: [dsa-sheet, greedy, greedy-strategies]
 difficulty: Mastery
+theory: smallest-string-with-each-letter-once
 ---
 
 ## Statement
@@ -45,16 +46,6 @@ Output:
 
 - `0 <= len(s) <= 200000`
 - Lower-case letters.
-
-## Theory
-
-A **greedy** algorithm builds the answer step by step and, at each step, takes the choice that looks best **right now**, without ever going back. It is fast and simple, but it is only correct when the problem has a structure that makes local choices safe. The hard part is the **proof**: show that the greedy choice can always be part of some best answer.
-
-Build the result with a **stack**, scanning left to right. For each letter `c` (skip it if it is already in the stack): while the **top** of the stack is **bigger** than `c` **and appears again later** in the string, pop it (it can be placed later, and `c` gives a smaller string now). Then push `c`.
-
-You need two helper facts: `last[ch]` (the last position of each letter, to know if it appears again) and a set `in_stack`. The condition "appears again later" is `last[top] > i`.
-
-This is the same idea as removing digits to get the smallest number, with the extra constraint that you cannot drop the last copy of a letter. `O(n)`.
 
 ## Explanation
 

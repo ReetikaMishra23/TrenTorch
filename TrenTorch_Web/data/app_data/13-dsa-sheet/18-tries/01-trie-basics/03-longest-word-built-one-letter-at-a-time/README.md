@@ -3,6 +3,7 @@ name: sheet-longest-word-built-one-letter-at-a-time
 title: 'Longest Word Built Letter by Letter'
 tags: [dsa-sheet, tries, trie-basics]
 difficulty: Intermediate
+theory: only-walk-through-words
 ---
 
 ## Statement
@@ -45,14 +46,6 @@ Output:
 
 - `0 <= len(words) <= 30000`
 - `1 <= length <= 30`, lower-case letters.
-
-## Theory
-
-A **trie** (prefix tree) stores a set of words letter by letter: every node is one letter, a word is a path from the root, and words that share a prefix share the start of their path. Each node has up to 26 children (a dictionary `letter -> node` in Python) and a flag that says "a word ends here". Inserting or searching a word of length `L` takes `O(L)` no matter how many words are stored, and a trie answers **prefix** questions ("does any word start with `ab`?") that a plain set of words cannot answer quickly. A node can be a small dictionary: `node = {}`; mark the end of a word with a special key such as `"$"`.
-
-A word is "buildable" when each of its prefixes is itself a word. Put the words in a trie with the end markers. A word qualifies when **every node on its path is marked as a word end**. Walk the trie with a DFS that **only enters children that are word ends**; the deepest node reached (breaking ties alphabetically by visiting children in order) is the answer.
-
-A simpler way with a set: sort the words, and keep a set `built`; a word is built if its prefix without the last letter is in `built` (or it has length 1). Sorting also gives the alphabetical tie-break. `O(n log n)`.
 
 ## Explanation
 

@@ -3,6 +3,7 @@ name: sheet-search-sorted-matrix
 title: 'Search a Sorted Matrix'
 tags: [dsa-sheet, binary-search, searching-grids]
 difficulty: Intermediate
+theory: a-grid-as-one-long-list
 ---
 
 ## Statement
@@ -45,14 +46,6 @@ False
 - Rows are sorted and each row starts after the previous one ends.
 - `-10**9 <= matrix[i][j], target <= 10**9`
 - The big tests count how many cells you read.
-
-## Theory
-
-Reading the rows in order gives **one sorted list** of `rows * cols` values. You do not have to build that list: you can **pretend** it exists by converting a position `p` in the imaginary list into a cell: row `p // cols`, column `p % cols`.
-
-Then run an ordinary binary search over positions `0 .. rows * cols - 1`, reading each probe with `matrix[p // cols][p % cols]`. That is `O(log(rows * cols))` reads, instead of looking at every cell.
-
-Mapping a 2D structure onto a 1D index with `//` and `%` is a very common trick for grids, and it works because the rows are all the same length.
 
 ## Explanation
 

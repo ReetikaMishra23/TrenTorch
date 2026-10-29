@@ -3,6 +3,7 @@ name: sheet-k-closest-points
 title: 'K Closest Points to the Origin'
 tags: [dsa-sheet, heaps, heap-basics]
 difficulty: Intermediate
+theory: top-k-by-a-custom-key
 ---
 
 ## Statement
@@ -45,14 +46,6 @@ Output:
 
 - `0 <= k <= len(points) <= 100000`
 - `-10**4 <= x, y <= 10**4`
-
-## Theory
-
-A **heap** (priority queue) always gives you the **smallest** item in `O(log n)`, while letting you add items in `O(log n)`. Python's `heapq` module implements a **min-heap** on a plain list: `heappush(h, x)`, `heappop(h)` (the smallest), `h[0]` (peek) and `heapify(h)` (turn a list into a heap in `O(n)`). For a **max-heap** push the negated values.
-
-Sorting all `n` points costs `O(n log n)`. When `k` is much smaller than `n` you can do better by keeping only the `k` best so far in a **max-heap of size `k`** (the farthest of the current `k` on top). For each new point: push it; if the heap now has more than `k` points, pop the farthest. At the end the heap holds the `k` closest points. This costs `O(n log k)`.
-
-Python's `heapq.nsmallest(k, points, key=...)` does exactly this for you. Compare squared distances: no square root is needed to compare which is closer.
 
 ## Explanation
 

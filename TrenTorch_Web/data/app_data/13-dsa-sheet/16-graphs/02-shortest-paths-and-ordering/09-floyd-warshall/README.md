@@ -3,6 +3,7 @@ name: sheet-floyd-warshall
 title: 'Floyd-Warshall: All Pairs'
 tags: [dsa-sheet, graphs, shortest-paths-and-ordering]
 difficulty: Advanced
+theory: floyd-warshall-all-pairs
 ---
 
 ## Statement
@@ -46,16 +47,6 @@ Output:
 - `1 <= n <= 120`
 - `0 <= len(edges) <= 3000`
 - `0 <= w <= 10**4`
-
-## Theory
-
-A **graph** is a set of **nodes** (vertices) joined by **edges**. Edges can be **undirected** (a road you can use both ways) or **directed** (a one-way street), and they can carry a **weight** (a distance or cost). Two ways to store a graph: an **adjacency list** (for each node, the list of its neighbours; `O(n + m)` memory, the usual choice) or an **adjacency matrix** (an `n x n` table; fast edge lookup but `O(n²)` memory). To visit every node reachable from a start, use **BFS** (a queue, level by level) or **DFS** (a stack or recursion, as deep as possible first). Mark nodes as **visited** so that you never process one twice, otherwise cycles loop forever.
-
-When you need the distances between **all pairs**, running Dijkstra from every node costs `n` runs. **Floyd–Warshall** does it with three nested loops and a beautiful idea of **dynamic programming**: let `dist[i][j]` be the best distance using only the nodes `0..k-1` as intermediate stops. Allowing one more intermediate node `k` gives
-
-`dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`.
-
-The loop over `k` must be the **outermost** one. After all `n` values of `k`, every path is allowed. `O(n³)`, which is fine for `n` up to a few hundred and very short to write.
 
 ## Explanation
 

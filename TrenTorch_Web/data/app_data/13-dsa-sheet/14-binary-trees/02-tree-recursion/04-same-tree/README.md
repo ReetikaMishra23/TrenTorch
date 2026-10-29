@@ -3,6 +3,7 @@ name: sheet-same-tree
 title: 'Same Tree'
 tags: [dsa-sheet, binary-trees, tree-recursion]
 difficulty: Beginner
+theory: same-tree-and-symmetric-tree
 ---
 
 ## Statement
@@ -47,14 +48,6 @@ False
 
 - `0 <= number of nodes <= 100000` in each tree
 - The trees are not deeper than 800 levels.
-
-## Theory
-
-A **binary tree** is made of nodes; each node has a value and up to two children, `left` and `right`. The first node is the **root**; a node with no children is a **leaf**. A tree is a recursive structure: the left child of a node is the root of a smaller tree, so most tree questions can be solved by solving the same question for the left and right subtrees and combining the answers.
-
-Compare the two trees in lockstep. Two trees are the same when both are empty, or both are non-empty with equal values and the left subtrees are the same **and** the right subtrees are the same.
-
-Return `False` as soon as one is empty and the other is not, or the values differ: the three base cases. `O(min(n, m))`.
 
 ## Explanation
 

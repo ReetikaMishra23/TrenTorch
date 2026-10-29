@@ -3,7 +3,8 @@ import { parseFrontmatterValue } from './parse-frontmatter-value.mjs';
 // README.md is one YAML-ish frontmatter block (name/title/tags/difficulty --
 // deliberately not a real YAML parser, since authors only ever write plain
 // scalars and one flow-sequence for tags) followed by exactly three `##`
-// sections in a fixed order: Statement, Theory, Explanation. See
+// sections in a fixed order: Statement, Theory, Explanation. A DSA-sheet question has no Theory
+// section (its theory lives on the step's theory page, see processes/dsa-theory). See
 // data/app_data/README.md for the authoring contract this mirrors.
 /**
  * @param {string} raw
@@ -32,11 +33,11 @@ export function parseReadme(raw, questionDirPath) {
 	}
 
 	const sectionMatch = body.match(
-		/^\s*## Statement\n([\s\S]*?)\n## Theory\n([\s\S]*?)\n## Explanation\n([\s\S]*)$/
+		/^\s*## Statement\n([\s\S]*?)\n(?:## Theory\n([\s\S]*?)\n)?## Explanation\n([\s\S]*)$/
 	);
 	if (!sectionMatch) {
 		throw new Error(
-			`README.md in ${questionDirPath} must have ## Statement, ## Theory and ## Explanation sections in that order`
+			`README.md in ${questionDirPath} must have ## Statement, ## Theory (optional) and ## Explanation sections in that order`
 		);
 	}
 	const [, statement, theory, explanation] = sectionMatch;
@@ -44,7 +45,7 @@ export function parseReadme(raw, questionDirPath) {
 	return {
 		meta,
 		statementMarkdown: statement.trim(),
-		theoryMarkdown: theory.trim(),
+		theoryMarkdown: (theory ?? '').trim(),
 		explanationMarkdown: explanation.trim()
 	};
 }

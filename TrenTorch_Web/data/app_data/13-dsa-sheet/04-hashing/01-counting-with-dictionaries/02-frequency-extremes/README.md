@@ -3,6 +3,7 @@ name: sheet-frequency-extremes
 title: 'Most and Least Frequent Value'
 tags: [dsa-sheet, hashing, counting-with-dictionaries]
 difficulty: Beginner
+theory: picking-the-winner-and-breaking-ties
 ---
 
 ## Statement
@@ -47,14 +48,6 @@ One value is both the most and the least frequent.
 
 - `1 <= len(nums) <= 3 * 10**5`
 - `-10**9 <= nums[i] <= 10**9`
-
-## Theory
-
-Count first, then choose. `Counter` gives every value's frequency in one pass. To pick the best with a tie-break, use a **key that is a tuple**: Python compares tuples element by element, so `(frequency, value)` orders by frequency and then by value.
-
-For the _most_ frequent with the smaller value winning ties, use `key=lambda v: (-count, v)` with `min`: the negative count makes bigger counts smaller, and `v` breaks ties. For the _least_ frequent, use `key=lambda v: (count, v)`.
-
-This "count, then pick with a composite key" pattern is the second thing to learn after plain counting.
 
 ## Explanation
 
