@@ -1,10 +1,20 @@
-import { CODE_KEY_PREFIX } from './code-storage-key';
+import { codeStorageKey } from './code-storage-key';
 import { forgetLocalDraftStamp, removeRemoteDraft } from './draft-sync.svelte';
 
-export function resetUserCode(contentId: string): void {
+// `language` resets just that language's draft; leave it out to reset every language (Re-attempt).
+export function resetUserCode(contentId: string, language?: string): void {
 	if (typeof window === 'undefined') return;
 	try {
-		localStorage.removeItem(`${CODE_KEY_PREFIX}${contentId}`);
+		if (language !== undefined && language !== 'python') {
+			localStorage.removeItem(codeStorageKey(contentId, language));
+			return;
+		}
+		if (language === undefined) {
+			for (const other of ['javascript', 'cpp', 'java', 'go', 'rust']) {
+				localStorage.removeItem(codeStorageKey(contentId, other));
+			}
+		}
+		localStorage.removeItem(codeStorageKey(contentId));
 		forgetLocalDraftStamp(contentId);
 		removeRemoteDraft(contentId);
 	} catch (e) {

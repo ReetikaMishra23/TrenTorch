@@ -10,3 +10,5 @@ bun.lockb
 static/
 # DSA-sheet test cases: one case per line on purpose (a reformat would spread each over many lines)
 problem.json
+# Vendored WASI shim (minified, third-party): left as it came
+rust-vendor/

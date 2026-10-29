@@ -20,10 +20,8 @@ func runGo(this js.Value, args []js.Value) interface{} {
 
 	result := map[string]interface{}{"output": out.String(), "error": nil}
 
+	// Evaluating a `package main` source already runs main(), so it is not called again here.
 	_, err := i.Eval(source)
-	if err == nil {
-		_, err = i.Eval("main.main()")
-	}
 	result["output"] = out.String()
 	if err != nil {
 		result["error"] = err.Error()

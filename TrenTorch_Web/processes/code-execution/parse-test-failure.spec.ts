@@ -63,4 +63,28 @@ describe('parseTestFailure', () => {
 	it('falls back to the first line for anything else', () => {
 		expect(parseTestFailure('Something odd happened.').title).toBe('Something odd happened.');
 	});
+
+	it('explains a skipped test, whatever the reason', () => {
+		expect(
+			parseTestFailure(
+				'Assertion failed: Skipped: an earlier performance test was already too slow.'
+			)
+		).toEqual({
+			title: 'Skipped',
+			facts: [],
+			note: 'An earlier performance test was already too slow.'
+		});
+		expect(
+			parseTestFailure('Skipped: this test uses numbers bigger than this language can hold.').note
+		).toBe('This test uses numbers bigger than this language can hold.');
+	});
+
+	it('shows a runtime error from another language as its message, keeping a longer trace folded away', () => {
+		const one = parseTestFailure('Runtime error: TypeError: x is undefined');
+		expect(one).toMatchObject({ title: 'Runtime error', note: 'TypeError: x is undefined' });
+		expect(one.trace).toBeUndefined();
+		const many = parseTestFailure('Runtime error: ArrayIndexOutOfBounds\n\tat Main.f(Main.java:3)');
+		expect(many.note).toBe('ArrayIndexOutOfBounds');
+		expect(many.trace).toContain('at Main.f');
+	});
 });

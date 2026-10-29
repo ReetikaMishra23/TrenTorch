@@ -42,6 +42,7 @@ export function buildQuestion(parent, trackId, questionDirName, questionDirPath)
 	// A DSA question keeps its tests in problem.json (language-neutral cases); the Python tests
 	// are generated from it. Every other question has a hand-written tests.py.
 	const problemJson = readIfExists(join(questionDirPath, 'problem.json'));
+	const parsedProblem = problemJson !== null ? parseProblem(problemJson, questionDirPath) : null;
 	const tests =
 		problemJson !== null
 			? buildCasesTests(problemJson, questionDirPath)
@@ -68,8 +69,8 @@ export function buildQuestion(parent, trackId, questionDirName, questionDirPath)
 		difficulty: meta.difficulty,
 		root: rootId,
 		...(meta.kind === 'problemset' ? { kind: 'problemset' } : {}),
-		...(problemJson !== null
-			? { kind: 'dsa', hints: parseProblem(problemJson, questionDirPath).hints }
+		...(parsedProblem !== null
+			? { kind: 'dsa', hints: parsedProblem.hints, signature: parsedProblem.signature }
 			: {}),
 		...(references.length > 0 ? { references } : {}),
 		...(typeof meta.caseCompany === 'string' ? { caseCompany: meta.caseCompany } : {}),

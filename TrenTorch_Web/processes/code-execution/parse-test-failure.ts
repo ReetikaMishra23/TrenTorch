@@ -69,7 +69,17 @@ export function parseTestFailure(raw: string): ParsedFailure {
 		return {
 			title: 'Skipped',
 			facts: [],
-			note: 'An earlier performance test was already too slow.'
+			note: text.replace(/^Skipped:\s*/, '').replace(/^./, (c) => c.toUpperCase())
+		};
+	}
+	const runtime = text.match(/^Runtime error: ([\s\S]*)$/);
+	if (runtime) {
+		const lines = runtime[1].split('\n').filter((line) => line.trim());
+		return {
+			title: 'Runtime error',
+			facts: [],
+			note: lines[0],
+			trace: lines.length > 1 ? runtime[1] : undefined
 		};
 	}
 

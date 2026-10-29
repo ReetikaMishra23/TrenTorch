@@ -33,6 +33,13 @@ export interface DsaSheet {
 	steps: DsaSheetStep[];
 }
 
+export interface DsaSignature {
+	name: string;
+	params: { name: string; type: string }[];
+	returns: string;
+	example?: Record<string, unknown>;
+}
+
 export interface GeneratedQuestion {
 	id: string;
 	title: string;
@@ -45,6 +52,9 @@ export interface GeneratedQuestion {
 	hint?: string;
 	// DSA sheet: up to four hints, shown one at a time (from problem.json).
 	hints?: string[];
+	// DSA sheet: the function's signature and its first example input, from problem.json. The IDE
+	// writes the starter code for every language but Python from it (build-language-starters.ts).
+	signature?: DsaSignature;
 	// DSA sheet: further reading, shown under the keywords (from references.json).
 	references?: { title: string; url: string }[];
 	tools?: string[];

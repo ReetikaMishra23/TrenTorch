@@ -38,8 +38,8 @@ public class Runner {
 
 			ByteArrayOutputStream compileLog = new ByteArrayOutputStream();
 			PrintWriter compileLogWriter = new PrintWriter(new PrintStream(compileLog, true, "UTF-8"));
-			String[] compileArgs = new String[] { "-source", "1.8", "-target", "1.8", "-bootclasspath",
-					"/app/java-runtime/rt.jar", "-d", workDir.toString(), srcFile.toString() };
+			String[] compileArgs = new String[] { "-source", "1.8", "-target", "1.8", "-proc:none", "-bootclasspath",
+					"/str/rt.jar", "-d", workDir.toString(), srcFile.toString() };
 			Main compiler = new Main(compileLogWriter, compileLogWriter, false);
 			boolean compileOk = compiler.compile(compileArgs);
 			compileLogWriter.flush();
