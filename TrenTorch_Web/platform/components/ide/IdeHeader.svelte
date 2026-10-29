@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { QuestionContent, RuntimeState } from '$data/curriculum/types';
+	import type { TrackQuestions } from '$processes/ide-content/get-track-questions';
+	import SolvedMark from '$components/SolvedMark.svelte';
+	import * as Dialog from '$components/ui/dialog';
+	import { solved } from '$processes/progress-tracking/solved.svelte';
 	import {
 		ArrowLeft,
 		ChevronLeft,
@@ -24,6 +28,7 @@
 		content,
 		fromPage = null,
 		fromPotd = false,
+		trackQuestions = { partId: null, track: null, questions: [] },
 		runtimeState = 'ready',
 		isRunning = false,
 		isFullscreen = false,
@@ -40,6 +45,7 @@
 		content: QuestionContent;
 		fromPage?: string | null;
 		fromPotd?: boolean;
+		trackQuestions?: TrackQuestions;
 		runtimeState: RuntimeState;
 		isRunning: boolean;
 		isFullscreen?: boolean;
@@ -86,7 +92,9 @@
 					: resolve('/potd')
 				: fromPage
 					? resolve(`/questions?page=${fromPage}`)
-					: resolve('/questions')
+					: trackQuestions.partId
+						? resolve('/questions/[partId]', { partId: trackQuestions.partId })
+						: resolve('/questions')
 	);
 	const backLabel = $derived(
 		content.metadata.kind === 'dsa'
@@ -95,6 +103,13 @@
 				? 'Back to Problem of the Day'
 				: 'Back to Module'
 	);
+
+	let isNavOpen = $state(false);
+
+	// Same ?from=N handling as GuidePane's prev/next links.
+	function questionHref(id: string) {
+		return fromPage ? resolve(`/ide/[id]?from=${fromPage}`, { id }) : resolve('/ide/[id]', { id });
+	}
 	// A DSA sheet question shows where it sits ("DSA Sheet / Hashing", and "3 / 6" between the
 	// arrows) instead of repeating its own title, which is the heading right below.
 	const place = $derived.by(() => {
@@ -135,15 +150,68 @@
 		>
 			<ArrowLeft class="size-4" />
 		</a>
-		<a
-			href={backHref}
-			class="hidden min-w-0 items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-muted sm:flex"
-		>
-			<ListChecks class="size-4 shrink-0 text-muted-foreground" />
-			<span class="shrink-0 text-muted-foreground">{crumb}</span>
-			<span class="text-muted-foreground/60" aria-hidden="true">/</span>
-			<span class="truncate font-medium">{place ? place.step : content.metadata.title}</span>
-		</a>
+		{#if content.metadata.kind === 'dsa'}
+			<a
+				href={backHref}
+				class="hidden min-w-0 items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-muted sm:flex"
+			>
+				<ListChecks class="size-4 shrink-0 text-muted-foreground" />
+				<span class="shrink-0 text-muted-foreground">{crumb}</span>
+				<span class="text-muted-foreground/60" aria-hidden="true">/</span>
+				<span class="truncate font-medium">{place ? place.step : content.metadata.title}</span>
+			</a>
+		{:else}
+			<div class="h-4 w-px bg-border"></div>
+			<Dialog.Root bind:open={isNavOpen}>
+				<Dialog.Trigger
+					class="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-amber-600 transition-colors hover:bg-amber-500/10 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
+					title="Problem list"
+				>
+					<ListChecks class="size-3.5" />
+					<span class="hidden truncate sm:inline">{content.metadata.title}</span>
+				</Dialog.Trigger>
+				<!-- Not portaled, so SvelteKit's router handles these links and it shows in fullscreen. -->
+				<Dialog.Content
+					portalProps={{ disabled: true }}
+					class="data-open:slide-in-from-left data-closed:slide-out-to-left data-open:zoom-in-100 data-closed:zoom-out-100 top-0 left-0 flex h-full max-w-sm translate-x-0 translate-y-0 flex-col rounded-none border-y-0 border-l-0 p-0 font-mono text-xs"
+				>
+					<div class="border-b border-border px-4 py-3">
+						<Dialog.Title class="text-sm">Problems</Dialog.Title>
+						{#if trackQuestions.track}
+							<Dialog.Description class="text-muted-foreground">
+								{trackQuestions.track}
+							</Dialog.Description>
+						{/if}
+					</div>
+					<nav class="flex-1 overflow-y-auto py-1">
+						{#each trackQuestions.questions as question, i (question.id)}
+							{@const isCurrent = question.id === content.id}
+							{@const isSolved = solved.isSolved(question.id)}
+							<a
+								href={questionHref(question.id)}
+								onclick={() => (isNavOpen = false)}
+								aria-current={isCurrent ? 'page' : undefined}
+								class="flex items-center gap-3 border-l-2 px-4 py-2 transition-colors hover:bg-secondary {isCurrent
+									? 'border-yellow-500 bg-secondary font-medium text-foreground dark:border-yellow-400'
+									: 'border-transparent text-muted-foreground hover:text-foreground'}"
+							>
+								<span class="w-5 shrink-0 text-right tabular-nums opacity-60">{i + 1}</span>
+								<SolvedMark {isSolved} questionTitle={question.title} />
+								<span class="truncate">{question.title}</span>
+								{#if isCurrent}
+									<span
+										class="ml-auto size-2.5 shrink-0 rounded-full bg-yellow-500 dark:bg-yellow-400"
+										title="Current problem"
+									></span>
+								{/if}
+							</a>
+						{:else}
+							<p class="px-4 py-2 text-muted-foreground">No problems listed for this track yet.</p>
+						{/each}
+					</nav>
+				</Dialog.Content>
+			</Dialog.Root>
+		{/if}
 
 		<!-- Previous / next question, right beside the question's name -->
 		<!-- eslint-disable svelte/no-navigation-without-resolve -- both hrefs come from resolve() in the page -->

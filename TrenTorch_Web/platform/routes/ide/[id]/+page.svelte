@@ -95,7 +95,9 @@
 				: resolve('/potd')
 			: fromPage
 				? resolve(`/questions?page=${fromPage}`)
-				: resolve('/questions')
+				: data.trackQuestions.partId
+					? resolve('/questions/[partId]', { partId: data.trackQuestions.partId })
+					: resolve('/questions')
 	);
 
 	// Prev/next in the same curriculum order /questions lists them in, so
@@ -691,6 +693,7 @@
 			{content}
 			{fromPage}
 			{fromPotd}
+			trackQuestions={data.trackQuestions}
 			runtimeState={$runtimeState}
 			isRunning={$isRunning}
 			{isFullscreen}
