@@ -1,4 +1,5 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { headingSlug, listTheorySteps, renderTheory } from './read-theory';
@@ -63,4 +64,29 @@ describe('question links', () => {
 		const html = renderTheory(step).html;
 		expect(html).toContain('<a href="/ide/sheet-house-robber">House Robber</a>');
 	}, 60_000);
+});
+
+describe('code fences', () => {
+	const render = (markdown: string) => {
+		const file = join(mkdtempSync(join(tmpdir(), 'theory-')), 'theory.md');
+		writeFileSync(file, markdown);
+		return renderTheory({ step: 'x', title: 'x', file }).html;
+	};
+
+	it('gives a code block its language as a class', () => {
+		expect(render('# T\n\n```go\nx := 1\n```\n')).toContain('<code class="language-go">');
+		expect(render('# T\n\n```c++\nint x;\n```\n')).toContain('<code class="language-c++">');
+	});
+
+	it('cannot be talked out of the class attribute by a hostile language', () => {
+		const html = render('# T\n\n```x"onmouseover="alert(1)\nhi\n```\n');
+		expect(html).not.toMatch(/onmouseover/);
+		expect(html).toContain('<pre><code>');
+	});
+
+	it('escapes markup in code text', () => {
+		const html = render('# T\n\n```text\na < b && <script>x()</script>\n```\n');
+		expect(html).toContain('a &lt; b &amp;&amp; &lt;script&gt;x()&lt;/script&gt;');
+		expect(html).not.toContain('<script>');
+	});
 });

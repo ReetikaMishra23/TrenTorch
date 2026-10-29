@@ -81,8 +81,14 @@ function groupCodeBlocks(markdown: string): string {
 	);
 }
 
+// Quotes are escaped too, so the result is safe inside an attribute as well as between tags.
 const escapeHtml = (text: string) =>
-	text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	text
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;');
 
 /** Colours a code block at build time with the same parsers the code editor uses. */
 function highlight(code: string, lang: string | undefined): string {
@@ -149,7 +155,9 @@ export function renderTheory(step: TheoryStep): TheoryPage {
 		renderer: {
 			code({ text, lang }) {
 				const language = lang?.trim().split(/\s+/)[0];
-				const cls = language ? ` class="language-${escapeHtml(language)}"` : '';
+				// A class name is a plain word: anything else in a fence's language is dropped, not escaped.
+				const safe = language && /^[A-Za-z0-9_+#.-]+$/.test(language) ? language : undefined;
+				const cls = safe ? ` class="language-${escapeHtml(safe)}"` : '';
 				return `<pre><code${cls}>${highlight(text, language)}</code></pre>\n`;
 			},
 			heading({ tokens, depth }) {
