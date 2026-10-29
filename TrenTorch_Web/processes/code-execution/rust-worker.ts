@@ -77,6 +77,8 @@ function ensureRuntime(): Promise<void> {
 	return runtimeReady;
 }
 
+// Matching the ESC byte is the point: these are the colour codes rustc puts in its diagnostics.
+// eslint-disable-next-line no-control-regex
 const ANSI_RE = /\x1b\[[0-9;]*m/g;
 
 function parseDiagnostics(log: string): string {
@@ -140,7 +142,7 @@ async function runRust(source: string): Promise<{ output: string; error: string 
 	const inst = await WebAssembly.instantiate(rustcModule!, {
 		wasi_snapshot_preview1: w.wasiImport
 	});
-	let exit = 0;
+	let exit: number;
 	try {
 		exit = w.start(inst);
 	} catch (e: any) {
@@ -174,7 +176,12 @@ async function runRust(source: string): Promise<{ output: string; error: string 
 			return { ret: 0, nwritten: data.byteLength };
 		}
 	}
-	const pfds = [new CapOut(), new CapOut(), new CapErrStream(), new PreopenDirectory('/sandbox', [])];
+	const pfds = [
+		new CapOut(),
+		new CapOut(),
+		new CapErrStream(),
+		new PreopenDirectory('/sandbox', [])
+	];
 	const pw = new WASI(['prog'], [], pfds, { debug: false });
 	try {
 		const { instance } = await WebAssembly.instantiate(bin.data.slice().buffer, {
@@ -184,7 +191,7 @@ async function runRust(source: string): Promise<{ output: string; error: string 
 		const stderr = progErr.replaceAll('/work/prog.rs', 'program').trim();
 		return {
 			output: progOut.trimEnd(),
-			error: rc === 0 ? (diagnosticText || null) : stderr || `process exited with code ${rc}`
+			error: rc === 0 ? diagnosticText || null : stderr || `process exited with code ${rc}`
 		};
 	} catch (e: any) {
 		return { output: progOut.trimEnd(), error: String(e?.message || e) };

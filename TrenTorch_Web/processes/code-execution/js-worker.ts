@@ -32,11 +32,10 @@ self.onmessage = async (e: MessageEvent) => {
 			);
 		let error: string | undefined;
 		try {
-			// eslint-disable-next-line @typescript-eslint/no-implied-eval
 			const fn = new Function('console', `"use strict";\n${code || ''}`);
 			fn({ log: print, error: print, warn: print, info: print });
-		} catch (err: any) {
-			error = err?.stack || err?.message || String(err);
+		} catch (err) {
+			error = err instanceof Error ? err.stack || err.message : String(err);
 		}
 		self.postMessage({
 			id,

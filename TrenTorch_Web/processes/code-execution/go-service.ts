@@ -122,7 +122,9 @@ class GoService {
 	}
 
 	public async runTests(): Promise<SubmissionResult> {
-		throw new Error('Submit is only available in Python for now. Switch the language to test your solution.');
+		throw new Error(
+			'Submit is only available in Python for now. Switch the language to test your solution.'
+		);
 	}
 
 	public async runCustomTest(): Promise<ExecutionResult> {
