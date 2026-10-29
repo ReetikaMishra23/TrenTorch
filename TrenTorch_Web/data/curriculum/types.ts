@@ -27,6 +27,9 @@ export interface QuestionContent {
 	metadata: QuestionMetadata;
 	descriptionMarkdown: string; // Description tab: what we're doing and how, not spoonfed
 	theoryMarkdown: string; // Theory tab: what/why/how/when, pros/cons, scaling
+	// DSA questions only: the starter for each language the student can switch to, except Python,
+	// whose starter is starterCode above.
+	languageStarters?: Record<'javascript' | 'cpp' | 'java' | 'go' | 'rust', string>;
 	starterCode: string; // the function signature(s), extracted from the description's own code fence -- authors don't write a separate stub
 	dbSchema?: string; // SQL questions only: CREATE/INSERT statements loaded into a fresh SQLite database for every run
 	solutionCode: string; // Solution tab: revealed on demand, hidden again on tab switch
@@ -44,6 +47,9 @@ export interface SingleTestResult {
 	expected?: string;
 	actual?: string;
 	stdout?: string;
+	// The test could not be run in this language (for example it needs numbers too big for it). It counts
+	// as passed, so it never costs the student a solve, and is shown as skipped.
+	skipped?: boolean;
 }
 
 export interface SubmissionResult {

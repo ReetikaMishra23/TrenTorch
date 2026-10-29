@@ -1,17 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import FilterSelect from '$components/FilterSelect.svelte';
+	import FilterBar from '$components/FilterBar.svelte';
 	import { SvelteSet } from 'svelte/reactivity';
-	import {
-		ArrowRight,
-		BookOpen,
-		Check,
-		CheckCircle2,
-		ChevronDown,
-		Gauge,
-		RotateCcw,
-		Search
-	} from '@lucide/svelte';
+	import { ArrowRight, BookOpen, Check, ChevronDown, RotateCcw } from '@lucide/svelte';
 	import { dsaQuestions, dsaSteps } from '$data/dsa-sheet';
 	import {
 		countSolved,
@@ -119,45 +110,25 @@
 			{/if}
 		</div>
 
-		<div class="mb-4 flex flex-wrap items-center gap-2">
-			<label class="search-field">
-				<span class="sr-only">Search questions</span>
-				<Search class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-				<input bind:value={searchQuery} type="search" placeholder="Search questions or tags..." />
-			</label>
-
-			<FilterSelect
-				bind:value={selectedStatus}
-				label="Filter by status"
-				icon={CheckCircle2}
-				options={statuses}
-			/>
-
-			<FilterSelect
-				bind:value={selectedDifficulty}
-				label="Filter by difficulty"
-				icon={Gauge}
-				options={[
-					{ value: '', label: 'All difficulties' },
-					...difficulties.map((d) => ({ value: d, label: d }))
-				]}
-			/>
-
-			{#if filtering}
-				<button type="button" class="clear-button" onclick={resetFilters}>
-					<RotateCcw class="size-3.5" />
-					Clear
-				</button>
-			{/if}
-		</div>
-
-		<p class="mb-3 text-xs text-muted-foreground" aria-live="polite">
-			{visibleCount}
-			{visibleCount === 1 ? 'question' : 'questions'}
-		</p>
+		<FilterBar
+			bind:query={searchQuery}
+			bind:difficulty={selectedDifficulty}
+			bind:status={selectedStatus}
+			{difficulties}
+			{statuses}
+			resultCount={visibleCount}
+			placeholder="Search questions or tags..."
+			noun="question"
+		/>
 
 		{#if visibleSteps.length === 0}
-			<p class="empty-state">No questions match these filters.</p>
+			<p class="empty-state">
+				No questions match these filters.
+				<button type="button" class="empty-clear" onclick={resetFilters}>
+					<RotateCcw class="size-3.5" aria-hidden="true" />
+					Clear filters
+				</button>
+			</p>
 		{:else}
 			<div class="flex flex-col gap-4">
 				{#each visibleSteps as step (step.id)}
@@ -485,51 +456,6 @@
 		font-size: 0.75rem;
 	}
 
-	.search-field {
-		position: relative;
-		min-width: 180px;
-		flex: 1;
-	}
-
-	.search-field input {
-		width: 100%;
-		height: 38px;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--secondary);
-		padding: 0 12px 0 36px;
-		color: var(--foreground);
-		font: inherit;
-		font-size: 0.78rem;
-	}
-
-	.search-field input:focus {
-		border-color: var(--primary);
-		outline: 1px solid var(--primary);
-	}
-
-	.search-field :global(svg) {
-		color: var(--muted-foreground);
-	}
-
-	.clear-button {
-		display: inline-flex;
-		height: 38px;
-		align-items: center;
-		gap: 7px;
-		border: 0;
-		background: transparent;
-		padding: 0 8px;
-		color: var(--muted-foreground);
-		font: inherit;
-		font-size: 0.78rem;
-		cursor: pointer;
-	}
-
-	.clear-button:hover {
-		color: var(--foreground);
-	}
-
 	.problem-table {
 		width: 100%;
 		table-layout: fixed;
@@ -615,12 +541,33 @@
 	}
 
 	.empty-state {
+		display: flex;
+		flex-direction: column;
 		border: 1px solid var(--border);
-		border-radius: 6px;
+		border-radius: 12px;
 		padding: 48px 12px;
 		color: var(--muted-foreground);
 		font-size: 0.85rem;
 		text-align: center;
+	}
+
+	.empty-clear {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin: 14px auto 0;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		background: var(--secondary);
+		padding: 6px 12px;
+		color: var(--foreground);
+		font: inherit;
+		font-size: 0.78rem;
+		cursor: pointer;
+	}
+
+	.empty-clear:hover {
+		border-color: var(--primary);
 	}
 
 	@media (max-width: 640px) {

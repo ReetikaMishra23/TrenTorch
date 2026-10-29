@@ -17,6 +17,23 @@ import time
 # a slow solution gets one clear "Time limit exceeded" and not a 20 second hard stop.
 STATE = {"slow": False}
 
+# Running the student's code in another language. Python stays the referee: it makes every input
+# (external_prepare), the other language only calls the student's function on them, and the answers come
+# back here to be judged by the same check_case below, so every language gets the same cases, the same
+# comparison and the same messages. EXTERNAL["outputs"] is None for a normal Python run. For an external run it
+# maps "<case id>:<index>" to what the other language reported for that call:
+#   {"out": <answer as JSON>, "ms": <milliseconds>, "reads": <values read, or None if it cannot count>}
+#   {"error": "<what went wrong>"}   {"skip": true}   (no record at all: the program never got there)
+# Notes for the student (something that could not be checked in that language) collect in "notes".
+EXTERNAL = {"outputs": None, "stopped": False, "notes": [], "returns": ""}
+
+
+class Skipped(AssertionError):
+    """A case that cannot run in this language (a number too big for it). It does not count against the student.
+    A test that was not run because an earlier one hung or was too slow is not this: it still fails."""
+
+    skipped = True
+
 
 def _mulberry32(seed):
     state = [seed & 0xFFFFFFFF]
@@ -1175,6 +1192,47 @@ def _same(actual, expected, compare, tolerance):
     return actual == expected
 
 
+def _as_type(value, kind):
+    """A whole number printed by another language (2) is the float the question returns (2.0). Python
+    keeps the two apart when it hashes an answer, so the type the question declares decides."""
+    if kind == "float":
+        return float(value) if isinstance(value, int) and not isinstance(value, bool) else value
+    if kind.startswith("list[") and isinstance(value, list):
+        return [_as_type(v, kind[5:-1]) for v in value]
+    return value
+
+
+def _external_answer(case, index):
+    """What the other language answered for one call: (answer, milliseconds, reads or None)."""
+    record = EXTERNAL["outputs"].get(case["id"] + ":" + str(index))
+    if record is None:
+        if EXTERNAL["stopped"]:
+            raise AssertionError("Skipped: an earlier test did not finish, so this one was not run.")
+        EXTERNAL["stopped"] = True
+        raise AssertionError(
+            "Time limit exceeded: your program did not finish this test, so it was stopped. "
+            "Look for an infinite loop, or a much faster approach."
+        )
+    if record.get("unsupported"):
+        raise Skipped("Skipped: " + record["unsupported"])
+    if record.get("skip"):
+        raise AssertionError("Skipped: an earlier performance test was already too slow.")
+    if "error" in record:
+        if record.get("fatal"):
+            EXTERNAL["stopped"] = True
+        raise AssertionError("Runtime error: " + str(record["error"]))
+    kind = EXTERNAL["returns"]
+    # A language with 64-bit integers sends the answer as JSON text, because a number bigger than 2^53 does
+    # not survive being a JavaScript number on the way here.
+    out = json.loads(record["outJson"]) if "outJson" in record else record["out"]
+    return _as_type(out, kind), float(record.get("ms", 0)), record.get("reads")
+
+
+def external_note(text):
+    if text not in EXTERNAL["notes"]:
+        EXTERNAL["notes"].append(text)
+
+
 def _check_batch(problem, case, fn):
     """Many small seeded random cases in one test. Each answer is checked against a short digest
     stored in the file, so hundreds of cases cost about 1 KB."""
@@ -1184,11 +1242,15 @@ def _check_batch(problem, case, fn):
     elapsed_ms = 0.0
     for index, expected in enumerate(case["digests"]):
         args = batch_args(problem, batch, index)
-        call_args, built = _prepare(problem, fn, copy.deepcopy(args))
-        started = time.perf_counter()
-        actual = fn(*[call_args[name] for name in order])
-        elapsed_ms += (time.perf_counter() - started) * 1000.0
-        actual = _finish(problem, actual, built)
+        if EXTERNAL["outputs"] is not None:
+            actual, took, _ = _external_answer(case, index)
+            elapsed_ms += took
+        else:
+            call_args, built = _prepare(problem, fn, copy.deepcopy(args))
+            started = time.perf_counter()
+            actual = fn(*[call_args[name] for name in order])
+            elapsed_ms += (time.perf_counter() - started) * 1000.0
+            actual = _finish(problem, actual, built)
         if _digest(actual)[: len(expected)] != expected:
             raise AssertionError(
                 "Wrong answer on random case "
@@ -1225,15 +1287,19 @@ def check_case(problem, case, fn):
             "Skipped: an earlier performance test was already too slow."
         )
 
-    reads = _Reads() if "maxReads" in case else None
+    external = EXTERNAL["outputs"] is not None
+    reads = _Reads() if "maxReads" in case and not external else None
     if reads:
         args = {name: _counted(value, reads) for name, value in args.items()}
 
-    call_args, built = _prepare(problem, fn, args)
-    started = time.perf_counter()
-    actual = fn(*[call_args[name] for name in order])
-    elapsed_ms = (time.perf_counter() - started) * 1000.0
-    actual = _finish(problem, actual, built)
+    if external:
+        actual, elapsed_ms, external_reads = _external_answer(case, 0)
+    else:
+        call_args, built = _prepare(problem, fn, args)
+        started = time.perf_counter()
+        actual = fn(*[call_args[name] for name in order])
+        elapsed_ms = (time.perf_counter() - started) * 1000.0
+        actual = _finish(problem, actual, built)
 
     if "digest" in case:
         ok = _digest(actual) == case["digest"]
@@ -1257,10 +1323,16 @@ def check_case(problem, case, fn):
                 + _short(actual)
             )
         raise AssertionError("Wrong answer on a hidden test case.")
-    if reads and reads.count > case["maxReads"]:
+    read_count = external_reads if external else (reads.count if reads else None)
+    if external and "maxReads" in case and read_count is None:
+        external_note(
+            "This language cannot count how many values your code reads, so the tests with a read limit "
+            "only checked that the answer is right. Python and JavaScript check the limit too."
+        )
+    if read_count is not None and "maxReads" in case and read_count > case["maxReads"]:
         raise AssertionError(
             "Right answer, but too many reads: your code read the list "
-            + str(reads.count)
+            + str(read_count)
             + " times and the limit is "
             + str(case["maxReads"])
             + ". Reading every value is not allowed here: halve the search range each step (binary search)."
@@ -1280,3 +1352,94 @@ def check_case(problem, case, fn):
 
 def load_problem(text):
     return json.loads(text)
+
+
+def _wire_list(spec, built):
+    """A ListNode argument in the one shape every language reads: its values, where the tail loops back
+    to (-1 for nowhere), and where it joins another parameter's list (or None)."""
+    values = _wire_value(_materialize(spec["values"] if isinstance(spec, dict) else spec))
+    spec = spec if isinstance(spec, dict) else {}
+    return {"values": values, "cycle": spec.get("cycle", -1), "join": spec.get("join")}
+
+
+_SAFE_INT = 2**53 - 1
+
+
+def _wire_value(value):
+    """JSON for another language: an integer a JavaScript number cannot hold exactly is sent as {"$int": "digits"}."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int):
+        return {"$int": str(value)} if abs(value) > _SAFE_INT else value
+    if isinstance(value, list):
+        return [_wire_value(v) for v in value]
+    return value
+
+
+def _wire_args(problem, args):
+    """The arguments of one call as plain JSON, in parameter order. Everything is already plain JSON
+    except linked lists (see _wire_list). Trees are level-order lists with None for a missing child."""
+    out = []
+    for p in problem["function"]["params"]:
+        value = args[p["name"]]
+        if p["type"] == "ListNode":
+            value = _wire_list(value, None)
+        elif p["type"] == "list[ListNode]":
+            value = [_wire_list(spec, None) for spec in value]
+        out.append(_wire_value(value) if p["type"] not in ("ListNode", "list[ListNode]") else value)
+    return out
+
+
+def _largest_int(value):
+    """The biggest absolute integer anywhere inside a JSON value (0 if there are none)."""
+    if isinstance(value, bool):
+        return 0
+    if isinstance(value, int):
+        return abs(value)
+    if isinstance(value, list):
+        return max((_largest_int(v) for v in value), default=0)
+    if isinstance(value, dict):
+        return max((_largest_int(v) for v in value.values()), default=0)
+    return 0
+
+
+def external_prepare(problem, limit=None, max_int=None):
+    """Every call the tests make, in the order the tests run, for a language that is not Python.
+    `limit` is the number of tests to prepare (Run uses the first few), and `max_int` the largest integer
+    that language can hold exactly: a call that needs a bigger one is marked unsupported, not wrong."""
+    params = problem["function"]["params"]
+    cases = problem["cases"][:limit] if limit else problem["cases"]
+    calls = []
+    for case in cases:
+        limit_ms = case.get("limitMs", problem.get("limits", {}).get("timeMs", 2000))
+        if "batch" in case:
+            sources = [
+                (index, batch_args(problem, case["batch"], index))
+                for index in range(len(case["digests"]))
+            ]
+        else:
+            sources = [(0, {name: _materialize(value) for name, value in case["input"].items()})]
+        # A digest has no expected answer to look at; an ordinary case does, and it can need a big integer too.
+        expected_big = _largest_int(case["expected"]) if "expected" in case else 0
+        for index, args in sources:
+            call = {
+                "key": case["id"] + ":" + str(index),
+                "case": case["id"],
+                "index": index,
+                "args": _wire_args(problem, args),
+                "limitMs": limit_ms,
+                "perf": bool(case.get("perf", False)),
+                "reads": "maxReads" in case,
+                "batch": "batch" in case,
+            }
+            biggest = max(expected_big, max((_largest_int(v) for v in args.values()), default=0))
+            if max_int is not None and biggest > max_int:
+                call["unsupported"] = (
+                    "this test uses numbers bigger than this language can hold exactly, so it was not run."
+                )
+            calls.append(call)
+    return {
+        "function": problem["function"],
+        "compare": problem.get("compare", "exact"),
+        "calls": calls,
+    }

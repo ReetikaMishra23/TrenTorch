@@ -11,6 +11,10 @@
 		DSA_LANGUAGES
 	} from '$processes/code-execution/detect-language';
 	import { loadUserCode } from '$processes/code-execution/load-user-code';
+	import {
+		loadDsaLanguage,
+		saveDsaLanguage
+	} from '$processes/code-execution/dsa-language-preference';
 	import { saveUserCode } from '$processes/code-execution/save-user-code';
 	import { draftSync } from '$processes/code-execution/draft-sync.svelte';
 	import { resetUserCode } from '$processes/code-execution/reset-user-code';
@@ -220,9 +224,31 @@
 		rust: 'Rust'
 	};
 
+	// The starter for a language: Python's is the hand-written one, the others are built from the
+	// question's signature (processes/ide-content/build-language-starters.ts).
+	function starterFor(lang: string): string {
+		if (!content) return '';
+		if (lang === 'python') return content.starterCode;
+		return (
+			content.languageStarters?.[lang as keyof NonNullable<typeof content.languageStarters>] ?? ''
+		);
+	}
+
 	function handleLanguageChange(next: string) {
-		selectedLanguage = next as ReturnType<typeof detectLanguage>;
-		unifiedExecutor.setLanguage(selectedLanguage);
+		if (!content) return;
+		const picked = next as ReturnType<typeof detectLanguage>;
+		selectedLanguage = picked;
+		saveDsaLanguage(picked);
+		// Also starts downloading that language's runtime and packages.
+		unifiedExecutor.setLanguage(picked);
+		// Each language keeps its own draft; one never seen before opens on its starter.
+		userCode = loadUserCode(content.id, starterFor(picked), picked);
+		editedSinceLoad = false;
+		// Whatever Run/Submit showed was for the other language's code.
+		unifiedExecutor.testResults.set(null);
+		unifiedExecutor.consoleOutput.set('');
+		unifiedExecutor.consoleError.set(false);
+		unifiedExecutor.consoleFigures.set([]);
 	}
 	let lastSavedAt = $state<number | null>(null);
 
@@ -292,9 +318,12 @@
 			// onMount-only call would miss that second case entirely, since
 			// SvelteKit reuses this component across /ide/[id] param changes
 			// rather than remounting it.
-			selectedLanguage = null;
+			const preferred = isLanguageSelectable(content) ? loadDsaLanguage() : null;
+			selectedLanguage = preferred;
 			unifiedExecutor.init(content);
-			userCode = loadUserCode(content.id, content.starterCode);
+			if (preferred) unifiedExecutor.setLanguage(preferred);
+			const openLanguage = preferred ?? detectLanguage(content);
+			userCode = loadUserCode(content.id, starterFor(openLanguage), openLanguage);
 			editedSinceLoad = false;
 			unifiedExecutor.testResults.set(null);
 			unifiedExecutor.consoleError.set(false);
@@ -313,7 +342,9 @@
 
 	$effect(() => {
 		void draftSync.version;
-		if (!content || editedSinceLoad || !draftSync.wasPulled(content.id)) return;
+		// Only Python drafts sync across devices.
+		if (!content || language !== 'python') return;
+		if (editedSinceLoad || !draftSync.wasPulled(content.id)) return;
 		userCode = loadUserCode(content.id, content.starterCode);
 	});
 
@@ -321,15 +352,15 @@
 		if (!content) return;
 		editedSinceLoad = true;
 		userCode = newCode;
-		saveUserCode(content.id, newCode);
+		saveUserCode(content.id, newCode, language);
 		lastSavedAt = Date.now();
 	}
 
 	function handleResetCode() {
 		if (!content) return;
 		if (confirm('Reset code to the original starter template for this question?')) {
-			resetUserCode(content.id);
-			userCode = content.starterCode;
+			resetUserCode(content.id, language);
+			userCode = starterFor(language);
 			lastSavedAt = Date.now();
 			// Whatever Run/Submit showed was for the code that just got
 			// discarded -- leaving it up would read as still describing the
@@ -352,7 +383,7 @@
 			)
 		) {
 			resetUserCode(content.id);
-			userCode = content.starterCode;
+			userCode = starterFor(language);
 			lastSavedAt = Date.now();
 			solved.unmarkSolved(content.id);
 			attempted.unmarkAttempted(content.id);
@@ -586,9 +617,13 @@
 	let runtimeStatusText = $derived.by(() => {
 		switch ($runtimeState) {
 			case 'loading_runtime':
-				return isSql ? 'Loading SQLite…' : 'Loading Python runtime…';
+				return isSql
+					? 'Loading SQLite…'
+					: `Loading ${LANGUAGE_LABELS[language] ?? 'Python'} runtime…`;
 			case 'loading_packages':
-				return isSql ? 'Loading SQLite…' : 'Loading libraries…';
+				return isSql
+					? 'Loading SQLite…'
+					: `Loading ${LANGUAGE_LABELS[language] ?? 'Python'} packages…`;
 			case 'running':
 				return 'Executing…';
 			case 'testing':
@@ -910,7 +945,7 @@
 				: language === 'javascript'
 					? 'JavaScript'
 					: language === 'cpp'
-						? 'C++ (JSCPP)'
+						? 'C++ (clang 22)'
 						: language === 'go'
 							? 'Go (Yaegi)'
 							: language === 'rust'

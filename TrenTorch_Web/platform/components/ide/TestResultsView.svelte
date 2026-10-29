@@ -34,6 +34,11 @@
 		selected && !selected.passed && selected.error ? parseTestFailure(selected.error) : null
 	);
 
+	// Tests this language could not run (numbers too big for it, say). They count as passed, never as a solve of their own.
+	const skippedCount = $derived(
+		results ? results.results.filter((test: { skipped?: boolean }) => test.skipped).length : 0
+	);
+
 	// A run that could not start at all (a syntax error, a missing function).
 	const startError = $derived(
 		results?.error && results.totalTests === 0 ? parseTestFailure(results.error) : null
@@ -75,7 +80,9 @@
 								This ran the first {results.totalTests} check{results.totalTests === 1 ? '' : 's'}.
 								Submit runs the full hidden suite and marks the question solved.
 							{:else}
-								Your code passes every check.
+								Your code passes every check.{#if skippedCount > 0}
+									{skippedCount} check{skippedCount === 1 ? ' was' : 's were'} skipped because this language
+									could not run {skippedCount === 1 ? 'it' : 'them'}.{/if}
 							{/if}
 						</p>
 					</div>
@@ -178,6 +185,8 @@
 									<pre class="detail-pre mt-2">{failure.trace}</pre>
 								</details>
 							{/if}
+						{:else if selected.skipped}
+							<p class="mt-2 text-xs text-muted-foreground">{selected.error ?? 'Skipped.'}</p>
 						{:else if selected.passed}
 							<p class="mt-2 text-xs text-muted-foreground">Passed.</p>
 						{/if}
